@@ -59,15 +59,17 @@ export function MainLayout({ children }: MainLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-bg-1">
-      {/* Top Bar */}
-      <header className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-gray-50">
+      {/* Fixed Top Bar */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-6 py-4">
+        <div className="flex items-center justify-between max-w-7xl mx-auto">
           {/* Left side - Logo and tenant switcher */}
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <img src="/logo.svg" alt="Rugira" className="w-8 h-8" />
-              <span className="text-lg font-semibold text-gray-900">Rugira</span>
+          <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-red-600 rounded flex items-center justify-center">
+                <span className="text-white font-bold text-sm">R</span>
+              </div>
+              <span className="text-xl font-semibold text-gray-900">Rugira</span>
             </div>
             
             {/* Tenant Switcher (placeholder) */}
@@ -149,11 +151,11 @@ export function MainLayout({ children }: MainLayoutProps) {
         </div>
       </header>
 
-      <div className="flex">
-        {/* Left Sidebar */}
-        <nav className="w-64 bg-white border-r border-gray-200 min-h-screen">
-          <div className="p-4">
-            <ul className="space-y-1">
+      <div className="flex pt-20">
+        {/* Fixed Left Sidebar */}
+        <nav className="fixed left-0 top-20 w-64 bg-white border-r border-gray-200 h-screen overflow-y-auto">
+          <div className="p-6">
+            <ul className="space-y-2">
               {navigation.map((item) => {
                 const Icon = item.icon;
                 const isActive = location === item.href || 
@@ -164,13 +166,16 @@ export function MainLayout({ children }: MainLayoutProps) {
                     <Link href={item.href}>
                       <span
                         className={cn(
-                          'flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer',
+                          'flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer group',
                           isActive
-                            ? 'bg-brand-red text-white'
-                            : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                            ? 'bg-red-600 text-white shadow-sm'
+                            : 'text-gray-700 hover:bg-red-50 hover:text-red-600'
                         )}
                       >
-                        <Icon className="mr-3 h-4 w-4 flex-shrink-0" />
+                        <Icon className={cn(
+                          "mr-3 h-5 w-5 flex-shrink-0",
+                          isActive ? "text-white" : "text-gray-400 group-hover:text-red-500"
+                        )} />
                         {item.name}
                       </span>
                     </Link>
@@ -182,8 +187,10 @@ export function MainLayout({ children }: MainLayoutProps) {
         </nav>
 
         {/* Main Content */}
-        <main className="flex-1 p-6 overflow-auto">
-          {children}
+        <main className="flex-1 ml-64 p-8 min-h-screen">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
         </main>
       </div>
     </div>

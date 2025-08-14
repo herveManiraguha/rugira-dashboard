@@ -62,50 +62,93 @@
   
   body {
     font-family: 'Inter', sans-serif;
-    background-color: var(--bg-1);
-    color: var(--text-700);
+    background-color: #fafafa;
+    color: #374151;
     font-size: 16px;
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
   h1 {
-    font-size: 2.5rem;
+    font-size: 2.25rem;
     font-weight: 700;
-    color: var(--text-900);
+    color: #111827;
+    letter-spacing: -0.025em;
   }
   
   h2 {
-    font-size: 1.8rem;
+    font-size: 1.875rem;
     font-weight: 700;
-    color: var(--text-900);
+    color: #111827;
+    letter-spacing: -0.025em;
   }
   
-  @media (min-width: 1024px) {
-    h1 {
-      font-size: 3rem;
-    }
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
+  }
+  
+  /* Professional Card Design */
+  .card-professional {
+    background: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.2s ease;
+  }
+  
+  .card-professional:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  }
+  
+  /* Navigation styling inspired by entrance site */
+  .nav-item-active {
+    background: #E10600;
+    color: white;
+    box-shadow: 0 1px 3px rgba(225, 6, 0, 0.3);
+  }
+  
+  .nav-item-hover:hover {
+    background: #FEF2F2;
+    color: #B91C1C;
   }
 }
 
 @layer components {
+  /* Professional Header Styling */
+  .header-fixed {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  }
+  
+  /* Rugira Button System */
   .btn-primary {
-    background: var(--brand-red);
+    background: #E10600;
     color: white;
     font-weight: 600;
-    border-radius: var(--radius);
-    padding: 0.85rem 1.4rem;
-    box-shadow: var(--shadow);
-    transition: all 0.2s ease;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     border: none;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    font-size: 0.9rem;
   }
   
   .btn-primary:hover {
-    background: var(--brand-red-600);
+    background: #B30000;
     transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  }
+  
+  .btn-primary:active {
+    transform: translateY(0);
   }
   
   .btn-primary:disabled {
@@ -115,14 +158,15 @@
   }
   
   .btn-secondary {
-    border: 1px solid var(--brand-red);
-    color: var(--brand-red);
-    background: transparent;
-    border-radius: var(--radius);
-    padding: 0.8rem 1.2rem;
+    border: 1px solid #E10600;
+    color: #E10600;
+    background: white;
+    border-radius: 8px;
+    padding: 0.7rem 1.3rem;
     font-weight: 600;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
+    font-size: 0.9rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
