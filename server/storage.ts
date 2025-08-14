@@ -1,4 +1,5 @@
 import { randomUUID } from "crypto";
+import { mockBots, mockTrades, mockStrategies, mockExchanges, mockMarketData, mockPerformanceData, mockRiskData, mockComplianceData } from "../shared/mockData";
 
 // Trading Bot interfaces
 interface Bot {
@@ -52,7 +53,17 @@ export interface IStorage {
   getKPIs(): Promise<KPI[]>;
   getActivities(): Promise<ActivityFeed[]>;
   
-  // Compliance and reporting
+  // Trading data
+  getRecentTrades(): Promise<any[]>;
+  getTradeHistory(botId?: string): Promise<any[]>;
+  
+  // Market data
+  getMarketData(): Promise<any[]>;
+  getPerformanceData(): Promise<any>;
+  
+  // Risk & Compliance
+  getRiskData(): Promise<any>;
+  getComplianceData(): Promise<any>;
   getComplianceAlerts(): Promise<any[]>;
   getPerformanceReport(): Promise<any>;
   getOperationalReport(): Promise<any>;
@@ -60,6 +71,7 @@ export interface IStorage {
   // Strategies and exchanges
   getStrategies(): Promise<any[]>;
   getExchangeConnections(): Promise<any[]>;
+  getAllExchanges(): Promise<any[]>;
   
   // Backtesting
   getBacktests(): Promise<any[]>;
@@ -264,6 +276,116 @@ export class MemStorage implements IStorage {
   async createBacktest(backtestData: any): Promise<any> {
     const id = randomUUID();
     return { id, ...backtestData, status: 'running', createdAt: new Date() };
+  }
+
+  // Mock data methods
+  async getRecentTrades(): Promise<any[]> {
+    return mockTrades.slice(0, 10);
+  }
+
+  async getTradeHistory(botId?: string): Promise<any[]> {
+    if (botId) {
+      return mockTrades.filter(trade => trade.botId === botId);
+    }
+    return mockTrades;
+  }
+
+  async getMarketData(): Promise<any[]> {
+    return mockMarketData;
+  }
+
+  async getPerformanceData(): Promise<any> {
+    return mockPerformanceData;
+  }
+
+  async getRiskData(): Promise<any> {
+    return mockRiskData;
+  }
+
+  async getComplianceData(): Promise<any> {
+    return mockComplianceData;
+  }
+
+  async getAllExchanges(): Promise<any[]> {
+    return mockExchanges;
+  }
+
+  // Override existing methods to use mock data
+  async getStrategies(): Promise<any[]> {
+    return mockStrategies;
+  }
+
+  async getExchangeConnections(): Promise<any[]> {
+    return mockExchanges;
+  }
+
+  async getAllBots(): Promise<Bot[]> {
+    // Convert mock bots to our Bot interface format
+    return mockBots.map(bot => ({
+      id: bot.id,
+      name: bot.name,
+      exchange: bot.exchange,
+      tradingPair: bot.tradingPair,
+      strategy: bot.strategy,
+      status: bot.status as Bot['status'],
+      performance: {
+        pnl: bot.pnl,
+        pnlPercent: bot.pnlPercent,
+        trades: bot.totalTrades,
+        winRate: bot.winRate
+      },
+      riskPolicy: {
+        maxPositionSize: 10,
+        stopLoss: 5
+      },
+      createdAt: new Date(bot.createdAt),
+      lastUpdated: new Date()
+    }));
+  }
+
+  async getKPIs(): Promise<KPI[]> {
+    const totalPnL = mockBots.reduce((sum, bot) => sum + bot.pnl, 0);
+    const dailyPnL = mockBots.reduce((sum, bot) => sum + bot.dailyPnl, 0);
+    const runningBots = mockBots.filter(bot => bot.status === 'running').length;
+    const totalTrades = mockBots.reduce((sum, bot) => sum + bot.totalTrades, 0);
+    
+    return [
+      {
+        id: '1',
+        label: 'Total P/L',
+        value: `$${totalPnL.toLocaleString()}`,
+        change: 12.5,
+        comparison: 'vs. last month',
+        icon: 'chart-line',
+        type: 'currency'
+      },
+      {
+        id: '2',
+        label: 'Daily P/L',
+        value: `$${dailyPnL.toLocaleString()}`,
+        change: -2.3,
+        comparison: 'vs. yesterday',
+        icon: 'trending-up',
+        type: 'currency'
+      },
+      {
+        id: '3',
+        label: 'Active Bots',
+        value: runningBots,
+        comparison: `${mockBots.length} total bots`,
+        icon: 'robot',
+        type: 'number'
+      },
+      {
+        id: '4',
+        label: 'Total Trades',
+        value: totalTrades.toLocaleString(),
+        change: 8.7,
+        comparison: 'vs. last week',
+        icon: 'activity',
+        type: 'number'
+      }
+    ];
   }
 }
 

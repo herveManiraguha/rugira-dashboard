@@ -136,6 +136,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Trading data endpoints
+  app.get("/api/trades/recent", async (req, res) => {
+    try {
+      const trades = await storage.getRecentTrades();
+      res.json(trades);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch recent trades" });
+    }
+  });
+
+  app.get("/api/trades/history", async (req, res) => {
+    try {
+      const botId = req.query.botId as string;
+      const trades = await storage.getTradeHistory(botId);
+      res.json(trades);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch trade history" });
+    }
+  });
+
+  // Market data endpoints
+  app.get("/api/market-data", async (req, res) => {
+    try {
+      const marketData = await storage.getMarketData();
+      res.json(marketData);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch market data" });
+    }
+  });
+
+  app.get("/api/performance", async (req, res) => {
+    try {
+      const performanceData = await storage.getPerformanceData();
+      res.json(performanceData);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch performance data" });
+    }
+  });
+
+  // Risk and compliance endpoints
+  app.get("/api/risk", async (req, res) => {
+    try {
+      const riskData = await storage.getRiskData();
+      res.json(riskData);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch risk data" });
+    }
+  });
+
+  app.get("/api/compliance", async (req, res) => {
+    try {
+      const complianceData = await storage.getComplianceData();
+      res.json(complianceData);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch compliance data" });
+    }
+  });
+
   // Emergency stop endpoint
   app.post("/api/emergency-stop", async (req, res) => {
     try {
@@ -193,7 +251,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Exchange connections endpoint
   app.get("/api/exchanges", async (req, res) => {
     try {
-      const exchanges = await storage.getExchangeConnections();
+      const exchanges = await storage.getAllExchanges();
       res.json(exchanges);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch exchange connections" });
