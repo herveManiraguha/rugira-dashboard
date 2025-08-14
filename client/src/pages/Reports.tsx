@@ -6,6 +6,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { BarChart3, TrendingUp, Download, Calendar, DollarSign, Target, Clock } from "lucide-react";
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  Area,
+  AreaChart
+} from 'recharts';
 
 export default function Reports() {
   const [dateRange, setDateRange] = useState('7d');
@@ -19,6 +32,43 @@ export default function Reports() {
     totalTrades: '1,247',
     avgLatency: '125ms'
   };
+
+  // Generate bot performance comparison data
+  const botPerformanceData = [
+    { name: 'Alpha Arbitrage', pnl: 1247.32, trades: 247, winRate: 68.4 },
+    { name: 'Beta Grid', pnl: -89.45, trades: 156, winRate: 45.2 },
+    { name: 'Gamma Momentum', pnl: 892.15, trades: 189, winRate: 72.1 },
+    { name: 'Delta Mean Rev.', pnl: 567.89, trades: 134, winRate: 58.9 },
+    { name: 'Epsilon Scalping', pnl: 2134.56, trades: 567, winRate: 61.3 },
+    { name: 'Zeta Swing', pnl: 445.78, trades: 78, winRate: 69.2 },
+    { name: 'Eta HF', pnl: 1876.23, trades: 423, winRate: 64.8 },
+    { name: 'Theta Cross', pnl: 334.12, trades: 89, winRate: 55.1 }
+  ];
+
+  // Generate cumulative returns over time
+  const generateCumulativeReturns = () => {
+    const data = [];
+    let cumulativeReturn = 10000; // Starting with $10,000
+    const days = dateRange === '24h' ? 1 : dateRange === '7d' ? 7 : dateRange === '30d' ? 30 : 90;
+    
+    for (let i = 0; i <= days; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() - (days - i));
+      
+      // Generate realistic daily returns with some volatility
+      const dailyReturn = (Math.random() - 0.45) * 0.05; // Slight positive bias
+      cumulativeReturn *= (1 + dailyReturn);
+      
+      data.push({
+        date: date.toISOString().split('T')[0],
+        value: Math.round(cumulativeReturn * 100) / 100,
+        return: Math.round(((cumulativeReturn / 10000 - 1) * 100) * 100) / 100
+      });
+    }
+    return data;
+  };
+
+  const cumulativeReturnsData = generateCumulativeReturns();
 
   return (
     <div className="space-y-6">
@@ -131,11 +181,31 @@ export default function Reports() {
                 <CardTitle>Performance by Bot</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-64 flex items-center justify-center bg-gray-50 rounded">
-                  <div className="text-center text-gray-500">
-                    <BarChart3 className="h-8 w-8 mx-auto mb-2" />
-                    <p>Bot performance comparison chart</p>
-                  </div>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={botPerformanceData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis 
+                        dataKey="name" 
+                        angle={-45}
+                        textAnchor="end"
+                        height={80}
+                        fontSize={12}
+                      />
+                      <YAxis />
+                      <Tooltip 
+                        formatter={(value, name) => [
+                          name === 'pnl' ? `$${value.toFixed(2)}` : `${value}`,
+                          name === 'pnl' ? 'P&L' : name === 'trades' ? 'Trades' : 'Win Rate %'
+                        ]}
+                      />
+                      <Bar 
+                        dataKey="pnl" 
+                        fill={(entry: any) => entry.pnl >= 0 ? '#16a34a' : '#dc2626'}
+                        name="pnl"
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
@@ -144,11 +214,31 @@ export default function Reports() {
                 <CardTitle>Cumulative Returns</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-64 flex items-center justify-center bg-gray-50 rounded">
-                  <div className="text-center text-gray-500">
-                    <TrendingUp className="h-8 w-8 mx-auto mb-2" />
-                    <p>Cumulative returns over time</p>
-                  </div>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={cumulativeReturnsData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis 
+                        dataKey="date"
+                        tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      />
+                      <YAxis 
+                        tickFormatter={(value) => `$${(value / 1000).toFixed(1)}k`}
+                      />
+                      <Tooltip 
+                        labelFormatter={(value) => new Date(value).toLocaleDateString()}
+                        formatter={(value: any) => [`$${value.toFixed(2)}`, 'Portfolio Value']}
+                      />
+                      <Area 
+                        type="monotone" 
+                        dataKey="value" 
+                        stroke="#e10600" 
+                        fill="#e10600" 
+                        fillOpacity={0.1}
+                        strokeWidth={2}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
