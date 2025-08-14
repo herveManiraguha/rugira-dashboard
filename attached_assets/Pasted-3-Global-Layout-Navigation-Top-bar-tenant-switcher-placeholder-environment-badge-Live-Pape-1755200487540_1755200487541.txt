@@ -1,0 +1,78 @@
+3) Global Layout & Navigation
+• Top bar: tenant switcher (placeholder), environment badge (Live/Paper), notifications bell, user menu, and a Kill Switch button (disabled until backend supports it).
+• Left sidebar nav with sections: Overview, Bots, Strategies, Exchanges, Compliance, Reports, Backtesting, Monitoring, Admin, Help.
+• A tiny connection indicator that shows API reachability (OK / degraded).
+
+4) Pages & MVP Features
+Overview
+• KPIs tiles: Total P/L (day/week/month), active bots, order success rate, p95 latency.
+• Two charts: equity curve and drawdown (placeholder data acceptable if API not ready).
+• Live feed: recent trades, risk interventions, compliance alerts (auto-refresh).
+
+Bots
+• Table: name, exchange, pair(s), strategy, status (starting/running/stopped/error), P/L, last heartbeat, actions (Start / Stop / View).
+• Filters and saved views by exchange/status/strategy/time window.
+• Bot details tabs: Runtime (start/stop, open orders, balances, live logs), Config (strategy params read-only for MVP + risk policy fields), Performance (P/L, win rate, drawdown + CSV export), Compliance (bot-level alerts & audit trail).
+• Create Bot wizard: exchange + market(s) → choose strategy template → set risk policy → confirm (UI only; backend calls can be stubbed until API is ready).
+
+Strategies
+• Templates gallery: Arbitrage and Moving Average Crossover, with descriptions and default params.
+• Parameter editor per template; allow saving named parameter profiles.
+
+Exchanges
+• Connections list: exchange name, account alias, permissions (trade-only), last verified.
+• “Add connection” flow: key/secret form with “trade-only” reminder, connectivity test (stub if needed), rotate/revoke controls.
+• Show a read-only badge for Paper vs Live.
+
+Compliance
+• Alerts inbox: severity, reason (e.g., KYT risk), impacted bot/order, timestamp.
+• Alert details: event timeline, recommended action, acknowledge/resolve with note.
+• Audit log (read-only): logins, config changes, orders, alerts; CSV export.
+
+Reports
+• Performance: ROI, Sharpe, max drawdown, win rate per bot and tenant aggregate.
+• Operational: order success %, latency p95, error rate.
+• Export selected range to CSV (PDF optional later).
+
+Backtesting
+• New run form: strategy, params, symbols, timeframe; show “queued / running / done”.
+• Results view: equity curve + metrics; “Promote to bot” prefills the Create Bot wizard.
+
+Monitoring
+• Simple health summary for API/Orchestrator (green/amber/red), small metrics snapshot.
+• Alerts snapshot: latency SLO breach, error spikes.
+• Log search (read-only) with request ID filter (stub if API not ready).
+
+Admin
+• Users & roles: invite, assign Admin/Trader/ReadOnly, deactivate (UI stubs ok).
+• Branding: name/logo/theme (simple form).
+• Notifications: email/webhook toggles (UI only for now).
+• Feature flags & Kill Switch: read-only placeholders until API is ready.
+
+Help
+• Links to User Guide and API Docs (open in new tab).
+• System status link (placeholder if not available).
+
+5) Real-Time UX (<1s target)
+• Implement EventSource (SSE) to subscribe to ${VITE_API_BASE_URL}/stream for live updates (use fallback polling if SSE fails).
+• Add “last updated (UTC)” to live tiles.
+
+6) Error States & Safety
+• Friendly loading/empty/error states on every page.
+• Confirmations for Start/Stop; disable if API is not ready.
+• Never show stack traces; display a support-friendly message with a request ID placeholder.
+
+7) Security & Privacy
+• Add a strict Content Security Policy suitable for a product app: only self for scripts/styles/fonts, and restrict connect-src to self plus the value of VITE_API_BASE_URL.
+• Block framing, enable no-sniff and no-referrer.
+• After HTTPS is confirmed on the custom domain, enable HSTS for app.rugira.ch.
+• Do not log or display secrets anywhere.
+
+8) Custom Domain (app.rugira.ch)
+• When the preview looks good, set this Repl’s custom domain to app.rugira.ch.
+• Show me the CNAME target you generate for this Repl and pause. I will create a CNAME in Infomaniak DNS:
+– Host: app
+– Type: CNAME
+– Target: the value you displayed (e.g., my-repl-name.my-user.repl.co)
+– TTL: default
+• After I confirm DNS, verify the domain in Replit and provision HTTPS. Then turn on HSTS for this subdomain.

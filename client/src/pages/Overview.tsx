@@ -1,172 +1,267 @@
 import React, { useEffect, useState } from "react";
-import { useBotsStore, useKPIStore, useActivityStore } from "../stores";
-import KPICard from "../components/UI/KPICard";
-import StatusIndicator from "../components/UI/StatusIndicator";
-import EquityChart from "../components/Charts/EquityChart";
-import DrawdownChart from "../components/Charts/DrawdownChart";
+import { useQuery } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { 
+  TrendingUp, 
+  TrendingDown, 
+  Bot, 
+  CheckCircle, 
+  Clock,
+  DollarSign,
+  Activity,
+  AlertTriangle
+} from "lucide-react";
+
+interface KPI {
+  id: string;
+  label: string;
+  value: string | number;
+  change?: number;
+  comparison: string;
+  icon: string;
+  type: 'currency' | 'percentage' | 'number' | 'time';
+}
+
+interface ActivityItem {
+  id: string;
+  type: 'online' | 'warning' | 'error';
+  message: string;
+  details: string;
+  pnl: number;
+  timestamp: string;
+}
 
 export default function Overview() {
-  const { bots, activeBotCount, fetchBots } = useBotsStore();
-  const { kpis, isLoading: kpiLoading, fetchKPIs } = useKPIStore();
-  const { activities, isLoading: activitiesLoading, fetchActivities } = useActivityStore();
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [lastUpdated, setLastUpdated] = useState(new Date());
 
+  // Fetch KPIs
+  const { data: kpis, isLoading: kpisLoading } = useQuery<KPI[]>({
+    queryKey: ['/api/kpis'],
+    refetchInterval: 30000, // Refresh every 30 seconds
+  });
+
+  // Fetch activities
+  const { data: activities, isLoading: activitiesLoading } = useQuery<ActivityItem[]>({
+    queryKey: ['/api/activities'],
+    refetchInterval: 10000, // Refresh every 10 seconds
+  });
+
+  // Setup SSE for real-time updates
   useEffect(() => {
-    // Fetch initial data
-    fetchBots();
-    fetchKPIs();
-    fetchActivities();
+    const eventSource = new EventSource('/api/stream');
     
-    // Update current time every 5 seconds
-    const interval = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 5000);
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'heartbeat' || data.type === 'update') {
+        setLastUpdated(new Date());
+      }
+    };
 
-    return () => clearInterval(interval);
-  }, [fetchBots, fetchKPIs, fetchActivities]);
+    eventSource.onerror = () => {
+      console.log('SSE connection lost, falling back to polling');
+    };
 
-  const formatCurrentTime = () => {
-    return currentTime.toLocaleTimeString('en-US', { 
-      timeZone: 'UTC', 
-      hour12: false 
-    }) + ' UTC';
+    return () => {
+      eventSource.close();
+    };
+  }, []);
+
+  const formatValue = (value: string | number, type: KPI['type']) => {
+    switch (type) {
+      case 'currency':
+        return typeof value === 'number' ? 
+          `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` :
+          value;
+      case 'percentage':
+        return typeof value === 'number' ? `${value}%` : value;
+      case 'time':
+        return typeof value === 'number' ? `${value}ms` : value;
+      default:
+        return value;
+    }
   };
 
-  const formatPnL = (pnl: number) => {
-    if (pnl === 0) return '$0.00';
-    const sign = pnl >= 0 ? '+' : '';
-    return `${sign}$${Math.abs(pnl).toFixed(2)}`;
+  const getIcon = (iconName: string) => {
+    switch (iconName) {
+      case 'chart-line':
+        return <TrendingUp className="h-5 w-5" />;
+      case 'robot':
+        return <Bot className="h-5 w-5" />;
+      case 'check-circle':
+        return <CheckCircle className="h-5 w-5" />;
+      case 'clock':
+        return <Clock className="h-5 w-5" />;
+      default:
+        return <DollarSign className="h-5 w-5" />;
+    }
   };
 
-  const formatTimestamp = (timestamp: Date) => {
-    const now = new Date();
-    const diffMs = now.getTime() - timestamp.getTime();
-    const diffMinutes = Math.floor(diffMs / 60000);
-    
-    if (diffMinutes < 1) return 'Just now';
-    if (diffMinutes < 60) return `${diffMinutes} minutes ago`;
-    return `${Math.floor(diffMinutes / 60)} hours ago`;
+  const getStatusIcon = (type: ActivityItem['type']) => {
+    switch (type) {
+      case 'online':
+        return <div className="w-2 h-2 bg-green-500 rounded-full" />;
+      case 'warning':
+        return <div className="w-2 h-2 bg-yellow-500 rounded-full" />;
+      case 'error':
+        return <div className="w-2 h-2 bg-red-500 rounded-full" />;
+      default:
+        return <div className="w-2 h-2 bg-gray-500 rounded-full" />;
+    }
   };
 
   return (
-    <div id="overview-page">
-      {/* Page Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-text-900 mb-2" data-testid="text-page-title">
-          Trading Overview
-        </h1>
-        <p className="text-text-500" data-testid="text-page-description">
-          Monitor your trading performance and bot activity
-        </p>
-        <div className="text-sm text-text-500 mt-2">
-          <span className="live-pulse">●</span> Live data • Last updated: 
-          <span data-testid="text-last-update-time"> {formatCurrentTime()}</span>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Overview</h1>
+          <p className="text-gray-600">Trading performance and system status</p>
+        </div>
+        <div className="text-sm text-gray-500">
+          Last updated: {lastUpdated.toLocaleTimeString()} UTC
         </div>
       </div>
 
-      {/* KPI Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <KPICard
-          label="Total P/L (24h)"
-          value={4247.32}
-          change={12.5}
-          comparison="vs. yesterday"
-          icon="chart-line"
-          type="currency"
-          data-testid="kpi-pnl"
-        />
-        <KPICard
-          label="Active Bots"
-          value={activeBotCount}
-          comparison="All systems operational"
-          icon="robot"
-          type="number"
-          data-testid="kpi-active-bots"
-        />
-        <KPICard
-          label="Order Success Rate"
-          value={98.7}
-          comparison="247/250 orders filled"
-          icon="check-circle"
-          type="percentage"
-          data-testid="kpi-success-rate"
-        />
-        <KPICard
-          label="P95 Latency"
-          value={125}
-          comparison="Within SLA targets"
-          icon="tachometer-alt"
-          type="time"
-          data-testid="kpi-latency"
-        />
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {kpisLoading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i}>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <Skeleton className="h-5 w-5 rounded" />
+                  <Skeleton className="h-4 w-12" />
+                </div>
+                <Skeleton className="h-4 w-24 mb-1" />
+                <Skeleton className="h-8 w-20 mb-2" />
+                <Skeleton className="h-3 w-16" />
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          kpis?.map((kpi) => (
+            <Card key={kpi.id}>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-gray-600">
+                    {getIcon(kpi.icon)}
+                  </div>
+                  {kpi.change && (
+                    <Badge variant={kpi.change > 0 ? "default" : "destructive"} className="text-xs">
+                      {kpi.change > 0 ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
+                      {Math.abs(kpi.change)}%
+                    </Badge>
+                  )}
+                </div>
+                <h3 className="text-sm font-medium text-gray-500 mb-1">{kpi.label}</h3>
+                <p className="text-2xl font-bold text-gray-900">{formatValue(kpi.value, kpi.type)}</p>
+                <div className="mt-2 text-xs text-gray-500">{kpi.comparison}</div>
+              </CardContent>
+            </Card>
+          ))
+        )}
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <EquityChart />
-        <DrawdownChart />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Equity Curve</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 flex items-center justify-center text-gray-500 bg-gray-50 rounded-lg">
+              <div className="text-center">
+                <TrendingUp className="h-12 w-12 mx-auto mb-2 text-gray-400" />
+                <p>Portfolio performance chart</p>
+                <p className="text-sm text-gray-400">Real-time data will appear here</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Drawdown Analysis</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 flex items-center justify-center text-gray-500 bg-gray-50 rounded-lg">
+              <div className="text-center">
+                <TrendingDown className="h-12 w-12 mx-auto mb-2 text-gray-400" />
+                <p>Maximum drawdown: -2.1%</p>
+                <p className="text-sm text-gray-400">Risk analysis visualization</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Live Activity Feed */}
-      <div className="card-rounded">
-        <div className="px-6 py-4 border-b border-gray-200">
+      <Card>
+        <CardHeader>
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-text-900" data-testid="text-feed-title">
-              Live Activity Feed
-            </h3>
-            <div className="flex items-center space-x-2 text-sm text-text-500">
-              <span className="live-pulse">●</span>
-              <span data-testid="text-auto-refresh">Auto-refreshing</span>
-            </div>
+            <CardTitle className="flex items-center">
+              <Activity className="h-5 w-5 mr-2" />
+              Live Trading Activity
+            </CardTitle>
+            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+              <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse" />
+              Live
+            </Badge>
           </div>
-        </div>
-        <div className="max-h-96 overflow-y-auto">
+        </CardHeader>
+        <CardContent>
           {activitiesLoading ? (
-            <div className="px-6 py-12 text-center text-text-500" data-testid="loading-activities">
-              <i className="fas fa-spinner fa-spin text-2xl mb-2"></i>
-              <p>Loading activities...</p>
-            </div>
-          ) : activities.length === 0 ? (
-            <div className="px-6 py-12 text-center text-text-500" data-testid="empty-activities">
-              <i className="fas fa-inbox text-2xl mb-2"></i>
-              <p>No recent activities</p>
-            </div>
-          ) : (
-            activities.map((activity, index) => (
-              <div 
-                key={index}
-                className="table-row px-6 py-3 border-b border-gray-100 last:border-b-0"
-                data-testid={`activity-${index}`}
-              >
-                <div className="flex items-center justify-between">
+            <div className="space-y-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="flex items-center justify-between p-4 border-b">
                   <div className="flex items-center space-x-3">
-                    <StatusIndicator status={activity.type} />
+                    <Skeleton className="w-2 h-2 rounded-full" />
                     <div>
-                      <p className="text-sm font-medium text-text-900" data-testid="text-activity-message">
-                        {activity.message}
-                      </p>
-                      <p className="text-xs text-text-500" data-testid="text-activity-details">
-                        {activity.details}
-                      </p>
+                      <Skeleton className="h-4 w-48 mb-1" />
+                      <Skeleton className="h-3 w-32" />
                     </div>
                   </div>
                   <div className="text-right">
-                    <p 
-                      className={`text-sm font-medium ${activity.pnl >= 0 ? 'text-brand-green' : 'text-brand-red'}`}
-                      data-testid="text-activity-pnl"
-                    >
-                      {formatPnL(activity.pnl)}
-                    </p>
-                    <p className="text-xs text-text-500" data-testid="text-activity-timestamp">
-                      {formatTimestamp(activity.timestamp)}
-                    </p>
+                    <Skeleton className="h-4 w-16 mb-1" />
+                    <Skeleton className="h-3 w-20" />
                   </div>
                 </div>
+              ))}
+            </div>
+          ) : activities?.length ? (
+            <div className="space-y-0 divide-y">
+              {activities.map((activity) => (
+                <div key={activity.id} className="flex items-center justify-between p-4">
+                  <div className="flex items-center space-x-3">
+                    {getStatusIcon(activity.type)}
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">{activity.message}</p>
+                      <p className="text-xs text-gray-500">{activity.details}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className={`text-sm font-medium ${
+                      activity.pnl > 0 ? 'text-green-600' : activity.pnl < 0 ? 'text-red-600' : 'text-gray-500'
+                    }`}>
+                      {activity.pnl > 0 ? '+' : ''}${activity.pnl.toFixed(2)}
+                    </p>
+                    <p className="text-xs text-gray-500">{activity.timestamp}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center py-8 text-gray-500">
+              <div className="text-center">
+                <Activity className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                <p>No recent activity</p>
+                <p className="text-sm text-gray-400">Trading activity will appear here in real-time</p>
               </div>
-            ))
+            </div>
           )}
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

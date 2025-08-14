@@ -1,10 +1,325 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { 
+  Activity, 
+  Server, 
+  Wifi, 
+  Database, 
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  Cpu,
+  HardDrive,
+  RefreshCw
+} from "lucide-react";
+
+interface SystemMetric {
+  name: string;
+  value: number;
+  unit: string;
+  status: 'healthy' | 'warning' | 'critical';
+  trend: 'up' | 'down' | 'stable';
+}
+
+interface ServiceStatus {
+  name: string;
+  status: 'online' | 'offline' | 'degraded';
+  uptime: string;
+  lastCheck: string;
+  responseTime: number;
+}
 
 export default function Monitoring() {
+  const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [systemMetrics] = useState<SystemMetric[]>([
+    { name: 'CPU Usage', value: 23, unit: '%', status: 'healthy', trend: 'stable' },
+    { name: 'Memory Usage', value: 67, unit: '%', status: 'warning', trend: 'up' },
+    { name: 'Disk Usage', value: 45, unit: '%', status: 'healthy', trend: 'stable' },
+    { name: 'Network I/O', value: 125, unit: 'MB/s', status: 'healthy', trend: 'stable' },
+    { name: 'Active Connections', value: 342, unit: '', status: 'healthy', trend: 'stable' },
+    { name: 'Queue Depth', value: 12, unit: 'items', status: 'healthy', trend: 'down' }
+  ]);
+
+  const [services] = useState<ServiceStatus[]>([
+    {
+      name: 'Trading Engine',
+      status: 'online',
+      uptime: '99.98%',
+      lastCheck: '2 seconds ago',
+      responseTime: 45
+    },
+    {
+      name: 'Market Data Feed',
+      status: 'online',
+      uptime: '99.95%',
+      lastCheck: '1 second ago',
+      responseTime: 12
+    },
+    {
+      name: 'Order Management',
+      status: 'online',
+      uptime: '100%',
+      lastCheck: '3 seconds ago',
+      responseTime: 67
+    },
+    {
+      name: 'Risk Monitor',
+      status: 'degraded',
+      uptime: '98.2%',
+      lastCheck: '10 seconds ago',
+      responseTime: 234
+    },
+    {
+      name: 'Database Cluster',
+      status: 'online',
+      uptime: '99.99%',
+      lastCheck: '1 second ago',
+      responseTime: 8
+    }
+  ]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLastUpdated(new Date());
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const getMetricIcon = (name: string) => {
+    switch (name.toLowerCase()) {
+      case 'cpu usage': return <Cpu className="h-4 w-4" />;
+      case 'memory usage': return <Server className="h-4 w-4" />;
+      case 'disk usage': return <HardDrive className="h-4 w-4" />;
+      case 'network i/o': return <Wifi className="h-4 w-4" />;
+      case 'active connections': return <Activity className="h-4 w-4" />;
+      case 'queue depth': return <Database className="h-4 w-4" />;
+      default: return <Activity className="h-4 w-4" />;
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'healthy':
+      case 'online': return 'text-green-600';
+      case 'warning':
+      case 'degraded': return 'text-yellow-600';
+      case 'critical':
+      case 'offline': return 'text-red-600';
+      default: return 'text-gray-600';
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'healthy':
+      case 'online': return <CheckCircle className="h-4 w-4 text-green-600" />;
+      case 'warning':
+      case 'degraded': return <AlertCircle className="h-4 w-4 text-yellow-600" />;
+      case 'critical':
+      case 'offline': return <AlertCircle className="h-4 w-4 text-red-600" />;
+      default: return <Clock className="h-4 w-4 text-gray-600" />;
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'online': return <Badge className="bg-green-100 text-green-800">Online</Badge>;
+      case 'degraded': return <Badge className="bg-yellow-100 text-yellow-800">Degraded</Badge>;
+      case 'offline': return <Badge variant="destructive">Offline</Badge>;
+      default: return <Badge variant="secondary">Unknown</Badge>;
+    }
+  };
+
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-text-900 mb-8">System Monitoring</h1>
-      <p className="text-text-500">Monitoring dashboard coming soon...</p>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">System Monitoring</h1>
+          <p className="text-gray-600">Real-time system health and performance metrics</p>
+        </div>
+        <div className="flex items-center space-x-4">
+          <div className="text-sm text-gray-500">
+            Last updated: {lastUpdated.toLocaleTimeString()}
+          </div>
+          <Button variant="outline" size="sm">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
+          </Button>
+        </div>
+      </div>
+
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList>
+          <TabsTrigger value="overview">System Overview</TabsTrigger>
+          <TabsTrigger value="services">Service Status</TabsTrigger>
+          <TabsTrigger value="alerts">Active Alerts</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="overview" className="space-y-6">
+          {/* System Metrics Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {systemMetrics.map((metric) => (
+              <Card key={metric.name}>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-2">
+                      {getMetricIcon(metric.name)}
+                      <h3 className="text-sm font-medium text-gray-700">{metric.name}</h3>
+                    </div>
+                    {getStatusIcon(metric.status)}
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex items-end space-x-2">
+                      <span className="text-2xl font-bold">{metric.value}</span>
+                      <span className="text-sm text-gray-500 mb-1">{metric.unit}</span>
+                    </div>
+                    
+                    {metric.name.includes('Usage') && (
+                      <Progress 
+                        value={metric.value} 
+                        className="h-2"
+                        style={{
+                          backgroundColor: metric.status === 'critical' ? '#fecaca' : 
+                                         metric.status === 'warning' ? '#fef3c7' : '#dcfce7'
+                        }}
+                      />
+                    )}
+                    
+                    <div className={`text-xs ${getStatusColor(metric.status)}`}>
+                      {metric.status === 'healthy' ? 'Normal' : 
+                       metric.status === 'warning' ? 'Above normal' : 'Critical level'}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Performance Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>CPU & Memory Trends</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-64 bg-gray-50 rounded flex items-center justify-center">
+                  <div className="text-center text-gray-500">
+                    <Activity className="h-8 w-8 mx-auto mb-2" />
+                    <p>Real-time performance charts</p>
+                    <p className="text-sm">CPU and memory usage over time</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Network & Disk I/O</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-64 bg-gray-50 rounded flex items-center justify-center">
+                  <div className="text-center text-gray-500">
+                    <Wifi className="h-8 w-8 mx-auto mb-2" />
+                    <p>I/O performance metrics</p>
+                    <p className="text-sm">Network and disk throughput</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="services" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Server className="h-5 w-5 mr-2" />
+                Service Health Status
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Service</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Uptime</TableHead>
+                    <TableHead>Response Time</TableHead>
+                    <TableHead>Last Check</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {services.map((service) => (
+                    <TableRow key={service.name}>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center space-x-2">
+                          {getStatusIcon(service.status)}
+                          <span>{service.name}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>{getStatusBadge(service.status)}</TableCell>
+                      <TableCell>{service.uptime}</TableCell>
+                      <TableCell>
+                        <span className={service.responseTime > 200 ? 'text-yellow-600' : 'text-green-600'}>
+                          {service.responseTime}ms
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-sm text-gray-500">{service.lastCheck}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="alerts" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <AlertCircle className="h-5 w-5 mr-2" />
+                Active System Alerts
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center p-4 border-l-4 border-yellow-400 bg-yellow-50 rounded">
+                  <AlertCircle className="h-5 w-5 text-yellow-600 mr-3" />
+                  <div>
+                    <h4 className="font-medium text-yellow-800">Memory Usage Warning</h4>
+                    <p className="text-sm text-yellow-700">
+                      System memory usage is at 67% and trending upward. Consider scaling resources.
+                    </p>
+                    <p className="text-xs text-yellow-600 mt-1">Triggered 5 minutes ago</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center p-4 border-l-4 border-yellow-400 bg-yellow-50 rounded">
+                  <AlertCircle className="h-5 w-5 text-yellow-600 mr-3" />
+                  <div>
+                    <h4 className="font-medium text-yellow-800">Service Degradation</h4>
+                    <p className="text-sm text-yellow-700">
+                      Risk Monitor service is experiencing degraded performance (234ms response time).
+                    </p>
+                    <p className="text-xs text-yellow-600 mt-1">Triggered 12 minutes ago</p>
+                  </div>
+                </div>
+                
+                <div className="text-center py-8 text-gray-500">
+                  <CheckCircle className="h-8 w-8 mx-auto mb-2" />
+                  <p>All other systems operating normally</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
