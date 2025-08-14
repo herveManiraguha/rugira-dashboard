@@ -21,28 +21,50 @@ interface ExchangeConnection {
 }
 
 export default function Exchanges() {
-  const [connections, setConnections] = useState<ExchangeConnection[]>([
-    {
-      id: '1',
-      name: 'Binance',
-      alias: 'Main Trading Account',
-      permissions: 'Trade-only',
-      status: 'connected',
-      environment: 'paper',
-      lastVerified: new Date().toISOString(),
-      apiKeyMasked: 'abc...123'
-    },
-    {
-      id: '2',
-      name: 'Coinbase Pro',
-      alias: 'Secondary Account',
-      permissions: 'Trade-only',
-      status: 'error',
-      environment: 'paper',
-      lastVerified: new Date(Date.now() - 86400000).toISOString(),
-      apiKeyMasked: 'def...456'
-    }
-  ]);
+  // Generate comprehensive exchange connection data
+  const generateMockExchanges = (): ExchangeConnection[] => {
+    const exchanges = [
+      { name: 'Binance', alias: 'Main Trading Account', status: 'connected' as const },
+      { name: 'Coinbase Pro', alias: 'Secondary Account', status: 'error' as const },
+      { name: 'Kraken', alias: 'European Trading', status: 'connected' as const },
+      { name: 'Bybit', alias: 'Derivatives Account', status: 'connected' as const },
+      { name: 'OKX', alias: 'Asian Markets', status: 'disconnected' as const },
+      { name: 'KuCoin', alias: 'Altcoin Trading', status: 'connected' as const },
+      { name: 'Gate.io', alias: 'DeFi Assets', status: 'error' as const },
+      { name: 'Huobi', alias: 'Spot Trading', status: 'connected' as const },
+      { name: 'Bitfinex', alias: 'Professional Trading', status: 'disconnected' as const },
+      { name: 'FTX EU', alias: 'Institutional Account', status: 'connected' as const },
+      { name: 'dYdX', alias: 'Perpetual Trading', status: 'connected' as const },
+      { name: 'Uniswap V3', alias: 'DEX Liquidity', status: 'error' as const }
+    ];
+
+    const permissions = ['Trade-only', 'Read-only', 'Full Access'];
+    const environments = ['paper', 'live'] as const;
+
+    return exchanges.map((exchange, index) => {
+      const hoursAgo = Math.floor(Math.random() * 72); // Up to 3 days ago
+      const permissionIndex = index % permissions.length;
+      const environment = index < 8 ? 'paper' : 'live'; // First 8 are paper, rest are live
+
+      // Generate realistic API key masks
+      const keyPrefixes = ['abc', 'def', 'xyz', 'key', 'api', 'usr', 'bot', 'rga'];
+      const keySuffixes = ['123', '456', '789', '000', '999', '555', '777', '888'];
+      const keyMask = `${keyPrefixes[index % keyPrefixes.length]}...${keySuffixes[index % keySuffixes.length]}`;
+
+      return {
+        id: (index + 1).toString(),
+        name: exchange.name,
+        alias: exchange.alias,
+        permissions: permissions[permissionIndex],
+        status: exchange.status,
+        environment,
+        lastVerified: new Date(Date.now() - (hoursAgo * 3600000)).toISOString(),
+        apiKeyMasked: keyMask
+      };
+    });
+  };
+
+  const [connections, setConnections] = useState<ExchangeConnection[]>(generateMockExchanges());
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { toast } = useToast();
 
