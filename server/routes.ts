@@ -6,34 +6,21 @@ import { storage } from "./storage";
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
   
-  // WebSocket server for real-time updates
-  const wss = new WebSocketServer({ server: httpServer });
+  // TODO: Re-enable WebSocket server after fixing Vite HMR conflict
+  // const wss = new WebSocketServer({ server: httpServer });
   
-  // Store connected clients for real-time updates
+  // Store connected SSE clients for real-time updates
   const clients = new Set<any>();
   
-  wss.on('connection', (ws) => {
-    clients.add(ws);
-    
-    // Send heartbeat every 30 seconds
-    const heartbeat = setInterval(() => {
-      if (ws.readyState === ws.OPEN) {
-        ws.send(JSON.stringify({ type: 'heartbeat', timestamp: new Date() }));
-      }
-    }, 30000);
-    
-    ws.on('close', () => {
-      clients.delete(ws);
-      clearInterval(heartbeat);
-    });
-  });
-  
-  // Broadcast to all connected clients
+  // Placeholder broadcast function (will be replaced when WebSocket is enabled)
   const broadcast = (data: any) => {
-    const message = JSON.stringify(data);
+    // For now, use SSE to broadcast to connected clients
+    const message = `data: ${JSON.stringify(data)}\n\n`;
     clients.forEach(client => {
-      if (client.readyState === client.OPEN) {
-        client.send(message);
+      try {
+        client.res.write(message);
+      } catch (error) {
+        clients.delete(client);
       }
     });
   };

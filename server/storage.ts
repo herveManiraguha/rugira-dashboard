@@ -192,10 +192,10 @@ export class MemStorage implements IStorage {
   }
 
   async stopAllBots(): Promise<void> {
-    for (const bot of this.bots.values()) {
+    Array.from(this.bots.values()).forEach(bot => {
       bot.status = 'stopped';
       bot.lastUpdated = new Date();
-    }
+    });
   }
 
   async getKPIs(): Promise<KPI[]> {
