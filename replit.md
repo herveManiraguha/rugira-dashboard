@@ -43,6 +43,7 @@ Preferred communication style: Simple, everyday language.
 - **Real-time WebSocket connections** with fallback to polling
 - **Font integration** with Google Fonts (Inter)
 - **Icon system** using Font Awesome and Lucide React
+- **Brand identity** with custom Rugira logo (Swiss shield with cross cutout and Inyambo horns)
 - **Build and deployment** optimized for Replit hosting with custom domain support
 
 ### Key Design Patterns
@@ -72,6 +73,7 @@ Preferred communication style: Simple, everyday language.
 - Shadcn/ui component system
 - Google Fonts (Inter) for typography
 - Font Awesome and Lucide React for icons
+- Custom Rugira logo assets (favicon.svg and logo.svg)
 
 ### State Management and API
 - TanStack React Query for server state management

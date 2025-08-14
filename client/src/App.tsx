@@ -10,8 +10,8 @@ function Overview() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center space-x-3 mb-6">
-            <div className="w-10 h-10 bg-brand-red rounded-lg flex items-center justify-center">
-              <i className="fas fa-chart-line text-white"></i>
+            <div className="w-10 h-10 flex items-center justify-center">
+              <img src="/logo.svg" alt="Rugira" className="w-10 h-10" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-text-900">Rugira Trading Dashboard</h1>
