@@ -50,7 +50,7 @@ export default function Overview() {
   });
 
   // Fetch performance data for charts
-  const { data: performanceData, isLoading: performanceLoading } = useQuery({
+  const { data: performanceData, isLoading: performanceLoading } = useQuery<any>({
     queryKey: ['/api/performance'],
     refetchInterval: 30000,
   });
@@ -171,7 +171,7 @@ export default function Overview() {
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <Card>
           <CardHeader>
             <CardTitle>Equity Curve</CardTitle>

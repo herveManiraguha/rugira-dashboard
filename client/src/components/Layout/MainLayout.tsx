@@ -153,7 +153,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
       <div className="flex pt-20">
         {/* Fixed Left Sidebar */}
-        <nav className="fixed left-0 top-20 w-64 bg-white border-r border-gray-200 h-screen overflow-y-auto">
+        <nav className="fixed left-0 top-20 w-64 bg-white border-r border-gray-200 h-[calc(100vh-5rem)] overflow-y-auto z-40">
           <div className="p-6">
             <ul className="space-y-2">
               {navigation.map((item) => {
@@ -187,8 +187,8 @@ export function MainLayout({ children }: MainLayoutProps) {
         </nav>
 
         {/* Main Content */}
-        <main className="flex-1 ml-64 p-8 min-h-screen">
-          <div className="max-w-7xl mx-auto">
+        <main className="flex-1 ml-64 p-6 min-h-screen bg-gray-50">
+          <div className="max-w-full">
             {children}
           </div>
         </main>
