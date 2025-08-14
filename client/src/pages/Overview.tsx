@@ -49,11 +49,70 @@ export default function Overview() {
     refetchInterval: 10000, // Refresh every 10 seconds
   });
 
-  // Fetch performance data for charts
-  const { data: performanceData, isLoading: performanceLoading } = useQuery<any>({
-    queryKey: ['/api/performance'],
-    refetchInterval: 30000,
-  });
+  // Generate mock performance data for charts
+  const generateEquityData = () => {
+    const data = [];
+    const baseValue = 100000;
+    let currentValue = baseValue;
+    
+    for (let i = 30; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      
+      // Simulate realistic trading performance with volatility
+      const changePercent = (Math.random() - 0.48) * 2; // Slight upward bias
+      currentValue = currentValue * (1 + changePercent / 100);
+      
+      data.push({
+        date: date.toISOString().split('T')[0],
+        value: Math.round(currentValue),
+        pnl: Math.round(currentValue - baseValue),
+        pnlPercent: ((currentValue - baseValue) / baseValue * 100).toFixed(2)
+      });
+    }
+    return data;
+  };
+
+  const generateDailyPnLData = () => {
+    const data = [];
+    for (let i = 30; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      
+      // Generate realistic daily P&L
+      const dailyPnL = (Math.random() - 0.45) * 2000; // Slight positive bias
+      
+      data.push({
+        date: date.toISOString().split('T')[0],
+        pnl: Math.round(dailyPnL),
+        cumulative: data.length > 0 ? data[data.length - 1].cumulative + dailyPnL : dailyPnL
+      });
+    }
+    return data;
+  };
+
+  const generateVolumeData = () => {
+    const data = [];
+    for (let i = 30; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      
+      // Generate trading volume with some randomness
+      const baseVolume = 50000;
+      const volume = baseVolume + (Math.random() - 0.5) * 30000;
+      
+      data.push({
+        date: date.toISOString().split('T')[0],
+        volume: Math.round(Math.max(volume, 5000)), // Ensure minimum volume
+        trades: Math.round(20 + Math.random() * 40)
+      });
+    }
+    return data;
+  };
+
+  const equityData = generateEquityData();
+  const dailyPnLData = generateDailyPnLData();
+  const volumeData = generateVolumeData();
 
   // Setup SSE for real-time updates
   useEffect(() => {
@@ -172,126 +231,122 @@ export default function Overview() {
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        {/* Equity Curve Chart */}
         <Card>
           <CardHeader>
-            <CardTitle>Equity Curve</CardTitle>
+            <CardTitle className="text-lg font-semibold">Equity Curve</CardTitle>
           </CardHeader>
           <CardContent>
-            {performanceLoading ? (
-              <div className="h-64 flex items-center justify-center">
-                <Skeleton className="h-full w-full" />
-              </div>
-            ) : (
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={performanceData?.equity || []}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis 
-                      dataKey="date" 
-                      tickFormatter={(value) => new Date(value).toLocaleDateString()}
-                    />
-                    <YAxis 
-                      tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                    />
-                    <Tooltip 
-                      formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Portfolio Value']}
-                      labelFormatter={(value) => new Date(value).toLocaleDateString()}
-                    />
-                    <Area 
-                      type="monotone" 
-                      dataKey="value" 
-                      stroke="#E10600" 
-                      fill="#E10600" 
-                      fillOpacity={0.1}
-                      strokeWidth={2}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            )}
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={equityData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="date" 
+                    tick={{ fontSize: 12 }}
+                    tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  />
+                  <YAxis 
+                    tick={{ fontSize: 12 }}
+                    tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                  />
+                  <Tooltip 
+                    formatter={(value, name) => [
+                      name === 'value' ? `$${Number(value).toLocaleString()}` : value,
+                      name === 'value' ? 'Portfolio Value' : name
+                    ]}
+                    labelFormatter={(value) => new Date(value).toLocaleDateString()}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="value" 
+                    stroke="#E10600" 
+                    fill="#E10600" 
+                    fillOpacity={0.1} 
+                    strokeWidth={2}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
           </CardContent>
         </Card>
 
+        {/* Daily P&L Chart */}
         <Card>
           <CardHeader>
-            <CardTitle>Daily P&L</CardTitle>
+            <CardTitle className="text-lg font-semibold">Daily P&L</CardTitle>
           </CardHeader>
           <CardContent>
-            {performanceLoading ? (
-              <div className="h-64 flex items-center justify-center">
-                <Skeleton className="h-full w-full" />
-              </div>
-            ) : (
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={performanceData?.pnl || []}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis 
-                      dataKey="date" 
-                      tickFormatter={(value) => new Date(value).toLocaleDateString()}
-                    />
-                    <YAxis 
-                      tickFormatter={(value) => `$${(value / 1000).toFixed(1)}k`}
-                    />
-                    <Tooltip 
-                      formatter={(value) => [
-                        `$${Number(value).toLocaleString()}`, 
-                        'Daily P&L'
-                      ]}
-                      labelFormatter={(value) => new Date(value).toLocaleDateString()}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="value" 
-                      stroke="#E10600" 
-                      strokeWidth={2}
-                      dot={(props) => {
-                        const { cx, cy, payload } = props;
-                        const color = payload.value >= 0 ? '#10B981' : '#EF4444';
-                        return <circle cx={cx} cy={cy} r={3} fill={color} />;
-                      }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            )}
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={dailyPnLData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="date" 
+                    tick={{ fontSize: 12 }}
+                    tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  />
+                  <YAxis 
+                    tick={{ fontSize: 12 }}
+                    tickFormatter={(value) => `$${(value / 1000).toFixed(1)}k`}
+                  />
+                  <Tooltip 
+                    formatter={(value, name) => [
+                      `$${Number(value).toLocaleString()}`,
+                      name === 'pnl' ? 'Daily P&L' : 'Cumulative P&L'
+                    ]}
+                    labelFormatter={(value) => new Date(value).toLocaleDateString()}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="pnl" 
+                    stroke="#1B7A46" 
+                    strokeWidth={2} 
+                    dot={{ fill: '#1B7A46', strokeWidth: 2, r: 3 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           </CardContent>
         </Card>
 
+        {/* Trading Volume Chart */}
         <Card>
           <CardHeader>
-            <CardTitle>Trading Volume</CardTitle>
+            <CardTitle className="text-lg font-semibold">Trading Volume</CardTitle>
           </CardHeader>
           <CardContent>
-            {performanceLoading ? (
-              <div className="h-64 flex items-center justify-center">
-                <Skeleton className="h-full w-full" />
-              </div>
-            ) : (
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={performanceData?.trades || []}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis 
-                      dataKey="hour" 
-                      tickFormatter={(value) => `${value}:00`}
-                    />
-                    <YAxis />
-                    <Tooltip 
-                      formatter={(value) => [`${value} trades`, 'Volume']}
-                      labelFormatter={(value) => `Hour ${value}:00`}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="count" 
-                      stroke="#1B7A46" 
-                      strokeWidth={2}
-                      dot={{ fill: '#1B7A46', r: 3 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            )}
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={volumeData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="date" 
+                    tick={{ fontSize: 12 }}
+                    tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  />
+                  <YAxis 
+                    tick={{ fontSize: 12 }}
+                    tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                  />
+                  <Tooltip 
+                    formatter={(value, name) => [
+                      name === 'volume' ? `$${Number(value).toLocaleString()}` : `${value} trades`,
+                      name === 'volume' ? 'Volume' : 'Trades'
+                    ]}
+                    labelFormatter={(value) => new Date(value).toLocaleDateString()}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="volume" 
+                    stroke="#3B82F6" 
+                    fill="#3B82F6" 
+                    fillOpacity={0.2} 
+                    strokeWidth={2}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
           </CardContent>
         </Card>
       </div>
