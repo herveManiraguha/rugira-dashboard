@@ -88,15 +88,17 @@ export function MainLayout({ children }: MainLayoutProps) {
             </DropdownMenu>
           </div>
 
-          {/* Right side - Environment, notifications, user menu, kill switch */}
+          {/* Right side - Environment toggle, status, notifications, kill switch */}
           <div className="flex items-center space-x-4">
-            {/* Environment Badge */}
-            <Badge 
-              variant={environment === 'Live' ? 'destructive' : 'secondary'}
-              className="font-medium"
+            {/* Environment Toggle Button */}
+            <Button
+              variant={environment === 'Live' ? "destructive" : "secondary"}
+              size="sm"
+              onClick={() => setEnvironment(environment === 'Live' ? 'Paper' : 'Live')}
+              className="text-xs font-medium px-3 py-1"
             >
               {environment}
-            </Badge>
+            </Button>
 
             {/* API Status Indicator */}
             <div className="flex items-center space-x-1">
@@ -116,37 +118,16 @@ export function MainLayout({ children }: MainLayoutProps) {
               <span className="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full"></span>
             </Button>
 
-            {/* User Menu */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <User className="h-4 w-4 mr-2" />
-                  Admin
-                  <ChevronDown className="ml-2 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  Switch to {environment === 'Live' ? 'Paper' : 'Live'}
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Sign out</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Kill Switch */}
+            {/* Kill Switch - Icon only */}
             <Button
               variant="destructive"
               size="sm"
               disabled={!isKillSwitchEnabled}
               onClick={handleKillSwitch}
-              className="font-medium"
+              className="bg-red-600 hover:bg-red-700"
+              title="Emergency Kill Switch"
             >
-              <Power className="h-4 w-4 mr-2" />
-              Kill Switch
+              <Power className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -154,8 +135,8 @@ export function MainLayout({ children }: MainLayoutProps) {
 
       <div className="flex pt-20">
         {/* Fixed Left Sidebar */}
-        <nav className="fixed left-0 top-20 w-64 bg-white border-r border-gray-200 h-[calc(100vh-5rem)] overflow-y-auto z-40">
-          <div className="p-6">
+        <nav className="fixed left-0 top-20 w-64 bg-white border-r border-gray-200 h-[calc(100vh-5rem)] overflow-y-auto z-40 flex flex-col">
+          <div className="p-6 flex-1">
             <ul className="space-y-2">
               {navigation.map((item) => {
                 const Icon = item.icon;
@@ -184,6 +165,25 @@ export function MainLayout({ children }: MainLayoutProps) {
                 );
               })}
             </ul>
+          </div>
+          
+          {/* User Profile at bottom of sidebar */}
+          <div className="p-4 border-t border-gray-200">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="w-full justify-start">
+                  <User className="h-4 w-4 mr-3" />
+                  <span className="flex-1 text-left">Admin</span>
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" side="right">
+                <DropdownMenuItem>Profile</DropdownMenuItem>
+                <DropdownMenuItem>Settings</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Sign out</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </nav>
 
