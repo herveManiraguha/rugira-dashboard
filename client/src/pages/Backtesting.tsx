@@ -70,8 +70,8 @@ export default function Backtesting() {
   const [selectedDateTo, setSelectedDateTo] = useState<Date>();
 
   // Generate equity curve data for backtesting
-  const generateEquityCurve = (strategyName: string, finalCapital: number) => {
-    const data = [];
+  const generateEquityCurve = (strategyName: string, finalCapital: number): Array<{date: string, equity: number, drawdown: number}> => {
+    const data: Array<{date: string, equity: number, drawdown: number}> = [];
     let capital = 100000; // Starting capital
     const targetCapital = finalCapital;
     const days = 365; // Full year backtest
