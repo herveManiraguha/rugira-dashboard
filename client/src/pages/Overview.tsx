@@ -245,7 +245,7 @@ export default function Overview() {
           `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` :
           value;
       case 'percentage':
-        return typeof value === 'number' ? `${value}%` : value;
+        return typeof value === 'number' ? `${value.toFixed(2)}%` : value;
       case 'time':
         return typeof value === 'number' ? `${value}ms` : value;
       default:
@@ -318,9 +318,15 @@ export default function Overview() {
                     {getIcon(kpi.icon)}
                   </div>
                   {kpi.change && (
-                    <Badge variant={kpi.change > 0 ? "default" : "destructive"} className="text-xs">
+                    <Badge 
+                      className={`text-xs text-white ${
+                        kpi.change > 0 
+                          ? 'bg-green-600 hover:bg-green-700' 
+                          : 'bg-red-600 hover:bg-red-700'
+                      }`}
+                    >
                       {kpi.change > 0 ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
-                      {Math.abs(kpi.change)}%
+                      {Math.abs(kpi.change).toFixed(2)}%
                     </Badge>
                   )}
                 </div>
