@@ -1,0 +1,44 @@
+Objective: Run my product Web Dashboard from my GitHub monorepo and publish it at app.rugira.ch.
+The dashboard lives here: https://github.com/herveManiraguha/rugirinka/tree/develop, subfolder apps/webclient.
+My marketing site at https://rugira.ch is already on Replit and must not be changed.
+
+Please do the following, confirming after each step:
+
+Create a new Repl by importing from GitHub: repository herveManiraguha/rugirinka, branch develop. Set the working app directory to apps/webclient (that’s where the dashboard is).
+
+Install and build the dashboard in that subfolder, then serve the built site on the Replit-assigned port, binding to 0.0.0.0. Use the standard Vite “preview” server so deep-link refresh works (single-page app fallback).
+
+Ask me for the API base URL the dashboard should call. Until I change it, set a Replit Secret named VITE_API_BASE_URL to: https://api.rugira.ch. After setting it, rebuild so the dashboard uses this value.
+
+Start the app and show me the temporary Replit preview URL so I can verify it renders.
+
+Add my custom domain: I want this Repl to serve app.rugira.ch. Please display the exact CNAME target Replit generates for this Repl and then pause. I will create a CNAME record at Infomaniak DNS with:
+• Host/Name: app
+• Type: CNAME
+• Target: the value you displayed (e.g., something like my-repl-name.my-user.repl.co)
+• TTL: default is fine
+After I confirm the DNS change, verify the domain in Replit and provision HTTPS for https://app.rugira.ch.
+
+Once HTTPS is active, keep things strict and minimal for this product app: no analytics or third-party scripts, and limit external network calls to the API domain specified in VITE_API_BASE_URL.
+
+Give me a smoke-test checklist now:
+• Load https://app.rugira.ch and confirm HTTPS works (no mixed content).
+• Open the browser console and confirm there are no CORS errors when the dashboard calls the API. If there is a CORS error, tell me the Origin the API must allow (it will be https://app.rugira.ch) so I can update my backend allow-list.
+• Confirm the SPA fallback works: navigate to a nested route in the dashboard and refresh the page without getting a 404.
+
+Provide a short operations note here in Replit with:
+• How to change the VITE_API_BASE_URL Secret later,
+• How to rebuild and restart the dashboard,
+• Which URLs to add later for OAuth redirects (e.g., https://app.rugira.ch/callback and https://app.rugira.ch/logout),
+• Where to view logs if something goes wrong.
+
+Do not modify the apex marketing site at https://rugira.ch (that’s a separate Repl). We are only adding the product UI at https://app.rugira.ch.
+
+When done, summarize what you configured (repo/branch/path, build & run, the Secret value, domain verification and HTTPS status) and confirm the final URL is https://app.rugira.ch.
+
+Acceptance criteria:
+• The dashboard from apps/webclient (develop branch) is reachable at https://app.rugira.ch over HTTPS.
+• The VITE_API_BASE_URL Secret is set and used by the app.
+• No console CORS errors when calling my API.
+• SPA deep-link refresh works.
+• The marketing site at https://rugira.ch remains unchanged.

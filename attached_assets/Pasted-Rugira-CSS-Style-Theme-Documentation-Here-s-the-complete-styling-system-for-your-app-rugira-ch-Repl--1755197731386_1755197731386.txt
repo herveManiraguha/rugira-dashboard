@@ -1,0 +1,164 @@
+Rugira CSS/Style/Theme Documentation
+Here's the complete styling system for your app.rugira.ch Repl:
+
+🎨 Core Color Palette
+:root {
+  /* Primary Swiss Brand Colors */
+  --brand-red: #E10600;          /* Main Swiss red */
+  --brand-red-600: #B30000;      /* Hover/active state */
+  --brand-green: #1B7A46;        /* Success/Swiss accent */
+  
+  /* Background System */
+  --bg-0: #FFFFFF;               /* Pure white */
+  --bg-1: #FAFAFA;               /* Light background */
+  --bg-rose: #FFF8F8;            /* Soft red wash */
+  --bg-rose-2: #FDEDED;          /* Deeper red wash */
+  
+  /* Text Hierarchy */
+  --text-900: #111111;           /* Primary text */
+  --text-700: #333333;           /* Secondary text */
+  --text-500: #6B7280;           /* Muted text */
+  
+  /* Borders & Effects */
+  --border: #E5E7EB;
+  --shadow: 0 6px 18px rgba(0,0,0,.06);
+  --radius: 10px;
+}
+📝 Typography
+Font Family: Inter (Google Fonts)
+Base Size: 16px with 1.6 line-height
+Hierarchy:
+H1: 2.5rem (mobile) → 3rem (desktop), weight: 700
+H2: 1.8rem, weight: 700
+Body: 1rem, color: var(--text-700)
+🔘 Button System
+Primary Button (Red)
+.btn-primary {
+  background: var(--brand-red);
+  color: white;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 0.85rem 1.4rem;
+  box-shadow: var(--shadow);
+}
+.btn-primary:hover {
+  background: var(--brand-red-600);
+}
+Secondary Button (Outline)
+.btn-secondary {
+  border: 1px solid var(--brand-red);
+  color: var(--brand-red);
+  background: transparent;
+  border-radius: 10px;
+  padding: 0.8rem 1.2rem;
+  font-weight: 600;
+}
+.btn-secondary:hover {
+  background: var(--brand-red);
+  color: white;
+}
+🎨 Layout Classes
+Cards
+.card-rounded {
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: white;
+}
+Gradients
+.hero-gradient {
+  background: linear-gradient(180deg, var(--bg-rose) 0%, var(--bg-rose-2) 100%);
+}
+.header-gradient {
+  background: linear-gradient(180deg, var(--bg-rose) 0%, rgba(255,255,255,.85) 100%);
+}
+Form Elements
+input, select, textarea {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  color: var(--text-700);
+  background: white;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--brand-red);
+  box-shadow: 0 0 0 3px rgba(225, 6, 0, 0.12);
+}
+🔧 Shadcn/UI Configuration
+components.json
+{
+  "style": "new-york",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "tailwind.config.ts",
+    "css": "client/src/index.css",
+    "baseColor": "neutral",
+    "cssVariables": true
+  }
+}
+Shadcn Color Mappings
+--background: var(--bg-0);
+--foreground: var(--text-900);
+--primary: var(--brand-red);
+--primary-foreground: #FFFFFF;
+--secondary: var(--bg-1);
+--secondary-foreground: var(--text-900);
+--muted: var(--bg-1);
+--muted-foreground: var(--text-500);
+--border: var(--border);
+--input: var(--bg-0);
+--ring: var(--brand-red);
+📱 Responsive Design
+Mobile First: Base styles for mobile
+Tablet: md: prefix (768px+)
+Desktop: lg: prefix (1024px+)
+Wide: xl: prefix (1280px+)
+Key Breakpoints
+/* Mobile spacing */
+@media (max-width: 768px) {
+  .section-spacing { padding: 48px 0; }
+  #hero { padding-top: 100px; }
+}
+/* Desktop spacing */
+.section-spacing { padding: 72px 0; }
+#hero { padding-top: 120px; }
+🎯 Special Elements
+Feature Icons
+.feature-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(225, 6, 0, 0.10);
+  color: var(--brand-red);
+}
+Section Titles
+.h-section-title::after {
+  content: "";
+  width: 72px;
+  height: 2px;
+  background: rgba(225, 6, 0, 0.18);
+  border-radius: 2px;
+}
+📦 Required Dependencies
+{
+  "tailwindcss": "latest",
+  "tailwindcss-animate": "latest",
+  "@tailwindcss/typography": "latest",
+  "@radix-ui/react-*": "latest",
+  "class-variance-authority": "latest",
+  "clsx": "latest",
+  "tailwind-merge": "latest"
+}
+🌍 Google Fonts Import
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+Key Design Principles:
+
+✅ Light-only theme (no dark mode)
+✅ Swiss precision with clean lines
+✅ Red accent color for CTAs and brand elements
+✅ Soft backgrounds with subtle gradients
+✅ Professional typography using Inter font
+✅ Consistent 10px border radius
+✅ Subtle shadows for depth
+✅ Mobile-first responsive design
