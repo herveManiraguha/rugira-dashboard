@@ -124,56 +124,91 @@
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   }
 
-  /* Select Dropdown Fix - Ensure solid background and proper contrast */
-  [data-radix-select-content] {
-    background-color: white !important;
-    border: 1px solid #E5E7EB !important;
+  /* Select Dropdown Fix - Target all possible Radix UI classes */
+  .radix-select-content,
+  [data-radix-select-content],
+  [role="listbox"],
+  .select-content {
+    background-color: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
     border-radius: 8px !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
-    z-index: 50 !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+    z-index: 9999 !important;
     opacity: 1 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    min-width: 160px !important;
+    max-height: 200px !important;
+    overflow-y: auto !important;
   }
 
-  [data-radix-select-item] {
-    background-color: white !important;
+  .radix-select-item,
+  [data-radix-select-item],
+  [role="option"],
+  .select-item {
+    background-color: #ffffff !important;
     color: #374151 !important;
-    padding: 8px 12px !important;
+    padding: 10px 16px !important;
     cursor: pointer !important;
-    transition: background-color 0.15s ease !important;
-  }
-
-  [data-radix-select-item]:hover,
-  [data-radix-select-item][data-highlighted] {
-    background-color: #F3F4F6 !important;
-    color: #111827 !important;
+    transition: all 0.15s ease !important;
+    border: none !important;
     outline: none !important;
+    font-size: 14px !important;
+    line-height: 1.4 !important;
   }
 
-  [data-radix-select-item][data-state="checked"] {
-    background-color: #E10600 !important;
-    color: white !important;
+  .radix-select-item:hover,
+  .radix-select-item[data-highlighted],
+  [data-radix-select-item]:hover,
+  [data-radix-select-item][data-highlighted],
+  [role="option"]:hover,
+  [role="option"][data-highlighted] {
+    background-color: #f9fafb !important;
+    color: #111827 !important;
   }
 
-  /* Select Trigger Styling */
-  [data-radix-select-trigger] {
-    background-color: white !important;
-    border: 1px solid #D1D5DB !important;
+  .radix-select-item[data-state="checked"],
+  [data-radix-select-item][data-state="checked"],
+  [role="option"][aria-selected="true"] {
+    background-color: #e10600 !important;
+    color: #ffffff !important;
+  }
+
+  /* Select Trigger Enhanced Styling */
+  .radix-select-trigger,
+  [data-radix-select-trigger],
+  .select-trigger {
+    background-color: #ffffff !important;
+    border: 1px solid #d1d5db !important;
     border-radius: 6px !important;
     padding: 8px 12px !important;
     color: #374151 !important;
     font-size: 14px !important;
     min-width: 160px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
   }
 
-  [data-radix-select-trigger]:focus {
-    border-color: #E10600 !important;
-    box-shadow: 0 0 0 1px #E10600 !important;
+  .radix-select-trigger:focus,
+  [data-radix-select-trigger]:focus,
+  .select-trigger:focus {
+    border-color: #e10600 !important;
+    box-shadow: 0 0 0 2px rgba(225, 6, 0, 0.2) !important;
     outline: none !important;
   }
 
-  /* Ensure Select components have proper stacking */
-  [data-radix-popper-content-wrapper] {
-    z-index: 50 !important;
+  /* Force override any conflicting styles */
+  [data-radix-popper-content-wrapper],
+  .radix-popper-content {
+    z-index: 9999 !important;
+  }
+
+  /* Override any potential CSS that might cause transparency */
+  * [data-radix-select-content] {
+    background: #ffffff !important;
+    opacity: 1 !important;
   }
 
   /* Responsive layout utilities */
