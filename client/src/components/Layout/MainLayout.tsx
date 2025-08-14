@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Route, Switch, useLocation, Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import logoSvg from "@/assets/logo.svg";
 import { 
   Bell, 
   User, 
@@ -66,8 +67,8 @@ export function MainLayout({ children }: MainLayoutProps) {
           {/* Left side - Logo and tenant switcher */}
           <div className="flex items-center space-x-6">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-red-600 rounded flex items-center justify-center">
-                <span className="text-white font-bold text-sm">R</span>
+              <div className="w-8 h-8 flex items-center justify-center">
+                <img src={logoSvg} alt="Rugira" className="w-8 h-8" />
               </div>
               <span className="text-xl font-semibold text-gray-900">Rugira</span>
             </div>
