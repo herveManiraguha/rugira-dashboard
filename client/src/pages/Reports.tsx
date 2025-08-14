@@ -195,13 +195,13 @@ export default function Reports() {
                       <YAxis />
                       <Tooltip 
                         formatter={(value, name) => [
-                          name === 'pnl' ? `$${value.toFixed(2)}` : `${value}`,
+                          name === 'pnl' ? `$${Number(value).toFixed(2)}` : `${value}`,
                           name === 'pnl' ? 'P&L' : name === 'trades' ? 'Trades' : 'Win Rate %'
                         ]}
                       />
                       <Bar 
                         dataKey="pnl" 
-                        fill={(entry: any) => entry.pnl >= 0 ? '#16a34a' : '#dc2626'}
+                        fill="#16a34a"
                         name="pnl"
                       />
                     </BarChart>

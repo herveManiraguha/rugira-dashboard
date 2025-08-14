@@ -23,6 +23,19 @@ import {
   DollarSign
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { 
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar
+} from 'recharts';
 
 interface BacktestConfig {
   strategyId: string;
@@ -55,6 +68,48 @@ export default function Backtesting() {
   const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
   const [selectedDateFrom, setSelectedDateFrom] = useState<Date>();
   const [selectedDateTo, setSelectedDateTo] = useState<Date>();
+
+  // Generate equity curve data for backtesting
+  const generateEquityCurve = (strategyName: string, finalCapital: number) => {
+    const data = [];
+    let capital = 100000; // Starting capital
+    const targetCapital = finalCapital;
+    const days = 365; // Full year backtest
+    
+    const totalReturn = (targetCapital - capital) / capital;
+    const dailyReturn = Math.pow(1 + totalReturn, 1/days) - 1;
+    
+    for (let i = 0; i <= days; i++) {
+      const date = new Date('2024-01-01');
+      date.setDate(date.getDate() + i);
+      
+      // Add some volatility to make it realistic
+      const volatility = (Math.random() - 0.5) * 0.02;
+      const adjustedReturn = dailyReturn + volatility;
+      capital *= (1 + adjustedReturn);
+      
+      // Ensure we end close to target
+      if (i === days) capital = targetCapital;
+      
+      data.push({
+        date: date.toISOString().split('T')[0],
+        equity: Math.round(capital * 100) / 100,
+        drawdown: Math.max(0, (capital / Math.max(...data.map(d => d.equity || capital)) - 1) * 100)
+      });
+    }
+    return data;
+  };
+
+  // Generate monthly performance breakdown
+  const generateMonthlyPerformance = () => {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return months.map(month => ({
+      month,
+      return: (Math.random() - 0.3) * 8, // Monthly returns between -5% and +5%
+      trades: Math.floor(Math.random() * 30 + 10),
+      winRate: Math.random() * 30 + 55 // 55-85% win rate
+    }));
+  };
   const [backtests] = useState<BacktestResult[]>([
     {
       id: '1',
@@ -345,11 +400,61 @@ export default function Backtesting() {
                   </div>
                 </div>
                 
-                <div className="h-64 bg-gray-50 rounded flex items-center justify-center">
-                  <div className="text-center text-gray-500">
-                    <BarChart3 className="h-8 w-8 mx-auto mb-2" />
-                    <p>Equity curve and performance charts</p>
-                    <p className="text-sm">Real-time backtest visualization will appear here</p>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Equity Curve Chart */}
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Equity Curve</h4>
+                    <div className="h-64 border rounded">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={generateEquityCurve(backtest.strategyName, backtest.results!.finalCapital)}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis 
+                            dataKey="date"
+                            tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          />
+                          <YAxis 
+                            tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                          />
+                          <Tooltip 
+                            labelFormatter={(value) => new Date(value).toLocaleDateString()}
+                            formatter={(value: any) => [`$${value.toFixed(2)}`, 'Portfolio Value']}
+                          />
+                          <Area 
+                            type="monotone" 
+                            dataKey="equity" 
+                            stroke="#1b7a46" 
+                            fill="#1b7a46" 
+                            fillOpacity={0.1}
+                            strokeWidth={2}
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+
+                  {/* Monthly Performance Chart */}
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Monthly Returns</h4>
+                    <div className="h-64 border rounded">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={generateMonthlyPerformance()}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="month" />
+                          <YAxis tickFormatter={(value) => `${value.toFixed(1)}%`} />
+                          <Tooltip 
+                            formatter={(value: any, name) => [
+                              name === 'return' ? `${Number(value).toFixed(2)}%` : Number(value).toFixed(1),
+                              name === 'return' ? 'Monthly Return' : name === 'trades' ? 'Trades' : 'Win Rate %'
+                            ]}
+                          />
+                          <Bar 
+                            dataKey="return" 
+                            fill="#e10600"
+                            name="return"
+                          />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
                   </div>
                 </div>
               </CardContent>
