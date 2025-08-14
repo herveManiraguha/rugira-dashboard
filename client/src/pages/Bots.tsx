@@ -59,53 +59,81 @@ export default function Bots() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch bots with sample data
+  // Generate comprehensive mock bot data
+  const generateMockBots = (): Bot[] => {
+    const exchanges = ['binance', 'coinbase', 'kraken', 'bybit', 'okx'];
+    const pairs = ['BTC-USDT', 'ETH-USDT', 'SOL-USDT', 'AVAX-USDT', 'DOT-USDT', 'MATIC-USDT', 'ADA-USDT', 'LINK-USDT'];
+    const strategies = ['arbitrage', 'grid_trading', 'momentum', 'mean_reversion', 'scalping', 'swing_trading'];
+    const statuses: Bot['status'][] = ['running', 'stopped', 'starting', 'error'];
+    
+    const botNames = [
+      'Alpha Arbitrage Bot',
+      'Beta Grid Trading',
+      'Gamma Momentum Scanner', 
+      'Delta Mean Reversion',
+      'Epsilon Scalping Engine',
+      'Zeta Swing Trader',
+      'Eta High Frequency',
+      'Theta Cross Exchange',
+      'Iota Volume Scanner',
+      'Kappa Trend Follower',
+      'Lambda Range Trader',
+      'Mu Breakout Hunter'
+    ];
+
+    return botNames.map((name, index) => {
+      const exchange = exchanges[index % exchanges.length];
+      const pair = pairs[index % pairs.length];
+      const strategy = strategies[index % strategies.length];
+      const status = statuses[index % statuses.length];
+      
+      // Generate realistic performance data
+      const isProductive = Math.random() > 0.3; // 70% chance of being profitable
+      const basePnl = isProductive ? 
+        (Math.random() * 2000 + 200) : // Profitable: $200-$2200
+        -(Math.random() * 500 + 50);   // Loss: -$50 to -$550
+      
+      const trades = Math.floor(Math.random() * 400 + 50);
+      const winRate = isProductive ? 
+        (Math.random() * 30 + 55) : // 55-85% win rate for profitable bots
+        (Math.random() * 40 + 30);  // 30-70% win rate for losing bots
+
+      const hoursAgo = Math.floor(Math.random() * 168); // Up to 7 days ago
+      const heartbeatDelay = status === 'running' ? 
+        Math.floor(Math.random() * 60000) : // 0-1 minute for running
+        Math.floor(Math.random() * 3600000); // 0-1 hour for others
+
+      return {
+        id: (index + 1).toString(),
+        name,
+        exchange,
+        tradingPair: pair,
+        strategy,
+        status,
+        performance: {
+          pnl: Math.round(basePnl * 100) / 100,
+          pnlPercent: Math.round((basePnl / 5000) * 100 * 100) / 100, // Assuming $5000 starting capital
+          trades,
+          winRate: Math.round(winRate * 10) / 10
+        },
+        lastHeartbeat: status === 'stopped' ? null : 
+          new Date(Date.now() - heartbeatDelay).toISOString(),
+        riskPolicy: {
+          maxPositionSize: Math.floor(Math.random() * 15 + 5), // 5-20%
+          stopLoss: Math.floor(Math.random() * 8 + 2) // 2-10%
+        },
+        createdAt: new Date(Date.now() - (hoursAgo * 3600000)).toISOString()
+      };
+    });
+  };
+
+  // Fetch bots with comprehensive mock data
   const { data: bots, isLoading: botsLoading } = useQuery<Bot[]>({
     queryKey: ['/api/bots'],
     queryFn: async () => {
-      // Return sample bot data for now
-      return [
-        {
-          id: '1',
-          name: 'Alpha Arbitrage Bot',
-          exchange: 'binance',
-          tradingPair: 'BTC-USDT',
-          strategy: 'arbitrage',
-          status: 'running',
-          performance: {
-            pnl: 1247.32,
-            pnlPercent: 12.47,
-            trades: 247,
-            winRate: 68.4
-          },
-          lastHeartbeat: new Date().toISOString(),
-          riskPolicy: {
-            maxPositionSize: 10,
-            stopLoss: 5
-          },
-          createdAt: new Date(Date.now() - 86400000).toISOString()
-        },
-        {
-          id: '2',
-          name: 'Beta Grid Trading',
-          exchange: 'coinbase',
-          tradingPair: 'ETH-USDT',
-          strategy: 'grid_trading',
-          status: 'stopped',
-          performance: {
-            pnl: -89.45,
-            pnlPercent: -2.1,
-            trades: 156,
-            winRate: 45.2
-          },
-          lastHeartbeat: new Date(Date.now() - 300000).toISOString(),
-          riskPolicy: {
-            maxPositionSize: 15,
-            stopLoss: 3
-          },
-          createdAt: new Date(Date.now() - 172800000).toISOString()
-        }
-      ] as Bot[];
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return generateMockBots();
     },
     refetchInterval: 5000,
   });
