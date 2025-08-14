@@ -29,45 +29,102 @@ interface AuditLogEntry {
 }
 
 export default function Compliance() {
-  const [alerts] = useState<ComplianceAlert[]>([
-    {
-      id: '1',
-      severity: 'medium',
-      reason: 'KYT risk detected',
-      impactedBot: 'Alpha Arbitrage Bot',
-      timestamp: new Date().toISOString(),
-      status: 'open',
-      details: 'Transaction flagged by compliance screening'
-    },
-    {
-      id: '2',
-      severity: 'low',
-      reason: 'Position size limit approached',
-      impactedBot: 'Beta Grid Trading',
-      timestamp: new Date(Date.now() - 3600000).toISOString(),
-      status: 'acknowledged',
-      details: 'Bot approaching 90% of maximum position size'
-    }
-  ]);
+  // Generate comprehensive compliance alerts
+  const generateComplianceAlerts = (): ComplianceAlert[] => {
+    const alertTypes = [
+      { reason: 'KYT risk detected', severity: 'medium' as const, details: 'Transaction flagged by compliance screening' },
+      { reason: 'Position size limit approached', severity: 'low' as const, details: 'Bot approaching 90% of maximum position size' },
+      { reason: 'Unusual trading pattern detected', severity: 'high' as const, details: 'Abnormal volume spike detected in trading behavior' },
+      { reason: 'Daily loss limit exceeded', severity: 'high' as const, details: 'Bot exceeded maximum daily loss threshold of 5%' },
+      { reason: 'AML screening triggered', severity: 'high' as const, details: 'Counterparty address flagged in sanctions database' },
+      { reason: 'Regulatory reporting required', severity: 'medium' as const, details: 'Large transaction requires regulatory filing' },
+      { reason: 'Market manipulation risk', severity: 'high' as const, details: 'Trading pattern may appear as market manipulation' },
+      { reason: 'Concentration risk alert', severity: 'medium' as const, details: 'Single asset exposure exceeds 25% portfolio limit' },
+      { reason: 'Liquidity risk warning', severity: 'low' as const, details: 'Trading in low liquidity market conditions' },
+      { reason: 'Cross-border compliance', severity: 'medium' as const, details: 'Trading across jurisdictions requires additional compliance' },
+      { reason: 'Stop-loss failure', severity: 'high' as const, details: 'Automated stop-loss mechanism failed to execute' },
+      { reason: 'API rate limit breach', severity: 'low' as const, details: 'Exchange API rate limits exceeded for sustained period' },
+      { reason: 'Slippage threshold exceeded', severity: 'medium' as const, details: 'Trade execution slippage exceeded 2% threshold' },
+      { reason: 'Wash trading detected', severity: 'high' as const, details: 'Potential wash trading activity identified' },
+      { reason: 'Position correlation risk', severity: 'medium' as const, details: 'High correlation between positions increases risk exposure' }
+    ];
 
-  const [auditLogs] = useState<AuditLogEntry[]>([
-    {
-      id: '1',
-      action: 'Bot started',
-      user: 'admin',
-      details: 'Alpha Arbitrage Bot manually started',
-      timestamp: new Date().toISOString(),
-      category: 'config'
-    },
-    {
-      id: '2',
-      action: 'User login',
-      user: 'admin',
-      details: 'Successful login from IP 192.168.1.100',
-      timestamp: new Date(Date.now() - 1800000).toISOString(),
-      category: 'login'
-    }
-  ]);
+    const bots = [
+      'Alpha Arbitrage Bot', 'Beta Grid Trading', 'Gamma Momentum Scanner', 'Delta Mean Reversion',
+      'Epsilon Scalping Engine', 'Zeta Swing Trader', 'Eta High Frequency', 'Theta Cross Exchange',
+      'Iota Volume Scanner', 'Kappa Trend Follower', 'Lambda Range Trader', 'Mu Breakout Hunter'
+    ];
+
+    const statuses: ComplianceAlert['status'][] = ['open', 'acknowledged', 'resolved'];
+
+    return alertTypes.map((alert, index) => {
+      const hoursAgo = Math.floor(Math.random() * 168); // Up to 7 days ago
+      const botIndex = index % bots.length;
+      const statusIndex = index % statuses.length;
+
+      return {
+        id: (index + 1).toString(),
+        severity: alert.severity,
+        reason: alert.reason,
+        impactedBot: bots[botIndex],
+        timestamp: new Date(Date.now() - (hoursAgo * 3600000)).toISOString(),
+        status: statuses[statusIndex],
+        details: alert.details
+      };
+    });
+  };
+
+  // Generate comprehensive audit logs
+  const generateAuditLogs = (): AuditLogEntry[] => {
+    const actions = [
+      { action: 'Bot started', category: 'config' as const, details: 'manually started' },
+      { action: 'User login', category: 'login' as const, details: 'Successful login from IP' },
+      { action: 'Bot stopped', category: 'config' as const, details: 'Emergency stop triggered' },
+      { action: 'Risk parameters updated', category: 'config' as const, details: 'Maximum position size changed from 10% to 8%' },
+      { action: 'Large order executed', category: 'order' as const, details: 'Order size: $25,000 BTC-USDT' },
+      { action: 'Compliance alert triggered', category: 'alert' as const, details: 'KYT screening flagged transaction' },
+      { action: 'API key rotated', category: 'config' as const, details: 'Binance API credentials updated' },
+      { action: 'User logout', category: 'login' as const, details: 'Session terminated' },
+      { action: 'Strategy parameters modified', category: 'config' as const, details: 'Grid spacing updated to 1.5%' },
+      { action: 'Alert acknowledged', category: 'alert' as const, details: 'Medium severity compliance alert reviewed' },
+      { action: 'Export generated', category: 'config' as const, details: 'Compliance report exported to PDF' },
+      { action: 'Failed login attempt', category: 'login' as const, details: 'Invalid credentials from IP 45.33.21.96' },
+      { action: 'Position closed', category: 'order' as const, details: 'Automatic position closure due to stop-loss' },
+      { action: 'Exchange connected', category: 'config' as const, details: 'Kraken API connection established' },
+      { action: 'Threshold breach', category: 'alert' as const, details: 'Daily loss limit of 5% exceeded' },
+      { action: 'Backup created', category: 'config' as const, details: 'Configuration backup saved to secure storage' },
+      { action: 'User permissions changed', category: 'config' as const, details: 'Trading permissions granted to user trader@rugira.ch' },
+      { action: 'Alert resolved', category: 'alert' as const, details: 'High severity AML alert cleared after review' },
+      { action: 'Market data reconnected', category: 'config' as const, details: 'WebSocket connection to price feed restored' },
+      { action: 'Compliance scan completed', category: 'alert' as const, details: 'Scheduled weekly compliance check passed' }
+    ];
+
+    const users = ['admin', 'trader@rugira.ch', 'system', 'compliance@rugira.ch', 'risk@rugira.ch'];
+    const ips = ['192.168.1.100', '10.0.1.50', '203.0.113.45', '198.51.100.30', '45.33.21.96'];
+
+    return actions.map((actionData, index) => {
+      const hoursAgo = Math.floor(Math.random() * 72); // Up to 3 days ago
+      const userIndex = index % users.length;
+      const ipIndex = index % ips.length;
+      
+      let details = actionData.details;
+      if (actionData.category === 'login' && actionData.details.includes('IP')) {
+        details = `${actionData.details} ${ips[ipIndex]}`;
+      }
+
+      return {
+        id: (index + 1).toString(),
+        action: actionData.action,
+        user: users[userIndex],
+        details,
+        timestamp: new Date(Date.now() - (hoursAgo * 3600000)).toISOString(),
+        category: actionData.category
+      };
+    });
+  };
+
+  const [alerts] = useState<ComplianceAlert[]>(generateComplianceAlerts());
+  const [auditLogs] = useState<AuditLogEntry[]>(generateAuditLogs());
 
   const getSeverityBadge = (severity: ComplianceAlert['severity']) => {
     switch (severity) {
