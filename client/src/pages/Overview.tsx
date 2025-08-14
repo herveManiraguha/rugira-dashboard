@@ -13,6 +13,7 @@ import {
   Activity,
   AlertTriangle
 } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 
 interface KPI {
   id: string;
@@ -46,6 +47,12 @@ export default function Overview() {
   const { data: activities, isLoading: activitiesLoading } = useQuery<ActivityItem[]>({
     queryKey: ['/api/activities'],
     refetchInterval: 10000, // Refresh every 10 seconds
+  });
+
+  // Fetch performance data for charts
+  const { data: performanceData, isLoading: performanceLoading } = useQuery({
+    queryKey: ['/api/performance'],
+    refetchInterval: 30000,
   });
 
   // Setup SSE for real-time updates
@@ -164,34 +171,127 @@ export default function Overview() {
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card>
           <CardHeader>
             <CardTitle>Equity Curve</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-64 flex items-center justify-center text-gray-500 bg-gray-50 rounded-lg">
-              <div className="text-center">
-                <TrendingUp className="h-12 w-12 mx-auto mb-2 text-gray-400" />
-                <p>Portfolio performance chart</p>
-                <p className="text-sm text-gray-400">Real-time data will appear here</p>
+            {performanceLoading ? (
+              <div className="h-64 flex items-center justify-center">
+                <Skeleton className="h-full w-full" />
               </div>
-            </div>
+            ) : (
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={performanceData?.equity || []}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="date" 
+                      tickFormatter={(value) => new Date(value).toLocaleDateString()}
+                    />
+                    <YAxis 
+                      tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                    />
+                    <Tooltip 
+                      formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Portfolio Value']}
+                      labelFormatter={(value) => new Date(value).toLocaleDateString()}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="value" 
+                      stroke="#E10600" 
+                      fill="#E10600" 
+                      fillOpacity={0.1}
+                      strokeWidth={2}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            )}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Drawdown Analysis</CardTitle>
+            <CardTitle>Daily P&L</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-64 flex items-center justify-center text-gray-500 bg-gray-50 rounded-lg">
-              <div className="text-center">
-                <TrendingDown className="h-12 w-12 mx-auto mb-2 text-gray-400" />
-                <p>Maximum drawdown: -2.1%</p>
-                <p className="text-sm text-gray-400">Risk analysis visualization</p>
+            {performanceLoading ? (
+              <div className="h-64 flex items-center justify-center">
+                <Skeleton className="h-full w-full" />
               </div>
-            </div>
+            ) : (
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={performanceData?.pnl || []}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="date" 
+                      tickFormatter={(value) => new Date(value).toLocaleDateString()}
+                    />
+                    <YAxis 
+                      tickFormatter={(value) => `$${(value / 1000).toFixed(1)}k`}
+                    />
+                    <Tooltip 
+                      formatter={(value) => [
+                        `$${Number(value).toLocaleString()}`, 
+                        'Daily P&L'
+                      ]}
+                      labelFormatter={(value) => new Date(value).toLocaleDateString()}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="value" 
+                      stroke="#E10600" 
+                      strokeWidth={2}
+                      dot={(props) => {
+                        const { cx, cy, payload } = props;
+                        const color = payload.value >= 0 ? '#10B981' : '#EF4444';
+                        return <circle cx={cx} cy={cy} r={3} fill={color} />;
+                      }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Trading Volume</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {performanceLoading ? (
+              <div className="h-64 flex items-center justify-center">
+                <Skeleton className="h-full w-full" />
+              </div>
+            ) : (
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={performanceData?.trades || []}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="hour" 
+                      tickFormatter={(value) => `${value}:00`}
+                    />
+                    <YAxis />
+                    <Tooltip 
+                      formatter={(value) => [`${value} trades`, 'Volume']}
+                      labelFormatter={(value) => `Hour ${value}:00`}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="count" 
+                      stroke="#1B7A46" 
+                      strokeWidth={2}
+                      dot={{ fill: '#1B7A46', r: 3 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
