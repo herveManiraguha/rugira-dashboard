@@ -2,7 +2,6 @@ import React from "react";
 import { Link, useLocation } from "wouter";
 import { useBotsStore, useApiStore } from "../../stores";
 import StatusIndicator from "../UI/StatusIndicator";
-import RugiraLogo from "../UI/RugiraLogo";
 
 export default function Sidebar() {
   const location = useLocation();
@@ -32,7 +31,9 @@ export default function Sidebar() {
       {/* Brand Header */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center space-x-3">
-          <RugiraLogo size={32} />
+          <div className="w-8 h-8 bg-brand-red rounded-lg flex items-center justify-center">
+            <i className="fas fa-chart-line text-white text-sm"></i>
+          </div>
           <div>
             <h2 className="text-lg font-bold text-text-900">Rugira</h2>
             <p className="text-xs text-text-500">Trading Dashboard</p>
