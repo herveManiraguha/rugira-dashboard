@@ -37,21 +37,125 @@ interface ActivityItem {
 export default function Overview() {
   const [lastUpdated, setLastUpdated] = useState(new Date());
 
-  // Fetch KPIs
-  const { data: kpis, isLoading: kpisLoading } = useQuery<KPI[]>({
-    queryKey: ['/api/kpis'],
-    refetchInterval: 30000, // Refresh every 30 seconds
-  });
+  // Generate mock KPI data
+  const generateKPIData = (): KPI[] => {
+    const currentValue = 105247.32;
+    const previousValue = 100000;
+    const change = ((currentValue - previousValue) / previousValue * 100);
+    
+    return [
+      {
+        id: '1',
+        label: 'Total Portfolio Value',
+        value: currentValue,
+        change: change,
+        comparison: 'vs last month',
+        icon: 'chart-line',
+        type: 'currency'
+      },
+      {
+        id: '2',
+        label: 'Active Bots',
+        value: 7,
+        change: 16.7,
+        comparison: '6 running, 1 stopped',
+        icon: 'robot',
+        type: 'number'
+      },
+      {
+        id: '3',
+        label: 'Today\'s P&L',
+        value: 1247.83,
+        change: 12.4,
+        comparison: 'vs yesterday',
+        icon: 'check-circle',
+        type: 'currency'
+      },
+      {
+        id: '4',
+        label: 'Avg Response Time',
+        value: 47,
+        change: -8.2,
+        comparison: 'vs last week',
+        icon: 'clock',
+        type: 'time'
+      }
+    ];
+  };
 
-  // Fetch activities
-  const { data: activities, isLoading: activitiesLoading } = useQuery<ActivityItem[]>({
-    queryKey: ['/api/activities'],
-    refetchInterval: 10000, // Refresh every 10 seconds
-  });
+  // Generate mock activity data
+  const generateActivityData = (): ActivityItem[] => {
+    const activities = [];
+    const now = new Date();
+    
+    for (let i = 0; i < 8; i++) {
+      const timestamp = new Date(now.getTime() - (i * 5 + Math.random() * 10) * 60000);
+      const types = ['online', 'warning', 'error'] as const;
+      const type = types[Math.floor(Math.random() * types.length)];
+      
+      const messages = {
+        online: [
+          'Alpha Arbitrage Bot executed trade on Binance',
+          'Beta Grid Trading opened new position',
+          'Gamma Momentum Bot closed profitable trade',
+          'Delta Mean Reversion rebalanced portfolio'
+        ],
+        warning: [
+          'High volatility detected in BTC-USDT pair',
+          'Position size approaching limit threshold',
+          'Network latency increased on Coinbase'
+        ],
+        error: [
+          'Failed to execute order on FTX',
+          'API rate limit exceeded on Kraken'
+        ]
+      };
+      
+      const details = {
+        online: [
+          'BTC-USDT • Size: $2,450 • Fee: $2.45',
+          'ETH-USDT • Size: $1,200 • Fee: $1.20',
+          'SOL-USDT • Size: $800 • Fee: $0.80',
+          'AVAX-USDT • Size: $500 • Fee: $0.50'
+        ],
+        warning: [
+          'Current volatility: 24.5% (24h)',
+          'Current: 87% • Limit: 90%',
+          'Current: 145ms • Normal: <100ms'
+        ],
+        error: [
+          'Error: Insufficient balance',
+          'Retry in 60 seconds'
+        ]
+      };
+      
+      const pnls = {
+        online: () => (Math.random() - 0.4) * 500, // Slight positive bias
+        warning: () => 0,
+        error: () => -(Math.random() * 200)
+      };
+      
+      activities.push({
+        id: `activity-${i}`,
+        type,
+        message: messages[type][Math.floor(Math.random() * messages[type].length)],
+        details: details[type][Math.floor(Math.random() * details[type].length)],
+        pnl: Math.round(pnls[type]() * 100) / 100,
+        timestamp: timestamp.toISOString()
+      });
+    }
+    
+    return activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  };
+
+  const kpis = generateKPIData();
+  const activities = generateActivityData();
+  const kpisLoading = false;
+  const activitiesLoading = false;
 
   // Generate mock performance data for charts
   const generateEquityData = () => {
-    const data = [];
+    const data: Array<{date: string; value: number; pnl: number; pnlPercent: string}> = [];
     const baseValue = 100000;
     let currentValue = baseValue;
     
@@ -74,7 +178,7 @@ export default function Overview() {
   };
 
   const generateDailyPnLData = () => {
-    const data = [];
+    const data: Array<{date: string; pnl: number; cumulative: number}> = [];
     for (let i = 30; i >= 0; i--) {
       const date = new Date();
       date.setDate(date.getDate() - i);
