@@ -8,6 +8,7 @@ import {
   User, 
   AlertTriangle, 
   ChevronDown,
+  ChevronRight,
   Activity,
   Bot,
   Target,
@@ -63,7 +64,7 @@ export function MainLayout({ children }: MainLayoutProps) {
     <div className="min-h-screen bg-gray-50">
       {/* Fixed Top Bar */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
+        <div className="flex items-center justify-between w-full">
           {/* Left side - Logo and tenant switcher */}
           <div className="flex items-center space-x-6">
             <div className="flex items-center space-x-3">
@@ -118,13 +119,13 @@ export function MainLayout({ children }: MainLayoutProps) {
               <span className="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full"></span>
             </Button>
 
-            {/* Kill Switch - Icon only */}
+            {/* Kill Switch - Icon only with same red as selected overview */}
             <Button
               variant="destructive"
               size="sm"
               disabled={!isKillSwitchEnabled}
               onClick={handleKillSwitch}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-red-600 hover:bg-red-700 text-white"
               title="Emergency Kill Switch"
             >
               <Power className="h-4 w-4" />
@@ -171,13 +172,15 @@ export function MainLayout({ children }: MainLayoutProps) {
           <div className="p-4 border-t border-gray-200">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="w-full justify-start">
-                  <User className="h-4 w-4 mr-3" />
-                  <span className="flex-1 text-left">Admin</span>
-                  <ChevronDown className="h-4 w-4" />
+                <Button variant="ghost" className="w-full justify-between group hover:bg-gray-50">
+                  <div className="flex items-center">
+                    <User className="h-4 w-4 mr-3" />
+                    <span className="text-left">Admin</span>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-gray-600" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" side="right">
+              <DropdownMenuContent align="start" side="right" className="w-48 ml-2">
                 <DropdownMenuItem>Profile</DropdownMenuItem>
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuSeparator />
