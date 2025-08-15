@@ -20,9 +20,10 @@ Preferred communication style: Simple, everyday language.
 - **Logout functionality** redirecting to rugira.ch main site
 
 ### UI and Branding Updates
-- **Updated logo implementation** across all pages (Home, Login, MainLayout)
+- **Updated logo implementation** across all pages (Login, MainLayout)
 - **Rugira Swiss shield logo** with cross cutout and Inyambo horns in official SVG format
-- **Professional Home page** with product intro, features, and clear CTAs
+- **Removed home page** to avoid content duplication with marketing website (rugira.ch)
+- **Direct login experience** - root route redirects to login page
 - **Consistent branding** using Swiss red (#E10600) and green (#1B7A46) color scheme
 - **Mobile-responsive design** with proper spacing and typography
 

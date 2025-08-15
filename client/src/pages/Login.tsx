@@ -146,11 +146,7 @@ export default function Login() {
           </CardContent>
 
           <CardFooter className="flex flex-col space-y-4 text-center">
-            <div className="flex items-center space-x-2 text-xs text-gray-500">
-              <a href="/" className="hover:text-[#E10600]">
-                ← Back to Home
-              </a>
-              <span>•</span>
+            <div className="flex items-center justify-center text-xs text-gray-500">
               <a href="https://rugira.ch" className="hover:text-[#E10600]">
                 Visit rugira.ch
               </a>

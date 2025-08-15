@@ -8,7 +8,6 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import "./index.css";
 
 // Import pages
-import Home from "@/pages/Home";
 import Login from "@/pages/Login";
 import AuthCallback from "@/pages/AuthCallback";
 import Overview from "@/pages/Overview";
@@ -41,7 +40,7 @@ function App() {
       <AuthProvider>
         <Switch>
           {/* Public routes */}
-          <Route path="/" component={Home} />
+          <Route path="/" component={Login} />
           <Route path="/login" component={Login} />
           <Route path="/auth/callback" component={AuthCallback} />
           
