@@ -135,7 +135,8 @@ export default function Bots() {
       await new Promise(resolve => setTimeout(resolve, 500));
       return generateMockBots();
     },
-    refetchInterval: 5000,
+    staleTime: 30000, // Consider data fresh for 30 seconds
+    refetchOnWindowFocus: false, // Don't refetch when user returns to tab
   });
 
   const getStatusColor = (status: Bot['status']) => {
