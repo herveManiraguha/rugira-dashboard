@@ -10,7 +10,7 @@ export default function TopBar() {
   const { isConnected } = useApiStore();
   const [currentUser] = useState({ name: 'John Trader' });
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(true); // Testing: Start with dropdown visible
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const notificationRef = useRef<HTMLDivElement>(null);
 
@@ -119,16 +119,11 @@ export default function TopBar() {
         {/* Top Bar Actions */}
         <div className="flex items-center space-x-4">
           {/* Notifications */}
-          <div className="relative" ref={notificationRef}>
+          <div className="relative">
             <button 
               type="button"
-              className="relative p-2 text-gray-600 hover:text-brand-red transition-colors rounded-lg hover:bg-gray-50 cursor-pointer" 
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('Notification bell clicked!');
-                setShowNotifications(!showNotifications);
-              }}
+              className="relative p-2 text-gray-600 hover:text-brand-red transition-colors rounded-lg hover:bg-gray-50" 
+              onClick={() => setShowNotifications(!showNotifications)}
               data-testid="button-notifications"
             >
               <Bell className="h-5 w-5" />
@@ -142,25 +137,18 @@ export default function TopBar() {
               )}
             </button>
 
-            {/* Notification Dropdown - DEBUG VERSION */}
+            {/* SIMPLE TEST - This should always show */}
             <div 
-              className="absolute right-0 mt-2 w-96 bg-red-500 rounded-lg shadow-xl border border-gray-200 max-h-96 overflow-hidden"
-              style={{ zIndex: 9999, display: 'block', minHeight: '200px' }}
-              onClick={(e) => e.stopPropagation()}
+              className="absolute right-0 mt-2 w-48 h-24 bg-red-500 text-white p-4 rounded border"
+              style={{ zIndex: 9999, top: '100%' }}
             >
-              <div className="p-4 text-white">
-                <h3>DEBUG: Notification Panel</h3>
-                <p>showNotifications: {String(showNotifications)}</p>
-                <p>Count: {count}</p>
-                <p>Notifications length: {notifications?.length || 0}</p>
-              </div>
+              TEST PANEL VISIBLE
             </div>
-            
+
             {showNotifications && (
               <div 
                 className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl border border-gray-200 max-h-96 overflow-hidden"
-                style={{ zIndex: 9999, display: 'block' }}
-                onClick={(e) => e.stopPropagation()}
+                style={{ zIndex: 50, top: '100%' }}
               >
                 <div className="p-4 border-b border-gray-200 flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
@@ -234,7 +222,7 @@ export default function TopBar() {
                   </div>
                 )}
               </div>
-            ) : null}
+            )}
           </div>
 
           {/* Kill Switch */}
