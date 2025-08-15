@@ -68,40 +68,53 @@ export function MainLayout({ children }: MainLayoutProps) {
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
         <div 
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="xl:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}
       
       {/* Fixed Top Bar */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-6 py-4">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-4 md:px-6 py-3 md:py-4">
         <div className="flex items-center justify-between w-full">
-          {/* Left side - Logo and tenant switcher */}
-          <div className="flex items-center space-x-6">
+          {/* Left side - Mobile Menu Button, Logo and tenant switcher */}
+          <div className="flex items-center space-x-3 md:space-x-6">
+            {/* Mobile/Tablet Menu Button - visible up to lg screens */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="xl:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              data-testid="button-mobile-menu"
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 flex items-center justify-center">
                 <img src={logoSvg} alt="Rugira" className="w-8 h-8" />
               </div>
-              <span className="text-xl font-semibold text-gray-900">Rugira</span>
+              <span className="text-lg md:text-xl font-semibold text-gray-900">Rugira</span>
             </div>
             
-            {/* Tenant Switcher (placeholder) */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="ml-4">
-                  Default Tenant
-                  <ChevronDown className="ml-2 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem>Default Tenant</DropdownMenuItem>
-                <DropdownMenuItem disabled>Switch Tenant (Pro)</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {/* Tenant Switcher (placeholder) - hidden on small screens */}
+            <div className="hidden sm:block">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="ml-2 md:ml-4">
+                    Default Tenant
+                    <ChevronDown className="ml-2 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem>Default Tenant</DropdownMenuItem>
+                  <DropdownMenuItem disabled>Switch Tenant (Pro)</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
 
           {/* Right side - Environment toggle, status, notifications, kill switch */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-4">
             {/* Environment Toggle Button */}
             <Button
               variant={environment === 'Live' ? "destructive" : "secondary"}
@@ -148,9 +161,22 @@ export function MainLayout({ children }: MainLayoutProps) {
       <div className="flex pt-20">
         {/* Fixed Left Sidebar */}
         <nav className={`fixed left-0 top-20 w-64 bg-white border-r border-gray-200 h-[calc(100vh-5rem)] overflow-y-auto z-40 flex flex-col transform transition-transform duration-200 ease-in-out ${
-          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full xl:translate-x-0'
         }`}>
           <div className="p-6 flex-1">
+            {/* Close button for mobile/tablet */}
+            <div className="xl:hidden flex justify-end mb-4">
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                data-testid="button-close-menu"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
             <ul className="space-y-2">
               {navigation.map((item) => {
                 const Icon = item.icon;
@@ -204,7 +230,7 @@ export function MainLayout({ children }: MainLayoutProps) {
         </nav>
 
         {/* Main Content */}
-        <main className="flex-1 lg:ml-64 p-4 md:p-6 min-h-screen bg-gray-50">
+        <main className="flex-1 xl:ml-64 p-4 md:p-6 min-h-screen bg-gray-50">
           <div className="max-w-full">
             {children}
           </div>
