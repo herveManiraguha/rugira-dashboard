@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Building2, CheckCircle, AlertTriangle, RotateCcw, Trash2, TestTube } from "lucide-react";
+import { Plus, Building2, CheckCircle, AlertTriangle, RotateCcw, Trash2, TestTube, TrendingUp, Shield, Eye, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface ExchangeConnection {
