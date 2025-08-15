@@ -280,6 +280,50 @@
     background: #f9fafb !important;
   }
 
+  /* Force Shadcn Select to have opaque background */
+  [data-radix-popper-content-wrapper] {
+    background: white !important;
+    opacity: 1 !important;
+  }
+
+  [data-radix-select-viewport] {
+    background: white !important;
+    opacity: 1 !important;
+  }
+
+  [data-radix-select-content] {
+    background: white !important;
+    opacity: 1 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  [role="listbox"] {
+    background: white !important;
+    opacity: 1 !important;
+  }
+
+  /* Target the specific dropdown portal */
+  [data-radix-popper-content-wrapper] > div {
+    background: white !important;
+    opacity: 1 !important;
+  }
+
+  /* Override any transparency on select items */
+  [data-radix-select-item] {
+    background: transparent !important;
+  }
+
+  [data-radix-select-item]:hover,
+  [data-radix-select-item][data-highlighted] {
+    background: #f3f4f6 !important;
+  }
+
+  [data-radix-select-item][data-state="checked"] {
+    background: #fee2e2 !important;
+    color: #e10600 !important;
+  }
+
   /* Responsive layout utilities */
   .main-layout {
     min-height: 100vh;

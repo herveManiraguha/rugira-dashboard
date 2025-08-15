@@ -85,10 +85,10 @@ export default function TopBar() {
         {/* Tenant Switcher - Shadcn Select */}
         <div className="flex items-center space-x-4">
           <Select defaultValue="default" data-testid="select-tenant">
-            <SelectTrigger className="w-[180px] font-semibold">
+            <SelectTrigger className="w-[180px] font-semibold bg-white">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white" style={{ backgroundColor: 'white', opacity: 1 }}>
               <SelectItem value="default">Default Tenant</SelectItem>
               <SelectItem value="switch">Switch Tenant (Pro)</SelectItem>
             </SelectContent>
