@@ -1,0 +1,106 @@
+Goal
+Replace the current “Paper / Live” buttons with a compact, accessible Environment chip that looks calm but unmistakable, and add a safe switch flow (with confirmation) so users don’t flip to Live by accident.
+
+A. Visual design (chip)
+
+Create a small pill chip component used in the header, left of the “OK” status and to the left of the Kill Switch.
+
+Chip contents: a 6–8px colored dot + short label. Use tabular numbers if any numbers appear later.
+
+Sizes: 28px height, 12–13px text, medium weight, 12–16px horizontal padding, fully rounded.
+
+Colors (AA contrast):
+
+Paper → neutral/sky “subtle” style (very light tint background + thin border + sky/dark slate text). Label: “Paper (Simulated)”. Dot: sky/neutral.
+
+Live → red “subtle” style (very light rose/red tint background + thin border + dark red text). Label: “LIVE (Real)”. Dot: red.
+
+Do not use a solid danger-red fill for the whole chip; keep it calm, reserve solid red for actual alerts.
+
+Motion: For Live, the dot can pulse once every 3–4s (very subtle). Respect prefers-reduced-motion and disable in that case.
+
+Tooltip on hover/focus:
+
+Paper: “Simulated environment. Orders are NOT sent to real exchanges.”
+
+Live: “Real environment. Orders are sent to real exchanges.”
+
+B. Interaction (menu + confirmation)
+
+Clicking the chip opens a tiny menu with:
+
+Paper (radio selected when active)
+
+Live (radio, shows a small lock icon)
+
+“Manage environments…” (links to settings)
+
+Switching to Live triggers a confirmation modal (cannot be bypassed):
+
+Title: “Switch to Live (Real funds)”
+
+Summary bullets: “Real orders will be placed”, “Check balances and keys”, “Kill Switch is available at any time.”
+
+Require the user to type LIVE to enable the confirm button.
+
+Secondary link: “Learn more” → opens a help article.
+
+After a successful switch, show a brief toast: “Switched to Live • Kill Switch ready”. On failure, show a clear error toast.
+
+Keyboard: chip is focusable; Enter opens menu; Esc closes; arrow keys move; Enter selects.
+
+C. Safety affordances (subtle, always on in Live)
+
+When in Live, add a 2–3px top border across the app in a soft red accent (no banner).
+
+Keep the Kill Switch button visible at all times; in Live it appears one step stronger (outline → solid or accent border) but not screaming.
+
+Add a small line in the footer: “Environment: LIVE — real orders” (or “Environment: Paper — simulated”).
+
+D. Copy & labels
+
+Paper label: “Paper (Simulated)”
+
+Live label: “LIVE (Real)” (uppercase “LIVE” for quick scan)
+
+Use short, consistent microcopy everywhere (menu, tooltip, confirm modal).
+
+E. State management
+
+Keep the current environment in a small global store.
+
+Persist the last chosen env in local storage so the chip restores after refresh.
+
+In Demo Mode, the chip should force “Paper (Simulated)” and disable switching to Live with a tooltip: “Not available in demo.”
+
+F. Where else to reuse the chip
+
+In Bots and Exchanges tables, render a compact environment chip in a column so users can scan Paper vs Live per row.
+
+In Backtesting, always show the Paper chip (disabled).
+
+G. Acceptance criteria
+
+The header shows a compact environment chip with a colored dot + label; Paper is calm, Live is clearly different but not alarming.
+
+Clicking the chip opens a menu; switching to Live requires typing LIVE.
+
+In Live, a thin red top border appears site-wide; the Kill Switch stays prominent but not aggressive.
+
+Keyboard users can operate the chip, menu, and confirm modal.
+
+Tooltips explain the environments; reduced-motion users don’t see the pulse.
+
+The selected environment persists across reloads and appears on relevant tables.
+
+No conflicts with existing “OK” status or notifications; spacing remains on the 8px grid.
+
+H. Hand-off summary (print for me after implementing)
+
+The exact labels, tooltip texts, and color tokens used.
+
+How to toggle environments programmatically (store/api).
+
+How to disable Live in demo builds.
+
+Any Tailwind/shadcn tokens or classes created (names only, no code dump).

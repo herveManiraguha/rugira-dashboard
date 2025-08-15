@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Switch } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
-import { MainLayout } from "@/components/Layout/MainLayout";
+import MainLayout from "@/components/Layout/MainLayout";
 import { AuthProvider } from "@/contexts/MockAuthContext";
 import { DemoProvider } from "@/contexts/DemoContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";

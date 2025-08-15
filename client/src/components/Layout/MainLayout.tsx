@@ -9,6 +9,8 @@ import Footer from '@/components/Layout/Footer';
 import StatusBadge from '@/components/Layout/StatusBadge';
 import AWSStatusIndicator from '@/components/Layout/AWSStatusIndicator';
 import NotificationButton from '@/components/Layout/NotificationButton';
+import EnvironmentChip from '@/components/Layout/EnvironmentChip';
+import { useEnvironment } from '@/hooks/useEnvironment';
 import { 
   Bell, 
   User, 
@@ -26,8 +28,7 @@ import {
   Settings,
   HelpCircle,
   Power,
-  Wifi,
-  WifiOff,
+
   LogOut
 } from 'lucide-react';
 import {
@@ -56,11 +57,11 @@ const navigation = [
   { name: 'Help', href: '/help', icon: HelpCircle },
 ];
 
-export function MainLayout({ children }: MainLayoutProps) {
+export default function MainLayout({ children }: MainLayoutProps) {
   const [location] = useLocation();
   const { user, logout } = useAuth();
   const [isKillSwitchEnabled, setIsKillSwitchEnabled] = useState(false);
-  const [environment, setEnvironment] = useState<'Live' | 'Paper'>('Paper');
+  const { environment, switchEnvironment, isLive } = useEnvironment();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleKillSwitch = () => {
@@ -71,6 +72,11 @@ export function MainLayout({ children }: MainLayoutProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       <DemoRibbon />
+      
+      {/* Live Environment Top Border */}
+      {isLive && (
+        <div className="fixed top-0 left-0 right-0 h-1 bg-red-400 z-[60]" />
+      )}
 
       
       {/* Mobile Menu Overlay */}
@@ -121,36 +127,13 @@ export function MainLayout({ children }: MainLayoutProps) {
             </div>
           </div>
 
-          {/* Right side - Environment toggle, status, notifications, kill switch */}
+          {/* Right side - Environment, status, notifications, kill switch */}
           <div className="flex items-center space-x-2 md:space-x-4">
-            {/* Environment Toggle Button */}
-            <Button
-              variant={environment === 'Live' ? "destructive" : "default"}
-              size="sm"
-              onClick={() => setEnvironment(environment === 'Live' ? 'Paper' : 'Live')}
-              className={cn(
-                "text-xs font-medium px-4 py-2 min-w-[60px] border-2 transition-all duration-200",
-                environment === 'Live' 
-                  ? "bg-red-600 hover:bg-red-700 text-white border-red-600 shadow-md font-semibold" 
-                  : "bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200 font-semibold"
-              )}
-              title={environment === 'Live' ? 'Switch to Paper Trading' : 'Switch to Live Trading'}
-              data-testid="button-environment-toggle"
-            >
-              <div className="flex items-center space-x-1">
-                {environment === 'Live' ? (
-                  <>
-                    <Wifi className="h-3 w-3" />
-                    <span>Live</span>
-                  </>
-                ) : (
-                  <>
-                    <WifiOff className="h-3 w-3" />
-                    <span>Paper</span>
-                  </>
-                )}
-              </div>
-            </Button>
+            {/* Environment Chip */}
+            <EnvironmentChip 
+              environment={environment}
+              onEnvironmentChange={switchEnvironment}
+            />
 
             {/* AWS Status Indicator */}
             <AWSStatusIndicator />
@@ -158,14 +141,20 @@ export function MainLayout({ children }: MainLayoutProps) {
             {/* Notifications */}
             <NotificationButton />
 
-            {/* Kill Switch - Icon only with same red as selected overview */}
+            {/* Kill Switch - Enhanced styling in Live mode */}
             <Button
-              variant="destructive"
+              variant={isLive ? "destructive" : "outline"}
               size="sm"
               disabled={!isKillSwitchEnabled}
               onClick={handleKillSwitch}
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className={cn(
+                "transition-all duration-200",
+                isLive 
+                  ? "bg-red-600 hover:bg-red-700 text-white border-red-600 shadow-sm" 
+                  : "border-red-300 text-red-600 hover:bg-red-50"
+              )}
               title="Emergency Kill Switch"
+              data-testid="kill-switch-button"
             >
               <Power className="h-4 w-4" />
             </Button>
