@@ -32,6 +32,8 @@ Preferred communication style: Simple, everyday language.
 - **CORS configuration** optimized for development environment compatibility
 - **Production-ready setup** for app.rugira.ch deployment with security headers
 - **Session-based authentication** with PostgreSQL backend support ready
+- **Domain blocking** configured to block rugira-dashboard.replit.app and redirect to app.rugira.ch
+- **Login redirect** updated to direct users to /overview instead of /dashboard
 
 ## Production Configuration
 

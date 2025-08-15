@@ -23,17 +23,22 @@ app.use((req, res, next) => {
   const host = req.get('host') || '';
   const origin = req.get('origin') || '';
   
-  // Block rugira-dashboard.replit.app and all Replit preview domains
-  if (host.includes('replit.app') || 
+  // In production, block rugira-dashboard.replit.app and all Replit preview domains
+  if (isProduction && (host.includes('replit.app') || 
       host.includes('replit.dev') || 
       host.includes('repl.co') ||
       origin.includes('replit.app') || 
       origin.includes('replit.dev') || 
-      origin.includes('repl.co')) {
+      origin.includes('repl.co'))) {
     
     console.log(`🚫 Blocked Replit domain access: ${host} (origin: ${origin})`);
     
-    // Return a clear message redirecting to the official domain
+    // For HTML requests, redirect to the official domain
+    if (req.headers.accept?.includes('text/html')) {
+      return res.redirect(301, 'https://app.rugira.ch');
+    }
+    
+    // For API requests, return JSON error
     return res.status(403).json({
       error: 'Access Denied',
       message: 'This application is only available at https://app.rugira.ch',
