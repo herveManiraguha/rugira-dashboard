@@ -142,8 +142,21 @@ export default function TopBar() {
               )}
             </button>
 
-            {/* Notification Dropdown */}
-            {showNotifications ? (
+            {/* Notification Dropdown - DEBUG VERSION */}
+            <div 
+              className="absolute right-0 mt-2 w-96 bg-red-500 rounded-lg shadow-xl border border-gray-200 max-h-96 overflow-hidden"
+              style={{ zIndex: 9999, display: 'block', minHeight: '200px' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-4 text-white">
+                <h3>DEBUG: Notification Panel</h3>
+                <p>showNotifications: {String(showNotifications)}</p>
+                <p>Count: {count}</p>
+                <p>Notifications length: {notifications?.length || 0}</p>
+              </div>
+            </div>
+            
+            {showNotifications && (
               <div 
                 className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl border border-gray-200 max-h-96 overflow-hidden"
                 style={{ zIndex: 9999, display: 'block' }}
