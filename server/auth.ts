@@ -101,7 +101,7 @@ export const authRoutes = (app: any) => {
     res.json({ 
       message: 'Login successful',
       user: req.session!.user,
-      redirectTo: '/dashboard'
+      redirectTo: '/overview'
     });
   });
 
@@ -136,12 +136,12 @@ export const authRoutes = (app: any) => {
     // 1. Exchange authorization code for tokens
     // 2. Get user info from OAuth provider
     // 3. Store session or JWT
-    // 4. Redirect to dashboard
+    // 4. Redirect to overview
     
     res.redirect(
       process.env.NODE_ENV === 'production' 
-        ? 'https://app.rugira.ch/dashboard'
-        : '/dashboard'
+        ? 'https://app.rugira.ch/overview'
+        : '/overview'
     );
   });
 };
