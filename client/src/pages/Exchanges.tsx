@@ -7,7 +7,7 @@ import { EmptyState } from '@/components/ui/empty-state';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { ExchangeIcon } from '@/components/ui/exchange-icon';
-import { EnhancedTable } from '@/components/ui/enhanced-table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { 
   Settings, 
   Plus,
@@ -478,162 +478,154 @@ function ExchangeTableView({ exchanges, onConnect, onDisconnect, onRefresh, getS
   formatLastSync: (timestamp: string) => string;
   getApiUsageColor: (used: number, total: number) => string;
 }) {
-  const tableColumns = [
-    {
-      id: 'exchange',
-      header: 'Exchange',
-      accessorKey: 'name',
-      cell: ({ row }: any) => (
-        <div className="flex items-center space-x-3">
-          <ExchangeIcon 
-            name={row.original.name}
-            logo={row.original.logo}
-            size="sm"
-          />
-          <span className="font-medium">{row.original.name}</span>
-        </div>
-      )
-    },
-    {
-      id: 'account',
-      header: 'Account Alias',
-      cell: ({ row }: any) => (
-        <div>
-          <div className="font-medium text-sm">
-            {row.original.name === 'Binance' ? 'Main Trading Account' :
-             row.original.name === 'Coinbase Pro' ? 'Secondary Account' :
-             row.original.name === 'Kraken' ? 'European Trading' :
-             row.original.name === 'Bybit' ? 'Derivatives Account' :
-             row.original.name === 'OKX' ? 'Asian Markets' :
-             row.original.name === 'KuCoin' ? 'Altcoin Trading' :
-             row.original.name === 'Huobi Global' ? 'Spot Trading' :
-             row.original.name === 'Gate.io' ? 'DeFi Assets' :
-             row.original.name === 'Bitfinex' ? 'Professional Trading' :
-             'Primary Account'}
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 'permissions',
-      header: 'Permissions',
-      cell: ({ row }: any) => {
-        const permissions = {
-          'Binance': 'Trade-only',
-          'Coinbase Pro': 'Read-only', 
-          'Kraken': 'Full Access',
-          'Bybit': 'Trade-only',
-          'OKX': 'Read-only',
-          'KuCoin': 'Full Access',
-          'Huobi Global': 'Trade-only',
-          'Gate.io': 'Trade-only',
-          'Bitfinex': 'Full Access',
-          'Gemini': 'Read-only'
-        };
-        const permission = permissions[row.original.name as keyof typeof permissions] || 'Read-only';
-        const color = permission === 'Full Access' ? 'bg-green-100 text-green-800' :
-                     permission === 'Trade-only' ? 'bg-orange-100 text-orange-800' :
-                     'bg-blue-100 text-blue-800';
-        
-        return (
-          <Badge className={color}>
-            {permission}
-          </Badge>
-        );
-      }
-    },
-    {
-      id: 'environment',
-      header: 'Environment',
-      cell: () => (
-        <Badge variant="outline" className="bg-gray-100">paper</Badge>
-      )
-    },
-    {
-      id: 'status',
-      header: 'Status',
-      cell: ({ row }: any) => getStatusBadge(row.original.status)
-    },
-    {
-      id: 'lastVerified',
-      header: 'Last Verified',
-      cell: ({ row }: any) => (
-        <span className="text-sm text-gray-600">
-          {formatLastSync(row.original.lastSync)}
-        </span>
-      )
-    },
-    {
-      id: 'actions',
-      header: 'Actions',
-      cell: ({ row }: any) => (
-        <div className="flex items-center space-x-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onRefresh(row.original.id)}
-            disabled={row.original.status === 'disconnected'}
-            data-testid={`table-refresh-${row.original.id}`}
-          >
-            <RefreshCw className="h-4 w-4" />
-          </Button>
-          
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" data-testid={`table-actions-${row.original.id}`}>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>
-                <Settings className="h-4 w-4 mr-2" />
-                Configure
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Test Connection
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              {row.original.status === 'connected' ? (
-                <ConfirmationDialog
-                  trigger={
-                    <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-red-600">
-                      <Unlink className="h-4 w-4 mr-2" />
-                      Disconnect
-                    </DropdownMenuItem>
-                  }
-                  title="Disconnect Exchange"
-                  description={`Are you sure you want to disconnect from ${row.original.name}? This will stop all active bots on this exchange.`}
-                  confirmText="Disconnect"
-                  onConfirm={() => onDisconnect(row.original.id)}
-                  variant="destructive"
-                />
-              ) : (
-                <DropdownMenuItem onClick={() => onConnect(row.original.id)}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Connect
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      )
-    }
-  ];
+  const getAccountAlias = (name: string) => {
+    const aliases = {
+      'Binance': 'Main Trading Account',
+      'Coinbase Pro': 'Secondary Account',
+      'Kraken': 'European Trading',
+      'Bybit': 'Derivatives Account',
+      'OKX': 'Asian Markets',
+      'KuCoin': 'Altcoin Trading',
+      'Huobi Global': 'Spot Trading',
+      'Gate.io': 'DeFi Assets',
+      'Bitfinex': 'Professional Trading',
+      'Gemini': 'Primary Account'
+    };
+    return aliases[name as keyof typeof aliases] || 'Primary Account';
+  };
+
+  const getPermission = (name: string) => {
+    const permissions = {
+      'Binance': 'Trade-only',
+      'Coinbase Pro': 'Read-only', 
+      'Kraken': 'Full Access',
+      'Bybit': 'Trade-only',
+      'OKX': 'Read-only',
+      'KuCoin': 'Full Access',
+      'Huobi Global': 'Trade-only',
+      'Gate.io': 'Trade-only',
+      'Bitfinex': 'Full Access',
+      'Gemini': 'Read-only'
+    };
+    return permissions[name as keyof typeof permissions] || 'Read-only';
+  };
+
+  const getPermissionBadgeColor = (permission: string) => {
+    return permission === 'Full Access' ? 'bg-green-100 text-green-800' :
+           permission === 'Trade-only' ? 'bg-orange-100 text-orange-800' :
+           'bg-blue-100 text-blue-800';
+  };
 
   return (
-    <EnhancedTable
-      data={exchanges}
-      columns={tableColumns}
-      searchKey="name"
-      searchPlaceholder="Search exchanges..."
-      filters={[
-        { id: 'connected', label: 'Connected', value: 'connected' },
-        { id: 'disconnected', label: 'Disconnected', value: 'disconnected' },
-        { id: 'error', label: 'Error', value: 'error' }
-      ]}
-      filterKey="status"
-      className="border rounded-lg"
-    />
+    <div className="border rounded-lg bg-white">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Exchange</TableHead>
+            <TableHead>Account Alias</TableHead>
+            <TableHead>Permissions</TableHead>
+            <TableHead>Environment</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Last Verified</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {exchanges.map((exchange) => (
+            <TableRow key={exchange.id} className="hover:bg-gray-50">
+              <TableCell>
+                <div className="flex items-center space-x-3">
+                  <ExchangeIcon 
+                    name={exchange.name}
+                    logo={exchange.logo}
+                    size="sm"
+                  />
+                  <span className="font-medium">{exchange.name}</span>
+                </div>
+              </TableCell>
+              
+              <TableCell>
+                <div className="font-medium text-sm">
+                  {getAccountAlias(exchange.name)}
+                </div>
+              </TableCell>
+              
+              <TableCell>
+                <Badge className={getPermissionBadgeColor(getPermission(exchange.name))}>
+                  {getPermission(exchange.name)}
+                </Badge>
+              </TableCell>
+              
+              <TableCell>
+                <Badge variant="outline" className="bg-gray-100">paper</Badge>
+              </TableCell>
+              
+              <TableCell>
+                {getStatusBadge(exchange.status)}
+              </TableCell>
+              
+              <TableCell>
+                <span className="text-sm text-gray-600">
+                  {formatLastSync(exchange.lastSync)}
+                </span>
+              </TableCell>
+              
+              <TableCell>
+                <div className="flex items-center space-x-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onRefresh(exchange.id)}
+                    disabled={exchange.status === 'disconnected'}
+                    data-testid={`table-refresh-${exchange.id}`}
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                  </Button>
+                  
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" data-testid={`table-actions-${exchange.id}`}>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem>
+                        <Settings className="h-4 w-4 mr-2" />
+                        Configure
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Test Connection
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      {exchange.status === 'connected' ? (
+                        <ConfirmationDialog
+                          trigger={
+                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-red-600">
+                              <Unlink className="h-4 w-4 mr-2" />
+                              Disconnect
+                            </DropdownMenuItem>
+                          }
+                          title="Disconnect Exchange"
+                          description={`Are you sure you want to disconnect from ${exchange.name}? This will stop all active bots on this exchange.`}
+                          confirmText="Disconnect"
+                          onConfirm={() => onDisconnect(exchange.id)}
+                          variant="destructive"
+                        />
+                      ) : (
+                        <DropdownMenuItem onClick={() => onConnect(exchange.id)}>
+                          <Plus className="h-4 w-4 mr-2" />
+                          Connect
+                        </DropdownMenuItem>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
