@@ -15,7 +15,14 @@ import {
   TrendingDown,
   AlertTriangle,
   MoreHorizontal,
-  Plus
+  Plus,
+  Grid3X3,
+  List,
+  Activity,
+  Clock,
+  DollarSign,
+  Zap,
+  Shield
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -164,6 +171,7 @@ const mockBots: BotData[] = [
 export default function Bots() {
   const [selectedBots, setSelectedBots] = useState<BotData[]>([]);
   const [filters, setFilters] = useState<string[]>([]);
+  const [viewMode, setViewMode] = useState<'cards' | 'table'>('table');
 
   const handleStartBot = (botId: string) => {
     console.log('Starting bot:', botId);
@@ -359,10 +367,32 @@ export default function Bots() {
           <h1 className="text-2xl font-bold text-gray-900">Trading Bots</h1>
           <p className="text-gray-600">Manage and monitor your automated trading strategies</p>
         </div>
-        <Button data-testid="create-bot">
-          <Plus className="h-4 w-4 mr-2" />
-          Create Bot
-        </Button>
+        <div className="flex items-center space-x-2">
+          <div className="flex border rounded-lg p-1">
+            <Button
+              variant={viewMode === 'cards' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('cards')}
+              data-testid="view-cards"
+              className="px-3"
+            >
+              <Grid3X3 className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={viewMode === 'table' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('table')}
+              data-testid="view-table"
+              className="px-3"
+            >
+              <List className="h-4 w-4" />
+            </Button>
+          </div>
+          <Button data-testid="create-bot">
+            <Plus className="h-4 w-4 mr-2" />
+            Create Bot
+          </Button>
+        </div>
       </div>
 
       <div id="bots-table">
@@ -375,6 +405,14 @@ export default function Bots() {
               label: "Create Your First Bot",
               onClick: () => console.log('Create bot')
             }}
+          />
+        ) : viewMode === 'cards' ? (
+          <BotCardsView 
+            bots={mockBots}
+            onStartBot={handleStartBot}
+            onStopBot={handleStopBot}
+            onDeleteBot={handleDeleteBot}
+            getStatusBadge={getStatusBadge}
           />
         ) : (
           <EnhancedTable
@@ -390,6 +428,216 @@ export default function Bots() {
           />
         )}
       </div>
+    </div>
+  );
+}
+
+// Bot Cards View Component
+function BotCardsView({ bots, onStartBot, onStopBot, onDeleteBot, getStatusBadge }: {
+  bots: BotData[];
+  onStartBot: (id: string) => void;
+  onStopBot: (id: string) => void;
+  onDeleteBot: (id: string) => void;
+  getStatusBadge: (status: BotData['status']) => React.ReactNode;
+}) {
+  const formatLastTrade = (lastTrade: string) => {
+    return lastTrade;
+  };
+
+  const getStrategyIcon = (strategy: string) => {
+    switch (strategy.toLowerCase()) {
+      case 'grid trading':
+        return <Activity className="h-5 w-5 text-blue-500" />;
+      case 'arbitrage':
+        return <TrendingUp className="h-5 w-5 text-green-500" />;
+      case 'momentum':
+        return <Zap className="h-5 w-5 text-purple-500" />;
+      case 'mean reversion':
+        return <TrendingDown className="h-5 w-5 text-orange-500" />;
+      case 'dca':
+        return <DollarSign className="h-5 w-5 text-indigo-500" />;
+      case 'futures hedging':
+        return <Shield className="h-5 w-5 text-gray-500" />;
+      case 'scalping':
+        return <Clock className="h-5 w-5 text-red-500" />;
+      default:
+        return <Bot className="h-5 w-5 text-gray-400" />;
+    }
+  };
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      {bots.map((bot) => (
+        <Card key={bot.id} className="hover:shadow-lg transition-shadow">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                {getStrategyIcon(bot.strategy)}
+                <div>
+                  <CardTitle className="text-lg">{bot.name}</CardTitle>
+                  <div className="flex items-center space-x-2 mt-1">
+                    {getStatusBadge(bot.status)}
+                    <Clock className="h-3 w-3 text-gray-400" />
+                    <span className="text-xs text-gray-500">
+                      {formatLastTrade(bot.lastTrade)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                {bot.status === 'running' ? (
+                  <ConfirmationDialog
+                    trigger={
+                      <Button variant="ghost" size="sm" data-testid={`stop-${bot.id}`}>
+                        <Square className="h-4 w-4" />
+                      </Button>
+                    }
+                    title="Stop Trading Bot"
+                    description={`Are you sure you want to stop ${bot.name}? This will halt its operations and close any pending orders.`}
+                    confirmText="Stop Bot"
+                    onConfirm={() => onStopBot(bot.id)}
+                    variant="destructive"
+                  />
+                ) : (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onStartBot(bot.id)}
+                    disabled={bot.status === 'error'}
+                    data-testid={`start-${bot.id}`}
+                  >
+                    <Play className="h-4 w-4" />
+                  </Button>
+                )}
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" data-testid={`actions-${bot.id}`}>
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem>
+                      <Settings className="h-4 w-4 mr-2" />
+                      Configure
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Activity className="h-4 w-4 mr-2" />
+                      View Performance
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <ConfirmationDialog
+                      trigger={
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-red-600">
+                          <AlertTriangle className="h-4 w-4 mr-2" />
+                          Delete
+                        </DropdownMenuItem>
+                      }
+                      title="Delete Trading Bot"
+                      description={`Are you sure you want to delete ${bot.name}? This action cannot be undone.`}
+                      confirmText="Delete Bot"
+                      onConfirm={() => onDeleteBot(bot.id)}
+                      variant="destructive"
+                    />
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+          </CardHeader>
+
+          <CardContent className="space-y-4">
+            {/* Strategy and Exchange Information */}
+            <div className="bg-gray-50 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-700">Trading Info</span>
+                <Activity className="h-4 w-4 text-gray-400" />
+              </div>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-gray-500">Strategy</span>
+                  <p className="font-semibold">{bot.strategy}</p>
+                </div>
+                <div>
+                  <span className="text-gray-500">Exchange</span>
+                  <p className="font-semibold">{bot.exchange}</p>
+                </div>
+              </div>
+              <div className="mt-2 pt-2 border-t">
+                <span className="text-gray-500">Trading Pair</span>
+                <p className="font-semibold">{bot.pair}</p>
+              </div>
+            </div>
+
+            {/* Performance Metrics */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium">Performance</span>
+                <DollarSign className="h-4 w-4 text-gray-400" />
+              </div>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-gray-500">24h P&L</span>
+                  <p className={`font-semibold ${
+                    bot.pnl24h > 0 ? 'text-green-600' : bot.pnl24h < 0 ? 'text-red-600' : 'text-gray-600'
+                  }`}>
+                    {bot.pnl24h > 0 ? '+' : ''}${bot.pnl24h.toFixed(2)}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-gray-500">Total P&L</span>
+                  <p className={`font-semibold ${
+                    bot.totalPnl > 0 ? 'text-green-600' : bot.totalPnl < 0 ? 'text-red-600' : 'text-gray-600'
+                  }`}>
+                    {bot.totalPnl > 0 ? '+' : ''}${bot.totalPnl.toFixed(2)}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Uptime and Activity */}
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="text-gray-500">Uptime</span>
+                <p className="font-semibold">{bot.uptime}</p>
+              </div>
+              <div>
+                <span className="text-gray-500">Last Trade</span>
+                <p className="font-semibold">{bot.lastTrade}</p>
+              </div>
+            </div>
+
+            {/* Performance Indicator */}
+            <div className="pt-2 border-t">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-500">Performance</span>
+                <div className="flex items-center space-x-1">
+                  {bot.pnl24h > 0 ? (
+                    <TrendingUp className="h-4 w-4 text-green-500" />
+                  ) : bot.pnl24h < 0 ? (
+                    <TrendingDown className="h-4 w-4 text-red-500" />
+                  ) : (
+                    <Activity className="h-4 w-4 text-gray-400" />
+                  )}
+                  <span className={`font-medium ${
+                    bot.pnl24h > 0 ? 'text-green-600' : bot.pnl24h < 0 ? 'text-red-600' : 'text-gray-600'
+                  }`}>
+                    {bot.pnl24h > 0 ? 'Profitable' : bot.pnl24h < 0 ? 'Loss' : 'Neutral'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Error Message */}
+            {bot.status === 'error' && (
+              <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg">
+                <AlertTriangle className="h-4 w-4" />
+                <span className="text-sm">Bot encountered an error. Check configuration.</span>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 }
