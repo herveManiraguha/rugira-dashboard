@@ -4,6 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import logoSvg from "@/assets/logo.svg";
 import { useAuth } from '@/contexts/MockAuthContext';
+import DemoRibbon from '@/components/Demo/DemoRibbon';
+import Footer from '@/components/Layout/Footer';
+import StatusBadge from '@/components/Layout/StatusBadge';
 import { 
   Bell, 
   User, 
@@ -66,6 +69,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <DemoRibbon />
 
       
       {/* Mobile Menu Overlay */}
@@ -260,10 +264,11 @@ export function MainLayout({ children }: MainLayoutProps) {
         </nav>
 
         {/* Main Content */}
-        <main className="flex-1 xl:ml-64 p-4 md:p-6 min-h-screen bg-gray-50">
-          <div className="max-w-full">
+        <main className="flex-1 xl:ml-64 p-4 md:p-6 min-h-screen bg-gray-50 flex flex-col">
+          <div className="max-w-full flex-1">
             {children}
           </div>
+          <Footer />
         </main>
       </div>
     </div>

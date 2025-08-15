@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { MainLayout } from "@/components/Layout/MainLayout";
 import { AuthProvider } from "@/contexts/MockAuthContext";
+import { DemoProvider } from "@/contexts/DemoContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import "./index.css";
 
@@ -11,6 +12,7 @@ import "./index.css";
 import Login from "@/pages/Login";
 import AuthCallback from "@/pages/AuthCallback";
 import Overview from "@/pages/Overview";
+import DemoOverview from "@/pages/DemoOverview";
 import Strategies from "@/pages/Strategies";
 import Exchanges from "@/pages/Exchanges";
 import Compliance from "@/pages/Compliance";
@@ -37,12 +39,16 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
+      <DemoProvider>
+        <AuthProvider>
         <Switch>
           {/* Public routes */}
           <Route path="/" component={Login} />
           <Route path="/login" component={Login} />
           <Route path="/auth/callback" component={AuthCallback} />
+          
+          {/* Public demo route */}
+          <Route path="/demo" component={DemoOverview} />
           
           {/* Protected routes */}
           <Route path="/overview">
@@ -151,7 +157,8 @@ function App() {
           
           <Route component={NotFound} />
         </Switch>
-      </AuthProvider>
+        </AuthProvider>
+      </DemoProvider>
       <Toaster />
     </QueryClientProvider>
   );

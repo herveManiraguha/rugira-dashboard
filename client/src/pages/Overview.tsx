@@ -2,7 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useDemoMode } from "@/contexts/DemoContext";
+import DemoStoryViewer from "@/components/Demo/DemoStoryViewer";
+import SampleExportModal from "@/components/Demo/SampleExportModal";
+import { DEMO_BOTS, DEMO_METRICS, DEMO_TRADES, DEMO_ALERTS } from "../../../shared/demo-data";
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -42,6 +47,8 @@ interface ActivityItem {
 export default function Overview() {
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [timeRange, setTimeRange] = useState('24h' as const);
+  const [showExportModal, setShowExportModal] = useState(false);
+  const { isDemoMode, isReadOnly } = useDemoMode();
 
   // Generate mock KPI data
   const generateKPIData = (): KPI[] => {
@@ -308,18 +315,18 @@ export default function Overview() {
     };
   }, []);
 
-  const formatValue = (value: string | number, type: KPI['type']) => {
+  const formatValue = (value: string | number, type: KPI['type']): string => {
     switch (type) {
       case 'currency':
         return typeof value === 'number' ? 
           `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` :
-          value;
+          String(value);
       case 'percentage':
-        return typeof value === 'number' ? `${value.toFixed(2)}%` : value;
+        return typeof value === 'number' ? `${value.toFixed(2)}%` : String(value);
       case 'time':
-        return typeof value === 'number' ? `${value}ms` : value;
+        return typeof value === 'number' ? `${value}ms` : String(value);
       default:
-        return value;
+        return String(value);
     }
   };
 
@@ -506,6 +513,41 @@ export default function Overview() {
           )}
         </CardContent>
       </Card>
+
+      {/* Demo Components */}
+      {isDemoMode && (
+        <div className="space-y-6">
+          <DemoStoryViewer />
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>Sample Exports</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-3">
+                <Button 
+                  onClick={() => setShowExportModal(true)}
+                  variant="outline"
+                  disabled={isReadOnly}
+                  data-testid="button-sample-exports"
+                >
+                  Download Sample Reports
+                </Button>
+                {isReadOnly && (
+                  <p className="text-sm text-gray-500 flex items-center">
+                    Export disabled in read-only mode
+                  </p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      <SampleExportModal 
+        isOpen={showExportModal} 
+        onClose={() => setShowExportModal(false)} 
+      />
     </div>
   );
 }

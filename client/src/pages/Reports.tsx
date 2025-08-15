@@ -6,6 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { BarChart3, TrendingUp, Download, Calendar, DollarSign, Target, Clock } from "lucide-react";
+import { useDemoMode } from "@/contexts/DemoContext";
+import SampleExportModal from "@/components/Demo/SampleExportModal";
 import { 
   BarChart, 
   Bar, 
@@ -23,6 +25,8 @@ import {
 export default function Reports() {
   const [dateRange, setDateRange] = useState('7d');
   const [selectedBot, setSelectedBot] = useState('all');
+  const [showExportModal, setShowExportModal] = useState(false);
+  const { isDemoMode, isReadOnly } = useDemoMode();
 
   const performanceMetrics = {
     roi: '12.4%',
@@ -305,6 +309,11 @@ export default function Reports() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <SampleExportModal 
+        isOpen={showExportModal} 
+        onClose={() => setShowExportModal(false)} 
+      />
     </div>
   );
 }
