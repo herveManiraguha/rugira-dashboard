@@ -3,6 +3,7 @@ import { Route, Switch, useLocation, Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import logoSvg from "@/assets/logo.svg";
+import { useAuth } from '@/contexts/AuthContext';
 import { 
   Bell, 
   User, 
@@ -21,7 +22,8 @@ import {
   HelpCircle,
   Power,
   Wifi,
-  WifiOff
+  WifiOff,
+  LogOut
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -37,7 +39,7 @@ interface MainLayoutProps {
 }
 
 const navigation = [
-  { name: 'Overview', href: '/', icon: Activity },
+  { name: 'Overview', href: '/overview', icon: Activity },
   { name: 'Bots', href: '/bots', icon: Bot },
   { name: 'Strategies', href: '/strategies', icon: Target },
   { name: 'Exchanges', href: '/exchanges', icon: Building2 },
@@ -51,6 +53,7 @@ const navigation = [
 
 export function MainLayout({ children }: MainLayoutProps) {
   const [location] = useLocation();
+  const { user, logout } = useAuth();
   const [isKillSwitchEnabled, setIsKillSwitchEnabled] = useState(false);
   const [apiStatus, setApiStatus] = useState<'ok' | 'degraded' | 'error'>('ok');
   const [environment, setEnvironment] = useState<'Live' | 'Paper'>('Paper');
@@ -212,23 +215,45 @@ export function MainLayout({ children }: MainLayoutProps) {
           <div className="p-4 border-t border-gray-200">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="w-full justify-between group hover:bg-gray-50">
-                  <div className="flex items-center">
-                    <User className="h-4 w-4 mr-3" />
-                    <span className="text-left">Hans</span>
+                <Button variant="ghost" className="w-full justify-between group hover:bg-gray-50" data-testid="button-user-menu">
+                  <div className="flex items-center overflow-hidden">
+                    <User className="h-4 w-4 mr-3 flex-shrink-0" />
+                    <div className="text-left overflow-hidden">
+                      <div className="text-sm font-medium truncate">
+                        {user?.profile?.name || user?.profile?.email || 'User'}
+                      </div>
+                      {user?.profile?.email && user?.profile?.name && (
+                        <div className="text-xs text-gray-500 truncate">
+                          {user.profile.email}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-gray-600" />
+                  <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-gray-600 flex-shrink-0" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" side="right" className="w-48 ml-2">
                 <DropdownMenuItem asChild>
-                  <Link href="/profile" className="w-full cursor-pointer">Profile</Link>
+                  <Link href="/profile" className="w-full cursor-pointer">
+                    <User className="h-4 w-4 mr-2" />
+                    Profile
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/settings" className="w-full cursor-pointer">Settings</Link>
+                  <Link href="/settings" className="w-full cursor-pointer">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Settings
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Sign out</DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={logout}
+                  className="text-red-600 focus:text-red-600"
+                  data-testid="button-logout"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign out
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

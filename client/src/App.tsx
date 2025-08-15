@@ -3,9 +3,14 @@ import { Route, Switch } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { MainLayout } from "@/components/Layout/MainLayout";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import "./index.css";
 
 // Import pages
+import Home from "@/pages/Home";
+import Login from "@/pages/Login";
+import AuthCallback from "@/pages/AuthCallback";
 import Overview from "@/pages/Overview";
 import Strategies from "@/pages/Strategies";
 import Exchanges from "@/pages/Exchanges";
@@ -33,25 +38,121 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <MainLayout>
+      <AuthProvider>
         <Switch>
-          <Route path="/" component={Overview} />
-          <Route path="/bots" component={Bots} />
-          <Route path="/strategies" component={Strategies} />
-          <Route path="/exchanges" component={Exchanges} />
-          <Route path="/compliance" component={Compliance} />
-          <Route path="/reports" component={Reports} />
-          <Route path="/backtesting" component={Backtesting} />
-          <Route path="/monitoring" component={Monitoring} />
-          <Route path="/settings" component={Settings} />
-          <Route path="/profile" component={Profile} />
-          <Route path="/admin" component={Admin} />
-        <Route path="/bots" component={Bots} />
-          <Route path="/admin/user/:id" component={UserDetail} />
-          <Route path="/help" component={Help} />
+          {/* Public routes */}
+          <Route path="/" component={Home} />
+          <Route path="/login" component={Login} />
+          <Route path="/auth/callback" component={AuthCallback} />
+          
+          {/* Protected routes */}
+          <Route path="/overview">
+            <ProtectedRoute>
+              <MainLayout>
+                <Overview />
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+          
+          <Route path="/bots">
+            <ProtectedRoute>
+              <MainLayout>
+                <Bots />
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+          
+          <Route path="/strategies">
+            <ProtectedRoute>
+              <MainLayout>
+                <Strategies />
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+          
+          <Route path="/exchanges">
+            <ProtectedRoute>
+              <MainLayout>
+                <Exchanges />
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+          
+          <Route path="/compliance">
+            <ProtectedRoute>
+              <MainLayout>
+                <Compliance />
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+          
+          <Route path="/reports">
+            <ProtectedRoute>
+              <MainLayout>
+                <Reports />
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+          
+          <Route path="/backtesting">
+            <ProtectedRoute>
+              <MainLayout>
+                <Backtesting />
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+          
+          <Route path="/monitoring">
+            <ProtectedRoute>
+              <MainLayout>
+                <Monitoring />
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+          
+          <Route path="/settings">
+            <ProtectedRoute>
+              <MainLayout>
+                <Settings />
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+          
+          <Route path="/profile">
+            <ProtectedRoute>
+              <MainLayout>
+                <Profile />
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+          
+          <Route path="/admin">
+            <ProtectedRoute>
+              <MainLayout>
+                <Admin />
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+          
+          <Route path="/admin/user/:id">
+            <ProtectedRoute>
+              <MainLayout>
+                <UserDetail />
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+          
+          <Route path="/help">
+            <ProtectedRoute>
+              <MainLayout>
+                <Help />
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+          
           <Route component={NotFound} />
         </Switch>
-      </MainLayout>
+      </AuthProvider>
       <Toaster />
     </QueryClientProvider>
   );

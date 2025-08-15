@@ -1,0 +1,158 @@
+Replit AI Prompt — Add Authentication + Home/Login flow to app.rugira.ch
+
+Goal
+Implement a secure login flow for the Rugira dashboard using OAuth2/OIDC Authorization Code with PKCE. I want:
+
+A public Home screen at / (product intro + “Log in” button).
+
+A Login route at /login that initiates the OIDC redirect.
+
+A Callback route at /auth/callback that completes the login and redirects to the intended page.
+
+All other routes require auth (route guard).
+
+A Logout link that ends the session and returns the user to the marketing site.
+
+Tokens kept out of localStorage (in-memory or httpOnly cookie if using a small BFF).
+
+Assumptions
+
+The app is Vue 3 + Vite in this Repl.
+
+The API lives at VITE_API_BASE_URL.
+
+I will use a managed IdP (Auth0, Cognito, or Keycloak). Ask me which one, then proceed accordingly.
+
+Step 1 — Ask me for IdP details and set secrets
+
+Ask: which IdP do I want? Auth0, Cognito, or Keycloak.
+
+Ask for the values and then create Replit Secrets (don’t hardcode):
+
+VITE_AUTH_ISSUER (e.g., https://<tenant>.auth0.com OR https://auth.rugira.ch/realms/rugira OR Cognito domain)
+
+VITE_AUTH_CLIENT_ID
+
+VITE_AUTH_AUDIENCE (only if my API checks an audience claim; otherwise leave empty)
+
+VITE_AUTH_REDIRECT_URI = https://app.rugira.ch/auth/callback
+
+VITE_AUTH_POST_LOGOUT_REDIRECT_URI = https://rugira.ch
+
+Confirm VITE_API_BASE_URL is already set and keep it as-is.
+
+Tell me exactly which Callback/Logout/Web Origins I must add in my IdP console, and pause until I confirm I’ve added:
+
+Callback: https://app.rugira.ch/auth/callback (+ my Replit preview https://<repl>.repl.co/auth/callback for staging)
+
+Post-logout: https://rugira.ch (or https://app.rugira.ch)
+
+Allowed web origins: https://app.rugira.ch (+ preview origin for staging)
+
+Step 2 — Install and wire an OIDC client
+
+If Auth0, use the official Vue SDK and configure it with PKCE.
+
+If Cognito or Keycloak, use a generic OIDC client (e.g., oidc-client-ts) configured for Authorization Code + PKCE.
+Do not store tokens in localStorage; keep tokens in memory. If a refresh token is needed, keep it in memory or (optionally) create a tiny BFF endpoint that sets a short-lived httpOnly, SameSite=None; Secure session cookie under app.rugira.ch and exchanges codes server-side.
+
+What to implement in code (you generate it):
+
+An auth plugin/composable that exposes: isAuthenticated, user, login(), logout(), getAccessToken(), handleRedirectCallback().
+
+Auto-renew access tokens via the IdP session (prompt=none) or refresh token rotation (no localStorage).
+
+Step 3 — Routes & guards
+
+Add/ensure routes:
+
+/ → Home (public): shows product intro, “Log in” primary CTA, and a link back to rugira.ch.
+
+/login (public): immediately calls login() and supports ?next= to remember the target page.
+
+/auth/callback (public): calls handleRedirectCallback() then redirects to next or /overview.
+
+All other existing routes (Overview, Bots, etc.) → add meta: { requiresAuth: true }.
+
+Add a global beforeEach guard in Vue Router:
+
+If the route has requiresAuth and the user is not authenticated, redirect to /login?next=<intended>.
+
+If authenticated, allow navigation.
+
+Step 4 — UI changes
+
+Home (/):
+
+Rugira brand, short 2–3 line intro.
+
+“Log in” button → /login?next=/overview.
+
+Link: “Back to rugira.ch” → https://rugira.ch.
+
+Footer: legal links (Privacy/Terms) and a small status line (“App status: Online”).
+
+Top-right user menu (visible after auth): show user name/email (from ID token), and a Logout item that:
+
+clears session in the app, and
+
+navigates to the IdP logout endpoint, with post_logout_redirect_uri set to VITE_AUTH_POST_LOGOUT_REDIRECT_URI.
+
+Loading states: full-page loader during /login → IdP redirect and during /auth/callback → token exchange.
+
+Error states: friendly failure page if the callback has an error (invalid state, mismatch redirect, etc.), with a “Try again” button.
+
+Step 5 — Secure API calls
+
+Update the API client to inject the access token from getAccessToken() into the Authorization: Bearer <token> header.
+
+If a token is missing/expired, trigger a silent renewal (or redirect to /login if renewal fails).
+
+When calling cross-origin APIs, ensure the API CORS allow-list includes https://app.rugira.ch (already handled separately).
+
+Never log token contents. Mask user identifiers in logs.
+
+Step 6 — Cookies (only if using a BFF/session cookie)
+
+If you choose the optional tiny BFF approach, set the session cookie attributes:
+Domain=.rugira.ch; Secure; SameSite=None; HttpOnly; Path=/
+
+Trust proxy headers so HTTPS is detected behind Replit/ALB.
+
+Keep CSRF protections if your BFF exposes state-changing endpoints.
+
+Step 7 — Acceptance criteria & tests
+
+Visiting https://app.rugira.ch/ shows the Home screen with the “Log in” CTA.
+
+Clicking Log in redirects to my IdP, then back to /auth/callback, then to the requested page (e.g., /overview).
+
+Protected routes cannot be accessed without authentication; the guard sends me to /login?next=….
+
+Logout returns me to https://rugira.ch (or the configured page) and the app shows me as signed-out.
+
+Refreshing a protected page keeps me signed in if the session is valid (token renewed or IdP session present).
+
+No tokens are stored in localStorage; console has no auth warnings/errors; CORS preflight passes.
+
+In the IdP dashboard, the Allowed Callback and Allowed Web Origins contain the new domain and staging preview.
+
+Step 8 — Output for me
+
+A short checklist of secrets to keep updated (issuer, client id, audience, redirect URIs).
+
+The exact IdP URLs you configured (authorize, token, logout).
+
+The list of protected routes and where the guard is wired.
+
+How to switch environments (staging preview vs production) by changing Secrets.
+
+A one-liner on how to add role-based UI later (read roles from ID token claims and hide Admin/Compliance if not present).
+
+Notes:
+
+Prefer Authorization Code + PKCE.
+
+If you implement refresh tokens, rotate them and avoid persistent storage.
+
+If later I host the IdP at auth.rugira.ch, we can enable truly same-site cookies for smoother silent renew.

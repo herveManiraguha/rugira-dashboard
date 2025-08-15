@@ -1,6 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
 
-// Extend Request type to include session and user
+// Extend Express Request type to include session and user
+declare module 'express-session' {
+  interface SessionData {
+    user?: {
+      id: string;
+      email: string;
+      name: string;
+      role?: string;
+    };
+  }
+}
+
+// Extend Request type to include user
 declare global {
   namespace Express {
     interface Request {
