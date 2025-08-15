@@ -19,18 +19,28 @@ import {
   Edit,
   RotateCcw,
   Download,
-  Upload
+  Upload,
+  Edit2,
+  UserX,
+  UserCheck,
+  TrendingUp,
+  Activity
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface User {
   id: string;
   username: string;
+  name: string;
   email: string;
   role: 'admin' | 'trader' | 'viewer';
-  status: 'active' | 'suspended';
+  status: 'active' | 'suspended' | 'inactive';
   lastLogin: string;
   createdAt: string;
+  country: string;
+  totalTrades: number;
+  totalVolume: string;
+  subscription: 'Free' | 'Professional' | 'Enterprise';
 }
 
 interface SystemConfig {
@@ -41,26 +51,47 @@ interface SystemConfig {
 }
 
 export default function Admin() {
-  const [users] = useState<User[]>([
-    {
-      id: '1',
-      username: 'admin',
-      email: 'admin@rugira.ch',
-      role: 'admin',
-      status: 'active',
-      lastLogin: new Date().toISOString(),
-      createdAt: new Date(Date.now() - 86400000 * 30).toISOString()
-    },
-    {
-      id: '2',
-      username: 'trader1',
-      email: 'trader@rugira.ch',
-      role: 'trader',
-      status: 'active',
-      lastLogin: new Date(Date.now() - 3600000).toISOString(),
-      createdAt: new Date(Date.now() - 86400000 * 15).toISOString()
-    }
-  ]);
+  const generateMockUsers = (): User[] => {
+    const userData = [
+      { username: 'hmueller', name: 'Hans Mueller', email: 'hans.mueller@rugira.ch', role: 'admin' as const, country: 'Switzerland', subscription: 'Enterprise' as const, totalTrades: 15847, totalVolume: '$2.4M' },
+      { username: 'echen', name: 'Emma Chen', email: 'emma.chen@tradepro.com', role: 'trader' as const, country: 'Singapore', subscription: 'Professional' as const, totalTrades: 8924, totalVolume: '$1.2M' },
+      { username: 'mrossi', name: 'Marco Rossi', email: 'marco.rossi@cryptofund.it', role: 'trader' as const, country: 'Italy', subscription: 'Professional' as const, totalTrades: 6743, totalVolume: '$890K' },
+      { username: 'sjohnson', name: 'Sarah Johnson', email: 'sarah.j@quanthedge.com', role: 'trader' as const, country: 'United Kingdom', subscription: 'Professional' as const, totalTrades: 12456, totalVolume: '$1.8M' },
+      { username: 'apetrov', name: 'Alex Petrov', email: 'alex.petrov@binarytech.ru', role: 'trader' as const, country: 'Russia', subscription: 'Professional' as const, totalTrades: 3421, totalVolume: '$345K' },
+      { username: 'landerson', name: 'Lisa Anderson', email: 'lisa.anderson@tradewise.ca', role: 'viewer' as const, country: 'Canada', subscription: 'Free' as const, totalTrades: 1567, totalVolume: '$89K' },
+      { username: 'htanaka', name: 'Hiroshi Tanaka', email: 'h.tanaka@cryptoasia.jp', role: 'trader' as const, country: 'Japan', subscription: 'Professional' as const, totalTrades: 9876, totalVolume: '$1.5M' },
+      { username: 'pdubois', name: 'Pierre Dubois', email: 'pierre.dubois@tradeparis.fr', role: 'trader' as const, country: 'France', subscription: 'Professional' as const, totalTrades: 4532, totalVolume: '$567K' },
+      { username: 'akowalski', name: 'Anna Kowalski', email: 'anna.k@cryptopoland.pl', role: 'viewer' as const, country: 'Poland', subscription: 'Free' as const, totalTrades: 892, totalVolume: '$34K' },
+      { username: 'crodriguez', name: 'Carlos Rodriguez', email: 'carlos.r@trademexico.mx', role: 'trader' as const, country: 'Mexico', subscription: 'Free' as const, totalTrades: 2134, totalVolume: '$156K' },
+      { username: 'ilarsson', name: 'Ingrid Larsson', email: 'ingrid.larsson@nordicfunds.se', role: 'trader' as const, country: 'Sweden', subscription: 'Professional' as const, totalTrades: 7234, totalVolume: '$923K' },
+      { username: 'moconnor', name: 'Michael O\'Connor', email: 'michael.oconnor@irishcrypto.ie', role: 'trader' as const, country: 'Ireland', subscription: 'Professional' as const, totalTrades: 3876, totalVolume: '$445K' },
+      { username: 'frashid', name: 'Fatima Al-Rashid', email: 'fatima.rashid@gulftrading.ae', role: 'trader' as const, country: 'UAE', subscription: 'Enterprise' as const, totalTrades: 11234, totalVolume: '$1.9M' },
+      { username: 'dkim', name: 'David Kim', email: 'david.kim@koreafintech.kr', role: 'trader' as const, country: 'South Korea', subscription: 'Professional' as const, totalTrades: 5432, totalVolume: '$678K' },
+      { username: 'evolkov', name: 'Elena Volkov', email: 'elena.volkov@baltictrade.ee', role: 'viewer' as const, country: 'Estonia', subscription: 'Free' as const, totalTrades: 234, totalVolume: '$12K' },
+      { username: 'jsilva', name: 'João Silva', email: 'joao.silva@brasilcrypto.br', role: 'trader' as const, country: 'Brazil', subscription: 'Professional' as const, totalTrades: 4567, totalVolume: '$523K' },
+      { username: 'rpatel', name: 'Raj Patel', email: 'raj.patel@mumbaitrading.in', role: 'trader' as const, country: 'India', subscription: 'Professional' as const, totalTrades: 8765, totalVolume: '$987K' },
+      { username: 'smitchell', name: 'Sophie Mitchell', email: 'sophie.mitchell@aussiefunds.au', role: 'trader' as const, country: 'Australia', subscription: 'Professional' as const, totalTrades: 3241, totalVolume: '$387K' },
+      { username: 'ahassan', name: 'Ahmed Hassan', email: 'ahmed.hassan@egypttrade.eg', role: 'viewer' as const, country: 'Egypt', subscription: 'Free' as const, totalTrades: 1456, totalVolume: '$67K' },
+      { username: 'kweber', name: 'Klaus Weber', email: 'klaus.weber@germanfunds.de', role: 'trader' as const, country: 'Germany', subscription: 'Enterprise' as const, totalTrades: 9432, totalVolume: '$1.3M' }
+    ];
+
+    return userData.map((user, index) => {
+      const hoursAgo = Math.floor(Math.random() * 168); // Up to 7 days ago
+      const daysAgo = Math.floor(Math.random() * 365) + 30; // 30-395 days ago
+      const statusOptions: ('active' | 'suspended' | 'inactive')[] = ['active', 'active', 'active', 'active', 'suspended', 'inactive'];
+      const randomStatus = statusOptions[Math.floor(Math.random() * statusOptions.length)];
+      
+      return {
+        id: (index + 1).toString(),
+        ...user,
+        status: index === 0 ? 'active' : randomStatus, // Ensure admin is always active
+        lastLogin: new Date(Date.now() - (hoursAgo * 3600000)).toISOString(),
+        createdAt: new Date(Date.now() - (daysAgo * 24 * 3600000)).toISOString()
+      };
+    });
+  };
+
+  const [users] = useState<User[]>(generateMockUsers());
 
   const [systemConfigs] = useState<SystemConfig[]>([
     {
@@ -105,7 +136,16 @@ export default function Admin() {
     switch (status) {
       case 'active': return <Badge className="bg-green-100 text-green-800">Active</Badge>;
       case 'suspended': return <Badge variant="destructive">Suspended</Badge>;
+      case 'inactive': return <Badge variant="secondary">Inactive</Badge>;
       default: return <Badge variant="secondary">Unknown</Badge>;
+    }
+  };
+
+  const getSubscriptionBadge = (subscription: User['subscription']) => {
+    switch (subscription) {
+      case 'Enterprise': return <Badge className="bg-brand-red text-white">Enterprise</Badge>;
+      case 'Professional': return <Badge className="bg-brand-green text-white">Professional</Badge>;
+      case 'Free': return <Badge variant="outline">Free</Badge>;
     }
   };
 
@@ -202,11 +242,70 @@ export default function Admin() {
         </TabsList>
         
         <TabsContent value="users" className="space-y-6">
+          {/* User Statistics */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center">
+                  <Users className="h-8 w-8 text-blue-600" />
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-500">Total Users</p>
+                    <p className="text-2xl font-bold text-gray-900">{users.length}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center">
+                  <UserCheck className="h-8 w-8 text-green-600" />
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-500">Active Users</p>
+                    <p className="text-2xl font-bold text-gray-900">{users.filter(u => u.status === 'active').length}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center">
+                  <TrendingUp className="h-8 w-8 text-purple-600" />
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-500">Total Volume</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      ${(users.reduce((acc, user) => {
+                        const volume = parseFloat(user.totalVolume.replace(/[$KM,]/g, ''));
+                        const multiplier = user.totalVolume.includes('M') ? 1000000 : user.totalVolume.includes('K') ? 1000 : 1;
+                        return acc + (volume * multiplier);
+                      }, 0) / 1000000).toFixed(1)}M
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center">
+                  <Activity className="h-8 w-8 text-orange-600" />
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-500">Total Trades</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {users.reduce((acc, user) => acc + user.totalTrades, 0).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">User Accounts</h2>
+            <h2 className="text-xl font-semibold">User Management</h2>
             <Dialog open={isAddUserModalOpen} onOpenChange={setIsAddUserModalOpen}>
               <DialogTrigger asChild>
-                <Button>
+                <Button data-testid="button-add-user">
                   <Plus className="h-4 w-4 mr-2" />
                   Add User
                 </Button>
@@ -222,13 +321,17 @@ export default function Admin() {
 
           <Card>
             <CardContent className="p-0">
-              <Table>
+              <div className="overflow-x-auto">
+                <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Username</TableHead>
-                    <TableHead>Email</TableHead>
+                    <TableHead>User</TableHead>
                     <TableHead>Role</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Subscription</TableHead>
+                    <TableHead>Country</TableHead>
+                    <TableHead>Total Trades</TableHead>
+                    <TableHead>Volume</TableHead>
                     <TableHead>Last Login</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
@@ -236,22 +339,43 @@ export default function Admin() {
                 <TableBody>
                   {users.map((user) => (
                     <TableRow key={user.id}>
-                      <TableCell className="font-medium">{user.username}</TableCell>
-                      <TableCell>{user.email}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-gradient-to-br from-brand-red to-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                            {user.name.split(' ').map(n => n[0]).join('')}
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">{user.name}</p>
+                            <p className="text-sm text-gray-500">{user.email}</p>
+                          </div>
+                        </div>
+                      </TableCell>
                       <TableCell>{getRoleBadge(user.role)}</TableCell>
                       <TableCell>{getStatusBadge(user.status)}</TableCell>
-                      <TableCell className="text-sm text-gray-500">
-                        {new Date(user.lastLogin).toLocaleString()}
+                      <TableCell>{getSubscriptionBadge(user.subscription)}</TableCell>
+                      <TableCell>
+                        <span className="text-sm text-gray-900">{user.country}</span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="font-medium">{user.totalTrades.toLocaleString()}</span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="font-medium text-green-600">{user.totalVolume}</span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm text-gray-500">
+                          {new Date(user.lastLogin).toLocaleDateString()}
+                        </span>
                       </TableCell>
                       <TableCell>
                         <div className="flex space-x-1">
-                          <Button size="sm" variant="outline">
-                            <Edit className="h-3 w-3" />
+                          <Button size="sm" variant="outline" data-testid="button-edit-user">
+                            <Edit2 className="h-3 w-3" />
                           </Button>
-                          <Button size="sm" variant="outline">
-                            <RotateCcw className="h-3 w-3" />
+                          <Button size="sm" variant="outline" data-testid="button-suspend-user">
+                            <UserX className="h-3 w-3" />
                           </Button>
-                          <Button size="sm" variant="outline">
+                          <Button size="sm" variant="outline" data-testid="button-delete-user">
                             <Trash2 className="h-3 w-3" />
                           </Button>
                         </div>
@@ -259,7 +383,8 @@ export default function Admin() {
                     </TableRow>
                   ))}
                 </TableBody>
-              </Table>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
