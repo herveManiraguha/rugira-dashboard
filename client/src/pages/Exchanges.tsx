@@ -8,6 +8,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Building2, CheckCircle, AlertTriangle, RotateCcw, Trash2, TestTube, TrendingUp, Shield, Eye, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  SiBinance,
+  SiCoinbase
+} from 'react-icons/si';
 
 interface ExchangeConnection {
   id: string;
@@ -67,6 +71,35 @@ export default function Exchanges() {
   const [connections, setConnections] = useState<ExchangeConnection[]>(generateMockExchanges());
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { toast } = useToast();
+
+  // Function to get exchange icon
+  const getExchangeIcon = (exchangeName: string) => {
+    const iconProps = { className: "h-5 w-5", title: exchangeName };
+    
+    switch (exchangeName.toLowerCase()) {
+      case 'binance':
+        return <SiBinance {...iconProps} style={{ color: '#F3BA2F' }} />;
+      case 'coinbase pro':
+      case 'coinbase':
+        return <SiCoinbase {...iconProps} style={{ color: '#0052FF' }} />;
+      case 'kraken':
+        return <Building2 {...iconProps} style={{ color: '#5741D9' }} />;
+      case 'bybit':
+        return <Building2 {...iconProps} style={{ color: '#F7931A' }} />;
+      case 'okx':
+        return <Building2 {...iconProps} style={{ color: '#000000' }} />;
+      case 'kucoin':
+        return <Building2 {...iconProps} style={{ color: '#23C070' }} />;
+      case 'gate.io':
+        return <Building2 {...iconProps} style={{ color: '#0066FF' }} />;
+      case 'huobi':
+        return <Building2 {...iconProps} style={{ color: '#2E7DD7' }} />;
+      case 'bitfinex':
+        return <Building2 {...iconProps} style={{ color: '#16A085' }} />;
+      default:
+        return <Building2 {...iconProps} className="h-5 w-5 text-gray-500" />;
+    }
+  };
 
   const getStatusBadge = (status: ExchangeConnection['status']) => {
     switch (status) {
@@ -232,7 +265,7 @@ export default function Exchanges() {
                 <TableRow key={connection.id}>
                   <TableCell className="font-medium">
                     <div className="flex items-center space-x-2">
-                      <Building2 className="h-4 w-4" />
+                      {getExchangeIcon(connection.name)}
                       <span>{connection.name}</span>
                     </div>
                   </TableCell>
