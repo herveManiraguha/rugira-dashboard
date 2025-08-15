@@ -242,6 +242,8 @@ const strategyTemplates: StrategyTemplate[] = [
 export default function Strategies() {
   const [selectedTemplate, setSelectedTemplate] = useState<StrategyTemplate | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showConfigModal, setShowConfigModal] = useState(false);
+  const [configuredStrategy, setConfiguredStrategy] = useState<StrategyTemplate | null>(null);
   const { toast } = useToast();
 
   const getCategoryIcon = (category: StrategyTemplate['category']) => {
@@ -275,6 +277,11 @@ export default function Strategies() {
   const openDetailsModal = (template: StrategyTemplate) => {
     setSelectedTemplate(template);
     setShowDetailsModal(true);
+  };
+
+  const openConfigModal = (template: StrategyTemplate) => {
+    setConfiguredStrategy(template);
+    setShowConfigModal(true);
   };
 
   const StrategyDetailsModal = ({ strategy }: { strategy: StrategyTemplate }) => {
@@ -607,6 +614,368 @@ export default function Strategies() {
     );
   };
 
+  const StrategyConfigModal = ({ strategy }: { strategy: StrategyTemplate }) => {
+    const [config, setConfig] = useState(strategy.defaultParams);
+    const [riskSettings, setRiskSettings] = useState({
+      maxPositionSize: 10,
+      stopLoss: 5,
+      takeProfit: 10,
+      maxDailyLoss: 2
+    });
+    const [tradingSettings, setTradingSettings] = useState({
+      exchange: 'binance',
+      tradingPair: 'BTC-USDT',
+      initialCapital: 1000
+    });
+    const [backtestSettings, setBacktestSettings] = useState({
+      enabled: true,
+      startDate: '2024-01-01',
+      endDate: '2024-12-31'
+    });
+
+    const handleConfigSave = () => {
+      toast({
+        title: "Strategy Configured",
+        description: `${strategy.name} has been configured and is ready for backtesting.`,
+      });
+      setShowConfigModal(false);
+    };
+
+    return (
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center space-x-3">
+            <Settings className="h-5 w-5" />
+            <span>Configure {strategy.name}</span>
+            <Badge className={getComplexityColor(strategy.complexity)}>
+              {strategy.complexity}
+            </Badge>
+          </DialogTitle>
+        </DialogHeader>
+
+        <Tabs defaultValue="parameters" className="w-full">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="parameters">Parameters</TabsTrigger>
+            <TabsTrigger value="risk">Risk Management</TabsTrigger>
+            <TabsTrigger value="trading">Trading Setup</TabsTrigger>
+            <TabsTrigger value="backtest">Backtesting</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="parameters" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Strategy Parameters</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  {Object.entries(config).map(([key, value]) => (
+                    <div key={key} className="space-y-2">
+                      <Label htmlFor={key} className="capitalize">
+                        {key.replace(/([A-Z])/g, ' $1').toLowerCase()}
+                      </Label>
+                      <Input
+                        id={key}
+                        type={typeof value === 'number' ? 'number' : 'text'}
+                        value={value}
+                        onChange={(e) => setConfig(prev => ({
+                          ...prev,
+                          [key]: typeof value === 'number' ? parseFloat(e.target.value) || 0 : e.target.value
+                        }))}
+                        className="w-full"
+                      />
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                  <h4 className="font-medium text-blue-900 mb-2">Parameter Tips:</h4>
+                  <ul className="text-sm text-blue-800 space-y-1">
+                    <li>• Lower values generally mean more conservative trading</li>
+                    <li>• Higher values can increase returns but also risk</li>
+                    <li>• Test different combinations with backtesting</li>
+                    <li>• Start conservative and adjust based on performance</li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="risk" className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Position & Loss Controls</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="maxPosition">Max Position Size (%)</Label>
+                    <Slider
+                      id="maxPosition"
+                      value={[riskSettings.maxPositionSize]}
+                      onValueChange={([value]) => setRiskSettings(prev => ({ ...prev, maxPositionSize: value }))}
+                      max={50}
+                      min={1}
+                      step={1}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>Conservative (1%)</span>
+                      <span className="font-medium">{riskSettings.maxPositionSize}%</span>
+                      <span>Aggressive (50%)</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="stopLoss">Stop Loss (%)</Label>
+                    <Slider
+                      id="stopLoss"
+                      value={[riskSettings.stopLoss]}
+                      onValueChange={([value]) => setRiskSettings(prev => ({ ...prev, stopLoss: value }))}
+                      max={20}
+                      min={1}
+                      step={0.5}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>Tight (1%)</span>
+                      <span className="font-medium">{riskSettings.stopLoss}%</span>
+                      <span>Wide (20%)</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="takeProfit">Take Profit (%)</Label>
+                    <Slider
+                      id="takeProfit"
+                      value={[riskSettings.takeProfit]}
+                      onValueChange={([value]) => setRiskSettings(prev => ({ ...prev, takeProfit: value }))}
+                      max={50}
+                      min={2}
+                      step={1}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>Conservative (2%)</span>
+                      <span className="font-medium">{riskSettings.takeProfit}%</span>
+                      <span>Aggressive (50%)</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Daily Risk Controls</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="maxDailyLoss">Max Daily Loss (%)</Label>
+                    <Slider
+                      id="maxDailyLoss"
+                      value={[riskSettings.maxDailyLoss]}
+                      onValueChange={([value]) => setRiskSettings(prev => ({ ...prev, maxDailyLoss: value }))}
+                      max={10}
+                      min={0.5}
+                      step={0.5}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>Conservative (0.5%)</span>
+                      <span className="font-medium">{riskSettings.maxDailyLoss}%</span>
+                      <span>Aggressive (10%)</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 mt-6">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="autoStop">Auto-stop on daily limit</Label>
+                      <Switch id="autoStop" defaultChecked />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="emailAlerts">Email risk alerts</Label>
+                      <Switch id="emailAlerts" defaultChecked />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="positionResize">Dynamic position sizing</Label>
+                      <Switch id="positionResize" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="trading" className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Exchange & Pairs</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="exchange">Exchange</Label>
+                    <select 
+                      id="exchange"
+                      value={tradingSettings.exchange}
+                      onChange={(e) => setTradingSettings(prev => ({ ...prev, exchange: e.target.value }))}
+                      className="w-full p-2 border border-gray-300 rounded-md"
+                    >
+                      <option value="binance">Binance</option>
+                      <option value="coinbase">Coinbase Pro</option>
+                      <option value="kraken">Kraken</option>
+                      <option value="bybit">Bybit</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="tradingPair">Trading Pair</Label>
+                    <select 
+                      id="tradingPair"
+                      value={tradingSettings.tradingPair}
+                      onChange={(e) => setTradingSettings(prev => ({ ...prev, tradingPair: e.target.value }))}
+                      className="w-full p-2 border border-gray-300 rounded-md"
+                    >
+                      <option value="BTC-USDT">BTC/USDT</option>
+                      <option value="ETH-USDT">ETH/USDT</option>
+                      <option value="SOL-USDT">SOL/USDT</option>
+                      <option value="AVAX-USDT">AVAX/USDT</option>
+                      <option value="DOT-USDT">DOT/USDT</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="initialCapital">Initial Capital (USD)</Label>
+                    <Input
+                      id="initialCapital"
+                      type="number"
+                      value={tradingSettings.initialCapital}
+                      onChange={(e) => setTradingSettings(prev => ({ ...prev, initialCapital: parseInt(e.target.value) || 0 }))}
+                      className="w-full"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Trading Schedule</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="runContinuous">Run 24/7</Label>
+                      <Switch id="runContinuous" defaultChecked />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="weekendsOnly">Weekends only</Label>
+                      <Switch id="weekendsOnly" />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="paperTrade">Paper trading mode</Label>
+                      <Switch id="paperTrade" defaultChecked />
+                    </div>
+                  </div>
+
+                  <div className="mt-4 p-3 bg-yellow-50 rounded-lg">
+                    <h5 className="font-medium text-yellow-900">Recommended</h5>
+                    <p className="text-sm text-yellow-800">Start with paper trading to test your configuration before using real funds.</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="backtest" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Backtesting Configuration</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="enableBacktest">Enable Backtesting</Label>
+                  <Switch 
+                    id="enableBacktest" 
+                    checked={backtestSettings.enabled}
+                    onCheckedChange={(checked) => setBacktestSettings(prev => ({ ...prev, enabled: checked }))}
+                  />
+                </div>
+
+                {backtestSettings.enabled && (
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="startDate">Start Date</Label>
+                        <Input
+                          id="startDate"
+                          type="date"
+                          value={backtestSettings.startDate}
+                          onChange={(e) => setBacktestSettings(prev => ({ ...prev, startDate: e.target.value }))}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="endDate">End Date</Label>
+                        <Input
+                          id="endDate"
+                          type="date"
+                          value={backtestSettings.endDate}
+                          onChange={(e) => setBacktestSettings(prev => ({ ...prev, endDate: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 mt-4">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="includeCommission">Include commission costs</Label>
+                        <Switch id="includeCommission" defaultChecked />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="slippageModel">Include slippage model</Label>
+                        <Switch id="slippageModel" defaultChecked />
+                      </div>
+                    </div>
+
+                    <div className="mt-4 p-4 bg-green-50 rounded-lg">
+                      <h4 className="font-medium text-green-900 mb-2">Backtest Results Preview</h4>
+                      <div className="grid grid-cols-3 gap-4 text-sm">
+                        <div className="text-center">
+                          <div className="font-medium text-green-700">Total Return</div>
+                          <div className="text-lg">+24.5%</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="font-medium text-green-700">Max Drawdown</div>
+                          <div className="text-lg text-red-600">-12.3%</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="font-medium text-green-700">Win Rate</div>
+                          <div className="text-lg">67%</div>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+
+        <div className="flex justify-between pt-4 mt-6 border-t">
+          <Button variant="outline" onClick={() => setShowConfigModal(false)}>
+            Cancel
+          </Button>
+          <div className="flex space-x-2">
+            <Button variant="outline" onClick={() => toast({ title: "Configuration saved as template" })}>
+              Save Template
+            </Button>
+            <Button onClick={handleConfigSave}>
+              <Play className="h-4 w-4 mr-2" />
+              Deploy Strategy
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    );
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -648,7 +1017,7 @@ export default function Strategies() {
               </div>
               
               <div className="flex space-x-2 pt-2">
-                <Button size="sm" onClick={() => toast({ title: "Strategy configuration coming soon" })}>
+                <Button size="sm" onClick={() => openConfigModal(template)}>
                   <Settings className="h-4 w-4 mr-1" />
                   Configure
                 </Button>
@@ -670,6 +1039,13 @@ export default function Strategies() {
       {selectedTemplate && (
         <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal}>
           <StrategyDetailsModal strategy={selectedTemplate} />
+        </Dialog>
+      )}
+
+      {/* Strategy Configuration Modal */}
+      {configuredStrategy && (
+        <Dialog open={showConfigModal} onOpenChange={setShowConfigModal}>
+          <StrategyConfigModal strategy={configuredStrategy} />
         </Dialog>
       )}
     </div>
