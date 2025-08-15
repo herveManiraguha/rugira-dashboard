@@ -5,7 +5,11 @@ import StatusIndicator from "../UI/StatusIndicator";
 import { Link } from "wouter";
 import { Bell, User, ChevronDown, StopCircle } from "lucide-react";
 
-export default function TopBar() {
+interface TopBarProps {
+  onMenuToggle?: () => void;
+}
+
+export default function TopBar({ onMenuToggle }: TopBarProps) {
   const { count, notifications, markAsRead, markAllAsRead } = useNotificationStore();
   const { isConnected } = useApiStore();
   const [currentUser] = useState({ name: 'John Trader' });
@@ -97,27 +101,45 @@ export default function TopBar() {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-4 overflow-visible">
+    <header className="bg-white border-b border-gray-200 px-3 sm:px-4 md:px-6 py-3 md:py-4 overflow-visible">
       <div className="flex items-center justify-between overflow-visible">
-        {/* Tenant Switcher - Shadcn Select */}
-        <div className="flex items-center space-x-4">
-          <Select defaultValue="default" data-testid="select-tenant">
-            <SelectTrigger className="w-[180px] font-semibold bg-white">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-white" style={{ backgroundColor: 'white', opacity: 1 }}>
-              <SelectItem value="default">Default Tenant</SelectItem>
-              <SelectItem value="switch">Switch Tenant (Pro)</SelectItem>
-            </SelectContent>
-          </Select>
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-green text-white">
+        {/* Left side - Mobile Menu and Tenant */}
+        <div className="flex items-center space-x-2 sm:space-x-4">
+          {/* Mobile Menu Button */}
+          {onMenuToggle && (
+            <button
+              onClick={onMenuToggle}
+              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              data-testid="button-mobile-menu"
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          )}
+          
+          {/* Tenant Switcher - Hidden on mobile */}
+          <div className="hidden sm:block">
+            <Select defaultValue="default" data-testid="select-tenant">
+              <SelectTrigger className="w-[140px] md:w-[180px] font-semibold bg-white text-sm md:text-base">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-white" style={{ backgroundColor: 'white', opacity: 1 }}>
+                <SelectItem value="default">Default Tenant</SelectItem>
+                <SelectItem value="switch">Switch Tenant (Pro)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          {/* Status Badge */}
+          <span className="hidden sm:inline-flex items-center px-2 md:px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-green text-white">
             <StatusIndicator status="online" className="mr-1" />
             LIVE
           </span>
         </div>
 
         {/* Top Bar Actions */}
-        <div className="flex items-center space-x-4 overflow-visible">
+        <div className="flex items-center space-x-2 md:space-x-4 overflow-visible">
           {/* Notifications */}
           <div className="relative overflow-visible">
             <button 
@@ -137,39 +159,31 @@ export default function TopBar() {
               )}
             </button>
           </div>
-          
-          {/* SIMPLE TEST - This should always show - MOVED OUTSIDE */}
-          <div 
-            className="fixed right-6 top-20 w-48 h-24 bg-red-500 text-white p-4 rounded border"
-            style={{ zIndex: 9999 }}
-          >
-            TEST PANEL VISIBLE
-          </div>
 
-          {/* Kill Switch */}
+          {/* Kill Switch - Hidden on mobile */}
           <button 
             type="button"
-            className="btn-secondary text-xs px-3 py-1.5 border-2 border-brand-red flex items-center"
+            className="hidden sm:flex btn-secondary text-xs px-2 md:px-3 py-1 md:py-1.5 border-2 border-brand-red items-center"
             onClick={emergencyStop}
             data-testid="button-kill-switch"
             disabled={!isConnected}
           >
-            <StopCircle className="h-4 w-4 mr-1" />
-            Kill Switch
+            <StopCircle className="h-4 w-4 md:mr-1" />
+            <span className="hidden md:inline">Kill Switch</span>
           </button>
 
           {/* User Menu */}
           <div className="relative">
             <button 
-              className="flex items-center space-x-2 text-sm"
+              className="flex items-center space-x-1 md:space-x-2 text-sm"
               onClick={toggleUserMenu}
               data-testid="button-user-menu"
             >
               <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                 <User className="h-4 w-4 text-gray-600" />
               </div>
-              <span data-testid="text-user-name">{currentUser.name}</span>
-              <ChevronDown className="h-4 w-4" />
+              <span className="hidden md:inline" data-testid="text-user-name">{currentUser.name}</span>
+              <ChevronDown className="h-4 w-4 hidden md:block" />
             </button>
             
             {/* User dropdown would go here */}

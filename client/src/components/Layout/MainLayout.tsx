@@ -54,6 +54,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   const [isKillSwitchEnabled, setIsKillSwitchEnabled] = useState(false);
   const [apiStatus, setApiStatus] = useState<'ok' | 'degraded' | 'error'>('ok');
   const [environment, setEnvironment] = useState<'Live' | 'Paper'>('Paper');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleKillSwitch = () => {
     // TODO: Implement kill switch functionality when backend supports it
@@ -62,6 +63,16 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+
+      
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div 
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+      
       {/* Fixed Top Bar */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between w-full">
@@ -136,7 +147,9 @@ export function MainLayout({ children }: MainLayoutProps) {
 
       <div className="flex pt-20">
         {/* Fixed Left Sidebar */}
-        <nav className="fixed left-0 top-20 w-64 bg-white border-r border-gray-200 h-[calc(100vh-5rem)] overflow-y-auto z-40 flex flex-col">
+        <nav className={`fixed left-0 top-20 w-64 bg-white border-r border-gray-200 h-[calc(100vh-5rem)] overflow-y-auto z-40 flex flex-col transform transition-transform duration-200 ease-in-out ${
+          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        }`}>
           <div className="p-6 flex-1">
             <ul className="space-y-2">
               {navigation.map((item) => {
@@ -191,7 +204,7 @@ export function MainLayout({ children }: MainLayoutProps) {
         </nav>
 
         {/* Main Content */}
-        <main className="flex-1 ml-64 p-6 min-h-screen bg-gray-50">
+        <main className="flex-1 lg:ml-64 p-4 md:p-6 min-h-screen bg-gray-50">
           <div className="max-w-full">
             {children}
           </div>

@@ -27,7 +27,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 fixed h-full z-30 overflow-y-auto">
+    <aside className="hidden lg:block w-64 bg-white border-r border-gray-200 fixed h-full z-30 overflow-y-auto">
       {/* Brand Header */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center space-x-3">
