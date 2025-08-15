@@ -77,6 +77,45 @@ export default function Exchanges() {
     }
   };
 
+  const getPermissionBadge = (permissions: ExchangeConnection['permissions']) => {
+    const permissionLower = permissions.toLowerCase();
+    
+    if (permissionLower.includes('full')) {
+      return (
+        <Badge className="bg-green-100 text-green-800 border-green-300 hover:bg-green-100 font-medium px-3 py-1">
+          <Shield className="h-3 w-3 mr-1" />
+          {permissions}
+        </Badge>
+      );
+    }
+    
+    if (permissionLower.includes('trade')) {
+      return (
+        <Badge className="bg-orange-100 text-orange-800 border-orange-300 hover:bg-orange-100 font-medium px-3 py-1">
+          <TrendingUp className="h-3 w-3 mr-1" />
+          {permissions}
+        </Badge>
+      );
+    }
+    
+    if (permissionLower.includes('read')) {
+      return (
+        <Badge className="bg-blue-100 text-blue-800 border-blue-300 hover:bg-blue-100 font-medium px-3 py-1">
+          <Eye className="h-3 w-3 mr-1" />
+          {permissions}
+        </Badge>
+      );
+    }
+    
+    // Default fallback
+    return (
+      <Badge className="bg-gray-100 text-gray-800 border-gray-300 hover:bg-gray-100 font-medium px-3 py-1">
+        <Settings className="h-3 w-3 mr-1" />
+        {permissions}
+      </Badge>
+    );
+  };
+
   const AddConnectionForm = () => {
     const [formData, setFormData] = useState({
       exchange: '',
@@ -199,9 +238,7 @@ export default function Exchanges() {
                   </TableCell>
                   <TableCell>{connection.alias}</TableCell>
                   <TableCell>
-                    <Badge variant="outline" className="text-green-700 border-green-200">
-                      {connection.permissions}
-                    </Badge>
+                    {getPermissionBadge(connection.permissions)}
                   </TableCell>
                   <TableCell>
                     <Badge variant={connection.environment === 'live' ? 'destructive' : 'secondary'}>
