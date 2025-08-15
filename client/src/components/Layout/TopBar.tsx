@@ -10,15 +10,29 @@ export default function TopBar() {
   const { isConnected } = useApiStore();
   const [currentUser] = useState({ name: 'John Trader' });
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(true); // Testing: Start with dropdown visible
 
   const notificationRef = useRef<HTMLDivElement>(null);
+
+  // Debug logging
+  useEffect(() => {
+    console.log('TopBar mounted, notifications count:', count);
+    console.log('Notifications:', notifications);
+  }, []);
+
+  useEffect(() => {
+    console.log('showNotifications state changed to:', showNotifications);
+  }, [showNotifications]);
 
   const toggleNotifications = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    console.log('Notification bell clicked, current state:', showNotifications);
-    setShowNotifications(prev => !prev);
+    console.log('Bell clicked! Current state:', showNotifications, 'Count:', count);
+    setShowNotifications(prev => {
+      const newState = !prev;
+      console.log('Setting showNotifications to:', newState);
+      return newState;
+    });
   };
 
   const handleNotificationClick = (id: string, e: React.MouseEvent) => {
@@ -108,8 +122,13 @@ export default function TopBar() {
           <div className="relative" ref={notificationRef}>
             <button 
               type="button"
-              className="relative p-2 text-gray-600 hover:text-brand-red transition-colors rounded-lg hover:bg-gray-50" 
-              onClick={toggleNotifications}
+              className="relative p-2 text-gray-600 hover:text-brand-red transition-colors rounded-lg hover:bg-gray-50 cursor-pointer" 
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Notification bell clicked!');
+                setShowNotifications(!showNotifications);
+              }}
               data-testid="button-notifications"
             >
               <Bell className="h-5 w-5" />
@@ -124,10 +143,10 @@ export default function TopBar() {
             </button>
 
             {/* Notification Dropdown */}
-            {showNotifications && (
+            {showNotifications ? (
               <div 
                 className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl border border-gray-200 max-h-96 overflow-hidden"
-                style={{ zIndex: 9999 }}
+                style={{ zIndex: 9999, display: 'block' }}
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="p-4 border-b border-gray-200 flex items-center justify-between">
@@ -202,7 +221,7 @@ export default function TopBar() {
                   </div>
                 )}
               </div>
-            )}
+            ) : null}
           </div>
 
           {/* Kill Switch */}
