@@ -241,6 +241,7 @@ const strategyTemplates: StrategyTemplate[] = [
 
 export default function Strategies() {
   const [selectedTemplate, setSelectedTemplate] = useState<StrategyTemplate | null>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const { toast } = useToast();
 
   const getCategoryIcon = (category: StrategyTemplate['category']) => {
@@ -269,6 +270,341 @@ export default function Strategies() {
       case 'high': return 'text-red-600';
       default: return 'text-gray-600';
     }
+  };
+
+  const openDetailsModal = (template: StrategyTemplate) => {
+    setSelectedTemplate(template);
+    setShowDetailsModal(true);
+  };
+
+  const StrategyDetailsModal = ({ strategy }: { strategy: StrategyTemplate }) => {
+    // Generate mock performance data
+    const generatePerformanceData = () => {
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return months.map(month => ({
+        month,
+        return: (Math.random() * 10 - 2).toFixed(2) // -2% to 8% random returns
+      }));
+    };
+
+    return (
+      <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center space-x-3">
+            {getCategoryIcon(strategy.category)}
+            <span>{strategy.name}</span>
+            <div className="flex space-x-2">
+              <Badge className={getComplexityColor(strategy.complexity)}>
+                {strategy.complexity}
+              </Badge>
+              <Badge variant="outline" className={getRiskColor(strategy.riskLevel)}>
+                {strategy.riskLevel}
+              </Badge>
+            </div>
+          </DialogTitle>
+        </DialogHeader>
+
+        <Tabs defaultValue="overview" className="w-full">
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="parameters">Parameters</TabsTrigger>
+            <TabsTrigger value="performance">Performance</TabsTrigger>
+            <TabsTrigger value="risk">Risk Analysis</TabsTrigger>
+            <TabsTrigger value="implementation">Implementation</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-6">
+            <div className="grid grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Strategy Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="font-medium">Category:</span>
+                    <span className="capitalize">{strategy.category.replace('_', ' ')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Complexity:</span>
+                    <Badge className={getComplexityColor(strategy.complexity)}>
+                      {strategy.complexity}
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Risk Level:</span>
+                    <Badge variant="outline" className={getRiskColor(strategy.riskLevel)}>
+                      {strategy.riskLevel}
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Timeframe:</span>
+                    <span>{strategy.timeframe}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Expected Return:</span>
+                    <span className="text-green-600 font-medium">{strategy.expectedReturn}</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Market Conditions</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="font-medium">Best Conditions:</span>
+                    <span className="text-green-600">Trending Markets</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Min Capital:</span>
+                    <span>$1,000</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Max Drawdown:</span>
+                    <span className="text-red-600">-15%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Win Rate:</span>
+                    <span>{strategy.riskLevel === 'high' ? '45-60%' : strategy.riskLevel === 'medium' ? '60-75%' : '70-85%'}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Strategy Description</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-700 leading-relaxed">{strategy.description}</p>
+                <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                  <h4 className="font-medium text-blue-900 mb-2">Key Features:</h4>
+                  <ul className="text-sm text-blue-800 space-y-1">
+                    <li>• Automated signal generation and execution</li>
+                    <li>• Built-in risk management and position sizing</li>
+                    <li>• Real-time performance monitoring</li>
+                    <li>• Backtesting capabilities with historical data</li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="parameters" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Default Parameters</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4">
+                  {Object.entries(strategy.defaultParams).map(([key, value]) => (
+                    <div key={key} className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                      <span className="font-medium capitalize">{key.replace(/([A-Z])/g, ' $1').toLowerCase()}:</span>
+                      <span className="font-mono text-sm">{typeof value === 'number' ? value : String(value)}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Parameter Guidelines</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="p-3 border-l-4 border-green-500 bg-green-50">
+                    <h5 className="font-medium text-green-900">Conservative Settings</h5>
+                    <p className="text-sm text-green-800">Lower risk parameters for steady, consistent returns</p>
+                  </div>
+                  <div className="p-3 border-l-4 border-yellow-500 bg-yellow-50">
+                    <h5 className="font-medium text-yellow-900">Balanced Settings</h5>
+                    <p className="text-sm text-yellow-800">Default parameters offer good risk/reward balance</p>
+                  </div>
+                  <div className="p-3 border-l-4 border-red-500 bg-red-50">
+                    <h5 className="font-medium text-red-900">Aggressive Settings</h5>
+                    <p className="text-sm text-red-800">Higher risk parameters for maximum returns</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="performance" className="space-y-4">
+            <div className="grid grid-cols-3 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Total Return</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-2xl font-bold text-green-600">+{strategy.expectedReturn.split('-')[1] || '25%'}</p>
+                  <p className="text-sm text-gray-500">Last 12 months</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Sharpe Ratio</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-2xl font-bold text-blue-600">{strategy.riskLevel === 'low' ? '1.8' : strategy.riskLevel === 'medium' ? '1.4' : '1.1'}</p>
+                  <p className="text-sm text-gray-500">Risk-adjusted return</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Max Drawdown</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-2xl font-bold text-red-600">-{strategy.riskLevel === 'low' ? '8%' : strategy.riskLevel === 'medium' ? '15%' : '25%'}</p>
+                  <p className="text-sm text-gray-500">Worst decline</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Monthly Performance</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-6 gap-2">
+                  {generatePerformanceData().map((data, index) => (
+                    <div key={index} className="text-center p-2 border rounded">
+                      <div className="text-xs text-gray-500">{data.month}</div>
+                      <div className={`text-sm font-medium ${parseFloat(data.return) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {parseFloat(data.return) >= 0 ? '+' : ''}{data.return}%
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="risk" className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Risk Metrics</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex justify-between">
+                    <span>Volatility:</span>
+                    <span className={strategy.riskLevel === 'high' ? 'text-red-600' : strategy.riskLevel === 'medium' ? 'text-yellow-600' : 'text-green-600'}>
+                      {strategy.riskLevel === 'low' ? '12%' : strategy.riskLevel === 'medium' ? '18%' : '28%'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Beta:</span>
+                    <span>{strategy.riskLevel === 'low' ? '0.7' : strategy.riskLevel === 'medium' ? '1.0' : '1.3'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Value at Risk (95%):</span>
+                    <span className="text-red-600">-{strategy.riskLevel === 'low' ? '3%' : strategy.riskLevel === 'medium' ? '5%' : '8%'}</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Risk Controls</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex justify-between">
+                    <span>Stop Loss:</span>
+                    <span>-5%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Position Limit:</span>
+                    <span>10%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Daily Loss Limit:</span>
+                    <span>-2%</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="implementation" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Implementation Steps</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm font-medium text-blue-600">1</span>
+                    </div>
+                    <div>
+                      <h5 className="font-medium">Strategy Configuration</h5>
+                      <p className="text-sm text-gray-600">Set parameters, risk limits, and trading pairs</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm font-medium text-blue-600">2</span>
+                    </div>
+                    <div>
+                      <h5 className="font-medium">Backtesting</h5>
+                      <p className="text-sm text-gray-600">Test strategy performance with historical data</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm font-medium text-blue-600">3</span>
+                    </div>
+                    <div>
+                      <h5 className="font-medium">Paper Trading</h5>
+                      <p className="text-sm text-gray-600">Run strategy in simulation mode to verify performance</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm font-medium text-blue-600">4</span>
+                    </div>
+                    <div>
+                      <h5 className="font-medium">Live Trading</h5>
+                      <p className="text-sm text-gray-600">Deploy strategy with real funds and monitor performance</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Requirements</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h5 className="font-medium mb-2">Technical Requirements</h5>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      <li>• API access to supported exchanges</li>
+                      <li>• Minimum $1,000 capital</li>
+                      <li>• Stable internet connection</li>
+                      <li>• 24/7 server uptime</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h5 className="font-medium mb-2">Supported Exchanges</h5>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      <li>• Binance</li>
+                      <li>• Coinbase Pro</li>
+                      <li>• Kraken</li>
+                      <li>• Bybit</li>
+                    </ul>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </DialogContent>
+    );
   };
 
   return (
@@ -316,7 +652,11 @@ export default function Strategies() {
                   <Settings className="h-4 w-4 mr-1" />
                   Configure
                 </Button>
-                <Button size="sm" variant="outline">
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => openDetailsModal(template)}
+                >
                   <FileText className="h-4 w-4 mr-1" />
                   Details
                 </Button>
@@ -325,6 +665,13 @@ export default function Strategies() {
           </Card>
         ))}
       </div>
+
+      {/* Strategy Details Modal */}
+      {selectedTemplate && (
+        <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal}>
+          <StrategyDetailsModal strategy={selectedTemplate} />
+        </Dialog>
+      )}
     </div>
   );
 }
