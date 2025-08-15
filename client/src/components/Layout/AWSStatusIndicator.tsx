@@ -49,15 +49,15 @@ export default function AWSStatusIndicator() {
   const getStatusText = () => {
     switch (healthStatus.status) {
       case 'healthy':
-        return 'AWS OK';
+        return 'OK';
       case 'degraded':
-        return 'AWS Degraded';
+        return 'Degraded';
       case 'unhealthy':
-        return 'AWS Down';
+        return 'Down';
       case 'checking':
         return 'Checking...';
       default:
-        return 'AWS Unknown';
+        return 'Unknown';
     }
   };
 
