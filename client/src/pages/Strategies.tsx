@@ -292,7 +292,7 @@ export default function Strategies() {
                     {template.complexity}
                   </Badge>
                   <Badge variant="outline" className={getRiskColor(template.riskLevel)}>
-                    {template.riskLevel} risk
+                    {template.riskLevel}
                   </Badge>
                 </div>
               </div>
