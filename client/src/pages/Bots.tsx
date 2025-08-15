@@ -1,658 +1,316 @@
-import React, { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { SkipLink } from '@/components/ui/skip-link';
+import { EmptyState } from '@/components/ui/empty-state';
+import { EnhancedTable, type ColumnDef } from '@/components/ui/enhanced-table';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
-import { 
+  Bot, 
   Play, 
-  Pause, 
-  Eye, 
-  Plus, 
-  Search,
-  Filter,
-  Download,
-  BarChart3
-} from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+  Square, 
+  Settings, 
+  TrendingUp, 
+  TrendingDown,
+  AlertTriangle,
+  MoreHorizontal,
+  Plus
+} from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
-interface Bot {
+interface BotData {
   id: string;
   name: string;
-  exchange: string;
-  tradingPair: string;
   strategy: string;
-  status: 'starting' | 'running' | 'stopped' | 'error';
-  performance: {
-    pnl: number;
-    pnlPercent: number;
-    trades: number;
-    winRate: number;
-  };
-  lastHeartbeat: string | null;
-  riskPolicy: {
-    maxPositionSize: number;
-    stopLoss: number;
-  };
-  createdAt: string;
+  status: 'running' | 'stopped' | 'error';
+  exchange: string;
+  pair: string;
+  pnl24h: number;
+  totalPnl: number;
+  uptime: string;
+  lastTrade: string;
 }
 
+const mockBots: BotData[] = [
+  {
+    id: '1',
+    name: 'Alpha Grid Bot',
+    strategy: 'Grid Trading',
+    status: 'running',
+    exchange: 'Binance',
+    pair: 'BTC/USDT',
+    pnl24h: 247.83,
+    totalPnl: 1247.83,
+    uptime: '5d 12h',
+    lastTrade: '2 minutes ago'
+  },
+  {
+    id: '2', 
+    name: 'Beta Arbitrage',
+    strategy: 'Arbitrage',
+    status: 'running',
+    exchange: 'Coinbase',
+    pair: 'ETH/USD',
+    pnl24h: -45.20,
+    totalPnl: 892.41,
+    uptime: '3d 8h',
+    lastTrade: '15 minutes ago'
+  },
+  {
+    id: '3',
+    name: 'Gamma Momentum',
+    strategy: 'Momentum',
+    status: 'error',
+    exchange: 'Kraken',
+    pair: 'SOL/EUR',
+    pnl24h: 0,
+    totalPnl: -125.67,
+    uptime: '0m',
+    lastTrade: '2 hours ago'
+  },
+  {
+    id: '4',
+    name: 'Delta Mean Reversion',
+    strategy: 'Mean Reversion',
+    status: 'stopped',
+    exchange: 'Binance',
+    pair: 'ADA/USDT',
+    pnl24h: 0,
+    totalPnl: 456.78,
+    uptime: '0m',
+    lastTrade: '1 day ago'
+  }
+];
+
 export default function Bots() {
-  const [selectedBot, setSelectedBot] = useState<Bot | null>(null);
-  const [filterStatus, setFilterStatus] = useState<string>('all');
-  const [filterExchange, setFilterExchange] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const [selectedBots, setSelectedBots] = useState<BotData[]>([]);
+  const [filters, setFilters] = useState<string[]>([]);
 
-  // Generate comprehensive mock bot data
-  const generateMockBots = (): Bot[] => {
-    const exchanges = ['binance', 'coinbase', 'kraken', 'bybit', 'okx'];
-    const pairs = ['BTC-USDT', 'ETH-USDT', 'SOL-USDT', 'AVAX-USDT', 'DOT-USDT', 'MATIC-USDT', 'ADA-USDT', 'LINK-USDT'];
-    const strategies = ['arbitrage', 'grid_trading', 'momentum', 'mean_reversion', 'scalping', 'swing_trading'];
-    const statuses: Bot['status'][] = ['running', 'stopped', 'starting', 'error'];
-    
-    const botNames = [
-      'Alpha Arbitrage Bot',
-      'Beta Grid Trading',
-      'Gamma Momentum Scanner', 
-      'Delta Mean Reversion',
-      'Epsilon Scalping Engine',
-      'Zeta Swing Trader',
-      'Eta High Frequency',
-      'Theta Cross Exchange',
-      'Iota Volume Scanner',
-      'Kappa Trend Follower',
-      'Lambda Range Trader',
-      'Mu Breakout Hunter'
-    ];
-
-    return botNames.map((name, index) => {
-      const exchange = exchanges[index % exchanges.length];
-      const pair = pairs[index % pairs.length];
-      const strategy = strategies[index % strategies.length];
-      const status = statuses[index % statuses.length];
-      
-      // Generate realistic performance data
-      const isProductive = Math.random() > 0.3; // 70% chance of being profitable
-      const basePnl = isProductive ? 
-        (Math.random() * 2000 + 200) : // Profitable: $200-$2200
-        -(Math.random() * 500 + 50);   // Loss: -$50 to -$550
-      
-      const trades = Math.floor(Math.random() * 400 + 50);
-      const winRate = isProductive ? 
-        (Math.random() * 30 + 55) : // 55-85% win rate for profitable bots
-        (Math.random() * 40 + 30);  // 30-70% win rate for losing bots
-
-      const hoursAgo = Math.floor(Math.random() * 168); // Up to 7 days ago
-      const heartbeatDelay = status === 'running' ? 
-        Math.floor(Math.random() * 60000) : // 0-1 minute for running
-        Math.floor(Math.random() * 3600000); // 0-1 hour for others
-
-      return {
-        id: (index + 1).toString(),
-        name,
-        exchange,
-        tradingPair: pair,
-        strategy,
-        status,
-        performance: {
-          pnl: Math.round(basePnl * 100) / 100,
-          pnlPercent: Math.round((basePnl / 5000) * 100 * 100) / 100, // Assuming $5000 starting capital
-          trades,
-          winRate: Math.round(winRate * 10) / 10
-        },
-        lastHeartbeat: status === 'stopped' ? null : 
-          new Date(Date.now() - heartbeatDelay).toISOString(),
-        riskPolicy: {
-          maxPositionSize: Math.floor(Math.random() * 15 + 5), // 5-20%
-          stopLoss: Math.floor(Math.random() * 8 + 2) // 2-10%
-        },
-        createdAt: new Date(Date.now() - (hoursAgo * 3600000)).toISOString()
-      };
-    });
+  const handleStartBot = (botId: string) => {
+    console.log('Starting bot:', botId);
   };
 
-  // Fetch bots with comprehensive mock data
-  const { data: bots, isLoading: botsLoading } = useQuery<Bot[]>({
-    queryKey: ['/api/bots'],
-    queryFn: async () => {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      return generateMockBots();
-    },
-    staleTime: 30000, // Consider data fresh for 30 seconds
-    refetchOnWindowFocus: false, // Don't refetch when user returns to tab
-  });
-
-  const getStatusColor = (status: Bot['status']) => {
-    switch (status) {
-      case 'running': return 'bg-green-500';
-      case 'starting': return 'bg-yellow-500 animate-pulse';
-      case 'stopped': return 'bg-gray-500';
-      case 'error': return 'bg-red-500';
-      default: return 'bg-gray-500';
-    }
+  const handleStopBot = (botId: string) => {
+    console.log('Stopping bot:', botId);
   };
 
-  const getStatusBadge = (status: Bot['status']) => {
-    switch (status) {
-      case 'running': return <Badge className="bg-green-100 text-green-800">Running</Badge>;
-      case 'starting': return <Badge className="bg-yellow-100 text-yellow-800">Starting</Badge>;
-      case 'stopped': return <Badge variant="secondary">Stopped</Badge>;
-      case 'error': return <Badge variant="destructive">Error</Badge>;
-      default: return <Badge variant="secondary">Unknown</Badge>;
-    }
+  const handleDeleteBot = (botId: string) => {
+    console.log('Deleting bot:', botId);
   };
 
-  const filteredBots = bots?.filter(bot => {
-    const matchesStatus = filterStatus === 'all' || bot.status === filterStatus;
-    const matchesExchange = filterExchange === 'all' || bot.exchange === filterExchange;
-    const matchesSearch = searchQuery === '' || 
-      bot.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      bot.tradingPair.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    return matchesStatus && matchesExchange && matchesSearch;
-  }) || [];
+  const handleBulkStart = () => {
+    console.log('Starting bots:', selectedBots.map(b => b.id));
+  };
 
-  const CreateBotForm = () => {
-    const [formData, setFormData] = useState({
-      name: '',
-      exchange: '',
-      tradingPair: '',
-      strategy: '',
-      maxPositionSize: 10,
-      stopLoss: 5,
-    });
+  const handleBulkStop = () => {
+    console.log('Stopping bots:', selectedBots.map(b => b.id));
+  };
 
-    const handleSubmit = (e: React.FormEvent) => {
-      e.preventDefault();
-      toast({ title: "Bot creation is not yet implemented", variant: "destructive" });
-      setIsCreateModalOpen(false);
+  const getStatusBadge = (status: BotData['status']) => {
+    const variants = {
+      running: 'bg-green-100 text-green-800',
+      stopped: 'bg-gray-100 text-gray-800', 
+      error: 'bg-red-100 text-red-800'
     };
-
+    
     return (
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="name">Bot Name</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              placeholder="e.g., Alpha Arbitrage"
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="exchange">Exchange</Label>
-            <Select onValueChange={(value) => setFormData(prev => ({ ...prev, exchange: value }))}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select exchange" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="binance">Binance</SelectItem>
-                <SelectItem value="coinbase">Coinbase Pro</SelectItem>
-                <SelectItem value="kraken">Kraken</SelectItem>
-                <SelectItem value="ftx">FTX</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="tradingPair">Trading Pair</Label>
-            <Input
-              id="tradingPair"
-              value={formData.tradingPair}
-              onChange={(e) => setFormData(prev => ({ ...prev, tradingPair: e.target.value }))}
-              placeholder="e.g., BTC-USDT"
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="strategy">Strategy</Label>
-            <Select onValueChange={(value) => setFormData(prev => ({ ...prev, strategy: value }))}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select strategy" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="arbitrage">Arbitrage</SelectItem>
-                <SelectItem value="grid_trading">Grid Trading</SelectItem>
-                <SelectItem value="moving_average">Moving Average Crossover</SelectItem>
-                <SelectItem value="mean_reversion">Mean Reversion</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="maxPosition">Max Position Size (%)</Label>
-            <Input
-              id="maxPosition"
-              type="number"
-              value={formData.maxPositionSize}
-              onChange={(e) => setFormData(prev => ({ ...prev, maxPositionSize: Number(e.target.value) }))}
-              min="1"
-              max="100"
-            />
-          </div>
-          <div>
-            <Label htmlFor="stopLoss">Stop Loss (%)</Label>
-            <Input
-              id="stopLoss"
-              type="number"
-              value={formData.stopLoss}
-              onChange={(e) => setFormData(prev => ({ ...prev, stopLoss: Number(e.target.value) }))}
-              min="0.1"
-              max="50"
-              step="0.1"
-            />
-          </div>
-        </div>
-
-        <div className="flex justify-end space-x-2 pt-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => setIsCreateModalOpen(false)}
-          >
-            Cancel
-          </Button>
-          <Button type="submit">
-            Create Bot
-          </Button>
-        </div>
-      </form>
+      <Badge className={variants[status]}>
+        {status.charAt(0).toUpperCase() + status.slice(1)}
+      </Badge>
     );
   };
 
-  const BotDetailsModal = ({ bot }: { bot: Bot }) => (
-    <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-      <DialogHeader>
-        <DialogTitle className="flex items-center space-x-2">
-          <span>{bot.name}</span>
-          {getStatusBadge(bot.status)}
-        </DialogTitle>
-      </DialogHeader>
-      
-      <Tabs defaultValue="runtime" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="runtime">Runtime</TabsTrigger>
-          <TabsTrigger value="config">Config</TabsTrigger>
-          <TabsTrigger value="performance">Performance</TabsTrigger>
-          <TabsTrigger value="compliance">Compliance</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="runtime" className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm">Status & Controls</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span>Status:</span>
-                    {getStatusBadge(bot.status)}
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>Last Heartbeat:</span>
-                    <span className="text-sm text-gray-500">
-                      {bot.lastHeartbeat ? new Date(bot.lastHeartbeat).toLocaleTimeString() : 'Never'}
-                    </span>
-                  </div>
-                  <div className="flex space-x-2 pt-2">
-                    <Button
-                      size="sm"
-                      onClick={() => toast({ title: "Start bot functionality not yet implemented" })}
-                    >
-                      <Play className="h-4 w-4 mr-1" />
-                      Start
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => toast({ title: "Stop bot functionality not yet implemented" })}
-                    >
-                      <Pause className="h-4 w-4 mr-1" />
-                      Stop
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm">Current Positions</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-sm text-gray-500">
-                  No open positions
-                </div>
-              </CardContent>
-            </Card>
+  const columns: ColumnDef<BotData>[] = [
+    {
+      id: 'name',
+      header: 'Bot Name',
+      accessorKey: 'name',
+      sortable: true,
+      cell: (bot) => (
+        <div className="flex items-center space-x-3">
+          <Bot className="h-5 w-5 text-gray-400" />
+          <div>
+            <div className="font-medium text-gray-900">{bot.name}</div>
+            <div className="text-sm text-gray-500">{bot.strategy}</div>
           </div>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm">Live Logs</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="bg-gray-900 text-green-400 p-4 rounded font-mono text-sm h-48 overflow-y-auto">
-                <div>[{new Date().toISOString()}] Bot initialized</div>
-                <div>[{new Date().toISOString()}] Connecting to {bot.exchange}...</div>
-                <div>[{new Date().toISOString()}] Strategy: {bot.strategy} loaded</div>
-                <div>[{new Date().toISOString()}] Monitoring {bot.tradingPair}</div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="config" className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm">Basic Configuration</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="flex justify-between">
-                  <span>Exchange:</span>
-                  <span className="font-medium">{bot.exchange}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Trading Pair:</span>
-                  <span className="font-medium">{bot.tradingPair}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Strategy:</span>
-                  <span className="font-medium">{bot.strategy}</span>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm">Risk Policy</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="flex justify-between">
-                  <span>Max Position Size:</span>
-                  <span className="font-medium">{bot.riskPolicy.maxPositionSize}%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Stop Loss:</span>
-                  <span className="font-medium">{bot.riskPolicy.stopLoss}%</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="performance" className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm">P&L Metrics</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="flex justify-between">
-                  <span>Total P&L:</span>
-                  <span className={`font-medium ${bot.performance.pnl >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    ${bot.performance.pnl.toFixed(2)}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>P&L %:</span>
-                  <span className={`font-medium ${bot.performance.pnlPercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {bot.performance.pnlPercent.toFixed(2)}%
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm">Trading Metrics</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="flex justify-between">
-                  <span>Total Trades:</span>
-                  <span className="font-medium">{bot.performance.trades}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Win Rate:</span>
-                  <span className="font-medium">{bot.performance.winRate.toFixed(1)}%</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm flex items-center justify-between">
-                Performance Chart
-                <Button size="sm" variant="outline">
-                  <Download className="h-4 w-4 mr-1" />
-                  Export CSV
-                </Button>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-48 bg-gray-50 rounded flex items-center justify-center">
-                <div className="text-center text-gray-500">
-                  <BarChart3 className="h-8 w-8 mx-auto mb-2" />
-                  <p>Performance chart will appear here</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="compliance" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm">Compliance Alerts</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-sm text-gray-500 text-center py-4">
-                No compliance alerts for this bot
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm">Audit Trail</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="text-xs text-gray-500 border-l-2 border-blue-200 pl-2">
-                  [{new Date(bot.createdAt).toLocaleString()}] Bot created
-                </div>
-                <div className="text-xs text-gray-500 border-l-2 border-green-200 pl-2">
-                  [{new Date().toLocaleString()}] Configuration updated
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </DialogContent>
+        </div>
+      )
+    },
+    {
+      id: 'status',
+      header: 'Status',
+      accessorKey: 'status',
+      sortable: true,
+      filterable: true,
+      cell: (bot) => getStatusBadge(bot.status)
+    },
+    {
+      id: 'exchange',
+      header: 'Exchange',
+      accessorKey: 'exchange',
+      sortable: true,
+      filterable: true,
+      cell: (bot) => (
+        <div>
+          <div className="font-medium">{bot.exchange}</div>
+          <div className="text-sm text-gray-500">{bot.pair}</div>
+        </div>
+      )
+    },
+    {
+      id: 'pnl24h',
+      header: '24h P&L',
+      accessorKey: 'pnl24h',
+      sortable: true,
+      cell: (bot) => (
+        <div className={`flex items-center space-x-1 ${
+          bot.pnl24h > 0 ? 'text-green-600' : bot.pnl24h < 0 ? 'text-red-600' : 'text-gray-600'
+        }`}>
+          {bot.pnl24h > 0 ? <TrendingUp className="h-4 w-4" /> : 
+           bot.pnl24h < 0 ? <TrendingDown className="h-4 w-4" /> : null}
+          <span>${bot.pnl24h.toFixed(2)}</span>
+        </div>
+      )
+    },
+    {
+      id: 'totalPnl',
+      header: 'Total P&L',
+      accessorKey: 'totalPnl',
+      sortable: true,
+      cell: (bot) => (
+        <span className={`font-medium ${
+          bot.totalPnl > 0 ? 'text-green-600' : bot.totalPnl < 0 ? 'text-red-600' : 'text-gray-600'
+        }`}>
+          ${bot.totalPnl.toFixed(2)}
+        </span>
+      )
+    },
+    {
+      id: 'uptime',
+      header: 'Uptime',
+      accessorKey: 'uptime',
+      sortable: true
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: (bot) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" data-testid={`bot-actions-${bot.id}`}>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem 
+              onClick={() => handleStartBot(bot.id)}
+              disabled={bot.status === 'running'}
+            >
+              <Play className="h-4 w-4 mr-2" />
+              Start
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={() => handleStopBot(bot.id)}
+              disabled={bot.status === 'stopped'}
+            >
+              <Square className="h-4 w-4 mr-2" />
+              Stop
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Settings className="h-4 w-4 mr-2" />
+              Configure
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem 
+              onClick={() => handleDeleteBot(bot.id)}
+              className="text-red-600"
+            >
+              <AlertTriangle className="h-4 w-4 mr-2" />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
+    }
+  ];
+
+  const tableFilters = [
+    { id: 'running', label: 'Running', value: 'running' },
+    { id: 'stopped', label: 'Stopped', value: 'stopped' },
+    { id: 'error', label: 'Error', value: 'error' },
+    { id: 'binance', label: 'Binance', value: 'binance' },
+    { id: 'coinbase', label: 'Coinbase', value: 'coinbase' }
+  ];
+
+  const bulkActions = (
+    <div className="flex space-x-2">
+      <Button size="sm" onClick={handleBulkStart} data-testid="bulk-start">
+        <Play className="h-4 w-4 mr-1" />
+        Start
+      </Button>
+      <ConfirmationDialog
+        trigger={
+          <Button size="sm" variant="outline" data-testid="bulk-stop">
+            <Square className="h-4 w-4 mr-1" />
+            Stop
+          </Button>
+        }
+        title="Stop Selected Bots"
+        description="Are you sure you want to stop the selected trading bots? This will halt their operations and close any pending orders."
+        confirmText="Stop Bots"
+        onConfirm={handleBulkStop}
+        variant="destructive"
+      />
+    </div>
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
+      <SkipLink href="#bots-table">Skip to bots table</SkipLink>
+      
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="min-w-0 flex-1">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 truncate">Bot Management</h1>
-          <p className="text-gray-600">Monitor and control your trading bots</p>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Trading Bots</h1>
+          <p className="text-gray-600">Manage and monitor your automated trading strategies</p>
         </div>
-        <div className="flex-shrink-0">
-          <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-            <DialogTrigger asChild>
-              <Button className="w-full sm:w-auto">
-                <Plus className="h-4 w-4 mr-2" />
-                Create Bot
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Create New Trading Bot</DialogTitle>
-              </DialogHeader>
-              <CreateBotForm />
-            </DialogContent>
-          </Dialog>
-        </div>
+        <Button data-testid="create-bot">
+          <Plus className="h-4 w-4 mr-2" />
+          Create Bot
+        </Button>
       </div>
 
-      {/* Filters */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search bots..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-              />
-            </div>
-            <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="running">Running</SelectItem>
-                <SelectItem value="stopped">Stopped</SelectItem>
-                <SelectItem value="error">Error</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={filterExchange} onValueChange={setFilterExchange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filter by exchange" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Exchanges</SelectItem>
-                <SelectItem value="binance">Binance</SelectItem>
-                <SelectItem value="coinbase">Coinbase</SelectItem>
-                <SelectItem value="kraken">Kraken</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button variant="outline" size="sm" className="w-full sm:w-auto">
-              <Filter className="h-4 w-4 mr-2" />
-              Saved Views
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Bots Table */}
-      <Card>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Bot Name</TableHead>
-                <TableHead>Exchange</TableHead>
-                <TableHead>Pair</TableHead>
-                <TableHead>Strategy</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>P&L</TableHead>
-                <TableHead>Last Heartbeat</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {botsLoading ? (
-                Array.from({ length: 3 }).map((_, i) => (
-                  <TableRow key={i}>
-                    {Array.from({ length: 8 }).map((_, j) => (
-                      <TableCell key={j}>
-                        <Skeleton className="h-4 w-20" />
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : filteredBots.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8 text-gray-500">
-                    No bots found matching your criteria
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredBots.map((bot) => (
-                  <TableRow key={bot.id}>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center space-x-2">
-                        <div className={`w-2 h-2 rounded-full ${getStatusColor(bot.status)}`} />
-                        <span>{bot.name}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>{bot.exchange}</TableCell>
-                    <TableCell>{bot.tradingPair}</TableCell>
-                    <TableCell>{bot.strategy}</TableCell>
-                    <TableCell>{getStatusBadge(bot.status)}</TableCell>
-                    <TableCell>
-                      <span className={bot.performance.pnl >= 0 ? 'text-green-600' : 'text-red-600'}>
-                        ${bot.performance.pnl.toFixed(2)}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-sm text-gray-500">
-                      {bot.lastHeartbeat ? new Date(bot.lastHeartbeat).toLocaleTimeString() : 'Never'}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex space-x-1">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => toast({ title: "Start functionality not yet implemented" })}
-                        >
-                          <Play className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => toast({ title: "Stop functionality not yet implemented" })}
-                        >
-                          <Pause className="h-3 w-3" />
-                        </Button>
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button size="sm" variant="outline">
-                              <Eye className="h-3 w-3" />
-                            </Button>
-                          </DialogTrigger>
-                          <BotDetailsModal bot={bot} />
-                        </Dialog>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      <div id="bots-table">
+        {mockBots.length === 0 ? (
+          <EmptyState
+            icon={<Bot className="h-12 w-12" />}
+            title="No trading bots found"
+            description="Get started by creating your first automated trading bot to begin generating profits."
+            action={{
+              label: "Create Your First Bot",
+              onClick: () => console.log('Create bot')
+            }}
+          />
+        ) : (
+          <EnhancedTable
+            data={mockBots}
+            columns={columns}
+            searchPlaceholder="Search bots by name, strategy, or exchange..."
+            filters={tableFilters}
+            selectedFilters={filters}
+            onFilterChange={setFilters}
+            onSelectionChange={setSelectedBots}
+            bulkActions={bulkActions}
+            pageSize={10}
+          />
+        )}
+      </div>
     </div>
   );
 }

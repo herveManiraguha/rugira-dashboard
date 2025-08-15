@@ -14,6 +14,10 @@ import {
   AlertTriangle
 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
+import { KPICard, KPICardGrid } from "@/components/ui/kpi-card";
+import { EnhancedChart } from "@/components/ui/enhanced-chart";
+import { SkipLink } from "@/components/ui/skip-link";
+import { TimeRangeSelector } from "@/components/ui/time-range-selector";
 
 interface KPI {
   id: string;
@@ -36,6 +40,7 @@ interface ActivityItem {
 
 export default function Overview() {
   const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [timeRange, setTimeRange] = useState('24h' as const);
 
   // Generate mock KPI data
   const generateKPIData = (): KPI[] => {
@@ -293,172 +298,74 @@ export default function Overview() {
         </div>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
+      {/* Enhanced KPI Cards */}
+      <KPICardGrid>
         {kpisLoading ? (
           Array.from({ length: 4 }).map((_, i) => (
-            <Card key={i}>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <Skeleton className="h-5 w-5 rounded" />
-                  <Skeleton className="h-4 w-12" />
-                </div>
-                <Skeleton className="h-4 w-24 mb-1" />
-                <Skeleton className="h-8 w-20 mb-2" />
-                <Skeleton className="h-3 w-16" />
-              </CardContent>
-            </Card>
+            <KPICard
+              key={i}
+              title="Loading..."
+              value=""
+              loading={true}
+            />
           ))
         ) : (
           kpis?.map((kpi) => (
-            <Card key={kpi.id}>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="text-gray-600">
-                    {getIcon(kpi.icon)}
-                  </div>
-                  {kpi.change && (
-                    <Badge 
-                      className={`text-xs text-white ${
-                        kpi.change > 0 
-                          ? 'bg-green-600 hover:bg-green-700' 
-                          : 'bg-red-600 hover:bg-red-700'
-                      }`}
-                    >
-                      {kpi.change > 0 ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
-                      {Math.abs(kpi.change).toFixed(2)}%
-                    </Badge>
-                  )}
-                </div>
-                <h3 className="text-sm font-medium text-gray-500 mb-1">{kpi.label}</h3>
-                <p className="text-2xl font-bold text-gray-900">{formatValue(kpi.value, kpi.type)}</p>
-                <div className="mt-2 text-xs text-gray-500">{kpi.comparison}</div>
-              </CardContent>
-            </Card>
+            <KPICard
+              key={kpi.id}
+              title={kpi.label}
+              value={kpi.value}
+              delta={kpi.change ? {
+                value: kpi.change,
+                period: kpi.comparison,
+                isPositive: kpi.change > 0
+              } : undefined}
+              icon={getIcon(kpi.icon)}
+              formatter={(value) => formatValue(value, kpi.type)}
+            />
           ))
         )}
-      </div>
+      </KPICardGrid>
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-        {/* Equity Curve Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">Equity Curve</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={equityData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="date" 
-                    tick={{ fontSize: 12 }}
-                    tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                  />
-                  <YAxis 
-                    tick={{ fontSize: 12 }}
-                    tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                  />
-                  <Tooltip 
-                    formatter={(value, name) => [
-                      name === 'value' ? `$${Number(value).toLocaleString()}` : value,
-                      name === 'value' ? 'Portfolio Value' : name
-                    ]}
-                    labelFormatter={(value) => new Date(value).toLocaleDateString()}
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="value" 
-                    stroke="#E10600" 
-                    fill="#E10600" 
-                    fillOpacity={0.1} 
-                    strokeWidth={2}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Enhanced Equity Curve Chart */}
+        <EnhancedChart
+          title="Portfolio Equity Curve"
+          description="Track your portfolio performance over time with key trading events marked"
+          data={equityData.map(d => ({ timestamp: d.date, value: d.value, pnl: d.pnl }))}
+          dataKeys={[
+            { key: 'value', label: 'Portfolio Value', color: '#16a34a' },
+            { key: 'pnl', label: 'P&L', color: '#dc2626' }
+          ]}
+          timeRange={timeRange}
+          onTimeRangeChange={(range) => setTimeRange(range.value)}
+          formatValue={(value) => `$${value.toLocaleString()}`}
+          className="lg:col-span-2"
+        />
 
-        {/* Daily P&L Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">Daily P&L</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={dailyPnLData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="date" 
-                    tick={{ fontSize: 12 }}
-                    tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                  />
-                  <YAxis 
-                    tick={{ fontSize: 12 }}
-                    tickFormatter={(value) => `$${(value / 1000).toFixed(1)}k`}
-                  />
-                  <Tooltip 
-                    formatter={(value, name) => [
-                      `$${Number(value).toLocaleString()}`,
-                      name === 'pnl' ? 'Daily P&L' : 'Cumulative P&L'
-                    ]}
-                    labelFormatter={(value) => new Date(value).toLocaleDateString()}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="pnl" 
-                    stroke="#1B7A46" 
-                    strokeWidth={2} 
-                    dot={{ fill: '#1B7A46', strokeWidth: 2, r: 3 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Enhanced Daily P&L Chart */}
+        <EnhancedChart
+          title="Daily P&L"
+          description="Daily profit and loss breakdown"
+          data={dailyPnLData.map(d => ({ timestamp: d.date, pnl: d.pnl }))}
+          dataKeys={[
+            { key: 'pnl', label: 'Daily P&L', color: '#dc2626' }
+          ]}
+          formatValue={(value) => `$${value.toFixed(2)}`}
+        />
 
         {/* Trading Volume Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">Trading Volume</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={volumeData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="date" 
-                    tick={{ fontSize: 12 }}
-                    tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                  />
-                  <YAxis 
-                    tick={{ fontSize: 12 }}
-                    tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                  />
-                  <Tooltip 
-                    formatter={(value, name) => [
-                      name === 'volume' ? `$${Number(value).toLocaleString()}` : `${value} trades`,
-                      name === 'volume' ? 'Volume' : 'Trades'
-                    ]}
-                    labelFormatter={(value) => new Date(value).toLocaleDateString()}
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="volume" 
-                    stroke="#3B82F6" 
-                    fill="#3B82F6" 
-                    fillOpacity={0.2} 
-                    strokeWidth={2}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
+        <EnhancedChart
+          title="Trading Volume"
+          description="Daily trading volume and number of trades"
+          data={volumeData.map(d => ({ timestamp: d.date, volume: d.volume, trades: d.trades }))}
+          dataKeys={[
+            { key: 'volume', label: 'Volume ($)', color: '#3b82f6' },
+            { key: 'trades', label: 'Trades', color: '#f59e0b' }
+          ]}
+          formatValue={(value) => `$${value.toLocaleString()}`}
+        />
       </div>
 
       {/* Live Activity Feed */}

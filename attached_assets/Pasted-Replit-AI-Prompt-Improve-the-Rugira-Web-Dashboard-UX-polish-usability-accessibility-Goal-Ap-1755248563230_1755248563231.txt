@@ -1,0 +1,174 @@
+Replit AI Prompt — Improve the Rugira Web Dashboard (UX polish + usability + accessibility)
+
+Goal
+Apply the following UX/UI improvements to the Rugira dashboard. Keep the current tech stack and overall Swiss, clean look. No new backend work is required; where data is not yet available, use safe placeholders and make the UI resilient.
+
+A. Global improvements
+
+Consistency & spacing: Adopt an 8px spacing grid; harmonize card paddings, section gaps, and table row heights across all pages.
+
+Typography: Use a clear hierarchy—H1 (page title), H2 (section titles), card titles, body text—with consistent sizes and weights. Ensure numbers use tabular figures so KPIs and table columns align nicely.
+
+Color semantics: Keep green for positive, red for negative, amber for warnings; never rely on color alone—always pair with an icon or label (▲▼, ✓, !).
+
+Accessibility: Meet WCAG AA contrast; minimum 14px body text; keyboard navigation for all interactive elements (focus states visible); aria‑labels on icons; chart descriptions for screen readers. Add a “Skip to content” link.
+
+Time & currency: Persist the time range selector (e.g., 24h / 7d / 30d / YTD / custom) and base currency across pages, stored in local storage. Always show Last updated: HH:MM:SS UTC near the page header.
+
+Real‑time indicator: In the top bar, add a tiny pulse “Live” dot when SSE is connected; when disconnected, show “Reconnecting…” and gracefully fall back to 5s polling.
+
+Microcopy: Add short helper text under page titles explaining what the user can do here. Add tooltips for jargon (Sharpe, drawdown, slippage, KYT).
+
+Notifications: Keep toasts minimal and actionable (e.g., “Bot started • View details”). Add a compact Notification Center flyout with filters (All, Errors, Compliance).
+
+Danger actions: Any destructive action (Stop all bots, Delete user, Rotate key) must show a confirm dialog with a clear summary. For the Kill Switch, require typing PAUSE to confirm.
+
+Empty states & skeletons: For each page/table/chart, show an encouraging empty state (what it is + primary CTA) and skeleton loaders while data fetches.
+
+Performance: Virtualize long tables (Bots, Users, Alerts). Defer heavy charts below the fold until visible. Cache last successful data and show it instantly on revisit with a small “refreshed just now” label.
+
+Global Search (⌘K / Ctrl+K): Provide a quick palette to jump to bots, exchanges, users, or help articles.
+
+B. Overview page
+
+KPI row: Make KPIs uniform (icon + label + big number + delta vs baseline). Ensure consistent currency and precision; thousands separators.
+
+Charts: Add a time‑range control aligned right. Enable on‑chart hover tooltips (date, value, delta) and a light “event” annotation type (e.g., bot starts/stops).
+
+Live feed: Group events by minute and type (Trade, Risk, Compliance). Each event shows bot name, symbol, concise message, and link to details.
+
+Service tiles: Show API and Orchestrator status with a small heartbeat timestamp (e.g., “120s since last heartbeat”).
+
+Acceptance: KPIs line up perfectly; charts respond to range changes; the feed streams in without layout jumps; service tiles never show stale “OK”.
+
+C. Bots list & details
+
+Table enhancements: Add column sorting; quick filters (Status, Exchange, Strategy); a search box; and “Saved views” (e.g., My Running Bots). Add a small sparkline P/L column for the last 24h.
+
+Bulk actions: If multiple selected, allow Start, Stop, and Export.
+
+Row badges: Status pill (Running/Stopped/Starting/Error) + last heartbeat age (e.g., “42s ago”).
+
+Details view tabs:
+
+Runtime: show positions, open orders, and a tailing log panel with auto‑scroll toggle and copy button.
+
+Config: group params into Strategy and Risk; lock fields in MVP but display version + “last changed by”; include a diff link when history is available.
+
+Performance: add ROI, P/L, win rate, Sharpe, max DD with mini trendlines; Export CSV button.
+
+Compliance: show bot‑scoped alerts and audit trail with filters.
+
+Start/Stop confirmations: Summarize impact (e.g., open orders will be canceled on stop).
+
+Acceptance: Sorting and filters persist per user; Start/Stop require confirmation; details tabs are responsive and fast.
+
+D. Strategies
+
+Card clarity: For each template card, keep a short description, risk level (low/medium/high), expected holding timeframe, and typical markets.
+
+Configure flow: When clicking Configure, show a clean form with validation, inline helper text (e.g., “Lookback: periods”), and a preview of expected behavior (simple textual summary is fine).
+
+Profiles: Allow saving named parameter sets (“Arb‑tight‑v1”). Show “last edited by” and a duplicate button.
+
+Acceptance: Users can browse, configure, and save profiles without leaving the page; validation is clear and friendly.
+
+E. Exchanges
+
+Connections table: Columns: Exchange, Alias, Permissions (Read‑only/Trade‑only/Full), Environment (Paper/Live), Status (Connected/Disconnected/Error), Last Verified, Actions.
+
+Actions column: Buttons for Test, Rotate Key, Refresh, Delete—each with confirmation.
+
+Add connection wizard: Steps—Select Exchange → Enter API key/secret → Permission reminder (trade‑only recommended) → Test → Save. Show clear success/failure.
+
+Security microcopy: “Never share keys. Disable withdrawals. Restrict IPs if your exchange allows it.”
+
+Acceptance: Status updates clearly; rotate/test flows are obvious; wizard prevents saving until a successful test.
+
+F. Compliance
+
+Alerts inbox: Filters by severity, reason, bot, time; bulk acknowledge with note.
+
+Alert details: Event timeline (what/when/by whom), recommended action, link to impacted bot/order, and audit trail entry id.
+
+Audit log tab: Tenant‑scoped log with export (CSV) and filters (actor, action, date).
+
+Acceptance: Operators can triage alerts quickly and export an audit slice for a timeframe.
+
+G. Reports
+
+Tabs: Performance, Operational, Risk Analysis.
+
+Controls: Time range + tenant/bot multiselect that persists.
+
+Charts: Provide tooltips, legend toggles, and export to CSV (and PNG if easy).
+
+Data integrity: Each KPI tile links to its underlying dataset slice (e.g., “View trades behind this P/L”).
+
+Acceptance: Exports work; charts remain readable on narrow screens; controls persist across visits.
+
+H. Backtesting
+
+Runs table: Columns—Strategy, Date Range, Status (Queued/Running/Completed/Failed with progress %), Total Return, Sharpe, Max DD, Actions.
+
+Results page: Equity curve, metrics, monthly returns; button “Promote to bot” pre‑fills the Create Bot wizard with these params.
+
+Compare tab: Allow selecting 2–3 completed runs to compare side‑by‑side.
+
+Acceptance: Users can create, monitor, export, and promote a backtest with no ambiguities.
+
+I. Monitoring
+
+System overview: CPU, Memory, Disk, Network, Active Connections, Queue Depth—each with Normal/Warning/Critical thresholds and tiny last‑5‑minutes sparkline.
+
+Service status: API, Orchestrator, Market Aggregator—status + last heartbeat + link to logs.
+
+Active alerts: Top of page shows current actionable alerts with severity.
+
+Acceptance: At a glance, operators know if the system is healthy; all status tiles reflect fresh data.
+
+J. Admin
+
+Users table: Add column sorting (by role, status, last login). Actions: Edit, Reset MFA, Impersonate (read‑only), Delete.
+
+Add user dialog: Invite via email, assign role, optional country, optional subscription tag.
+
+Security tab: Tenant‑level toggles—MFA required, session timeout, password rules (UI only for now).
+
+Maintenance tab: Link to incident runbook and planned maintenance banner controls.
+
+Acceptance: Admins can manage users quickly; security/maintenance settings are discoverable and safe.
+
+K. Help
+
+Tabs: FAQ, Guides & Tutorials, Contact Support.
+
+Search: Simple client‑side search over FAQ entries.
+
+FAQ items: Expandable accordions; tag chips (getting‑started, trading, technical).
+
+Acceptance: Users can self‑serve most questions; “Contact Support” contains a clear mailto: and optional form.
+
+L. Final polish & QA checklist
+
+All pages show Last updated (UTC) and respect the global time range.
+
+No layout shift when live data arrives (reserve heights).
+
+No console errors or unhandled promise rejections.
+
+Keyboard can reach every action; focus ring visible; Escape closes modals.
+
+Charts and tables are responsive down to 1280px gracefully.
+
+No mixed content; CSP violations resolved; no third‑party trackers.
+
+Empty states exist for every major list/table/chart with a helpful CTA.
+
+All destructive actions require confirmation; the Kill Switch requires typing PAUSE.
+
+Tooltips added for jargon; deltas always show sign (±) and time basis (vs yesterday / vs last week).
+
+Numbers formatted with thousands separators; currency shown consistently; percent precision consistent (e.g., 1 decimal place).
+
+Please implement the above, then summarize what changed per section (A–L) and list any items you stubbed due to missing backend data.

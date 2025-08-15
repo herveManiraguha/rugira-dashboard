@@ -9,6 +9,25 @@
   --brand-red-600: hsl(0, 100%, 35%);      /* #B30000 */
   --brand-green: hsl(155, 62%, 29%);       /* #1B7A46 */
   
+  /* 8px Spacing Grid */
+  --spacing-xs: 4px;   /* 0.5 units */
+  --spacing-sm: 8px;   /* 1 unit */
+  --spacing-md: 16px;  /* 2 units */
+  --spacing-lg: 24px;  /* 3 units */
+  --spacing-xl: 32px;  /* 4 units */
+  --spacing-2xl: 40px; /* 5 units */
+  --spacing-3xl: 48px; /* 6 units */
+  
+  /* Typography Scale with tabular figures */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
+  --font-size-4xl: 36px;
+  
   /* Background System */
   --bg-0: hsl(0, 0%, 100%);                /* #FFFFFF */
   --bg-1: hsl(0, 0%, 98%);                 /* #FAFAFA */
@@ -64,30 +83,46 @@
     font-family: 'Inter', sans-serif;
     background-color: #fafafa;
     color: #374151;
-    font-size: 16px;
+    font-size: var(--font-size-base);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "tnum"; /* Tabular numbers for KPI alignment */
   }
   
+  /* Typography Hierarchy */
   h1 {
-    font-size: 2.25rem;
+    font-size: var(--font-size-4xl);
     font-weight: 700;
     color: #111827;
     letter-spacing: -0.025em;
+    margin-bottom: var(--spacing-md);
   }
   
   h2 {
-    font-size: 1.875rem;
+    font-size: var(--font-size-3xl);
     font-weight: 700;
     color: #111827;
     letter-spacing: -0.025em;
+    margin-bottom: var(--spacing-md);
   }
   
   h3 {
-    font-size: 1.5rem;
+    font-size: var(--font-size-2xl);
     font-weight: 600;
     color: #111827;
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  /* Accessible text minimum 14px */
+  .text-accessible {
+    font-size: max(var(--font-size-sm), 14px);
+  }
+  
+  /* Tabular numbers for KPIs and data */
+  .tabular-nums {
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
   }
   
   /* Professional Card Design */
@@ -122,6 +157,95 @@
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  }
+  
+  /* 8px Spacing Grid Utilities */
+  .space-grid-sm { gap: var(--spacing-sm); }
+  .space-grid-md { gap: var(--spacing-md); }
+  .space-grid-lg { gap: var(--spacing-lg); }
+  .space-grid-xl { gap: var(--spacing-xl); }
+  
+  .p-grid-sm { padding: var(--spacing-sm); }
+  .p-grid-md { padding: var(--spacing-md); }
+  .p-grid-lg { padding: var(--spacing-lg); }
+  .p-grid-xl { padding: var(--spacing-xl); }
+  
+  /* Accessibility improvements */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--brand-red);
+    color: white;
+    padding: 8px;
+    z-index: 1000;
+    text-decoration: none;
+    border-radius: 4px;
+  }
+  
+  .skip-link:focus {
+    top: 6px;
+  }
+  
+  /* Focus states for accessibility */
+  .focus-visible:focus-visible {
+    outline: 2px solid var(--brand-red);
+    outline-offset: 2px;
+  }
+  
+  /* Status indicators with semantic colors and icons */
+  .status-positive {
+    color: var(--brand-green);
+  }
+  
+  .status-negative {
+    color: var(--brand-red);
+  }
+  
+  .status-warning {
+    color: #f59e0b;
+  }
+  
+  /* Live indicator pulse animation */
+  .live-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--brand-green);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  
+  /* Loading skeletons */
+  .skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+  }
+  
+  @keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  
+  /* Confirmation dialog styles */
+  .danger-action {
+    background: var(--brand-red);
+    color: white;
+  }
+  
+  .danger-action:hover {
+    background: var(--brand-red-600);
   }
 
   /* Select Dropdown Fix - Target all possible Radix UI classes */

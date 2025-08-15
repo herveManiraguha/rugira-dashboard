@@ -3,6 +3,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useNotificationStore, useApiStore } from "../../stores/index.tsx";
 import StatusIndicator from "../UI/StatusIndicator";
 import NotificationDropdown from "./NotificationDropdown";
+import { GlobalSearch } from "@/components/ui/global-search";
+import { LiveIndicator } from "@/components/ui/live-indicator";
+import { LastUpdated } from "@/components/ui/last-updated";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { Bell, User, ChevronDown, StopCircle } from "lucide-react";
 
 interface TopBarProps {
@@ -35,12 +39,8 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
   };
 
   const emergencyStop = () => {
-    if (!window.confirm('Are you sure you want to activate the emergency stop? This will halt all trading operations.')) {
-      return;
-    }
-    
     // Call emergency stop API
-    alert('Emergency stop activated. All bots have been halted.');
+    console.log('Emergency stop activated. All bots have been halted.');
   };
 
   const toggleUserMenu = () => {
@@ -49,7 +49,7 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
 
   return (
     <header className="bg-white border-b border-gray-200 px-3 sm:px-4 md:px-6 py-3 md:py-4 overflow-visible">
-      <div className="flex items-center justify-between overflow-visible">
+      <div className="flex items-center justify-between overflow-visible space-grid-md">
         {/* Left side - Mobile Menu and Tenant */}
         <div className="flex items-center space-x-2 sm:space-x-4">
           {/* Mobile Menu Button */}
@@ -85,6 +85,13 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
           </span>
         </div>
 
+        {/* Center - Global Search and Live Status */}
+        <div className="hidden lg:flex items-center space-x-4 mx-4 flex-1 justify-center">
+          <GlobalSearch />
+          <LiveIndicator isConnected={isConnected} />
+          <LastUpdated timestamp={new Date()} className="text-xs" />
+        </div>
+
         {/* Top Bar Actions */}
         <div className="flex items-center space-x-2 md:space-x-4 overflow-visible">
           {/* Notifications */}
@@ -117,17 +124,26 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
             anchorRef={notificationButtonRef}
           />
 
-          {/* Kill Switch - Hidden on mobile */}
-          <button 
-            type="button"
-            className="hidden sm:flex btn-secondary text-xs px-2 md:px-3 py-1 md:py-1.5 border-2 border-brand-red items-center"
-            onClick={emergencyStop}
-            data-testid="button-kill-switch"
-            disabled={!isConnected}
-          >
-            <StopCircle className="h-4 w-4 md:mr-1" />
-            <span className="hidden md:inline">Kill Switch</span>
-          </button>
+          {/* Kill Switch - Enhanced with Confirmation Dialog */}
+          <ConfirmationDialog
+            trigger={
+              <button 
+                type="button"
+                className="hidden sm:flex btn-secondary text-xs px-2 md:px-3 py-1 md:py-1.5 border-2 border-brand-red items-center danger-action"
+                disabled={!isConnected}
+                data-testid="button-kill-switch"
+              >
+                <StopCircle className="h-4 w-4 md:mr-1" />
+                <span className="hidden md:inline">Kill Switch</span>
+              </button>
+            }
+            title="Emergency Stop Confirmation"
+            description="This will immediately halt all trading operations across all bots. All open orders will be cancelled and positions will be maintained."
+            confirmText="Stop All Trading"
+            requiresTyping="PAUSE"
+            onConfirm={emergencyStop}
+            variant="destructive"
+          />
 
           {/* User Menu */}
           <div className="relative">
