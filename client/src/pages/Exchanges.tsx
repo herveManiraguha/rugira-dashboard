@@ -206,15 +206,15 @@ export default function Exchanges() {
   const getStatusBadge = (status: ExchangeData['status']) => {
     switch (status) {
       case 'connected':
-        return <StatusBadge status="online" label="Connected" />;
+        return <Badge className="bg-green-100 text-green-800 border-green-200">Connected</Badge>;
       case 'disconnected':
-        return <StatusBadge status="offline" label="Disconnected" />;
+        return <Badge className="bg-gray-100 text-gray-800 border-gray-200">Disconnected</Badge>;
       case 'error':
-        return <StatusBadge status="error" label="Error" />;
+        return <Badge className="bg-red-100 text-red-800 border-red-200">Error</Badge>;
       case 'connecting':
-        return <StatusBadge status="pending" label="Connecting" />;
+        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">Connecting</Badge>;
       default:
-        return <StatusBadge status="offline" label="Unknown" />;
+        return <Badge className="bg-gray-100 text-gray-800 border-gray-200">Unknown</Badge>;
     }
   };
 
