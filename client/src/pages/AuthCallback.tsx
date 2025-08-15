@@ -75,7 +75,7 @@ export default function AuthCallback() {
             </h1>
             
             <p className="text-gray-600 dark:text-gray-300 mb-8">
-              Redirecting you to the dashboard...
+              Redirecting you to the overview...
             </p>
             
             <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">

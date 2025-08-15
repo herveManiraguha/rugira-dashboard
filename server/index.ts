@@ -185,6 +185,12 @@ app.use((req, res, next) => {
   next();
 });
 
+// Redirect any requests to /dashboard to /overview (in case external links still reference dashboard)
+app.get("/dashboard", (req: Request, res: Response) => {
+  console.log(`🔄 Redirecting /dashboard to /overview`);
+  res.redirect(301, "/overview");
+});
+
 (async () => {
   const server = await registerRoutes(app);
 
