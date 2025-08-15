@@ -39,6 +39,8 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import KillSwitchButton from '@/components/KillSwitch/KillSwitchButton';
+import KillSwitchBanner from '@/components/KillSwitch/KillSwitchBanner';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -141,23 +143,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
             {/* Notifications */}
             <NotificationButton />
 
-            {/* Kill Switch - Enhanced styling in Live mode */}
-            <Button
-              variant={isLive ? "destructive" : "outline"}
-              size="sm"
-              disabled={!isKillSwitchEnabled}
-              onClick={handleKillSwitch}
-              className={cn(
-                "transition-all duration-200",
-                isLive 
-                  ? "bg-red-600 hover:bg-red-700 text-white border-red-600 shadow-sm" 
-                  : "border-red-300 text-red-600 hover:bg-red-50"
-              )}
-              title="Emergency Kill Switch"
-              data-testid="kill-switch-button"
-            >
-              <Power className="h-4 w-4" />
-            </Button>
+            {/* Kill Switch */}
+            <KillSwitchButton />
           </div>
         </div>
       </header>
@@ -263,6 +250,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
         {/* Main Content */}
         <main className="flex-1 xl:ml-64 p-4 md:p-6 min-h-screen bg-gray-50 flex flex-col">
           <div className="max-w-full flex-1">
+            {/* Kill Switch Banner */}
+            <KillSwitchBanner />
+            
             {children}
           </div>
           <Footer />

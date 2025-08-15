@@ -63,6 +63,11 @@ export interface IStorage {
   
   // Risk & Compliance
   getRiskData(): Promise<any>;
+  
+  // Kill Switch
+  getKillSwitchState(): Promise<import('../shared/schema').KillSwitchState | null>;
+  engageKillSwitch(state: import('../shared/schema').KillSwitchState): Promise<void>;
+  clearKillSwitch(): Promise<void>;
   getComplianceData(): Promise<any>;
   getComplianceAlerts(): Promise<any[]>;
   getPerformanceReport(): Promise<any>;
@@ -81,6 +86,7 @@ export interface IStorage {
 export class MemStorage implements IStorage {
   private bots: Map<string, Bot> = new Map();
   private activities: ActivityFeed[] = [];
+  private killSwitchState: import('../shared/schema').KillSwitchState | null = null;
 
   constructor() {
     this.initializeSampleData();
@@ -386,6 +392,30 @@ export class MemStorage implements IStorage {
         type: 'number'
       }
     ];
+  }
+
+  // Kill Switch implementation
+  async getKillSwitchState(): Promise<import('../shared/schema').KillSwitchState | null> {
+    return this.killSwitchState;
+  }
+
+  async engageKillSwitch(state: import('../shared/schema').KillSwitchState): Promise<void> {
+    this.killSwitchState = state;
+    
+    // In a real implementation, this would:
+    // 1. Update Redis/DB with the kill switch state
+    // 2. Broadcast to all services via SSE/WebSocket
+    // 3. Trigger order cancellation for hard halt
+    console.log(`Kill Switch ENGAGED: ${state.scope}/${state.profile} by ${state.by}`);
+  }
+
+  async clearKillSwitch(): Promise<void> {
+    this.killSwitchState = null;
+    
+    // In a real implementation, this would:
+    // 1. Clear Redis/DB state
+    // 2. Broadcast TRADING_RESUMED event
+    console.log('Kill Switch CLEARED');
   }
 }
 

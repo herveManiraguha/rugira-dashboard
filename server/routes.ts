@@ -42,6 +42,96 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Kill Switch middleware - checks if trading is halted
+  const checkKillSwitch = async (req: any, res: any, next: any) => {
+    const killSwitchState = await storage.getKillSwitchState();
+    if (killSwitchState?.active) {
+      return res.status(423).json({
+        error: "Trading Locked",
+        message: `Trading is currently halted (${killSwitchState.scope}/${killSwitchState.profile})`,
+        reason: killSwitchState.reason,
+        scope: killSwitchState.scope,
+        by: killSwitchState.by,
+        at: killSwitchState.at
+      });
+    }
+    next();
+  };
+
+  // Kill Switch admin endpoints
+  app.get("/api/admin/kill-switch/status", optionalAuth, async (req, res) => {
+    try {
+      const state = await storage.getKillSwitchState();
+      res.json(state || { active: false });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch kill switch status" });
+    }
+  });
+
+  app.post("/api/admin/kill-switch/engage", optionalAuth, async (req, res) => {
+    try {
+      const { scope, profile, filters, reason }: import('../shared/schema').KillSwitchEngageRequest = req.body;
+      
+      // Validate required fields
+      if (!scope || !profile || !reason) {
+        return res.status(400).json({ message: "Missing required fields: scope, profile, reason" });
+      }
+
+      // Mock user - in real implementation, get from authenticated session
+      const mockUser = "Hanz Mueller";
+      
+      const killSwitchState: import('../shared/schema').KillSwitchState = {
+        active: true,
+        scope,
+        profile,
+        by: mockUser,
+        at: new Date(),
+        reason,
+        filters
+      };
+
+      await storage.engageKillSwitch(killSwitchState);
+      
+      // Broadcast the kill switch event
+      broadcast({
+        type: 'TRADING_HALTED',
+        data: killSwitchState
+      });
+
+      res.json({ success: true, state: killSwitchState });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to engage kill switch" });
+    }
+  });
+
+  app.post("/api/admin/kill-switch/clear", optionalAuth, async (req, res) => {
+    try {
+      const { note }: import('../shared/schema').KillSwitchClearRequest = req.body;
+      
+      const currentState = await storage.getKillSwitchState();
+      if (!currentState?.active) {
+        return res.status(400).json({ message: "Kill switch is not currently active" });
+      }
+
+      await storage.clearKillSwitch();
+      
+      // Broadcast the clear event
+      broadcast({
+        type: 'TRADING_RESUMED',
+        data: { 
+          clearedAt: new Date(),
+          clearedBy: "Hanz Mueller", // Mock user
+          note,
+          previousState: currentState
+        }
+      });
+
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to clear kill switch" });
+    }
+  });
+
 
 
   // Bots endpoints (with optional auth for demo purposes)

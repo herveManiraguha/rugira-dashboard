@@ -73,6 +73,35 @@ export interface ExchangeConnection {
   exchange: string;
   accountAlias: string;
   permissions: string[];
+}
+
+export interface KillSwitchState {
+  active: boolean;
+  scope: 'tenant' | 'global';
+  profile: 'soft' | 'hard';
+  by: string;
+  at: Date;
+  reason: string;
+  filters?: {
+    exchanges?: string[];
+    tags?: string[];
+  };
+  note?: string;
+}
+
+export interface KillSwitchEngageRequest {
+  scope: 'tenant' | 'global';
+  profile: 'soft' | 'hard';
+  filters?: {
+    exchanges?: string[];
+    tags?: string[];
+  };
+  reason: string;
+}
+
+export interface KillSwitchClearRequest {
+  scope: 'tenant' | 'global';
+  note?: string;
   lastVerified: Date | null;
   status: 'connected' | 'error' | 'pending';
 }

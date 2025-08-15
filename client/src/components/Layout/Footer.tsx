@@ -2,9 +2,11 @@ import React from 'react';
 import { AlertTriangle, ExternalLink } from 'lucide-react';
 import AWSStatusIndicator from './AWSStatusIndicator';
 import { useEnvironment } from '@/hooks/useEnvironment';
+import { useKillSwitch } from '@/hooks/useKillSwitch';
 
 export default function Footer() {
   const { environment } = useEnvironment();
+  const { killSwitchState } = useKillSwitch();
   
   return (
     <footer className="bg-white border-t border-gray-200 px-6 py-4 mt-auto">
@@ -20,6 +22,11 @@ export default function Footer() {
             <span>Environment:</span>
             <span className={environment === 'Live' ? 'font-semibold text-red-700' : 'text-gray-500'}>
               {environment === 'Live' ? 'LIVE — real orders' : 'Paper — simulated'}
+              {killSwitchState?.active && (
+                <span className="ml-2 text-red-600 font-semibold">
+                  — Kill Switch active
+                </span>
+              )}
             </span>
           </div>
         </div>

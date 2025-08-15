@@ -1,0 +1,138 @@
+Goal
+Add a secure Kill Switch that instantly halts trading activity and prevents new orders. It must be obvious, hard to misclick, fully audited, and quickly reversible by authorized admins.
+
+A) What the Kill Switch does (scope & levels)
+
+Tenant Kill (default): affects only the current tenant (most use-cases).
+
+Global Kill (admins only): affects all tenants (hidden behind an extra confirm).
+
+Action profiles:
+
+Soft Halt: block new order submissions; bots keep running but cannot place orders.
+
+Hard Halt: Soft Halt + cancel all open orders across exchanges.
+
+Selective Halt (optional): by exchange or by bot tag (e.g., “live-futures”).
+
+Duration: until manually cleared (optionally allow a TTL in advanced settings).
+
+System effect when engaged
+
+API rejects order-creating routes with HTTP 423 Locked and a human-readable message.
+
+Orchestrator stops scheduling start/resume events.
+
+Bots transition to PAUSED_EMERGENCY and stop submitting orders (Hard Halt cancels open orders).
+
+UI disables Start/Resume actions and shows a global banner.
+
+B) UI/UX
+
+Header button: right side near status; label “Kill Switch” with a shield/power icon.
+
+Idle state: outline button.
+
+Engaged state: solid danger style + text “TRADING HALTED”.
+
+Click → modal (cannot be bypassed):
+
+Select Scope: Tenant (default) / Global (admins only).
+
+Select Profile: Soft Halt / Hard Halt (Hard explains “will cancel open orders”).
+
+Optional: filter by Exchange or Bot tag.
+
+Reason (required): short textarea (stored in audit log).
+
+Type to confirm: require user to type PAUSE to enable Confirm.
+
+Show expected effects + link to help.
+
+While engaged:
+
+Global top banner: “Trading halted for TenantName by User at Time UTC. Reason: …”
+
+Buttons Start/Resume/Run Backtest to Live disabled with tooltip “Disabled while Kill Switch is active.”
+
+Footer line: “Environment: LIVE — Kill Switch active” or “Paper — Kill Switch active” (if applicable).
+
+Clear/Recover: “Resume Trading” button (admins only) opens a clear modal requiring typed RESUME and a note.
+
+A11y: button/menu focusable; Enter opens; Esc closes; modal traps focus; ARIA labels present.
+
+C) Security & permissions
+
+Only Admin can engage/clear; require MFA.
+
+Global Kill requires a second explicit step (checkbox “I understand this halts all tenants”) or dual-confirm (optional).
+
+Rate-limit: at most one engage/clear action per 60 seconds per scope.
+
+Show who has permission; gray out for others with tooltip “Admin only”.
+
+D) Backend contract (define & call these endpoints)
+
+POST /admin/kill-switch/engage
+Body: { scope:'tenant'|'global', profile:'soft'|'hard', filters?:{exchanges?:string[], tags?:string[]}, reason:string }
+Behavior: set halting flag (Redis + DB), broadcast event TRADING_HALTED, start cancel routine if hard. Idempotent.
+
+POST /admin/kill-switch/clear
+Body: { scope:'tenant'|'global', note?:string }
+Behavior: clear flags, broadcast TRADING_RESUMED.
+
+GET /admin/kill-switch/status → { active:boolean, scope, profile, by, at, reason, filters }
+
+All order-creating endpoints must check the flag and reject with 423 Locked (include reason + scope in JSON).
+
+SSE topic includes killSwitch events so UI updates instantly.
+
+Propagation target
+
+p95 end-to-end from click → bots blocked ≤ 2s.
+
+Orchestrator & API read a shared Redis key (and cache for ≤250ms) so the stop is durable even if one service restarts.
+
+E) Observability & audit
+
+Metrics: killswitch_engage_total{scope,profile}, killswitch_active{scope} (gauge), killswitch_clear_total.
+
+Structured audit log entry on engage/clear: { actor, tenant, scope, profile, filters, reason, ts, request_id, mfa_verified:true }.
+
+Notifications: send an Admin email (and webhook if configured) on engage and clear.
+
+F) Edge cases & safety
+
+Partial failure: UI shows “Some services didn’t acknowledge halt—retry or contact support”; keep state active until all confirm.
+
+Network partition: order endpoints still read the central flag—orders blocked even if bots are lagging.
+
+Hard Halt caveat: cancellation depends on exchange API—show a note “Open orders will be requested to cancel; verify on Exchanges page.”
+
+Demo Mode: Kill Switch is available but acts only on demo data; show tooltip “Demo—no real orders”.
+
+G) Acceptance criteria
+
+Pressing Kill Switch (Tenant/Soft) blocks new orders within ≤2s; Start/Resume buttons disable; banner appears.
+
+Hard Halt additionally triggers bulk cancel of open orders and reflects status per exchange.
+
+Status API reflects the engaged state; refreshing the app preserves the banner and disabled controls.
+
+Clear returns the system to normal; banner disappears; actions re-enable.
+
+All actions are audited, MFA-verified, and rate-limited; SSE updates arrive in real time.
+
+Keyboard and screen-reader users can operate it; motion respects prefers-reduced-motion.
+
+H) Hand-off (print this summary to me when done)
+
+Final button label/states, modal copy, and color tokens used.
+
+Endpoint URLs and request/response examples.
+
+Where the halting flag is stored (key name, TTL if any).
+
+How bots and API enforce the halt (middleware names/locations).
+
+How to test (dev script to simulate in-flight orders + expected timings).
