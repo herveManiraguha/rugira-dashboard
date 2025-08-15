@@ -3,6 +3,7 @@ import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Shield, TrendingUp, Zap, ArrowRight, ExternalLink } from 'lucide-react';
+import logoSvg from "@/assets/logo.svg";
 
 export default function Home() {
   const [, setLocation] = useLocation();
@@ -36,10 +37,8 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-[#E10600] rounded flex items-center justify-center">
-                <div className="w-4 h-4 bg-white rounded-sm flex items-center justify-center">
-                  <div className="w-2 h-2 bg-[#E10600] rounded-full"></div>
-                </div>
+              <div className="w-8 h-8 flex items-center justify-center">
+                <img src={logoSvg} alt="Rugira" className="w-8 h-8" />
               </div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Rugira</h1>
               <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">Trading Dashboard</span>

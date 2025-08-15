@@ -41,9 +41,11 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   if (!isAuthenticated) {
-    // Redirect to login with current path as return URL
-    const encodedPath = encodeURIComponent(location);
-    setLocation(`/login?next=${encodedPath}`);
+    // Use useEffect to prevent state updates during render
+    React.useEffect(() => {
+      const encodedPath = encodeURIComponent(location);
+      setLocation(`/login?next=${encodedPath}`);
+    }, [location, setLocation]);
     return null;
   }
 

@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import logoSvg from "@/assets/logo.svg";
 
 export default function Login() {
   const [, setLocation] = useLocation();
@@ -59,10 +60,8 @@ export default function Login() {
           <CardHeader className="text-center space-y-4">
             {/* Rugira Logo */}
             <div className="flex justify-center">
-              <div className="w-16 h-16 bg-[#E10600] rounded-2xl flex items-center justify-center">
-                <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                  <div className="w-4 h-4 bg-[#E10600] rounded-full"></div>
-                </div>
+              <div className="w-16 h-16 flex items-center justify-center">
+                <img src={logoSvg} alt="Rugira" className="w-14 h-14" />
               </div>
             </div>
             
@@ -147,13 +146,6 @@ export default function Login() {
           </CardContent>
 
           <CardFooter className="flex flex-col space-y-4 text-center">
-            {/* Demo credentials hint */}
-            <div className="text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
-              <p className="font-medium mb-1">Demo Credentials:</p>
-              <p>Username: <code className="bg-white dark:bg-gray-700 px-1 rounded">hanz.mueller</code></p>
-              <p>Password: <code className="bg-white dark:bg-gray-700 px-1 rounded">Hanz1234!</code></p>
-            </div>
-
             <div className="flex items-center space-x-2 text-xs text-gray-500">
               <a href="/" className="hover:text-[#E10600]">
                 ← Back to Home

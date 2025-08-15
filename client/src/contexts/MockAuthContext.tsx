@@ -60,10 +60,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Set up API client auth token getter
-    setAuthTokenGetter(() => user?.access_token || null);
-
-    // Check for existing session
+    // Check for existing session on mount
     const storedUser = sessionStorage.getItem('rugira_mock_user');
     if (storedUser) {
       try {
@@ -76,7 +73,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     }
     setIsLoading(false);
-  }, [user]);
+  }, []); // Empty dependency array to run only on mount
+
+  useEffect(() => {
+    // Set up API client auth token getter whenever user changes
+    setAuthTokenGetter(() => user?.access_token || null);
+  }, [user]); // Only depend on user
 
   const login = async (returnPath?: string) => {
     setIsLoading(true);
