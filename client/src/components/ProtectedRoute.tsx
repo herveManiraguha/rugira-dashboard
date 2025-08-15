@@ -11,6 +11,14 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { isAuthenticated, isLoading } = useAuth();
   const [location, setLocation] = useLocation();
 
+  // Always call useEffect at the top level, but conditionally execute logic inside
+  React.useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      const encodedPath = encodeURIComponent(location);
+      setLocation(`/login?next=${encodedPath}`);
+    }
+  }, [isAuthenticated, isLoading, location, setLocation]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
@@ -41,11 +49,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   if (!isAuthenticated) {
-    // Use useEffect to prevent state updates during render
-    React.useEffect(() => {
-      const encodedPath = encodeURIComponent(location);
-      setLocation(`/login?next=${encodedPath}`);
-    }, [location, setLocation]);
+    // Return null while the redirect is happening
     return null;
   }
 
