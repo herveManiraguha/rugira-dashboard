@@ -1,5 +1,6 @@
 import React from 'react';
 import { AlertTriangle, ExternalLink } from 'lucide-react';
+import AWSStatusIndicator from './AWSStatusIndicator';
 
 export default function Footer() {
   return (
@@ -46,16 +47,7 @@ export default function Footer() {
             <ExternalLink className="w-3 h-3" />
           </a>
           
-          <a 
-            href="https://status.rugira.ch" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-gray-500 hover:text-[#1B7A46] flex items-center space-x-1"
-            data-testid="link-status"
-          >
-            <span>Status</span>
-            <ExternalLink className="w-3 h-3" />
-          </a>
+          <AWSStatusIndicator />
         </div>
       </div>
     </footer>
