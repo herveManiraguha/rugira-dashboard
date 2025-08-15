@@ -10,45 +10,71 @@ const app = express();
 // CORS configuration for production and development
 const isProduction = process.env.NODE_ENV === 'production';
 const allowedOrigins = [
-  'https://app.rugira.ch',        // Production domain
+  'https://app.rugira.ch',        // Production domain ONLY
   'https://rugira.ch',            // Main site
-  'http://localhost:5000',        // Local development
-  'http://localhost:3000',        // Vite dev server
-  'http://127.0.0.1:5000',        // Local development
-  'https://*.replit.dev',         // Replit preview domains
-  'https://*.repl.co',            // Legacy Replit domains
+  'http://localhost:5000',        // Local development only
+  'http://localhost:3000',        // Vite dev server only
+  'http://127.0.0.1:5000',        // Local development only
+  // NOTE: Replit preview domains explicitly BLOCKED
 ];
+
+// Middleware to block Replit preview domains entirely
+app.use((req, res, next) => {
+  const host = req.get('host') || '';
+  const origin = req.get('origin') || '';
+  
+  // Block rugira-dashboard.replit.app and all Replit preview domains
+  if (host.includes('replit.app') || 
+      host.includes('replit.dev') || 
+      host.includes('repl.co') ||
+      origin.includes('replit.app') || 
+      origin.includes('replit.dev') || 
+      origin.includes('repl.co')) {
+    
+    console.log(`🚫 Blocked Replit domain access: ${host} (origin: ${origin})`);
+    
+    // Return a clear message redirecting to the official domain
+    return res.status(403).json({
+      error: 'Access Denied',
+      message: 'This application is only available at https://app.rugira.ch',
+      redirect: 'https://app.rugira.ch'
+    });
+  }
+  
+  next();
+});
 
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (mobile apps, etc.)
     if (!origin) return callback(null, true);
     
-    // In development, be more permissive with origins
+    // Block all Replit domains explicitly
+    if (origin.includes('replit.app') || 
+        origin.includes('replit.dev') || 
+        origin.includes('repl.co')) {
+      console.log(`🚫 CORS blocked Replit domain: ${origin}`);
+      return callback(new Error('Access denied - use https://app.rugira.ch'));
+    }
+    
+    // In development, only allow localhost
     if (!isProduction) {
-      // Allow all localhost and 127.0.0.1 origins in development
       if (origin.startsWith('http://localhost') || 
-          origin.startsWith('http://127.0.0.1') || 
-          origin.includes('replit.dev') || 
-          origin.includes('repl.co')) {
+          origin.startsWith('http://127.0.0.1')) {
         return callback(null, true);
       }
     }
     
     // Check if origin matches allowed patterns
     const isAllowed = allowedOrigins.some(allowed => {
-      if (allowed.includes('*')) {
-        const pattern = new RegExp(allowed.replace('\\*', '.*'));
-        return pattern.test(origin);
-      }
       return allowed === origin;
     });
     
     if (isAllowed) {
       callback(null, true);
     } else {
-      console.log(`CORS blocked origin: ${origin}`);
-      callback(new Error('Not allowed by CORS'));
+      console.log(`🚫 CORS blocked origin: ${origin}`);
+      callback(new Error('Access denied - use https://app.rugira.ch'));
     }
   },
   credentials: true, // Allow cookies/auth headers
