@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNotificationStore, useApiStore } from "../../stores";
+import { useNotificationStore, useApiStore } from "../../stores/index.tsx";
 import StatusIndicator from "../UI/StatusIndicator";
 import { Link } from "wouter";
 

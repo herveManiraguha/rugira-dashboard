@@ -153,9 +153,100 @@ export const useActivityStore = defineStore('activity', () => {
   }
 })
 
+interface Notification {
+  id: string;
+  type: 'success' | 'warning' | 'error' | 'info';
+  title: string;
+  message: string;
+  timestamp: string;
+  read: boolean;
+  category: 'trading' | 'system' | 'risk' | 'performance' | 'compliance';
+  actionUrl?: string;
+}
+
 export const useNotificationStore = defineStore('notifications', () => {
-  const count = ref(0)
-  const notifications = ref<any[]>([])
+  const count = ref(8)
+  const notifications = ref<Notification[]>([
+    {
+      id: '1',
+      type: 'error',
+      title: 'Bot Alpha Arbitrage Stopped',
+      message: 'Bot encountered an error and has been automatically stopped. Error: Insufficient balance on Binance exchange.',
+      timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+      read: false,
+      category: 'trading',
+      actionUrl: '/bots'
+    },
+    {
+      id: '2',
+      type: 'warning',
+      title: 'High Memory Usage Alert',
+      message: 'System memory usage has reached 67%. Consider scaling resources to maintain optimal performance.',
+      timestamp: new Date(Date.now() - 12 * 60 * 1000).toISOString(),
+      read: false,
+      category: 'system',
+      actionUrl: '/monitoring'
+    },
+    {
+      id: '3',
+      type: 'warning',
+      title: 'Risk Threshold Exceeded',
+      message: 'Portfolio drawdown has exceeded 5% threshold. Current drawdown: -6.2%. Review risk parameters.',
+      timestamp: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
+      read: false,
+      category: 'risk',
+      actionUrl: '/compliance'
+    },
+    {
+      id: '4',
+      type: 'success',
+      title: 'New Profit Target Reached',
+      message: 'Beta Grid bot has achieved +15% profit target on ETH/USDT pair. Total profit: $2,347.89',
+      timestamp: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+      read: false,
+      category: 'trading',
+      actionUrl: '/bots'
+    },
+    {
+      id: '5',
+      type: 'info',
+      title: 'Market Data Connection Restored',
+      message: 'Connection to Binance market data feed has been restored. All systems operating normally.',
+      timestamp: new Date(Date.now() - 1.5 * 60 * 60 * 1000).toISOString(),
+      read: false,
+      category: 'system'
+    },
+    {
+      id: '6',
+      type: 'warning',
+      title: 'Exchange API Rate Limit',
+      message: 'Approaching rate limit on Coinbase Pro API (85% of limit used). Consider optimizing request frequency.',
+      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      read: false,
+      category: 'performance',
+      actionUrl: '/exchanges'
+    },
+    {
+      id: '7',
+      type: 'success',
+      title: 'Backtest Completed',
+      message: 'Moving Average Crossover strategy backtest completed successfully. Total return: +24.7%',
+      timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+      read: false,
+      category: 'performance',
+      actionUrl: '/backtesting'
+    },
+    {
+      id: '8',
+      type: 'info',
+      title: 'Compliance Report Generated',
+      message: 'Monthly compliance report has been generated and is ready for review.',
+      timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+      read: false,
+      category: 'compliance',
+      actionUrl: '/compliance'
+    }
+  ])
   
   const incrementCount = () => {
     count.value++
@@ -165,10 +256,25 @@ export const useNotificationStore = defineStore('notifications', () => {
     count.value = 0
   }
   
+  const markAsRead = (id: string) => {
+    const notification = notifications.value.find(n => n.id === id)
+    if (notification && !notification.read) {
+      notification.read = true
+      count.value = Math.max(0, count.value - 1)
+    }
+  }
+  
+  const markAllAsRead = () => {
+    notifications.value.forEach(n => n.read = true)
+    count.value = 0
+  }
+  
   return {
     count,
     notifications,
     incrementCount,
-    resetCount
+    resetCount,
+    markAsRead,
+    markAllAsRead
   }
 })
