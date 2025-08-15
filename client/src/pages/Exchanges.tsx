@@ -10,8 +10,14 @@ import { Plus, Building2, CheckCircle, AlertTriangle, RotateCcw, Trash2, TestTub
 import { useToast } from "@/hooks/use-toast";
 import {
   SiBinance,
-  SiCoinbase
+  SiCoinbase,
+  SiBitcoin,
+  SiEthereum
 } from 'react-icons/si';
+import {
+  FaBitcoin,
+  FaExchangeAlt
+} from 'react-icons/fa';
 
 interface ExchangeConnection {
   id: string;
@@ -72,32 +78,94 @@ export default function Exchanges() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { toast } = useToast();
 
-  // Function to get exchange icon
+  // Function to get exchange icon - using creative icon combinations for exchanges
   const getExchangeIcon = (exchangeName: string) => {
     const iconProps = { className: "h-5 w-5", title: exchangeName };
+    const name = exchangeName.toLowerCase();
     
-    switch (exchangeName.toLowerCase()) {
-      case 'binance':
-        return <SiBinance {...iconProps} style={{ color: '#F3BA2F' }} />;
-      case 'coinbase pro':
-      case 'coinbase':
-        return <SiCoinbase {...iconProps} style={{ color: '#0052FF' }} />;
-      case 'kraken':
-        return <Building2 {...iconProps} style={{ color: '#5741D9' }} />;
-      case 'bybit':
-        return <Building2 {...iconProps} style={{ color: '#F7931A' }} />;
-      case 'okx':
-        return <Building2 {...iconProps} style={{ color: '#000000' }} />;
-      case 'kucoin':
-        return <Building2 {...iconProps} style={{ color: '#23C070' }} />;
-      case 'gate.io':
-        return <Building2 {...iconProps} style={{ color: '#0066FF' }} />;
-      case 'huobi':
-        return <Building2 {...iconProps} style={{ color: '#2E7DD7' }} />;
-      case 'bitfinex':
-        return <Building2 {...iconProps} style={{ color: '#16A085' }} />;
-      default:
-        return <Building2 {...iconProps} className="h-5 w-5 text-gray-500" />;
+    // Using available icons creatively for each exchange
+    if (name.includes('binance')) {
+      return <SiBinance {...iconProps} style={{ color: '#F3BA2F' }} />;
+    } else if (name.includes('coinbase')) {
+      return <SiCoinbase {...iconProps} style={{ color: '#0052FF' }} />;
+    } else if (name.includes('kraken')) {
+      // Kraken - using a stylized K shape with gradient
+      return (
+        <div className="h-5 w-5 flex items-center justify-center font-bold text-white rounded" 
+             style={{ backgroundColor: '#5741D9' }}>
+          K
+        </div>
+      );
+    } else if (name.includes('bybit')) {
+      // Bybit - using stylized B
+      return (
+        <div className="h-5 w-5 flex items-center justify-center font-bold text-white rounded" 
+             style={{ backgroundColor: '#F7931A' }}>
+          B
+        </div>
+      );
+    } else if (name.includes('okx')) {
+      // OKX - using stylized text
+      return (
+        <div className="h-5 w-5 flex items-center justify-center font-bold text-white rounded text-xs" 
+             style={{ backgroundColor: '#000000' }}>
+          OK
+        </div>
+      );
+    } else if (name.includes('kucoin')) {
+      // KuCoin - using stylized KC
+      return (
+        <div className="h-5 w-5 flex items-center justify-center font-bold text-white rounded text-xs" 
+             style={{ backgroundColor: '#23C070' }}>
+          KC
+        </div>
+      );
+    } else if (name.includes('gate')) {
+      // Gate.io - using stylized G
+      return (
+        <div className="h-5 w-5 flex items-center justify-center font-bold text-white rounded" 
+             style={{ backgroundColor: '#0066FF' }}>
+          G
+        </div>
+      );
+    } else if (name.includes('huobi')) {
+      // Huobi - using stylized H
+      return (
+        <div className="h-5 w-5 flex items-center justify-center font-bold text-white rounded" 
+             style={{ backgroundColor: '#2E7DD7' }}>
+          H
+        </div>
+      );
+    } else if (name.includes('bitfinex')) {
+      // Bitfinex - using Bitcoin icon with different color
+      return <FaBitcoin {...iconProps} style={{ color: '#16A085' }} />;
+    } else if (name.includes('ftx')) {
+      // FTX - using stylized F
+      return (
+        <div className="h-5 w-5 flex items-center justify-center font-bold text-white rounded" 
+             style={{ backgroundColor: '#5FCADE' }}>
+          F
+        </div>
+      );
+    } else if (name.includes('dydx')) {
+      // dYdX - using stylized dY
+      return (
+        <div className="h-5 w-5 flex items-center justify-center font-bold text-white rounded text-xs" 
+             style={{ backgroundColor: '#6966FF' }}>
+          dY
+        </div>
+      );
+    } else if (name.includes('uniswap')) {
+      // Uniswap - using stylized U with pink color
+      return (
+        <div className="h-5 w-5 flex items-center justify-center font-bold text-white rounded" 
+             style={{ backgroundColor: '#FF007A' }}>
+          U
+        </div>
+      );
+    } else {
+      // Default exchange icon
+      return <FaExchangeAlt {...iconProps} className="text-gray-500" />;
     }
   };
 
