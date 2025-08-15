@@ -9,13 +9,16 @@ const app = express();
 
 // CORS configuration for production and development
 const isProduction = process.env.NODE_ENV === 'production';
-const allowedOrigins = [
+const allowedOrigins = isProduction ? [
   'https://app.rugira.ch',        // Production domain ONLY
   'https://rugira.ch',            // Main site
-  'http://localhost:5000',        // Local development only
-  'http://localhost:3000',        // Vite dev server only
-  'http://127.0.0.1:5000',        // Local development only
-  // NOTE: Replit preview domains explicitly BLOCKED
+] : [
+  'https://app.rugira.ch',        // Production domain
+  'https://rugira.ch',            // Main site
+  'http://localhost:5000',        // Local development
+  'http://localhost:3000',        // Vite dev server
+  'http://127.0.0.1:5000',        // Local development
+  // Allow Replit domains in development only
 ];
 
 // Middleware to block Replit preview domains entirely
@@ -54,18 +57,21 @@ app.use(cors({
     // Allow requests with no origin (mobile apps, etc.)
     if (!origin) return callback(null, true);
     
-    // Block all Replit domains explicitly
-    if (origin.includes('replit.app') || 
+    // In production, block all Replit domains
+    if (isProduction && (origin.includes('replit.app') || 
         origin.includes('replit.dev') || 
-        origin.includes('repl.co')) {
-      console.log(`🚫 CORS blocked Replit domain: ${origin}`);
+        origin.includes('repl.co'))) {
+      console.log(`🚫 CORS blocked Replit domain in production: ${origin}`);
       return callback(new Error('Access denied - use https://app.rugira.ch'));
     }
     
-    // In development, only allow localhost
+    // In development, allow localhost and Replit domains
     if (!isProduction) {
       if (origin.startsWith('http://localhost') || 
-          origin.startsWith('http://127.0.0.1')) {
+          origin.startsWith('http://127.0.0.1') ||
+          origin.includes('replit.dev') ||
+          origin.includes('repl.co') ||
+          origin.includes('janeway.replit.dev')) {
         return callback(null, true);
       }
     }
