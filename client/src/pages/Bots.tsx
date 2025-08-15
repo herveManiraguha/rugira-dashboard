@@ -56,7 +56,7 @@ const mockBots: BotData[] = [
     name: 'Beta Arbitrage',
     strategy: 'Arbitrage',
     status: 'running',
-    exchange: 'Coinbase',
+    exchange: 'Coinbase Pro',
     pair: 'ETH/USD',
     pnl24h: -45.20,
     totalPnl: 892.41,
@@ -86,6 +86,78 @@ const mockBots: BotData[] = [
     totalPnl: 456.78,
     uptime: '0m',
     lastTrade: '1 day ago'
+  },
+  {
+    id: '5',
+    name: 'Epsilon DCA Bot',
+    strategy: 'DCA',
+    status: 'running',
+    exchange: 'Bybit',
+    pair: 'MATIC/USDT',
+    pnl24h: 125.40,
+    totalPnl: 890.32,
+    uptime: '2d 6h',
+    lastTrade: '8 minutes ago'
+  },
+  {
+    id: '6',
+    name: 'Zeta Futures Bot',
+    strategy: 'Futures Hedging',
+    status: 'running',
+    exchange: 'OKX',
+    pair: 'DOGE/USDT',
+    pnl24h: 98.76,
+    totalPnl: 654.21,
+    uptime: '1d 14h',
+    lastTrade: '5 minutes ago'
+  },
+  {
+    id: '7',
+    name: 'Theta Scalping',
+    strategy: 'Scalping',
+    status: 'running',
+    exchange: 'KuCoin',
+    pair: 'LINK/USDT',
+    pnl24h: 76.89,
+    totalPnl: 432.10,
+    uptime: '4d 2h',
+    lastTrade: '1 minute ago'
+  },
+  {
+    id: '8',
+    name: 'Iota Cross Bot',
+    strategy: 'Cross Exchange',
+    status: 'stopped',
+    exchange: 'Gate.io',
+    pair: 'UNI/USDT',
+    pnl24h: 0,
+    totalPnl: 234.56,
+    uptime: '0m',
+    lastTrade: '3 hours ago'
+  },
+  {
+    id: '9',
+    name: 'Kappa Range Bot',
+    strategy: 'Range Trading',
+    status: 'running',
+    exchange: 'Bitfinex',
+    pair: 'LTC/USD',
+    pnl24h: 156.78,
+    totalPnl: 1089.45,
+    uptime: '6d 18h',
+    lastTrade: '12 minutes ago'
+  },
+  {
+    id: '10',
+    name: 'Lambda Swing Bot',
+    strategy: 'Swing Trading',
+    status: 'error',
+    exchange: 'Gemini',
+    pair: 'BTC/USD',
+    pnl24h: 0,
+    totalPnl: -89.12,
+    uptime: '0m',
+    lastTrade: '4 hours ago'
   }
 ];
 
@@ -246,7 +318,14 @@ export default function Bots() {
     { id: 'stopped', label: 'Stopped', value: 'stopped' },
     { id: 'error', label: 'Error', value: 'error' },
     { id: 'binance', label: 'Binance', value: 'binance' },
-    { id: 'coinbase', label: 'Coinbase', value: 'coinbase' }
+    { id: 'coinbase-pro', label: 'Coinbase Pro', value: 'coinbase pro' },
+    { id: 'kraken', label: 'Kraken', value: 'kraken' },
+    { id: 'bybit', label: 'Bybit', value: 'bybit' },
+    { id: 'okx', label: 'OKX', value: 'okx' },
+    { id: 'kucoin', label: 'KuCoin', value: 'kucoin' },
+    { id: 'gate-io', label: 'Gate.io', value: 'gate.io' },
+    { id: 'bitfinex', label: 'Bitfinex', value: 'bitfinex' },
+    { id: 'gemini', label: 'Gemini', value: 'gemini' }
   ];
 
   const bulkActions = (

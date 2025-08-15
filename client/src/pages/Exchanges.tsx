@@ -6,6 +6,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { EmptyState } from '@/components/ui/empty-state';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
+import { ExchangeIcon } from '@/components/ui/exchange-icon';
 import { 
   Settings, 
   Plus,
@@ -53,8 +54,8 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 12450.32, available: 8921.45, currency: 'USDT' },
     supportedPairs: 1800,
     activeBots: 4,
-    logo: '/logos/binance.svg',
-    features: ['Spot Trading', 'Futures', 'Margin', 'Options']
+    logo: 'https://cryptologos.cc/logos/binance-coin-bnb-logo.svg',
+    features: ['Spot Trading', 'Futures', 'Margin', 'Options', 'P2P', 'Staking']
   },
   {
     id: '2',
@@ -66,8 +67,8 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 5620.78, available: 4150.23, currency: 'USD' },
     supportedPairs: 180,
     activeBots: 2,
-    logo: '/logos/coinbase.svg',
-    features: ['Spot Trading', 'Institutional']
+    logo: 'https://cryptologos.cc/logos/coinbase-coin-logo.svg',
+    features: ['Spot Trading', 'Institutional', 'Advanced Trading', 'API Access']
   },
   {
     id: '3',
@@ -79,21 +80,99 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 0, available: 0, currency: 'EUR' },
     supportedPairs: 220,
     activeBots: 0,
-    logo: '/logos/kraken.svg',
-    features: ['Spot Trading', 'Futures', 'Margin']
+    logo: 'https://cryptologos.cc/logos/kraken-kraken-logo.svg',
+    features: ['Spot Trading', 'Futures', 'Margin', 'Staking', 'DeFi']
   },
   {
     id: '4',
-    name: 'FTX',
+    name: 'Bybit',
+    status: 'connected',
+    lastSync: '2024-01-15T10:25:00Z',
+    tradingFees: { maker: 0.1, taker: 0.1 },
+    apiLimits: { used: 280, total: 600 },
+    balance: { total: 3420.15, available: 2890.67, currency: 'USDT' },
+    supportedPairs: 400,
+    activeBots: 3,
+    logo: 'https://cryptologos.cc/logos/bybit-token-bit-logo.svg',
+    features: ['Spot Trading', 'Futures', 'Options', 'Copy Trading', 'NFT']
+  },
+  {
+    id: '5',
+    name: 'OKX',
+    status: 'connected',
+    lastSync: '2024-01-15T10:28:00Z',
+    tradingFees: { maker: 0.08, taker: 0.1 },
+    apiLimits: { used: 340, total: 1000 },
+    balance: { total: 7850.92, available: 6120.45, currency: 'USDT' },
+    supportedPairs: 500,
+    activeBots: 5,
+    logo: 'https://cryptologos.cc/logos/okex-okb-logo.svg',
+    features: ['Spot Trading', 'Futures', 'Options', 'DeFi', 'Web3 Wallet']
+  },
+  {
+    id: '6',
+    name: 'KuCoin',
+    status: 'connected',
+    lastSync: '2024-01-15T10:27:00Z',
+    tradingFees: { maker: 0.1, taker: 0.1 },
+    apiLimits: { used: 190, total: 800 },
+    balance: { total: 2940.78, available: 2340.12, currency: 'USDT' },
+    supportedPairs: 750,
+    activeBots: 2,
+    logo: 'https://cryptologos.cc/logos/kucoin-token-kcs-logo.svg',
+    features: ['Spot Trading', 'Futures', 'Margin', 'Pool-X', 'Trading Bots']
+  },
+  {
+    id: '7',
+    name: 'Huobi Global',
     status: 'disconnected',
-    lastSync: '2024-01-10T15:20:00Z',
-    tradingFees: { maker: 0.02, taker: 0.07 },
-    apiLimits: { used: 0, total: 3000 },
-    balance: { total: 0, available: 0, currency: 'USD' },
-    supportedPairs: 300,
+    lastSync: '2024-01-14T15:20:00Z',
+    tradingFees: { maker: 0.2, taker: 0.2 },
+    apiLimits: { used: 0, total: 600 },
+    balance: { total: 0, available: 0, currency: 'USDT' },
+    supportedPairs: 600,
     activeBots: 0,
-    logo: '/logos/ftx.svg',
-    features: ['Spot Trading', 'Futures', 'Options', 'Leveraged Tokens']
+    logo: 'https://cryptologos.cc/logos/huobi-token-ht-logo.svg',
+    features: ['Spot Trading', 'Futures', 'Margin', 'DeFi', 'Prime Pool']
+  },
+  {
+    id: '8',
+    name: 'Gate.io',
+    status: 'connected',
+    lastSync: '2024-01-15T10:26:00Z',
+    tradingFees: { maker: 0.2, taker: 0.2 },
+    apiLimits: { used: 150, total: 500 },
+    balance: { total: 1850.45, available: 1420.33, currency: 'USDT' },
+    supportedPairs: 900,
+    activeBots: 1,
+    logo: 'https://cryptologos.cc/logos/gate-gt-logo.svg',
+    features: ['Spot Trading', 'Futures', 'Options', 'Copy Trading', 'Startup']
+  },
+  {
+    id: '9',
+    name: 'Bitfinex',
+    status: 'connecting',
+    lastSync: '2024-01-15T10:20:00Z',
+    tradingFees: { maker: 0.1, taker: 0.2 },
+    apiLimits: { used: 45, total: 300 },
+    balance: { total: 0, available: 0, currency: 'USD' },
+    supportedPairs: 350,
+    activeBots: 0,
+    logo: 'https://cryptologos.cc/logos/bitfinex-leo-logo.svg',
+    features: ['Spot Trading', 'Margin', 'Derivatives', 'Lending', 'OTC']
+  },
+  {
+    id: '10',
+    name: 'Gemini',
+    status: 'disconnected',
+    lastSync: '2024-01-12T08:15:00Z',
+    tradingFees: { maker: 0.25, taker: 0.35 },
+    apiLimits: { used: 0, total: 600 },
+    balance: { total: 0, available: 0, currency: 'USD' },
+    supportedPairs: 80,
+    activeBots: 0,
+    logo: 'https://cryptologos.cc/logos/gemini-dollar-gusd-logo.svg',
+    features: ['Spot Trading', 'Custody', 'Institutional', 'ActiveTrader']
   }
 ];
 
@@ -173,15 +252,17 @@ export default function Exchanges() {
             }}
           />
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {exchanges.map((exchange) => (
               <Card key={exchange.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                        <TrendingUp className="h-6 w-6 text-gray-600" />
-                      </div>
+                      <ExchangeIcon 
+                        name={exchange.name}
+                        logo={exchange.logo}
+                        size="md"
+                      />
                       <div>
                         <CardTitle className="text-lg">{exchange.name}</CardTitle>
                         <div className="flex items-center space-x-2 mt-1">

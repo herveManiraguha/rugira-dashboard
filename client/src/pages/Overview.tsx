@@ -18,6 +18,7 @@ import { KPICard, KPICardGrid } from "@/components/ui/kpi-card";
 import { EnhancedChart } from "@/components/ui/enhanced-chart";
 import { SkipLink } from "@/components/ui/skip-link";
 import { TimeRangeSelector } from "@/components/ui/time-range-selector";
+import { ExchangeSummary } from "@/components/ui/exchange-summary";
 
 interface KPI {
   id: string;
@@ -223,6 +224,70 @@ export default function Overview() {
   const dailyPnLData = generateDailyPnLData();
   const volumeData = generateVolumeData();
 
+  // Mock exchange summary data
+  const exchangeSummaryData = [
+    {
+      id: '1',
+      name: 'Binance',
+      status: 'connected' as const,
+      logo: 'https://cryptologos.cc/logos/binance-coin-bnb-logo.svg',
+      activeBots: 4,
+      balance: 12450.32,
+      currency: 'USDT',
+      last24hVolume: 45000
+    },
+    {
+      id: '2',
+      name: 'Coinbase Pro',
+      status: 'connected' as const,
+      logo: 'https://cryptologos.cc/logos/coinbase-coin-logo.svg',
+      activeBots: 2,
+      balance: 5620.78,
+      currency: 'USD',
+      last24hVolume: 28000
+    },
+    {
+      id: '3',
+      name: 'Bybit',
+      status: 'connected' as const,
+      logo: 'https://cryptologos.cc/logos/bybit-token-bit-logo.svg',
+      activeBots: 3,
+      balance: 3420.15,
+      currency: 'USDT',
+      last24hVolume: 32000
+    },
+    {
+      id: '4',
+      name: 'OKX',
+      status: 'connected' as const,
+      logo: 'https://cryptologos.cc/logos/okex-okb-logo.svg',
+      activeBots: 5,
+      balance: 7850.92,
+      currency: 'USDT',
+      last24hVolume: 51000
+    },
+    {
+      id: '5',
+      name: 'Kraken',
+      status: 'error' as const,
+      logo: 'https://cryptologos.cc/logos/kraken-kraken-logo.svg',
+      activeBots: 0,
+      balance: 0,
+      currency: 'EUR',
+      last24hVolume: 0
+    },
+    {
+      id: '6',
+      name: 'KuCoin',
+      status: 'connected' as const,
+      logo: 'https://cryptologos.cc/logos/kucoin-token-kcs-logo.svg',
+      activeBots: 2,
+      balance: 2940.78,
+      currency: 'USDT',
+      last24hVolume: 19000
+    }
+  ];
+
   // Setup SSE for real-time updates
   useEffect(() => {
     const eventSource = new EventSource('/api/stream');
@@ -348,18 +413,18 @@ export default function Overview() {
         <EnhancedChart
           title="Daily P&L"
           description="Daily profit and loss breakdown"
-          data={dailyPnLData.map(d => ({ timestamp: d.date, pnl: d.pnl }))}
+          data={dailyPnLData.map(d => ({ timestamp: d.date, value: d.pnl, pnl: d.pnl }))}
           dataKeys={[
             { key: 'pnl', label: 'Daily P&L', color: '#dc2626' }
           ]}
-          formatValue={(value) => `$${value.toFixed(2)}`}
+          formatValue={(value) => `$${Number(value).toFixed(2)}`}
         />
 
         {/* Trading Volume Chart */}
         <EnhancedChart
           title="Trading Volume"
           description="Daily trading volume and number of trades"
-          data={volumeData.map(d => ({ timestamp: d.date, volume: d.volume, trades: d.trades }))}
+          data={volumeData.map(d => ({ timestamp: d.date, value: d.volume, volume: d.volume, trades: d.trades }))}
           dataKeys={[
             { key: 'volume', label: 'Volume ($)', color: '#3b82f6' },
             { key: 'trades', label: 'Trades', color: '#f59e0b' }
@@ -367,6 +432,13 @@ export default function Overview() {
           formatValue={(value) => `$${value.toLocaleString()}`}
         />
       </div>
+
+      {/* Exchange Summary */}
+      <ExchangeSummary 
+        exchanges={exchangeSummaryData}
+        onAddExchange={() => console.log('Add exchange')}
+        onExchangeClick={(id) => console.log('Exchange clicked:', id)}
+      />
 
       {/* Live Activity Feed */}
       <Card>
