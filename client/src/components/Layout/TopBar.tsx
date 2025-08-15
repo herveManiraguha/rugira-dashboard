@@ -83,16 +83,25 @@ export default function TopBar() {
         {/* Tenant Switcher */}
         <div className="flex items-center space-x-4">
           <select 
-            className="border border-gray-300 rounded-rugira px-3 py-2 text-sm bg-white focus:border-brand-red focus:ring-2 focus:ring-brand-red focus:ring-opacity-20 text-gray-900 font-medium"
+            className="border-2 border-gray-400 rounded-rugira px-3 py-2 text-sm font-bold text-gray-900"
             style={{
-              backgroundColor: 'white !important',
-              opacity: '1 !important',
-              color: '#1f2937 !important'
+              backgroundColor: '#ffffff',
+              background: '#ffffff',
+              opacity: '1',
+              color: '#1f2937',
+              fontWeight: '700',
+              border: '2px solid #9CA3AF',
+              boxShadow: 'none',
+              filter: 'none',
+              backdropFilter: 'none',
+              WebkitBackdropFilter: 'none',
+              transform: 'none',
+              mixBlendMode: 'normal'
             }}
             data-testid="select-tenant"
           >
-            <option value="acme" style={{ backgroundColor: 'white', color: '#1f2937' }}>Default Tenant</option>
-            <option value="demo" style={{ backgroundColor: 'white', color: '#1f2937' }}>Switch Tenant (Pro)</option>
+            <option value="acme" style={{ backgroundColor: '#ffffff', background: '#ffffff', color: '#1f2937', fontWeight: '700' }}>Default Tenant</option>
+            <option value="demo" style={{ backgroundColor: '#ffffff', background: '#ffffff', color: '#1f2937', fontWeight: '700' }}>Switch Tenant (Pro)</option>
           </select>
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-green text-white">
             <StatusIndicator status="online" className="mr-1" />

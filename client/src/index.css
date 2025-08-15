@@ -211,20 +211,28 @@
     opacity: 1 !important;
   }
 
-  /* Native HTML Select Fix for TopBar */
-  select {
+  /* Native HTML Select Fix for TopBar - Aggressive Override */
+  select,
+  select[data-testid="select-tenant"] {
     background-color: #ffffff !important;
+    background: #ffffff !important;
     opacity: 1 !important;
     color: #374151 !important;
-    border: 1px solid #d1d5db !important;
+    border: 2px solid #d1d5db !important;
     border-radius: 6px !important;
     padding: 8px 12px !important;
     font-size: 14px !important;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
     outline: none !important;
     appearance: auto !important;
     -webkit-appearance: auto !important;
     -moz-appearance: auto !important;
+    box-shadow: none !important;
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    transform: none !important;
+    mix-blend-mode: normal !important;
   }
 
   select:focus {
@@ -234,16 +242,31 @@
 
   select option {
     background-color: #ffffff !important;
+    background: #ffffff !important;
     color: #374151 !important;
     opacity: 1 !important;
     padding: 8px 12px !important;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
+    filter: none !important;
+    backdrop-filter: none !important;
+    mix-blend-mode: normal !important;
   }
 
   select option:hover,
   select option:checked {
-    background-color: #f9fafb !important;
-    color: #111827 !important;
+    background-color: #e10600 !important;
+    background: #e10600 !important;
+    color: #ffffff !important;
+  }
+
+  /* Force override any parent transparency */
+  header select,
+  .bg-white select,
+  div select {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    opacity: 1 !important;
+    color: #374151 !important;
   }
 
   /* Responsive layout utilities */
