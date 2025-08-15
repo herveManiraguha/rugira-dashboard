@@ -14,6 +14,7 @@ const allowedOrigins = [
   'https://rugira.ch',            // Main site
   'http://localhost:5000',        // Local development
   'http://localhost:3000',        // Vite dev server
+  'http://127.0.0.1:5000',        // Local development
   'https://*.replit.dev',         // Replit preview domains
   'https://*.repl.co',            // Legacy Replit domains
 ];
@@ -23,10 +24,21 @@ app.use(cors({
     // Allow requests with no origin (mobile apps, etc.)
     if (!origin) return callback(null, true);
     
+    // In development, be more permissive with origins
+    if (!isProduction) {
+      // Allow all localhost and 127.0.0.1 origins in development
+      if (origin.startsWith('http://localhost') || 
+          origin.startsWith('http://127.0.0.1') || 
+          origin.includes('replit.dev') || 
+          origin.includes('repl.co')) {
+        return callback(null, true);
+      }
+    }
+    
     // Check if origin matches allowed patterns
     const isAllowed = allowedOrigins.some(allowed => {
       if (allowed.includes('*')) {
-        const pattern = new RegExp(allowed.replace('*', '.*'));
+        const pattern = new RegExp(allowed.replace('\\*', '.*'));
         return pattern.test(origin);
       }
       return allowed === origin;
@@ -35,6 +47,7 @@ app.use(cors({
     if (isAllowed) {
       callback(null, true);
     } else {
+      console.log(`CORS blocked origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },
