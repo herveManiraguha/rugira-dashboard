@@ -27,6 +27,7 @@ import {
   Activity
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Link } from "wouter";
 
 interface User {
   id: string;
@@ -369,9 +370,11 @@ export default function Admin() {
                       </TableCell>
                       <TableCell>
                         <div className="flex space-x-1">
-                          <Button size="sm" variant="outline" data-testid="button-edit-user">
-                            <Edit2 className="h-3 w-3" />
-                          </Button>
+                          <Link href={`/admin/user/${user.id}`}>
+                            <Button size="sm" variant="outline" data-testid="button-view-user">
+                              <Edit2 className="h-3 w-3" />
+                            </Button>
+                          </Link>
                           <Button size="sm" variant="outline" data-testid="button-suspend-user">
                             <UserX className="h-3 w-3" />
                           </Button>

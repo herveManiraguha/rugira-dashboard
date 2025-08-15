@@ -17,6 +17,7 @@ import Monitoring from "@/pages/Monitoring";
 import Settings from "@/pages/Settings";
 import Profile from "@/pages/Profile";
 import Admin from "@/pages/Admin";
+import UserDetail from "@/pages/UserDetail";
 import Help from "@/pages/Help";
 import NotFound from "@/pages/not-found";
 
@@ -45,6 +46,7 @@ function App() {
           <Route path="/settings" component={Settings} />
           <Route path="/profile" component={Profile} />
           <Route path="/admin" component={Admin} />
+          <Route path="/admin/user/:id" component={UserDetail} />
           <Route path="/help" component={Help} />
           <Route component={NotFound} />
         </Switch>
