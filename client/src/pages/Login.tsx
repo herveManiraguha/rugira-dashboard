@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { useAuth } from '@/contexts/MockAuthContext';
-import { useDemoMode } from '@/contexts/DemoContext';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Eye, EyeOff, AlertCircle, Play } from 'lucide-react';
+import { Loader2, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import logoSvg from "@/assets/logo.svg";
 
 export default function Login() {
   const [, setLocation] = useLocation();
   const { performLogin, isAuthenticated } = useAuth();
-  const { enableDemoMode } = useDemoMode();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -64,10 +63,7 @@ export default function Login() {
     }
   };
 
-  const handleDemoMode = () => {
-    enableDemoMode();
-    setLocation('/overview?demo=1');
-  };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
@@ -162,21 +158,6 @@ export default function Login() {
           </CardContent>
 
           <CardFooter className="flex flex-col space-y-4 text-center">
-            <div className="text-center text-sm text-gray-500 dark:text-gray-400">
-              or
-            </div>
-            
-            <Button 
-              type="button"
-              variant="outline"
-              className="w-full border-[#1B7A46] text-[#1B7A46] hover:bg-[#1B7A46] hover:text-white"
-              onClick={handleDemoMode}
-              data-testid="button-demo-mode"
-            >
-              <Play className="mr-2 h-4 w-4" />
-              Try Live Demo
-            </Button>
-            
             <div className="flex items-center justify-center text-xs text-gray-500">
               <a href="https://rugira.ch" className="hover:text-[#E10600]">
                 Visit rugira.ch
