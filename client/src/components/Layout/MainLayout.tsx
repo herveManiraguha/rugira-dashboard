@@ -125,12 +125,31 @@ export function MainLayout({ children }: MainLayoutProps) {
           <div className="flex items-center space-x-2 md:space-x-4">
             {/* Environment Toggle Button */}
             <Button
-              variant={environment === 'Live' ? "destructive" : "secondary"}
+              variant={environment === 'Live' ? "destructive" : "default"}
               size="sm"
               onClick={() => setEnvironment(environment === 'Live' ? 'Paper' : 'Live')}
-              className="text-xs font-medium px-3 py-1"
+              className={cn(
+                "text-xs font-medium px-4 py-2 min-w-[60px] border-2 transition-all duration-200",
+                environment === 'Live' 
+                  ? "bg-red-600 hover:bg-red-700 text-white border-red-600 shadow-md font-semibold" 
+                  : "bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200 font-semibold"
+              )}
+              title={environment === 'Live' ? 'Switch to Paper Trading' : 'Switch to Live Trading'}
+              data-testid="button-environment-toggle"
             >
-              {environment}
+              <div className="flex items-center space-x-1">
+                {environment === 'Live' ? (
+                  <>
+                    <Wifi className="h-3 w-3" />
+                    <span>Live</span>
+                  </>
+                ) : (
+                  <>
+                    <WifiOff className="h-3 w-3" />
+                    <span>Paper</span>
+                  </>
+                )}
+              </div>
             </Button>
 
             {/* AWS Status Indicator */}
