@@ -45,7 +45,6 @@ const navigation = [
   { name: 'Reports', href: '/reports', icon: BarChart3 },
   { name: 'Backtesting', href: '/backtesting', icon: TrendingUp },
   { name: 'Monitoring', href: '/monitoring', icon: Monitor },
-  { name: 'Settings', href: '/settings', icon: Settings },
   { name: 'Admin', href: '/admin', icon: Shield },
   { name: 'Help', href: '/help', icon: HelpCircle },
 ];
@@ -215,14 +214,16 @@ export function MainLayout({ children }: MainLayoutProps) {
                 <Button variant="ghost" className="w-full justify-between group hover:bg-gray-50">
                   <div className="flex items-center">
                     <User className="h-4 w-4 mr-3" />
-                    <span className="text-left">Admin</span>
+                    <span className="text-left">Hans</span>
                   </div>
                   <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-gray-600" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" side="right" className="w-48 ml-2">
                 <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Settings</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/settings" className="w-full cursor-pointer">Settings</Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>Sign out</DropdownMenuItem>
               </DropdownMenuContent>
