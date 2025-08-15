@@ -97,8 +97,8 @@ export default function TopBar() {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-4">
-      <div className="flex items-center justify-between">
+    <header className="bg-white border-b border-gray-200 px-6 py-4 overflow-visible">
+      <div className="flex items-center justify-between overflow-visible">
         {/* Tenant Switcher - Shadcn Select */}
         <div className="flex items-center space-x-4">
           <Select defaultValue="default" data-testid="select-tenant">
@@ -117,9 +117,9 @@ export default function TopBar() {
         </div>
 
         {/* Top Bar Actions */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 overflow-visible">
           {/* Notifications */}
-          <div className="relative">
+          <div className="relative overflow-visible">
             <button 
               type="button"
               className="relative p-2 text-gray-600 hover:text-brand-red transition-colors rounded-lg hover:bg-gray-50" 
@@ -136,93 +136,14 @@ export default function TopBar() {
                 </span>
               )}
             </button>
-
-            {/* SIMPLE TEST - This should always show */}
-            <div 
-              className="absolute right-0 mt-2 w-48 h-24 bg-red-500 text-white p-4 rounded border"
-              style={{ zIndex: 9999, top: '100%' }}
-            >
-              TEST PANEL VISIBLE
-            </div>
-
-            {showNotifications && (
-              <div 
-                className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl border border-gray-200 max-h-96 overflow-hidden"
-                style={{ zIndex: 50, top: '100%' }}
-              >
-                <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
-                  <button 
-                    onClick={handleMarkAllRead}
-                    className="text-sm text-brand-red hover:text-brand-red-dark font-medium"
-                  >
-                    Mark all read
-                  </button>
-                </div>
-                
-                <div className="max-h-80 overflow-y-auto">
-                  {notifications.slice(0, 8).map((notification) => (
-                    <div 
-                      key={notification.id}
-                      className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors ${!notification.read ? 'bg-blue-50' : ''}`}
-                      onClick={(e) => handleNotificationClick(notification.id, e)}
-                    >
-                      <div className="flex items-start space-x-3">
-                        <div className="flex-shrink-0 mt-1">
-                          <i className={`${getNotificationIcon(notification.type)} text-sm`}></i>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <p className={`text-sm font-medium text-gray-900 ${!notification.read ? 'font-semibold' : ''}`}>
-                              {notification.title}
-                            </p>
-                            {!notification.read && (
-                              <div className="w-2 h-2 bg-brand-red rounded-full flex-shrink-0 ml-2"></div>
-                            )}
-                          </div>
-                          <p className="text-sm text-gray-600 mt-1">
-                            {notification.message}
-                          </p>
-                          <div className="flex items-center justify-between mt-2">
-                            <span className="text-xs text-gray-500">
-                              {formatTimeAgo(notification.timestamp)}
-                            </span>
-                            {notification.actionUrl && (
-                              <Link href={notification.actionUrl}>
-                                <button 
-                                  className="text-xs text-brand-red hover:text-brand-red-dark font-medium"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setShowNotifications(false);
-                                  }}
-                                >
-                                  View Details
-                                </button>
-                              </Link>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  
-                  {notifications.length === 0 && (
-                    <div className="p-8 text-center text-gray-500">
-                      <i className="fas fa-bell-slash text-3xl text-gray-300 mb-3"></i>
-                      <p>No notifications</p>
-                    </div>
-                  )}
-                </div>
-                
-                {notifications.length > 8 && (
-                  <div className="p-3 border-t border-gray-200 text-center">
-                    <button className="text-sm text-brand-red hover:text-brand-red-dark font-medium">
-                      View All Notifications
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
+          </div>
+          
+          {/* SIMPLE TEST - This should always show - MOVED OUTSIDE */}
+          <div 
+            className="fixed right-6 top-20 w-48 h-24 bg-red-500 text-white p-4 rounded border"
+            style={{ zIndex: 9999 }}
+          >
+            TEST PANEL VISIBLE
           </div>
 
           {/* Kill Switch */}
