@@ -3,6 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useNotificationStore, useApiStore } from "../../stores/index.tsx";
 import StatusIndicator from "../UI/StatusIndicator";
 import { Link } from "wouter";
+import { Bell, User, ChevronDown, StopCircle } from "lucide-react";
 
 export default function TopBar() {
   const { count, notifications, markAsRead, markAllAsRead } = useNotificationStore();
@@ -15,7 +16,9 @@ export default function TopBar() {
 
   const toggleNotifications = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setShowNotifications(!showNotifications);
+    e.preventDefault();
+    console.log('Notification bell clicked, current state:', showNotifications);
+    setShowNotifications(prev => !prev);
   };
 
   const handleNotificationClick = (id: string, e: React.MouseEvent) => {
@@ -104,14 +107,15 @@ export default function TopBar() {
           {/* Notifications */}
           <div className="relative" ref={notificationRef}>
             <button 
-              className="relative p-2 text-text-500 hover:text-brand-red transition-colors" 
+              type="button"
+              className="relative p-2 text-gray-600 hover:text-brand-red transition-colors rounded-lg hover:bg-gray-50" 
               onClick={toggleNotifications}
               data-testid="button-notifications"
             >
-              <i className="fas fa-bell text-lg"></i>
+              <Bell className="h-5 w-5" />
               {count > 0 && (
                 <span 
-                  className="absolute -top-1 -right-1 bg-brand-red text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+                  className="absolute -top-1 -right-1 bg-brand-red text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium"
                   data-testid="text-notification-count"
                 >
                   {count}
@@ -122,7 +126,8 @@ export default function TopBar() {
             {/* Notification Dropdown */}
             {showNotifications && (
               <div 
-                className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-96 overflow-hidden"
+                className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl border border-gray-200 max-h-96 overflow-hidden"
+                style={{ zIndex: 9999 }}
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="p-4 border-b border-gray-200 flex items-center justify-between">
@@ -202,12 +207,13 @@ export default function TopBar() {
 
           {/* Kill Switch */}
           <button 
-            className="btn-secondary text-xs px-3 py-1.5 border-2 border-brand-red"
+            type="button"
+            className="btn-secondary text-xs px-3 py-1.5 border-2 border-brand-red flex items-center"
             onClick={emergencyStop}
             data-testid="button-kill-switch"
             disabled={!isConnected}
           >
-            <i className="fas fa-stop-circle mr-1"></i>
+            <StopCircle className="h-4 w-4 mr-1" />
             Kill Switch
           </button>
 
@@ -219,10 +225,10 @@ export default function TopBar() {
               data-testid="button-user-menu"
             >
               <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                <i className="fas fa-user text-text-500"></i>
+                <User className="h-4 w-4 text-gray-600" />
               </div>
               <span data-testid="text-user-name">{currentUser.name}</span>
-              <i className="fas fa-chevron-down text-xs"></i>
+              <ChevronDown className="h-4 w-4" />
             </button>
             
             {/* User dropdown would go here */}
