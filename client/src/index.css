@@ -269,6 +269,17 @@
     color: #374151 !important;
   }
 
+  /* Custom Tenant Dropdown Styling */
+  .tenant-dropdown-trigger {
+    background: #ffffff !important;
+    opacity: 1 !important;
+    z-index: 1000;
+  }
+
+  .tenant-dropdown-trigger:hover {
+    background: #f9fafb !important;
+  }
+
   /* Responsive layout utilities */
   .main-layout {
     min-height: 100vh;

@@ -9,6 +9,7 @@ export default function TopBar() {
   const [currentUser] = useState({ name: 'John Trader' });
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showTenantMenu, setShowTenantMenu] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
 
   const toggleNotifications = (e: React.MouseEvent) => {
@@ -26,22 +27,27 @@ export default function TopBar() {
     markAllAsRead();
   };
 
-  // Close notification dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
         setShowNotifications(false);
       }
+      // Close tenant menu if clicking outside
+      if (!(event.target as Element).closest('.tenant-dropdown-trigger') && 
+          !(event.target as Element).closest('.absolute')) {
+        setShowTenantMenu(false);
+      }
     };
 
-    if (showNotifications) {
+    if (showNotifications || showTenantMenu) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showNotifications]);
+  }, [showNotifications, showTenantMenu]);
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
@@ -80,29 +86,58 @@ export default function TopBar() {
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
-        {/* Tenant Switcher */}
+        {/* Tenant Switcher - Custom Dropdown */}
         <div className="flex items-center space-x-4">
-          <select 
-            className="border-2 border-gray-400 rounded-rugira px-3 py-2 text-sm font-bold text-gray-900"
-            style={{
-              backgroundColor: '#ffffff',
-              background: '#ffffff',
-              opacity: '1',
-              color: '#1f2937',
-              fontWeight: '700',
-              border: '2px solid #9CA3AF',
-              boxShadow: 'none',
-              filter: 'none',
-              backdropFilter: 'none',
-              WebkitBackdropFilter: 'none',
-              transform: 'none',
-              mixBlendMode: 'normal'
-            }}
-            data-testid="select-tenant"
-          >
-            <option value="acme" style={{ backgroundColor: '#ffffff', background: '#ffffff', color: '#1f2937', fontWeight: '700' }}>Default Tenant</option>
-            <option value="demo" style={{ backgroundColor: '#ffffff', background: '#ffffff', color: '#1f2937', fontWeight: '700' }}>Switch Tenant (Pro)</option>
-          </select>
+          <div className="relative">
+            <button 
+              className="tenant-dropdown-trigger flex items-center justify-between px-3 py-2 text-sm font-bold text-gray-900 border-2 border-gray-400 rounded-rugira min-w-[160px]"
+              style={{
+                backgroundColor: '#ffffff',
+                background: '#ffffff',
+                opacity: '1',
+                color: '#1f2937',
+                fontWeight: '700',
+                border: '2px solid #9CA3AF',
+                boxShadow: 'none'
+              }}
+              onClick={() => setShowTenantMenu(!showTenantMenu)}
+              data-testid="button-tenant-dropdown"
+            >
+              <span>Default Tenant</span>
+              <i className={`fas fa-chevron-down text-xs ml-2 transition-transform ${showTenantMenu ? 'rotate-180' : ''}`}></i>
+            </button>
+            
+            {showTenantMenu && (
+              <div 
+                className="absolute top-full left-0 right-0 mt-1 bg-white border-2 border-gray-300 rounded-rugira shadow-lg z-50"
+                style={{
+                  backgroundColor: '#ffffff',
+                  background: '#ffffff',
+                  opacity: '1',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                }}
+              >
+                <div 
+                  className="px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm font-bold text-gray-900 border-b border-gray-200"
+                  style={{ backgroundColor: '#ffffff', color: '#1f2937', fontWeight: '700' }}
+                  onClick={() => {
+                    setShowTenantMenu(false);
+                  }}
+                >
+                  Default Tenant
+                </div>
+                <div 
+                  className="px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm font-bold text-gray-500"
+                  style={{ backgroundColor: '#ffffff', color: '#6B7280', fontWeight: '700' }}
+                  onClick={() => {
+                    setShowTenantMenu(false);
+                  }}
+                >
+                  Switch Tenant (Pro)
+                </div>
+              </div>
+            )}
+          </div>
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-green text-white">
             <StatusIndicator status="online" className="mr-1" />
             LIVE
