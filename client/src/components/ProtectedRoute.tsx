@@ -14,8 +14,11 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   // Always call useEffect at the top level, but conditionally execute logic inside
   React.useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      const encodedPath = encodeURIComponent(location);
-      setLocation(`/login?next=${encodedPath}`);
+      // Only redirect if we're not already on the login page
+      if (!location.startsWith('/login')) {
+        const encodedPath = encodeURIComponent(location);
+        setLocation(`/login?next=${encodedPath}`);
+      }
     }
   }, [isAuthenticated, isLoading, location, setLocation]);
 

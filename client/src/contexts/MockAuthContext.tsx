@@ -72,7 +72,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         sessionStorage.removeItem('rugira_mock_user');
       }
     }
-    setIsLoading(false);
+    
+    // Add a small delay to ensure state is properly updated before components check
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 100);
   }, []); // Empty dependency array to run only on mount
 
   useEffect(() => {

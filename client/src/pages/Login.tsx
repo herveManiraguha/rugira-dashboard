@@ -11,7 +11,7 @@ import logoSvg from "@/assets/logo.svg";
 
 export default function Login() {
   const [, setLocation] = useLocation();
-  const { performLogin } = useAuth();
+  const { performLogin, isAuthenticated } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -28,6 +28,13 @@ export default function Login() {
     }
   }, []);
 
+  // If already authenticated, redirect immediately
+  useEffect(() => {
+    if (isAuthenticated) {
+      setLocation(nextPath);
+    }
+  }, [isAuthenticated, nextPath, setLocation]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -41,8 +48,10 @@ export default function Login() {
       const success = await performLogin(username, password);
       
       if (success) {
-        // Redirect to the intended page
-        setLocation(nextPath);
+        // Add a small delay to ensure state is updated before redirect
+        setTimeout(() => {
+          setLocation(nextPath);
+        }, 150);
       } else {
         setError('Invalid username or password. Please try again.');
       }
