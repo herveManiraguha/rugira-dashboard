@@ -7,6 +7,7 @@ import { EmptyState } from '@/components/ui/empty-state';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { ExchangeIcon } from '@/components/ui/exchange-icon';
+import { EnhancedTable } from '@/components/ui/enhanced-table';
 import { 
   Settings, 
   Plus,
@@ -16,8 +17,18 @@ import {
   Clock,
   Shield,
   TrendingUp,
-  DollarSign
+  DollarSign,
+  Grid3X3,
+  List,
+  MoreHorizontal
 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface ExchangeData {
   id: string;
@@ -178,6 +189,7 @@ const mockExchanges: ExchangeData[] = [
 
 export default function Exchanges() {
   const [exchanges] = useState(mockExchanges);
+  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
 
   const handleConnect = (exchangeId: string) => {
     console.log('Connecting to exchange:', exchangeId);
@@ -233,10 +245,32 @@ export default function Exchanges() {
         title="Exchange Connections"
         description="Manage your cryptocurrency exchange integrations and API connections"
         actions={
-          <Button data-testid="add-exchange">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Exchange
-          </Button>
+          <div className="flex items-center space-x-2">
+            <div className="flex border rounded-lg p-1">
+              <Button
+                variant={viewMode === 'cards' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('cards')}
+                data-testid="view-cards"
+                className="px-3"
+              >
+                <Grid3X3 className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === 'table' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('table')}
+                data-testid="view-table"
+                className="px-3"
+              >
+                <List className="h-4 w-4" />
+              </Button>
+            </div>
+            <Button data-testid="add-exchange">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Exchange
+            </Button>
+          </div>
         }
       />
 
@@ -251,152 +285,355 @@ export default function Exchanges() {
               onClick: () => console.log('Connect exchange')
             }}
           />
+        ) : viewMode === 'table' ? (
+          <ExchangeTableView 
+            exchanges={exchanges}
+            onConnect={handleConnect}
+            onDisconnect={handleDisconnect}
+            onRefresh={handleRefresh}
+            getStatusBadge={getStatusBadge}
+            formatLastSync={formatLastSync}
+            getApiUsageColor={getApiUsageColor}
+          />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {exchanges.map((exchange) => (
-              <Card key={exchange.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <ExchangeIcon 
-                        name={exchange.name}
-                        logo={exchange.logo}
-                        size="md"
-                      />
-                      <div>
-                        <CardTitle className="text-lg">{exchange.name}</CardTitle>
-                        <div className="flex items-center space-x-2 mt-1">
-                          {getStatusBadge(exchange.status)}
-                          <Clock className="h-3 w-3 text-gray-400" />
-                          <span className="text-xs text-gray-500">
-                            {formatLastSync(exchange.lastSync)}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleRefresh(exchange.id)}
-                        disabled={exchange.status === 'disconnected'}
-                        data-testid={`refresh-${exchange.id}`}
-                      >
-                        <RefreshCw className="h-4 w-4" />
-                      </Button>
-                      
-                      {exchange.status === 'connected' ? (
-                        <ConfirmationDialog
-                          trigger={
-                            <Button variant="ghost" size="sm" data-testid={`disconnect-${exchange.id}`}>
-                              <Unlink className="h-4 w-4" />
-                            </Button>
-                          }
-                          title="Disconnect Exchange"
-                          description={`Are you sure you want to disconnect from ${exchange.name}? This will stop all active bots on this exchange.`}
-                          confirmText="Disconnect"
-                          onConfirm={() => handleDisconnect(exchange.id)}
-                          variant="destructive"
-                        />
-                      ) : (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleConnect(exchange.id)}
-                          data-testid={`connect-${exchange.id}`}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </CardHeader>
-
-                <CardContent className="space-y-4">
-                  {/* Balance Information */}
-                  {exchange.status === 'connected' && (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-700">Account Balance</span>
-                        <DollarSign className="h-4 w-4 text-gray-400" />
-                      </div>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <span className="text-gray-500">Total</span>
-                          <p className="font-semibold">
-                            {exchange.balance.total.toLocaleString()} {exchange.balance.currency}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-gray-500">Available</span>
-                          <p className="font-semibold">
-                            {exchange.balance.available.toLocaleString()} {exchange.balance.currency}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* API Usage */}
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium">API Usage</span>
-                      <span className="text-xs text-gray-500">
-                        {exchange.apiLimits.used}/{exchange.apiLimits.total}
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
-                        className={`h-2 rounded-full transition-all ${getApiUsageColor(exchange.apiLimits.used, exchange.apiLimits.total)}`}
-                        style={{ width: `${(exchange.apiLimits.used / exchange.apiLimits.total) * 100}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Trading Fees */}
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-500">Maker Fee</span>
-                      <p className="font-semibold">{exchange.tradingFees.maker}%</p>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Taker Fee</span>
-                      <p className="font-semibold">{exchange.tradingFees.taker}%</p>
-                    </div>
-                  </div>
-
-                  {/* Features */}
-                  <div>
-                    <span className="text-sm font-medium text-gray-700 mb-2 block">Features</span>
-                    <div className="flex flex-wrap gap-2">
-                      {exchange.features.map((feature, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {feature}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Footer Stats */}
-                  <div className="flex items-center justify-between text-sm text-gray-500 pt-2 border-t">
-                    <span>{exchange.supportedPairs} pairs</span>
-                    <span>{exchange.activeBots} active bot{exchange.activeBots !== 1 ? 's' : ''}</span>
-                  </div>
-
-                  {/* Error Message */}
-                  {exchange.status === 'error' && (
-                    <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg">
-                      <AlertTriangle className="h-4 w-4" />
-                      <span className="text-sm">API connection failed. Check your credentials.</span>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <ExchangeCardView 
+            exchanges={exchanges}
+            onConnect={handleConnect}
+            onDisconnect={handleDisconnect}
+            onRefresh={handleRefresh}
+            getStatusBadge={getStatusBadge}
+            formatLastSync={formatLastSync}
+            getApiUsageColor={getApiUsageColor}
+          />
         )}
       </main>
     </div>
+  );
+}
+
+// Card View Component
+function ExchangeCardView({ exchanges, onConnect, onDisconnect, onRefresh, getStatusBadge, formatLastSync, getApiUsageColor }: {
+  exchanges: ExchangeData[];
+  onConnect: (id: string) => void;
+  onDisconnect: (id: string) => void;
+  onRefresh: (id: string) => void;
+  getStatusBadge: (status: ExchangeData['status']) => React.ReactNode;
+  formatLastSync: (timestamp: string) => string;
+  getApiUsageColor: (used: number, total: number) => string;
+}) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      {exchanges.map((exchange) => (
+        <Card key={exchange.id} className="hover:shadow-lg transition-shadow">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <ExchangeIcon 
+                  name={exchange.name}
+                  logo={exchange.logo}
+                  size="md"
+                />
+                <div>
+                  <CardTitle className="text-lg">{exchange.name}</CardTitle>
+                  <div className="flex items-center space-x-2 mt-1">
+                    {getStatusBadge(exchange.status)}
+                    <Clock className="h-3 w-3 text-gray-400" />
+                    <span className="text-xs text-gray-500">
+                      {formatLastSync(exchange.lastSync)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onRefresh(exchange.id)}
+                  disabled={exchange.status === 'disconnected'}
+                  data-testid={`refresh-${exchange.id}`}
+                >
+                  <RefreshCw className="h-4 w-4" />
+                </Button>
+                
+                {exchange.status === 'connected' ? (
+                  <ConfirmationDialog
+                    trigger={
+                      <Button variant="ghost" size="sm" data-testid={`disconnect-${exchange.id}`}>
+                        <Unlink className="h-4 w-4" />
+                      </Button>
+                    }
+                    title="Disconnect Exchange"
+                    description={`Are you sure you want to disconnect from ${exchange.name}? This will stop all active bots on this exchange.`}
+                    confirmText="Disconnect"
+                    onConfirm={() => onDisconnect(exchange.id)}
+                    variant="destructive"
+                  />
+                ) : (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onConnect(exchange.id)}
+                    data-testid={`connect-${exchange.id}`}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            </div>
+          </CardHeader>
+
+          <CardContent className="space-y-4">
+            {/* Balance Information */}
+            {exchange.status === 'connected' && (
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-gray-700">Account Balance</span>
+                  <DollarSign className="h-4 w-4 text-gray-400" />
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-500">Total</span>
+                    <p className="font-semibold">
+                      {exchange.balance.total.toLocaleString()} {exchange.balance.currency}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Available</span>
+                    <p className="font-semibold">
+                      {exchange.balance.available.toLocaleString()} {exchange.balance.currency}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* API Usage */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium">API Usage</span>
+                <span className="text-xs text-gray-500">
+                  {exchange.apiLimits.used}/{exchange.apiLimits.total}
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className={`h-2 rounded-full transition-all ${getApiUsageColor(exchange.apiLimits.used, exchange.apiLimits.total)}`}
+                  style={{ width: `${(exchange.apiLimits.used / exchange.apiLimits.total) * 100}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Trading Fees */}
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="text-gray-500">Maker Fee</span>
+                <p className="font-semibold">{exchange.tradingFees.maker}%</p>
+              </div>
+              <div>
+                <span className="text-gray-500">Taker Fee</span>
+                <p className="font-semibold">{exchange.tradingFees.taker}%</p>
+              </div>
+            </div>
+
+            {/* Features */}
+            <div>
+              <span className="text-sm font-medium text-gray-700 mb-2 block">Features</span>
+              <div className="flex flex-wrap gap-2">
+                {exchange.features.map((feature, index) => (
+                  <Badge key={index} variant="outline" className="text-xs">
+                    {feature}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+
+            {/* Footer Stats */}
+            <div className="flex items-center justify-between text-sm text-gray-500 pt-2 border-t">
+              <span>{exchange.supportedPairs} pairs</span>
+              <span>{exchange.activeBots} active bot{exchange.activeBots !== 1 ? 's' : ''}</span>
+            </div>
+
+            {/* Error Message */}
+            {exchange.status === 'error' && (
+              <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg">
+                <AlertTriangle className="h-4 w-4" />
+                <span className="text-sm">API connection failed. Check your credentials.</span>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+// Table View Component
+function ExchangeTableView({ exchanges, onConnect, onDisconnect, onRefresh, getStatusBadge, formatLastSync, getApiUsageColor }: {
+  exchanges: ExchangeData[];
+  onConnect: (id: string) => void;
+  onDisconnect: (id: string) => void;
+  onRefresh: (id: string) => void;
+  getStatusBadge: (status: ExchangeData['status']) => React.ReactNode;
+  formatLastSync: (timestamp: string) => string;
+  getApiUsageColor: (used: number, total: number) => string;
+}) {
+  const tableColumns = [
+    {
+      id: 'exchange',
+      header: 'Exchange',
+      accessorKey: 'name',
+      cell: ({ row }: any) => (
+        <div className="flex items-center space-x-3">
+          <ExchangeIcon 
+            name={row.original.name}
+            logo={row.original.logo}
+            size="sm"
+          />
+          <span className="font-medium">{row.original.name}</span>
+        </div>
+      )
+    },
+    {
+      id: 'account',
+      header: 'Account Alias',
+      cell: ({ row }: any) => (
+        <div>
+          <div className="font-medium text-sm">
+            {row.original.name === 'Binance' ? 'Main Trading Account' :
+             row.original.name === 'Coinbase Pro' ? 'Secondary Account' :
+             row.original.name === 'Kraken' ? 'European Trading' :
+             row.original.name === 'Bybit' ? 'Derivatives Account' :
+             row.original.name === 'OKX' ? 'Asian Markets' :
+             row.original.name === 'KuCoin' ? 'Altcoin Trading' :
+             row.original.name === 'Huobi Global' ? 'Spot Trading' :
+             row.original.name === 'Gate.io' ? 'DeFi Assets' :
+             row.original.name === 'Bitfinex' ? 'Professional Trading' :
+             'Primary Account'}
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 'permissions',
+      header: 'Permissions',
+      cell: ({ row }: any) => {
+        const permissions = {
+          'Binance': 'Trade-only',
+          'Coinbase Pro': 'Read-only', 
+          'Kraken': 'Full Access',
+          'Bybit': 'Trade-only',
+          'OKX': 'Read-only',
+          'KuCoin': 'Full Access',
+          'Huobi Global': 'Trade-only',
+          'Gate.io': 'Trade-only',
+          'Bitfinex': 'Full Access',
+          'Gemini': 'Read-only'
+        };
+        const permission = permissions[row.original.name as keyof typeof permissions] || 'Read-only';
+        const color = permission === 'Full Access' ? 'bg-green-100 text-green-800' :
+                     permission === 'Trade-only' ? 'bg-orange-100 text-orange-800' :
+                     'bg-blue-100 text-blue-800';
+        
+        return (
+          <Badge className={color}>
+            {permission}
+          </Badge>
+        );
+      }
+    },
+    {
+      id: 'environment',
+      header: 'Environment',
+      cell: () => (
+        <Badge variant="outline" className="bg-gray-100">paper</Badge>
+      )
+    },
+    {
+      id: 'status',
+      header: 'Status',
+      cell: ({ row }: any) => getStatusBadge(row.original.status)
+    },
+    {
+      id: 'lastVerified',
+      header: 'Last Verified',
+      cell: ({ row }: any) => (
+        <span className="text-sm text-gray-600">
+          {formatLastSync(row.original.lastSync)}
+        </span>
+      )
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }: any) => (
+        <div className="flex items-center space-x-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onRefresh(row.original.id)}
+            disabled={row.original.status === 'disconnected'}
+            data-testid={`table-refresh-${row.original.id}`}
+          >
+            <RefreshCw className="h-4 w-4" />
+          </Button>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" data-testid={`table-actions-${row.original.id}`}>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>
+                <Settings className="h-4 w-4 mr-2" />
+                Configure
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Test Connection
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              {row.original.status === 'connected' ? (
+                <ConfirmationDialog
+                  trigger={
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-red-600">
+                      <Unlink className="h-4 w-4 mr-2" />
+                      Disconnect
+                    </DropdownMenuItem>
+                  }
+                  title="Disconnect Exchange"
+                  description={`Are you sure you want to disconnect from ${row.original.name}? This will stop all active bots on this exchange.`}
+                  confirmText="Disconnect"
+                  onConfirm={() => onDisconnect(row.original.id)}
+                  variant="destructive"
+                />
+              ) : (
+                <DropdownMenuItem onClick={() => onConnect(row.original.id)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Connect
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      )
+    }
+  ];
+
+  return (
+    <EnhancedTable
+      data={exchanges}
+      columns={tableColumns}
+      searchKey="name"
+      searchPlaceholder="Search exchanges..."
+      filters={[
+        { id: 'connected', label: 'Connected', value: 'connected' },
+        { id: 'disconnected', label: 'Disconnected', value: 'disconnected' },
+        { id: 'error', label: 'Error', value: 'error' }
+      ]}
+      filterKey="status"
+      className="border rounded-lg"
+    />
   );
 }
