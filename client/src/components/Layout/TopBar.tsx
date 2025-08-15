@@ -141,11 +141,11 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
         {/* Top Bar Actions */}
         <div className="flex items-center space-x-2 md:space-x-4 overflow-visible">
           {/* Notifications */}
-          <div className="relative overflow-visible">
+          <div className="relative overflow-visible" ref={notificationRef}>
             <button 
               type="button"
               className="relative p-2 text-gray-600 hover:text-brand-red transition-colors rounded-lg hover:bg-gray-50" 
-              onClick={() => setShowNotifications(!showNotifications)}
+              onClick={toggleNotifications}
               data-testid="button-notifications"
             >
               <Bell className="h-5 w-5" />
@@ -158,6 +158,78 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
                 </span>
               )}
             </button>
+            
+            {/* Notification Dropdown */}
+            {showNotifications && (
+              <div 
+                className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-[9999] overflow-hidden"
+                style={{ 
+                  position: 'absolute',
+                  top: '100%',
+                  right: 0,
+                  marginTop: '0.5rem',
+                  zIndex: 9999
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="p-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+                  <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
+                  {notifications.filter(n => !n.read).length > 0 && (
+                    <button 
+                      onClick={handleMarkAllRead}
+                      className="text-xs text-brand-red hover:text-red-700 font-medium"
+                    >
+                      Mark all as read
+                    </button>
+                  )}
+                </div>
+                
+                <div className="max-h-96 overflow-y-auto">
+                  {notifications.length === 0 ? (
+                    <div className="p-8 text-center text-gray-500">
+                      <Bell className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                      <p className="text-sm">No notifications yet</p>
+                    </div>
+                  ) : (
+                    notifications.map((notification) => (
+                      <div 
+                        key={notification.id}
+                        className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors ${
+                          !notification.read ? 'bg-blue-50' : ''
+                        }`}
+                        onClick={(e) => handleNotificationClick(notification.id, e)}
+                      >
+                        <div className="flex items-start space-x-3">
+                          <i className={getNotificationIcon(notification.type)} />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900">
+                              {notification.title}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {notification.message}
+                            </p>
+                            <p className="text-xs text-gray-400 mt-2">
+                              {formatTimeAgo(notification.timestamp)}
+                            </p>
+                          </div>
+                          {!notification.read && (
+                            <div className="w-2 h-2 bg-brand-red rounded-full flex-shrink-0 mt-1.5"></div>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+                
+                {notifications.length > 0 && (
+                  <Link href="/notifications">
+                    <div className="p-3 text-center text-sm text-brand-red hover:bg-gray-50 font-medium cursor-pointer">
+                      View all notifications
+                    </div>
+                  </Link>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Kill Switch - Hidden on mobile */}
