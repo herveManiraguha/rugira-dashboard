@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, Shield, Clock } from 'lucide-react';
+import { AlertTriangle, Ban, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useKillSwitch } from '@/hooks/useKillSwitch';
 import { cn } from '@/lib/utils';
@@ -43,7 +43,7 @@ export default function KillSwitchBanner({ className }: KillSwitchBannerProps) {
           {killSwitchState.scope === 'global' ? (
             <AlertTriangle className="h-6 w-6 text-red-600" />
           ) : (
-            <Shield className="h-6 w-6 text-orange-600" />
+            <Ban className="h-6 w-6 text-orange-600" />
           )}
         </div>
         

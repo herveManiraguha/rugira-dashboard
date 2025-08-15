@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, Power, AlertTriangle } from 'lucide-react';
+import { Ban, Power, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -104,7 +104,7 @@ export default function KillSwitchButton({ className }: KillSwitchButtonProps) {
         title="Admin only"
         data-testid="kill-switch-button-disabled"
       >
-        <Shield className="h-4 w-4" />
+        <Ban className="h-4 w-4" />
       </Button>
     );
   }
@@ -128,7 +128,7 @@ export default function KillSwitchButton({ className }: KillSwitchButtonProps) {
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle className="flex items-center space-x-2">
-              <Shield className="h-5 w-5 text-green-600" />
+              <Ban className="h-5 w-5 text-green-600" />
               <span>Resume Trading</span>
             </DialogTitle>
             <DialogDescription>
@@ -207,7 +207,7 @@ export default function KillSwitchButton({ className }: KillSwitchButtonProps) {
           title="Emergency Kill Switch"
           data-testid="kill-switch-button-inactive"
         >
-          <Shield className="h-4 w-4" />
+          <Ban className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
