@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useNotificationStore, useApiStore } from "../../stores/index.tsx";
 import StatusIndicator from "../UI/StatusIndicator";
-import { Link } from "wouter";
+import NotificationDropdown from "./NotificationDropdown";
 import { Bell, User, ChevronDown, StopCircle } from "lucide-react";
 
 interface TopBarProps {
@@ -16,75 +16,22 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
-  const notificationRef = useRef<HTMLDivElement>(null);
+  const notificationButtonRef = useRef<HTMLDivElement>(null);
 
-  // Debug logging
-  useEffect(() => {
-    console.log('TopBar mounted, notifications count:', count);
-    console.log('Notifications:', notifications);
-  }, []);
-
-  useEffect(() => {
-    console.log('showNotifications state changed to:', showNotifications);
-  }, [showNotifications]);
-
-  const toggleNotifications = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    console.log('Bell clicked! Current state:', showNotifications, 'Count:', count);
-    setShowNotifications(prev => {
-      const newState = !prev;
-      console.log('Setting showNotifications to:', newState);
-      return newState;
-    });
+  const handleToggleNotifications = () => {
+    setShowNotifications(!showNotifications);
   };
 
-  const handleNotificationClick = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleCloseNotifications = () => {
+    setShowNotifications(false);
+  };
+
+  const handleMarkAsRead = (id: string) => {
     markAsRead(id);
   };
 
-  const handleMarkAllRead = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleMarkAllAsRead = () => {
     markAllAsRead();
-  };
-
-  // Close notification dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
-        setShowNotifications(false);
-      }
-    };
-
-    if (showNotifications) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showNotifications]);
-
-  const getNotificationIcon = (type: string) => {
-    switch (type) {
-      case 'success': return 'fas fa-check-circle text-green-500';
-      case 'warning': return 'fas fa-exclamation-triangle text-yellow-500';
-      case 'error': return 'fas fa-exclamation-circle text-red-500';
-      case 'info': return 'fas fa-info-circle text-blue-500';
-      default: return 'fas fa-bell text-gray-500';
-    }
-  };
-
-  const formatTimeAgo = (timestamp: string) => {
-    const now = new Date();
-    const time = new Date(timestamp);
-    const diffInMinutes = Math.floor((now.getTime() - time.getTime()) / (1000 * 60));
-    
-    if (diffInMinutes < 1) return 'Just now';
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
-    return `${Math.floor(diffInMinutes / 1440)}d ago`;
   };
 
   const emergencyStop = () => {
@@ -141,11 +88,11 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
         {/* Top Bar Actions */}
         <div className="flex items-center space-x-2 md:space-x-4 overflow-visible">
           {/* Notifications */}
-          <div className="relative overflow-visible" ref={notificationRef}>
+          <div className="relative" ref={notificationButtonRef}>
             <button 
               type="button"
               className="relative p-2 text-gray-600 hover:text-brand-red transition-colors rounded-lg hover:bg-gray-50" 
-              onClick={toggleNotifications}
+              onClick={handleToggleNotifications}
               data-testid="button-notifications"
             >
               <Bell className="h-5 w-5" />
@@ -158,79 +105,17 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
                 </span>
               )}
             </button>
-            
-            {/* Notification Dropdown */}
-            {showNotifications && (
-              <div 
-                className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-[9999] overflow-hidden"
-                style={{ 
-                  position: 'absolute',
-                  top: '100%',
-                  right: 0,
-                  marginTop: '0.5rem',
-                  zIndex: 9999
-                }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="p-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
-                  {notifications.filter(n => !n.read).length > 0 && (
-                    <button 
-                      onClick={handleMarkAllRead}
-                      className="text-xs text-brand-red hover:text-red-700 font-medium"
-                    >
-                      Mark all as read
-                    </button>
-                  )}
-                </div>
-                
-                <div className="max-h-96 overflow-y-auto">
-                  {notifications.length === 0 ? (
-                    <div className="p-8 text-center text-gray-500">
-                      <Bell className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-                      <p className="text-sm">No notifications yet</p>
-                    </div>
-                  ) : (
-                    notifications.map((notification) => (
-                      <div 
-                        key={notification.id}
-                        className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors ${
-                          !notification.read ? 'bg-blue-50' : ''
-                        }`}
-                        onClick={(e) => handleNotificationClick(notification.id, e)}
-                      >
-                        <div className="flex items-start space-x-3">
-                          <i className={getNotificationIcon(notification.type)} />
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900">
-                              {notification.title}
-                            </p>
-                            <p className="text-xs text-gray-500 mt-1">
-                              {notification.message}
-                            </p>
-                            <p className="text-xs text-gray-400 mt-2">
-                              {formatTimeAgo(notification.timestamp)}
-                            </p>
-                          </div>
-                          {!notification.read && (
-                            <div className="w-2 h-2 bg-brand-red rounded-full flex-shrink-0 mt-1.5"></div>
-                          )}
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-                
-                {notifications.length > 0 && (
-                  <Link href="/notifications">
-                    <div className="p-3 text-center text-sm text-brand-red hover:bg-gray-50 font-medium cursor-pointer">
-                      View all notifications
-                    </div>
-                  </Link>
-                )}
-              </div>
-            )}
           </div>
+          
+          {/* Notification Dropdown Portal */}
+          <NotificationDropdown
+            isOpen={showNotifications}
+            onClose={handleCloseNotifications}
+            notifications={notifications}
+            onMarkAsRead={handleMarkAsRead}
+            onMarkAllAsRead={handleMarkAllAsRead}
+            anchorRef={notificationButtonRef}
+          />
 
           {/* Kill Switch - Hidden on mobile */}
           <button 
