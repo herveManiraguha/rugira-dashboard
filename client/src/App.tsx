@@ -14,6 +14,7 @@ import Compliance from "@/pages/Compliance";
 import Reports from "@/pages/Reports";
 import Backtesting from "@/pages/Backtesting";
 import Monitoring from "@/pages/Monitoring";
+import Settings from "@/pages/Settings";
 import Admin from "@/pages/Admin";
 import Help from "@/pages/Help";
 import NotFound from "@/pages/not-found";
@@ -40,6 +41,7 @@ function App() {
           <Route path="/reports" component={Reports} />
           <Route path="/backtesting" component={Backtesting} />
           <Route path="/monitoring" component={Monitoring} />
+          <Route path="/settings" component={Settings} />
           <Route path="/admin" component={Admin} />
           <Route path="/help" component={Help} />
           <Route component={NotFound} />

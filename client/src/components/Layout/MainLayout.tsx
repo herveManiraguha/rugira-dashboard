@@ -45,7 +45,8 @@ const navigation = [
   { name: 'Reports', href: '/reports', icon: BarChart3 },
   { name: 'Backtesting', href: '/backtesting', icon: TrendingUp },
   { name: 'Monitoring', href: '/monitoring', icon: Monitor },
-  { name: 'Admin', href: '/admin', icon: Settings },
+  { name: 'Settings', href: '/settings', icon: Settings },
+  { name: 'Admin', href: '/admin', icon: Shield },
   { name: 'Help', href: '/help', icon: HelpCircle },
 ];
 
