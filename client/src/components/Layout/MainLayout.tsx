@@ -163,19 +163,20 @@ export function MainLayout({ children }: MainLayoutProps) {
         <nav className={`fixed left-0 top-20 w-64 bg-white border-r border-gray-200 h-[calc(100vh-5rem)] overflow-y-auto z-40 flex flex-col transform transition-transform duration-200 ease-in-out ${
           mobileMenuOpen ? 'translate-x-0' : '-translate-x-full xl:translate-x-0'
         }`}>
+          {/* Fixed Close button for mobile/tablet */}
+          <div className="xl:hidden sticky top-0 bg-white z-10 p-4 border-b border-gray-200 flex justify-end">
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              data-testid="button-close-menu"
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
           <div className="p-6 flex-1">
-            {/* Close button for mobile/tablet */}
-            <div className="xl:hidden flex justify-end mb-4">
-              <button
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                data-testid="button-close-menu"
-              >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
             
             <ul className="space-y-2">
               {navigation.map((item) => {
