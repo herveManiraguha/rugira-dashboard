@@ -8,6 +8,20 @@ Rugira is a professional trading bot management dashboard built as a Single Page
 
 Preferred communication style: Simple, everyday language.
 
+## Production Configuration
+
+### Domain Setup (Updated: Aug 15, 2025)
+- **Production Domain**: app.rugira.ch
+- **Main Site**: rugira.ch
+- **CORS Configuration**: Configured for cross-subdomain support
+- **Session Management**: PostgreSQL-backed with .rugira.ch domain cookies
+- **Security**: Full HTTPS enforcement with comprehensive security headers
+
+### OAuth Configuration Required
+- **Production Callback**: https://app.rugira.ch/auth/callback
+- **Post-logout Redirect**: https://rugira.ch
+- **Cookie Domain**: .rugira.ch with Secure=true, SameSite=None
+
 ## System Architecture
 
 ### Frontend Architecture
@@ -34,9 +48,11 @@ Preferred communication style: Simple, everyday language.
 
 ### Authentication and Authorization
 - **Bearer token authentication** prepared in API client
-- **Session-based authentication** infrastructure with PostgreSQL storage
-- **CORS configuration** for secure cross-origin requests
-- **Security headers** including CSP, X-Frame-Options, and referrer policy
+- **Session-based authentication** with PostgreSQL storage using connect-pg-simple
+- **Production CORS configuration** for app.rugira.ch and rugira.ch domains
+- **Comprehensive security headers** including CSP, HSTS, X-Frame-Options, and referrer policy
+- **Cross-subdomain session support** with .rugira.ch domain configuration
+- **Development fallback** with memory sessions and localhost CORS support
 
 ### External Service Integrations
 - **Environment-based API configuration** using VITE_API_BASE_URL

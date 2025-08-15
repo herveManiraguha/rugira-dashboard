@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer } from "ws";
 import { storage } from "./storage";
+import { authRoutes, optionalAuth } from "./auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
@@ -25,6 +26,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   };
 
+  // Register authentication routes
+  authRoutes(app);
+
   // Health check endpoint
   app.get("/api/health", (req, res) => {
     res.json({ 
@@ -38,8 +42,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Bots endpoints
-  app.get("/api/bots", async (req, res) => {
+  // Bots endpoints (with optional auth for demo purposes)
+  app.get("/api/bots", optionalAuth, async (req, res) => {
     try {
       const bots = await storage.getAllBots();
       res.json(bots);
@@ -104,8 +108,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
       'Connection': 'keep-alive',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'Cache-Control'
+      // CORS headers are handled by the cors middleware above
     });
 
     // Send initial connection event
