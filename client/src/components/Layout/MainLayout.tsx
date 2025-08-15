@@ -8,6 +8,7 @@ import DemoRibbon from '@/components/Demo/DemoRibbon';
 import Footer from '@/components/Layout/Footer';
 import StatusBadge from '@/components/Layout/StatusBadge';
 import AWSStatusIndicator from '@/components/Layout/AWSStatusIndicator';
+import NotificationButton from '@/components/Layout/NotificationButton';
 import { 
   Bell, 
   User, 
@@ -136,10 +137,7 @@ export function MainLayout({ children }: MainLayoutProps) {
             <AWSStatusIndicator />
 
             {/* Notifications */}
-            <Button variant="ghost" size="sm" className="relative">
-              <Bell className="h-4 w-4" />
-              <span className="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full"></span>
-            </Button>
+            <NotificationButton />
 
             {/* Kill Switch - Icon only with same red as selected overview */}
             <Button
