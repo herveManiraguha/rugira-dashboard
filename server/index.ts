@@ -185,6 +185,17 @@ app.use((req, res, next) => {
   next();
 });
 
+// Health check endpoint at root level (must be before Vite middleware)
+app.get("/healthcheck", (req: Request, res: Response) => {
+  res.status(200).json({
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    version: process.env.npm_package_version || "1.0.0",
+    environment: process.env.NODE_ENV || "development"
+  });
+});
+
 // Redirect any requests to /dashboard to /overview (in case external links still reference dashboard)
 app.get("/dashboard", (req: Request, res: Response) => {
   console.log(`🔄 Redirecting /dashboard to /overview`);

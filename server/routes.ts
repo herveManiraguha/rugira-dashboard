@@ -29,7 +29,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register authentication routes
   authRoutes(app);
 
-  // Health check endpoint
+  // Health check endpoints
   app.get("/api/health", (req, res) => {
     res.json({ 
       status: "ok", 
@@ -41,6 +41,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     });
   });
+
+
 
   // Bots endpoints (with optional auth for demo purposes)
   app.get("/api/bots", optionalAuth, async (req, res) => {
