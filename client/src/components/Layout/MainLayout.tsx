@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/MockAuthContext';
 import DemoRibbon from '@/components/Demo/DemoRibbon';
 import Footer from '@/components/Layout/Footer';
 import StatusBadge from '@/components/Layout/StatusBadge';
+import AWSStatusIndicator from '@/components/Layout/AWSStatusIndicator';
 import { 
   Bell, 
   User, 
@@ -58,7 +59,6 @@ export function MainLayout({ children }: MainLayoutProps) {
   const [location] = useLocation();
   const { user, logout } = useAuth();
   const [isKillSwitchEnabled, setIsKillSwitchEnabled] = useState(false);
-  const [apiStatus, setApiStatus] = useState<'ok' | 'degraded' | 'error'>('ok');
   const [environment, setEnvironment] = useState<'Live' | 'Paper'>('Paper');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -132,17 +132,8 @@ export function MainLayout({ children }: MainLayoutProps) {
               {environment}
             </Button>
 
-            {/* API Status Indicator */}
-            <div className="flex items-center space-x-1">
-              {apiStatus === 'ok' ? (
-                <Wifi className="h-4 w-4 text-green-500" />
-              ) : (
-                <WifiOff className="h-4 w-4 text-red-500" />
-              )}
-              <span className="text-xs text-gray-500">
-                {apiStatus === 'ok' ? 'OK' : 'Degraded'}
-              </span>
-            </div>
+            {/* AWS Status Indicator */}
+            <AWSStatusIndicator />
 
             {/* Notifications */}
             <Button variant="ghost" size="sm" className="relative">
