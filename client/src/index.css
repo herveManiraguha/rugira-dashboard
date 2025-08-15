@@ -211,6 +211,41 @@
     opacity: 1 !important;
   }
 
+  /* Native HTML Select Fix for TopBar */
+  select {
+    background-color: #ffffff !important;
+    opacity: 1 !important;
+    color: #374151 !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 6px !important;
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    outline: none !important;
+    appearance: auto !important;
+    -webkit-appearance: auto !important;
+    -moz-appearance: auto !important;
+  }
+
+  select:focus {
+    border-color: #e10600 !important;
+    box-shadow: 0 0 0 2px rgba(225, 6, 0, 0.2) !important;
+  }
+
+  select option {
+    background-color: #ffffff !important;
+    color: #374151 !important;
+    opacity: 1 !important;
+    padding: 8px 12px !important;
+    font-weight: 500 !important;
+  }
+
+  select option:hover,
+  select option:checked {
+    background-color: #f9fafb !important;
+    color: #111827 !important;
+  }
+
   /* Responsive layout utilities */
   .main-layout {
     min-height: 100vh;
