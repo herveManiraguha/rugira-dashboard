@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNotificationStore, useApiStore } from "../../stores";
 import StatusIndicator from "../UI/StatusIndicator";
 import { Link } from "wouter";
@@ -9,14 +9,39 @@ export default function TopBar() {
   const [currentUser] = useState({ name: 'John Trader' });
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const notificationRef = useRef<HTMLDivElement>(null);
 
-  const toggleNotifications = () => {
+  const toggleNotifications = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setShowNotifications(!showNotifications);
   };
 
-  const handleNotificationClick = (id: string) => {
+  const handleNotificationClick = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     markAsRead(id);
   };
+
+  const handleMarkAllRead = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    markAllAsRead();
+  };
+
+  // Close notification dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
+      }
+    };
+
+    if (showNotifications) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showNotifications]);
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
@@ -73,7 +98,7 @@ export default function TopBar() {
         {/* Top Bar Actions */}
         <div className="flex items-center space-x-4">
           {/* Notifications */}
-          <div className="relative">
+          <div className="relative" ref={notificationRef}>
             <button 
               className="relative p-2 text-text-500 hover:text-brand-red transition-colors" 
               onClick={toggleNotifications}
@@ -92,12 +117,15 @@ export default function TopBar() {
 
             {/* Notification Dropdown */}
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-96 overflow-hidden">
+              <div 
+                className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-96 overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <div className="p-4 border-b border-gray-200 flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
                   <button 
-                    onClick={markAllAsRead}
-                    className="text-sm text-brand-red hover:text-brand-red-dark"
+                    onClick={handleMarkAllRead}
+                    className="text-sm text-brand-red hover:text-brand-red-dark font-medium"
                   >
                     Mark all read
                   </button>
@@ -107,8 +135,8 @@ export default function TopBar() {
                   {notifications.slice(0, 8).map((notification) => (
                     <div 
                       key={notification.id}
-                      className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${!notification.read ? 'bg-blue-50' : ''}`}
-                      onClick={() => handleNotificationClick(notification.id)}
+                      className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors ${!notification.read ? 'bg-blue-50' : ''}`}
+                      onClick={(e) => handleNotificationClick(notification.id, e)}
                     >
                       <div className="flex items-start space-x-3">
                         <div className="flex-shrink-0 mt-1">
@@ -123,7 +151,7 @@ export default function TopBar() {
                               <div className="w-2 h-2 bg-brand-red rounded-full flex-shrink-0 ml-2"></div>
                             )}
                           </div>
-                          <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                          <p className="text-sm text-gray-600 mt-1">
                             {notification.message}
                           </p>
                           <div className="flex items-center justify-between mt-2">
@@ -132,7 +160,13 @@ export default function TopBar() {
                             </span>
                             {notification.actionUrl && (
                               <Link href={notification.actionUrl}>
-                                <button className="text-xs text-brand-red hover:text-brand-red-dark font-medium">
+                                <button 
+                                  className="text-xs text-brand-red hover:text-brand-red-dark font-medium"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowNotifications(false);
+                                  }}
+                                >
                                   View Details
                                 </button>
                               </Link>
