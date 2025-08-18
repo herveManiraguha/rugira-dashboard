@@ -32,6 +32,8 @@ export interface ColumnDef<T> {
   sortable?: boolean;
   filterable?: boolean;
   width?: string;
+  hideOnMobile?: boolean;
+  priority?: 'high' | 'medium' | 'low'; // For responsive hiding
 }
 
 export interface Filter {
@@ -203,133 +205,159 @@ export function EnhancedTable<T extends { id: string | number }>({
   return (
     <div className={cn("space-y-4", className)}>
       {/* Search and Filters */}
-      <div className="flex items-center justify-between space-x-4">
-        <div className="relative flex-1 max-w-sm">
+      <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative flex-1 max-w-full sm:max-w-sm">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
             placeholder={searchPlaceholder}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            className="pl-10 h-11"
             data-testid="table-search"
           />
         </div>
         
-        {filters.length > 0 && (
-          <div className="flex items-center space-x-2">
-            <Filter className="h-4 w-4 text-gray-400" />
-            <div className="flex space-x-2">
-              {filters.map(filter => (
-                <Badge
-                  key={filter.id}
-                  variant={selectedFilters.includes(filter.id) ? "default" : "outline"}
-                  className="cursor-pointer"
-                  onClick={() => {
-                    if (onFilterChange) {
-                      const newFilters = selectedFilters.includes(filter.id)
-                        ? selectedFilters.filter(id => id !== filter.id)
-                        : [...selectedFilters, filter.id];
-                      onFilterChange(newFilters);
-                    }
-                  }}
-                  data-testid={`filter-${filter.id}`}
-                >
-                  {filter.label}
-                </Badge>
-              ))}
+        <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:space-x-4">
+          {filters.length > 0 && (
+            <div className="flex items-center space-x-2">
+              <Filter className="h-4 w-4 text-gray-400 flex-shrink-0" />
+              <div className="flex flex-wrap gap-2">
+                {filters.map(filter => (
+                  <Badge
+                    key={filter.id}
+                    variant={selectedFilters.includes(filter.id) ? "default" : "outline"}
+                    className="cursor-pointer touch-friendly min-h-[32px] px-3"
+                    onClick={() => {
+                      if (onFilterChange) {
+                        const newFilters = selectedFilters.includes(filter.id)
+                          ? selectedFilters.filter(id => id !== filter.id)
+                          : [...selectedFilters, filter.id];
+                        onFilterChange(newFilters);
+                      }
+                    }}
+                    data-testid={`filter-${filter.id}`}
+                  >
+                    {filter.label}
+                  </Badge>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
-        
-        {selectedRows.size > 0 && bulkActions && (
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-500">
-              {selectedRows.size} selected
-            </span>
-            {bulkActions}
-          </div>
-        )}
+          )}
+          
+          {selectedRows.size > 0 && bulkActions && (
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
+              <span className="text-sm text-gray-500">
+                {selectedRows.size} selected
+              </span>
+              <div className="flex space-x-2 w-full sm:w-auto">
+                {bulkActions}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Table */}
       <div className="border rounded-lg overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              {onSelectionChange && (
-                <TableHead className="w-12">
-                  <Checkbox
-                    checked={allSelected || someSelected}
-                    onCheckedChange={handleSelectAll}
-                    data-testid="select-all-checkbox"
-                  />
-                </TableHead>
-              )}
-              {columns.map((column) => (
-                <TableHead 
-                  key={column.id}
-                  className={cn(
-                    column.sortable && "cursor-pointer hover:bg-gray-50",
-                    column.width && `w-[${column.width}]`
-                  )}
-                  onClick={() => column.sortable && handleSort(column.id)}
-                  data-testid={`column-header-${column.id}`}
-                >
-                  <div className="flex items-center space-x-2">
-                    <span>{column.header}</span>
-                    {column.sortable && (
-                      <span className="ml-2">
-                        {getSortIcon(column.id)}
-                      </span>
-                    )}
-                  </div>
-                </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginatedData.map((row) => (
-              <TableRow key={row.id} data-testid={`table-row-${row.id}`}>
+        <div className="overflow-x-auto">
+          <Table className="min-w-full">
+            <TableHeader>
+              <TableRow>
                 {onSelectionChange && (
-                  <TableCell>
+                  <TableHead className="w-12 sticky left-0 bg-white z-10">
                     <Checkbox
-                      checked={selectedRows.has(row.id)}
-                      onCheckedChange={(checked) => handleRowSelection(row.id, !!checked)}
-                      data-testid={`row-checkbox-${row.id}`}
+                      checked={allSelected || someSelected}
+                      onCheckedChange={handleSelectAll}
+                      data-testid="select-all-checkbox"
                     />
-                  </TableCell>
+                  </TableHead>
                 )}
-                {columns.map((column) => (
-                  <TableCell key={column.id} data-testid={`cell-${column.id}-${row.id}`}>
-                    {column.cell ? column.cell(row) : 
-                     column.accessorKey ? String(row[column.accessorKey]) : ''}
-                  </TableCell>
+                {columns.map((column, index) => (
+                  <TableHead 
+                    key={column.id}
+                    className={cn(
+                      column.sortable && "cursor-pointer hover:bg-gray-50",
+                      column.width && `w-[${column.width}]`,
+                      column.hideOnMobile && "hidden sm:table-cell",
+                      column.priority === 'low' && "hidden lg:table-cell",
+                      column.priority === 'medium' && "hidden md:table-cell",
+                      // Make first column sticky on mobile
+                      index === 0 && onSelectionChange && "sticky left-12 bg-white z-10",
+                      index === 0 && !onSelectionChange && "sticky left-0 bg-white z-10",
+                      "whitespace-nowrap px-3 py-3 sm:px-6 sm:py-4"
+                    )}
+                    onClick={() => column.sortable && handleSort(column.id)}
+                    data-testid={`column-header-${column.id}`}
+                  >
+                    <div className="flex items-center space-x-1 sm:space-x-2">
+                      <span className="text-xs sm:text-sm font-medium">{column.header}</span>
+                      {column.sortable && (
+                        <span className="ml-1">
+                          {getSortIcon(column.id)}
+                        </span>
+                      )}
+                    </div>
+                  </TableHead>
                 ))}
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {paginatedData.map((row) => (
+                <TableRow key={row.id} data-testid={`table-row-${row.id}`} className="hover:bg-gray-50">
+                  {onSelectionChange && (
+                    <TableCell className="w-12 sticky left-0 bg-white z-10 px-3 py-3 sm:px-6 sm:py-4">
+                      <Checkbox
+                        checked={selectedRows.has(row.id)}
+                        onCheckedChange={(checked) => handleRowSelection(row.id, !!checked)}
+                        data-testid={`row-checkbox-${row.id}`}
+                      />
+                    </TableCell>
+                  )}
+                  {columns.map((column, index) => (
+                    <TableCell 
+                      key={column.id} 
+                      data-testid={`cell-${column.id}-${row.id}`}
+                      className={cn(
+                        column.hideOnMobile && "hidden sm:table-cell",
+                        column.priority === 'low' && "hidden lg:table-cell",
+                        column.priority === 'medium' && "hidden md:table-cell",
+                        // Make first column sticky on mobile
+                        index === 0 && onSelectionChange && "sticky left-12 bg-white z-10",
+                        index === 0 && !onSelectionChange && "sticky left-0 bg-white z-10",
+                        "whitespace-nowrap px-3 py-3 sm:px-6 sm:py-4 text-sm"
+                      )}
+                    >
+                      {column.cell ? column.cell(row) : 
+                       column.accessorKey ? String(row[column.accessorKey]) : ''}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-gray-500">
+        <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
+          <div className="text-xs sm:text-sm text-gray-500 order-2 sm:order-1">
             Showing {currentPage * pageSize + 1} to {Math.min((currentPage + 1) * pageSize, sortedData.length)} of {sortedData.length} results
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-center space-x-2 order-1 sm:order-2">
             <Button
               variant="outline"
               size="sm"
               onClick={() => setCurrentPage(currentPage - 1)}
               disabled={currentPage === 0}
               data-testid="prev-page"
+              className="h-9 sm:h-8"
             >
               <ChevronLeft className="h-4 w-4" />
-              Previous
+              <span className="hidden sm:inline">Previous</span>
             </Button>
-            <span className="text-sm">
-              Page {currentPage + 1} of {totalPages}
+            <span className="text-xs sm:text-sm font-medium bg-gray-100 px-3 py-2 rounded">
+              {currentPage + 1} / {totalPages}
             </span>
             <Button
               variant="outline"
@@ -337,8 +365,9 @@ export function EnhancedTable<T extends { id: string | number }>({
               onClick={() => setCurrentPage(currentPage + 1)}
               disabled={currentPage === totalPages - 1}
               data-testid="next-page"
+              className="h-9 sm:h-8"
             >
-              Next
+              <span className="hidden sm:inline">Next</span>
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>

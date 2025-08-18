@@ -213,12 +213,13 @@ export default function Bots() {
       header: 'Bot Name',
       accessorKey: 'name',
       sortable: true,
+      priority: 'high',
       cell: (bot) => (
-        <div className="flex items-center space-x-3">
-          <Bot className="h-5 w-5 text-gray-400" />
-          <div>
-            <div className="font-medium text-gray-900">{bot.name}</div>
-            <div className="text-sm text-gray-500">{bot.strategy}</div>
+        <div className="flex items-center space-x-2 min-w-0">
+          <Bot className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 flex-shrink-0" />
+          <div className="min-w-0">
+            <div className="font-medium text-gray-900 text-sm sm:text-base truncate">{bot.name}</div>
+            <div className="text-xs sm:text-sm text-gray-500 truncate">{bot.strategy}</div>
           </div>
         </div>
       )
@@ -229,6 +230,7 @@ export default function Bots() {
       accessorKey: 'status',
       sortable: true,
       filterable: true,
+      priority: 'high',
       cell: (bot) => getStatusBadge(bot.status)
     },
     {
@@ -237,10 +239,11 @@ export default function Bots() {
       accessorKey: 'exchange',
       sortable: true,
       filterable: true,
+      priority: 'medium',
       cell: (bot) => (
-        <div>
-          <div className="font-medium">{bot.exchange}</div>
-          <div className="text-sm text-gray-500">{bot.pair}</div>
+        <div className="min-w-0">
+          <div className="font-medium text-sm truncate">{bot.exchange}</div>
+          <div className="text-xs text-gray-500 truncate">{bot.pair}</div>
         </div>
       )
     },
@@ -249,13 +252,14 @@ export default function Bots() {
       header: '24h P&L',
       accessorKey: 'pnl24h',
       sortable: true,
+      priority: 'medium',
       cell: (bot) => (
         <div className={`flex items-center space-x-1 ${
           bot.pnl24h > 0 ? 'text-green-600' : bot.pnl24h < 0 ? 'text-red-600' : 'text-gray-600'
         }`}>
-          {bot.pnl24h > 0 ? <TrendingUp className="h-4 w-4" /> : 
-           bot.pnl24h < 0 ? <TrendingDown className="h-4 w-4" /> : null}
-          <span>${bot.pnl24h.toFixed(2)}</span>
+          {bot.pnl24h > 0 ? <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" /> : 
+           bot.pnl24h < 0 ? <TrendingDown className="h-3 w-3 sm:h-4 sm:w-4" /> : null}
+          <span className="text-sm">${bot.pnl24h.toFixed(2)}</span>
         </div>
       )
     },
@@ -264,8 +268,9 @@ export default function Bots() {
       header: 'Total P&L',
       accessorKey: 'totalPnl',
       sortable: true,
+      priority: 'low',
       cell: (bot) => (
-        <span className={`font-medium ${
+        <span className={`font-medium text-sm ${
           bot.totalPnl > 0 ? 'text-green-600' : bot.totalPnl < 0 ? 'text-red-600' : 'text-gray-600'
         }`}>
           ${bot.totalPnl.toFixed(2)}
@@ -276,15 +281,20 @@ export default function Bots() {
       id: 'uptime',
       header: 'Uptime',
       accessorKey: 'uptime',
-      sortable: true
+      sortable: true,
+      priority: 'low',
+      cell: (bot) => (
+        <div className="text-sm text-gray-600">{bot.uptime}</div>
+      )
     },
     {
       id: 'actions',
       header: 'Actions',
+      priority: 'high',
       cell: (bot) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" data-testid={`bot-actions-${bot.id}`}>
+            <Button variant="ghost" size="sm" data-testid={`bot-actions-${bot.id}`} className="h-8 w-8 p-0">
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -337,16 +347,16 @@ export default function Bots() {
   ];
 
   const bulkActions = (
-    <div className="flex space-x-2">
-      <Button size="sm" onClick={handleBulkStart} data-testid="bulk-start">
-        <Play className="h-4 w-4 mr-1" />
-        Start
+    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
+      <Button size="sm" onClick={handleBulkStart} data-testid="bulk-start" className="h-9 w-full sm:w-auto">
+        <Play className="h-4 w-4 mr-2" />
+        Start Selected
       </Button>
       <ConfirmationDialog
         trigger={
-          <Button size="sm" variant="outline" data-testid="bulk-stop">
-            <Square className="h-4 w-4 mr-1" />
-            Stop
+          <Button size="sm" variant="outline" data-testid="bulk-stop" className="h-9 w-full sm:w-auto">
+            <Square className="h-4 w-4 mr-2" />
+            Stop Selected
           </Button>
         }
         title="Stop Selected Bots"
