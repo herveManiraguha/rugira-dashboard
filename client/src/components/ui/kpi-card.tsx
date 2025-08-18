@@ -75,14 +75,14 @@ export function KPICard({
   }
 
   return (
-    <Card className={cn("p-grid-md hover:shadow-md transition-shadow", className)}>
+    <Card className={cn("p-4 sm:p-6 hover:shadow-md transition-shadow", className)}>
       <CardContent className="p-0">
         <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <p className="text-sm font-medium text-gray-600 mb-1" data-testid="kpi-title">
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-gray-600 mb-2" data-testid="kpi-title">
               {title}
             </p>
-            <p className="text-3xl font-bold text-gray-900 tabular-nums mb-1" data-testid="kpi-value">
+            <p className="text-2xl sm:text-3xl font-bold text-gray-900 tabular-nums mb-2 truncate" data-testid="kpi-value">
               {formatter(value)}
             </p>
             {delta && (
@@ -91,14 +91,14 @@ export function KPICard({
                 getDeltaColor()
               )} data-testid="kpi-delta">
                 {getDeltaIcon()}
-                <span className="tabular-nums">
+                <span className="tabular-nums truncate">
                   {formatDelta(delta.value)} {delta.period}
                 </span>
               </div>
             )}
           </div>
           {icon && (
-            <div className="text-gray-400" data-testid="kpi-icon">
+            <div className="text-gray-400 flex-shrink-0 ml-3" data-testid="kpi-icon">
               {icon}
             </div>
           )}
@@ -111,7 +111,7 @@ export function KPICard({
 export function KPICardGrid({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={cn(
-      "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 space-grid-md",
+      "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6",
       className
     )}>
       {children}

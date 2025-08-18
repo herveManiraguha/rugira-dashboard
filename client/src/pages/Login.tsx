@@ -68,8 +68,8 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4 sm:p-6 lg:p-8">
       <div className="w-full max-w-sm sm:max-w-md">
-        <Card className="shadow-2xl sm:shadow-3xl">
-          <CardHeader className="text-center space-y-4 sm:space-y-6 p-6 sm:p-8">
+        <Card className="shadow-lg sm:shadow-2xl">
+          <CardHeader className="text-center space-y-4 sm:space-y-6 p-4 sm:p-6 lg:p-8">
             {/* Rugira Logo */}
             <div className="flex justify-center">
               <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center">
