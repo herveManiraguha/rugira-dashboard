@@ -105,6 +105,7 @@ export default function KillSwitchBanner({ className }: KillSwitchBannerProps) {
                 </Button>
               </div>
             </div>
+          </div>
           
           {killSwitchState.filters && (
             <div className="mt-2 text-xs">
