@@ -450,12 +450,12 @@ export default function Overview() {
       {/* Live Activity Feed */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center">
-              <Activity className="h-5 w-5 mr-2" />
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0">
+            <CardTitle className="flex items-center text-base sm:text-lg">
+              <Activity className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
               Live Trading Activity
             </CardTitle>
-            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 self-start sm:self-auto">
               <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse" />
               Live
             </Badge>
@@ -463,17 +463,17 @@ export default function Overview() {
         </CardHeader>
         <CardContent>
           {activitiesLoading ? (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="flex items-center justify-between p-4 border-b">
+                <div key={i} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 border-b space-y-2 sm:space-y-0">
                   <div className="flex items-center space-x-3">
                     <Skeleton className="w-2 h-2 rounded-full" />
                     <div>
-                      <Skeleton className="h-4 w-48 mb-1" />
-                      <Skeleton className="h-3 w-32" />
+                      <Skeleton className="h-4 w-32 sm:w-48 mb-1" />
+                      <Skeleton className="h-3 w-24 sm:w-32" />
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className="text-left sm:text-right">
                     <Skeleton className="h-4 w-16 mb-1" />
                     <Skeleton className="h-3 w-20" />
                   </div>
@@ -483,15 +483,15 @@ export default function Overview() {
           ) : activities?.length ? (
             <div className="space-y-0 divide-y">
               {activities.map((activity) => (
-                <div key={activity.id} className="flex items-center justify-between p-4">
-                  <div className="flex items-center space-x-3">
+                <div key={activity.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 space-y-2 sm:space-y-0">
+                  <div className="flex items-center space-x-3 min-w-0 flex-1">
                     {getStatusIcon(activity.type)}
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">{activity.message}</p>
-                      <p className="text-xs text-gray-500">{activity.details}</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-gray-900 truncate">{activity.message}</p>
+                      <p className="text-xs text-gray-500 truncate">{activity.details}</p>
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className="text-left sm:text-right flex-shrink-0">
                     <p className={`text-sm font-medium ${
                       activity.pnl > 0 ? 'text-green-600' : activity.pnl < 0 ? 'text-red-600' : 'text-gray-500'
                     }`}>
@@ -503,11 +503,11 @@ export default function Overview() {
               ))}
             </div>
           ) : (
-            <div className="flex items-center justify-center py-8 text-gray-500">
+            <div className="flex items-center justify-center py-8 sm:py-12 text-gray-500">
               <div className="text-center">
-                <Activity className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                <p>No recent activity</p>
-                <p className="text-sm text-gray-400">Trading activity will appear here in real-time</p>
+                <Activity className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 text-gray-400" />
+                <p className="text-sm sm:text-base">No recent activity</p>
+                <p className="text-xs sm:text-sm text-gray-400">Trading activity will appear here in real-time</p>
               </div>
             </div>
           )}
@@ -521,15 +521,16 @@ export default function Overview() {
           
           <Card>
             <CardHeader>
-              <CardTitle>Sample Exports</CardTitle>
+              <CardTitle className="text-base sm:text-lg">Sample Exports</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
                 <Button 
                   onClick={() => setShowExportModal(true)}
                   variant="outline"
                   disabled={isReadOnly}
                   data-testid="button-sample-exports"
+                  className="w-full sm:w-auto"
                 >
                   Download Sample Reports
                 </Button>

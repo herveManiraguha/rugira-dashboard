@@ -126,7 +126,7 @@ export function TimeRangeSelector({ value = '24h', onChange, className }: TimeRa
   return (
     <div className={className}>
       <Select value={selectedRange} onValueChange={handleRangeChange}>
-        <SelectTrigger className="w-[140px]" data-testid="time-range-selector">
+        <SelectTrigger className="w-[120px] sm:w-[140px] text-xs sm:text-sm" data-testid="time-range-selector">
           <SelectValue>
             {selectedRange === 'custom' && customFrom && customTo ? 
               `${format(customFrom, 'MMM dd')} - ${format(customTo, 'MMM dd')}` :
@@ -147,8 +147,8 @@ export function TimeRangeSelector({ value = '24h', onChange, className }: TimeRa
         <PopoverTrigger asChild>
           <Button style={{ display: 'none' }} />
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <div className="p-4 space-y-4">
+        <PopoverContent className="w-auto p-0 max-w-[90vw] sm:max-w-none" align="start">
+          <div className="p-3 sm:p-4 space-y-3 sm:space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">From:</label>
               <Popover>

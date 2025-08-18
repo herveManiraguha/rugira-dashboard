@@ -35,10 +35,10 @@ export function ExchangeSummary({
 
   return (
     <Card className={className}>
-      <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center space-x-2">
-            <Activity className="h-5 w-5" />
+      <CardHeader className="pb-3 sm:pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0">
+          <CardTitle className="flex items-center space-x-2 text-base sm:text-lg">
+            <Activity className="h-4 w-4 sm:h-5 sm:w-5" />
             <span>Exchange Connections</span>
           </CardTitle>
           <Button 
@@ -46,30 +46,31 @@ export function ExchangeSummary({
             size="sm" 
             onClick={onAddExchange}
             data-testid="add-exchange-summary"
+            className="w-full sm:w-auto"
           >
             <Plus className="h-4 w-4 mr-1" />
             Add
           </Button>
         </div>
         
-        <div className="grid grid-cols-3 gap-4 text-sm">
-          <div>
-            <span className="text-gray-500">Connected</span>
-            <p className="font-semibold text-green-600">{connectedExchanges.length}/{exchanges.length}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-sm">
+          <div className="text-center sm:text-left">
+            <span className="text-gray-500 text-xs sm:text-sm">Connected</span>
+            <p className="font-semibold text-green-600 text-sm sm:text-base">{connectedExchanges.length}/{exchanges.length}</p>
           </div>
-          <div>
-            <span className="text-gray-500">Total Balance</span>
-            <p className="font-semibold">${totalBalance.toLocaleString()}</p>
+          <div className="text-center sm:text-left">
+            <span className="text-gray-500 text-xs sm:text-sm">Total Balance</span>
+            <p className="font-semibold text-sm sm:text-base">${totalBalance.toLocaleString()}</p>
           </div>
-          <div>
-            <span className="text-gray-500">Active Bots</span>
-            <p className="font-semibold">{totalBots}</p>
+          <div className="text-center sm:text-left">
+            <span className="text-gray-500 text-xs sm:text-sm">Active Bots</span>
+            <p className="font-semibold text-sm sm:text-base">{totalBots}</p>
           </div>
         </div>
       </CardHeader>
 
       <CardContent className="pt-0">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
           {exchanges.map((exchange) => (
             <div
               key={exchange.id}

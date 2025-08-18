@@ -147,6 +147,13 @@ export default function EnvironmentChip({
 
   const getLabel = () => {
     if (environment === 'Live') {
+      return "LIVE";
+    }
+    return "Paper";
+  };
+
+  const getFullLabel = () => {
+    if (environment === 'Live') {
       return "LIVE (Real)";
     }
     return "Paper (Simulated)";
@@ -160,7 +167,7 @@ export default function EnvironmentChip({
             variant="ghost"
             size="sm"
             className={cn(
-              "h-7 px-3 rounded-full border transition-all duration-200 font-medium text-xs",
+              "h-8 px-2 sm:px-3 rounded-full border transition-all duration-200 font-medium text-xs min-w-[80px] sm:min-w-[120px]",
               "focus:ring-2 focus:ring-offset-1",
               getChipStyle(),
               className
@@ -169,9 +176,9 @@ export default function EnvironmentChip({
             data-testid="environment-chip"
             disabled={isDemoMode && environment === 'Paper'}
           >
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1 sm:space-x-2">
               <div className={getDotStyle()} />
-              <span className="tabular-nums">{getLabel()}</span>
+              <span className="tabular-nums truncate">{getLabel()}</span>
             </div>
           </Button>
         </DropdownMenuTrigger>

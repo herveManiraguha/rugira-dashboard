@@ -117,21 +117,21 @@ export default function KillSwitchButton({ className }: KillSwitchButtonProps) {
           <Button
             variant="destructive"
             size="sm"
-            className={cn("bg-red-600 hover:bg-red-700 text-white font-semibold", className)}
+            className={cn("bg-red-600 hover:bg-red-700 text-white font-semibold min-h-[32px] px-2 sm:px-3", className)}
             title="Resume Trading - Clear Kill Switch"
             data-testid="kill-switch-button-active"
           >
-            <Power className="h-4 w-4 mr-2" />
-            TRADING HALTED
+            <Power className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
+            <span className="truncate text-xs sm:text-sm">TRADING HALTED</span>
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center space-x-2">
-              <Ban className="h-5 w-5 text-green-600" />
+            <DialogTitle className="flex items-center space-x-2 text-base sm:text-lg">
+              <Ban className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
               <span>Resume Trading</span>
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-sm">
               This will clear the kill switch and resume normal trading operations.
             </DialogDescription>
           </DialogHeader>
@@ -203,20 +203,20 @@ export default function KillSwitchButton({ className }: KillSwitchButtonProps) {
         <Button
           variant="outline"
           size="sm"
-          className={cn("border-red-300 text-red-600 hover:bg-red-50", className)}
+          className={cn("border-red-300 text-red-600 hover:bg-red-50 min-h-[32px] p-2", className)}
           title="Emergency Kill Switch"
           data-testid="kill-switch-button-inactive"
         >
           <Ban className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center space-x-2">
-            <AlertTriangle className="h-5 w-5 text-red-600" />
+          <DialogTitle className="flex items-center space-x-2 text-base sm:text-lg">
+            <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-red-600" />
             <span>Emergency Kill Switch</span>
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-sm">
             This will immediately halt trading activity and prevent new orders. This action is logged and audited.
           </DialogDescription>
         </DialogHeader>
