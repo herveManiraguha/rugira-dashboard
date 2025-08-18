@@ -583,13 +583,17 @@ export default function MainLayout({ children }: MainLayoutProps) {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuItem>
-                    <User className="w-4 h-4 mr-2" />
-                    Profile
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile" className="flex items-center w-full" data-testid="menu-profile">
+                      <User className="w-4 h-4 mr-2" />
+                      Profile
+                    </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings className="w-4 h-4 mr-2" />
-                    Settings
+                  <DropdownMenuItem asChild>
+                    <Link href="/settings" className="flex items-center w-full" data-testid="menu-settings">
+                      <Settings className="w-4 h-4 mr-2" />
+                      Settings
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout} data-testid="menu-logout">
@@ -617,13 +621,17 @@ export default function MainLayout({ children }: MainLayoutProps) {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuItem>
-                    <User className="w-4 h-4 mr-2" />
-                    Profile
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile" className="flex items-center w-full" data-testid="menu-profile-collapsed">
+                      <User className="w-4 h-4 mr-2" />
+                      Profile
+                    </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings className="w-4 h-4 mr-2" />
-                    Settings
+                  <DropdownMenuItem asChild>
+                    <Link href="/settings" className="flex items-center w-full" data-testid="menu-settings-collapsed">
+                      <Settings className="w-4 h-4 mr-2" />
+                      Settings
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout} data-testid="menu-logout">
