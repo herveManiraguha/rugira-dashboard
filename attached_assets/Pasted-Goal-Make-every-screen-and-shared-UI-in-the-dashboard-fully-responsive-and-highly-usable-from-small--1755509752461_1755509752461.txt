@@ -1,0 +1,197 @@
+Goal
+Make every screen and shared UI in the dashboard fully responsive and highly usable from small phones to wide desktops, without changing frameworks or auth/session behavior. Keep the Swiss, clean aesthetic and light theme.
+
+Context (from replit.md)
+
+Frontend: React 18 + TypeScript, Vite, Wouter, Tailwind, shadcn/ui (Radix), TanStack Query.
+
+Backend: Express (TS) with WebSocket (ws) + SSE fallback, Drizzle ORM + Neon/Postgres, connect-pg-simple sessions.
+
+Auth: mock login (demo), session storage for demo, real cookies for prod (.rugira.ch, Secure, SameSite=None).
+
+Branding: Rugira Swiss shield logo, Swiss red #E10600 and green #1B7A46.
+
+Routing: /login is entry; root redirects to /login; after login go to /overview.
+
+Do not touch domain blocking, security headers, or CORS allow-list.
+
+Guardrails (do NOT change)
+
+Keep frameworks, routing, auth/session, security headers, domain rules exactly as they are.
+
+No third-party trackers, no analytics changes.
+
+Do not remove existing a11y attributes or SSE/WebSocket behavior.
+
+Tailwind breakpoints (use mobile-first)
+
+sm: 640px, md: 768px, lg: 1024px, xl: 1280px, 2xl: 1536px.
+Confirm tailwind.config.js uses defaults; if not, align to these.
+
+A) Global shell & layout
+
+Header
+
+On lg+: keep full header.
+
+On md: compress secondary actions into a “More” menu (overflow).
+
+On sm: show logo + hamburger; move user/profile, Environment chip (Paper/LIVE), and Kill Switch into the overflow sheet.
+
+Ensure focus states and aria-labels for all icon buttons.
+
+Sidebar (nav)
+
+lg+: persistent sidebar.
+
+md: collapsible.
+
+sm: off-canvas drawer with overlay, focus trap, ESC to close, swipe-to-dismiss if easy.
+
+Keep SPA fallback (no 404 on refresh).
+
+Footer
+
+xl+: multi-column.
+
+sm/md: stacked sections (accordion style).
+
+Typography & spacing
+
+Use an 8px spacing grid; scale type with clamp() or Tailwind responsive utilities.
+
+Numbers use tabular figures for aligned KPIs.
+
+No layout shift
+
+Reserve heights for KPIs, charts, tables; show skeletons during load.
+
+Live updates (WS/SSE) must not shift surrounding layout.
+
+B) Core components
+
+Environment chip (Paper/LIVE)
+
+Compact pill with dot + label; truncate gracefully; tooltip clarifies meaning.
+
+On sm, move into overflow menu; on lg+, keep visible.
+
+Kill Switch
+
+Visible on lg+; moves into overflow on sm/md.
+
+Modal becomes full-screen sheet on small screens with clear confirm zone.
+
+Tables (Bots, Users, Alerts, etc.)
+
+sm/md: switch to card rows (label:value pairs) or allow horizontal scroll inside a container with sticky header + “Scroll →” hint.
+
+lg+: normal table with sticky header; if crowded, add a column chooser.
+
+Keep status chips and primary action visible without extra scrolling.
+
+Virtualize very long lists if jank appears.
+
+Charts (equity, drawdown, latency)
+
+Responsive wrappers with fixed aspect ratio; legends collapse to a dropdown on sm/md.
+
+Tooltips must not overflow; values readable at 320px width.
+
+Forms & dialogs
+
+sm/md: dialogs become full-screen sheets with large CTAs; inputs stack; inline errors below fields.
+
+Touch targets ≥44×44px; date/time pickers thumb-friendly.
+
+Notifications
+
+Toasts compact; don’t overlap critical controls on small screens.
+
+C) Page-by-page adjustments
+
+/login: single column; big inputs; error text readable; “Back to rugira.ch” link stays visible.
+
+/overview:
+
+KPIs wrap: 1/row (sm), 2/row (md), 3–4/row (lg+).
+
+Live feed → compact cards on sm; reserve height to avoid jump.
+
+Charts responsive with range control dropping into a compact select on sm.
+
+/bots (list + details):
+
+Filters collapse into a top drawer on sm; saved views accessible from overflow.
+
+Details tabs → segmented control with horizontal scroll on sm.
+
+Runtime panel logs: fixed height container with internal scroll (no page jump).
+
+/strategies:
+
+Gallery → single-column list on sm; editor stacks parameter groups; helper text concise.
+
+/exchanges:
+
+“Add connection” wizard uses stepped layout; test result block remains readable on sm.
+
+/compliance & /reports:
+
+Filters collapse; tables follow table rules above; export buttons short labels.
+
+/backtesting:
+
+Form stacks; results charts responsive; compare view becomes stacked charts on sm.
+
+/monitoring:
+
+Metric tiles wrap; long labels truncate with tooltip.
+
+D) Accessibility & performance
+
+A11y: WCAG AA contrast; visible focus; keyboard-reachable; aria/roles on icon-only buttons; respect prefers-reduced-motion.
+
+Performance: lazy-load heavy charts below the fold; responsive images; keep CLS ~0.
+
+Cross-browser: Chrome, Safari, Firefox latest; iOS Safari; Android Chrome.
+
+E) Acceptance Criteria (must all pass)
+
+No horizontal page scroll on sm/md for primary content (tables may scroll inside their container with a visible hint).
+
+Navigation works at all breakpoints (drawer on sm, collapsible on md, full on lg+).
+
+Tables readable on sm (card/h-scroll) and fully featured on lg+.
+
+Charts responsive, tooltips legible, no clipping at 320px.
+
+Forms usable on mobile (targets ≥44px; errors readable).
+
+Live updates do not cause layout jumps (reserved heights + skeletons).
+
+A11y: keyboard nav OK, focus visible, prefers-reduced-motion respected.
+
+Lighthouse Performance ≥90 (mobile & desktop) on /overview and one detail page; no console errors.
+
+Auth/session untouched; domain blocking/CSP/CORS unchanged.
+
+F) Deliverables
+
+Implemented responsive styles/layouts as above across all pages.
+
+RESPONSIVE_NOTES.md with: breakpoints, components refactored, known limits, and how to toggle “card mode” for tables.
+
+A short QA screenshot set (or small screen-recordings) for sm, md, lg on: /login, /overview, /bots, /exchanges, /reports.
+
+Optional: a “Density” toggle (Comfortable/Compact) applied at lg+ only.
+
+G) Quick QA matrix (run and attach in notes)
+
+Viewports: 360×640, 390×844, 768×1024, 1024×768, 1280×800, 1440×900.
+
+Devices: iPhone 13/14, iPad (portrait & landscape), Pixel 6, small laptop, 1080p desktop.
+
+Browsers: Chrome, Safari, Firefox; iOS Safari, Android Chrome.
+
+Important: Do not modify authentication/session logic, security headers, domain blocking, or CORS. Keep /login → /overview redirect and session persistence exactly as is.
