@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { SkipLink } from '@/components/ui/skip-link';
 import { EmptyState } from '@/components/ui/empty-state';
 import { EnhancedTable, type ColumnDef } from '@/components/ui/enhanced-table';
+import { MobileBotsTable } from '@/components/UI/MobileBotsTable';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   Bot, 
   Play, 
@@ -22,7 +25,9 @@ import {
   Clock,
   DollarSign,
   Zap,
-  Shield
+  Shield,
+  Search,
+  Filter
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -169,9 +174,14 @@ const mockBots: BotData[] = [
 ];
 
 export default function Bots() {
+  const isMobile = useIsMobile();
   const [selectedBots, setSelectedBots] = useState<BotData[]>([]);
+  const [selectedBotIds, setSelectedBotIds] = useState<Set<string>>(new Set());
   const [filters, setFilters] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('table');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(0);
+  const pageSize = 10;
 
   const handleStartBot = (botId: string) => {
     console.log('Starting bot:', botId);
@@ -192,6 +202,74 @@ export default function Bots() {
   const handleBulkStop = () => {
     console.log('Stopping bots:', selectedBots.map(b => b.id));
   };
+
+  const handleSelectBot = (botId: string, selected: boolean) => {
+    const newIds = new Set(selectedBotIds);
+    if (selected) {
+      newIds.add(botId);
+    } else {
+      newIds.delete(botId);
+    }
+    setSelectedBotIds(newIds);
+    
+    const selected_bots = mockBots.filter(bot => newIds.has(bot.id));
+    setSelectedBots(selected_bots);
+  };
+
+  const handleSelectAll = (selected: boolean) => {
+    if (selected) {
+      const allIds = new Set(paginatedBots.map(bot => bot.id));
+      setSelectedBotIds(allIds);
+      setSelectedBots(paginatedBots);
+    } else {
+      setSelectedBotIds(new Set());
+      setSelectedBots([]);
+    }
+  };
+
+  // Filter and search data
+  const filteredBots = useMemo(() => {
+    let result = mockBots;
+
+    // Apply search
+    if (searchTerm) {
+      result = result.filter(bot => {
+        const searchLower = searchTerm.toLowerCase();
+        return (
+          bot.name.toLowerCase().includes(searchLower) ||
+          bot.strategy.toLowerCase().includes(searchLower) ||
+          bot.exchange.toLowerCase().includes(searchLower) ||
+          bot.pair.toLowerCase().includes(searchLower)
+        );
+      });
+    }
+
+    // Apply filters
+    if (filters.length > 0) {
+      result = result.filter(bot => {
+        return filters.some(filterId => {
+          const filter = tableFilters.find(f => f.id === filterId);
+          if (!filter) return false;
+          
+          const filterValue = filter.value.toLowerCase();
+          return (
+            bot.status.toLowerCase().includes(filterValue) ||
+            bot.exchange.toLowerCase().includes(filterValue)
+          );
+        });
+      });
+    }
+
+    return result;
+  }, [searchTerm, filters]);
+
+  // Paginate data
+  const paginatedBots = useMemo(() => {
+    const start = currentPage * pageSize;
+    return filteredBots.slice(start, start + pageSize);
+  }, [filteredBots, currentPage, pageSize]);
+
+  const totalPages = Math.ceil(filteredBots.length / pageSize);
 
   const getStatusBadge = (status: BotData['status']) => {
     const variants = {
@@ -331,7 +409,7 @@ export default function Bots() {
     }
   ];
 
-  const tableFilters = [
+  const tableFilters = useMemo(() => [
     { id: 'running', label: 'Running', value: 'running' },
     { id: 'stopped', label: 'Stopped', value: 'stopped' },
     { id: 'error', label: 'Error', value: 'error' },
@@ -344,7 +422,7 @@ export default function Bots() {
     { id: 'gate-io', label: 'Gate.io', value: 'gate.io' },
     { id: 'bitfinex', label: 'Bitfinex', value: 'bitfinex' },
     { id: 'gemini', label: 'Gemini', value: 'gemini' }
-  ];
+  ], []);
 
   const bulkActions = (
     <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
@@ -423,12 +501,80 @@ export default function Bots() {
           />
         ) : viewMode === 'cards' ? (
           <BotCardsView 
-            bots={mockBots}
+            bots={filteredBots}
             onStartBot={handleStartBot}
             onStopBot={handleStopBot}
             onDeleteBot={handleDeleteBot}
             getStatusBadge={getStatusBadge}
           />
+        ) : isMobile ? (
+          <div className="space-y-4">
+            {/* Mobile Search and Filters */}
+            <div className="space-y-3">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search bots by name, strategy, or exchange..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 h-11"
+                  data-testid="mobile-search"
+                />
+              </div>
+              
+              {/* Mobile Filters */}
+              {tableFilters.length > 0 && (
+                <div className="flex items-start space-x-2">
+                  <Filter className="h-4 w-4 text-gray-400 mt-2 flex-shrink-0" />
+                  <div className="flex flex-wrap gap-2 flex-1">
+                    {tableFilters.slice(0, 6).map(filter => (
+                      <Badge
+                        key={filter.id}
+                        variant={filters.includes(filter.id) ? "default" : "outline"}
+                        className="cursor-pointer min-h-[32px] px-3"
+                        onClick={() => {
+                          const newFilters = filters.includes(filter.id)
+                            ? filters.filter(id => id !== filter.id)
+                            : [...filters, filter.id];
+                          setFilters(newFilters);
+                        }}
+                        data-testid={`mobile-filter-${filter.id}`}
+                      >
+                        {filter.label}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Bulk Actions for Mobile */}
+              {selectedBotIds.size > 0 && (
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <div className="flex flex-col space-y-2">
+                    <span className="text-sm font-medium text-gray-700">
+                      {selectedBotIds.size} bot{selectedBotIds.size > 1 ? 's' : ''} selected
+                    </span>
+                    {bulkActions}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Mobile Table View */}
+            <MobileBotsTable
+              bots={paginatedBots}
+              selectedBots={selectedBotIds}
+              onSelectBot={handleSelectBot}
+              onSelectAll={handleSelectAll}
+              onStartBot={handleStartBot}
+              onStopBot={handleStopBot}
+              onDeleteBot={handleDeleteBot}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              pageSize={pageSize}
+            />
+          </div>
         ) : (
           <EnhancedTable
             data={mockBots}
