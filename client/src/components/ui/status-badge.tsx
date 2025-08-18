@@ -24,43 +24,43 @@ export function StatusBadge({
         return {
           label: label || 'Online',
           icon: CheckCircle,
-          className: 'status-positive'
+          className: 'bg-green-100 text-green-800 border-green-200'
         };
       case 'offline':
         return {
           label: label || 'Offline',
           icon: XCircle,
-          className: 'status-negative'
+          className: 'bg-gray-100 text-gray-800 border-gray-200'
         };
       case 'warning':
         return {
           label: label || 'Warning',
           icon: AlertTriangle,
-          className: 'status-warning'
+          className: 'bg-yellow-100 text-yellow-800 border-yellow-200'
         };
       case 'error':
         return {
           label: label || 'Error',
           icon: XCircle,
-          className: 'status-negative'
+          className: 'bg-red-100 text-red-800 border-red-200'
         };
       case 'pending':
         return {
           label: label || 'Pending',
           icon: Clock,
-          className: 'status-neutral'
+          className: 'bg-blue-100 text-blue-800 border-blue-200'
         };
       case 'paused':
         return {
           label: label || 'Paused',
           icon: Pause,
-          className: 'status-neutral'
+          className: 'bg-gray-100 text-gray-800 border-gray-200'
         };
       default:
         return {
           label: label || 'Unknown',
           icon: XCircle,
-          className: 'status-neutral'
+          className: 'bg-gray-100 text-gray-800 border-gray-200'
         };
     }
   };

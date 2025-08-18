@@ -156,16 +156,17 @@ export default function Strategies() {
   };
 
   const getStatusBadge = (status: StrategyData['status']) => {
-    switch (status) {
-      case 'active':
-        return <StatusBadge status="online" label="Active" />;
-      case 'inactive':
-        return <StatusBadge status="offline" label="Inactive" />;
-      case 'testing':
-        return <StatusBadge status="warning" label="Testing" />;
-      default:
-        return <StatusBadge status="offline" label="Unknown" />;
-    }
+    const variants = {
+      active: 'bg-green-100 text-green-800 border-green-200',
+      inactive: 'bg-gray-100 text-gray-800 border-gray-200',
+      testing: 'bg-yellow-100 text-yellow-800 border-yellow-200'
+    };
+    
+    return (
+      <Badge className={variants[status] || variants.inactive}>
+        {status.charAt(0).toUpperCase() + status.slice(1)}
+      </Badge>
+    );
   };
 
   return (
