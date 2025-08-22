@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Route, Switch, useLocation, Link, useRouter } from 'wouter';
+import { Route, Switch, useLocation, Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import logoSvg from "@/assets/logo.svg";
@@ -71,8 +71,7 @@ const navigation = [
 ];
 
 export default function MainLayout({ children }: MainLayoutProps) {
-  const [location] = useLocation();
-  const router = useRouter();
+  const [location, setLocation] = useLocation();
   const { user, logout } = useAuth();
   const [isKillSwitchEnabled, setIsKillSwitchEnabled] = useState(false);
   const { environment, switchEnvironment, isLive } = useEnvironment();
@@ -584,11 +583,11 @@ export default function MainLayout({ children }: MainLayoutProps) {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuItem onClick={() => router.navigate('/profile')} data-testid="menu-profile">
+                  <DropdownMenuItem onClick={() => setLocation('/profile')} data-testid="menu-profile">
                     <User className="w-4 h-4 mr-2" />
                     Profile
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => router.navigate('/settings')} data-testid="menu-settings">
+                  <DropdownMenuItem onClick={() => setLocation('/settings')} data-testid="menu-settings">
                     <Settings className="w-4 h-4 mr-2" />
                     Settings
                   </DropdownMenuItem>
@@ -618,11 +617,11 @@ export default function MainLayout({ children }: MainLayoutProps) {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuItem onClick={() => router.navigate('/profile')} data-testid="menu-profile-collapsed">
+                  <DropdownMenuItem onClick={() => setLocation('/profile')} data-testid="menu-profile-collapsed">
                     <User className="w-4 h-4 mr-2" />
                     Profile
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => router.navigate('/settings')} data-testid="menu-settings-collapsed">
+                  <DropdownMenuItem onClick={() => setLocation('/settings')} data-testid="menu-settings-collapsed">
                     <Settings className="w-4 h-4 mr-2" />
                     Settings
                   </DropdownMenuItem>
