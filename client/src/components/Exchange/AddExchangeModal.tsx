@@ -40,7 +40,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'binance',
     displayName: 'Binance',
-    logo: 'https://cryptologos.cc/logos/binance-coin-bnb-logo.svg',
+    logo: 'https://cdn.jsdelivr.net/gh/Cryptofonts/cryptofonts@1.0.0/SVG/binance.svg',
     description: 'World\'s largest cryptocurrency exchange by trading volume',
     features: ['Spot Trading', 'Futures', 'Margin', 'Options', 'P2P', 'Staking'],
     requiresPassphrase: false,
@@ -50,7 +50,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'coinbase',
     displayName: 'Coinbase Advanced',
-    logo: 'https://cryptologos.cc/logos/coinbase-coin-logo.svg',
+    logo: 'https://cdn.jsdelivr.net/gh/Cryptofonts/cryptofonts@1.0.0/SVG/coinbase.svg',
     description: 'Leading US-based cryptocurrency exchange with advanced trading features',
     features: ['Spot Trading', 'Institutional', 'Advanced Trading', 'API Access'],
     requiresPassphrase: true,
@@ -60,7 +60,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'kraken',
     displayName: 'Kraken',
-    logo: 'https://cryptologos.cc/logos/kraken-logo.svg',
+    logo: 'https://cdn.jsdelivr.net/gh/Cryptofonts/cryptofonts@1.0.0/SVG/kraken.svg',
     description: 'Established European exchange with comprehensive trading features',
     features: ['Spot Trading', 'Futures', 'Margin', 'Staking', 'DeFi'],
     requiresPassphrase: false,
@@ -70,7 +70,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'bybit',
     displayName: 'Bybit',
-    logo: 'https://cryptologos.cc/logos/bybit-logo.svg',
+    logo: 'https://assets.coingecko.com/markets/images/698/small/bybit_spot.png',
     description: 'Popular derivatives exchange with spot and futures trading',
     features: ['Spot Trading', 'Futures', 'Options', 'Copy Trading', 'NFT'],
     requiresPassphrase: false,
@@ -80,7 +80,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'okx',
     displayName: 'OKX',
-    logo: 'https://cryptologos.cc/logos/okx-logo.svg',
+    logo: 'https://assets.coingecko.com/markets/images/96/small/WeChat_Image_20220117220452.png',
     description: 'Comprehensive crypto exchange with DeFi and Web3 features',
     features: ['Spot Trading', 'Futures', 'Options', 'DeFi', 'Web3 Wallet'],
     requiresPassphrase: true,
@@ -90,7 +90,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'kucoin',
     displayName: 'KuCoin',
-    logo: 'https://cryptologos.cc/logos/kucoin-shares-kcs-logo.svg',
+    logo: 'https://cdn.jsdelivr.net/gh/Cryptofonts/cryptofonts@1.0.0/SVG/kucoin.svg',
     description: 'Global exchange known for altcoin variety and trading bots',
     features: ['Spot Trading', 'Futures', 'Margin', 'Pool-X', 'Trading Bots'],
     requiresPassphrase: true,
@@ -100,7 +100,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'gateio',
     displayName: 'Gate.io',
-    logo: 'https://cryptologos.cc/logos/gateio-logo.svg',
+    logo: 'https://cdn.jsdelivr.net/gh/Cryptofonts/cryptofonts@1.0.0/SVG/gate.svg',
     description: 'Leading exchange with largest selection of altcoins and early-stage projects',
     features: ['Spot Trading', 'Futures', 'Options', 'Copy Trading', 'Startup', 'NFT'],
     requiresPassphrase: false,
@@ -110,7 +110,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'mexc',
     displayName: 'MEXC',
-    logo: 'https://cryptologos.cc/logos/mexc-logo.svg',
+    logo: 'https://assets.coingecko.com/markets/images/409/small/MEXC.png',
     description: 'Fast-growing global exchange with quick listings and low fees',
     features: ['Spot Trading', 'Futures', 'Margin', 'Copy Trading', 'Launchpad'],
     requiresPassphrase: false,
@@ -120,7 +120,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'huobi',
     displayName: 'Huobi Global',
-    logo: 'https://cryptologos.cc/logos/huobi-token-ht-logo.svg',
+    logo: 'https://cdn.jsdelivr.net/gh/Cryptofonts/cryptofonts@1.0.0/SVG/huobi.svg',
     description: 'Established global exchange with comprehensive trading features',
     features: ['Spot Trading', 'Futures', 'Margin', 'DeFi', 'Prime Pool'],
     requiresPassphrase: false,
@@ -130,7 +130,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'gemini',
     displayName: 'Gemini',
-    logo: 'https://cryptologos.cc/logos/gemini-dollar-gusd-logo.svg',
+    logo: 'https://cdn.jsdelivr.net/gh/Cryptofonts/cryptofonts@1.0.0/SVG/gemini.svg',
     description: 'US-regulated exchange founded by the Winklevoss twins',
     features: ['Spot Trading', 'Custody', 'Institutional', 'ActiveTrader'],
     requiresPassphrase: false,
@@ -140,7 +140,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'bitfinex',
     displayName: 'Bitfinex',
-    logo: 'https://cryptologos.cc/logos/bitfinex-logo.svg',
+    logo: 'https://cdn.jsdelivr.net/gh/Cryptofonts/cryptofonts@1.0.0/SVG/bitfinex.svg',
     description: 'Professional trading platform with advanced tools and liquidity',
     features: ['Spot Trading', 'Margin', 'Derivatives', 'Lending', 'OTC'],
     requiresPassphrase: false,
@@ -150,7 +150,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'bitstamp',
     displayName: 'Bitstamp',
-    logo: 'https://cryptologos.cc/logos/bitstamp-logo.svg',
+    logo: 'https://cdn.jsdelivr.net/gh/Cryptofonts/cryptofonts@1.0.0/SVG/bitstamp.svg',
     description: 'One of the oldest and most trusted European crypto exchanges',
     features: ['Spot Trading', 'Institutional', 'API Access', 'Pro Trading'],
     requiresPassphrase: false,
@@ -160,7 +160,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'cryptocom',
     displayName: 'Crypto.com',
-    logo: 'https://cryptologos.cc/logos/crypto-com-coin-cro-logo.svg',
+    logo: 'https://cdn.jsdelivr.net/gh/Cryptofonts/cryptofonts@1.0.0/SVG/crypto-com.svg',
     description: 'Popular exchange with crypto debit cards and broad ecosystem',
     features: ['Spot Trading', 'Derivatives', 'DeFi', 'Cards', 'Staking', 'NFT'],
     requiresPassphrase: false,
@@ -170,7 +170,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'whitebit',
     displayName: 'WhiteBIT',
-    logo: 'https://cryptologos.cc/logos/whitebit-logo.svg',
+    logo: 'https://assets.coingecko.com/markets/images/418/small/white_bit.png',
     description: 'Europe\'s largest crypto exchange by traffic and user base',
     features: ['Spot Trading', 'Futures', 'Margin', 'Lending', 'Staking'],
     requiresPassphrase: false,
@@ -180,7 +180,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'bitget',
     displayName: 'Bitget',
-    logo: 'https://cryptologos.cc/logos/bitget-token-bgb-logo.svg',
+    logo: 'https://assets.coingecko.com/markets/images/540/small/Bitget.png',
     description: 'Leading copy trading exchange with social trading features',
     features: ['Spot Trading', 'Futures', 'Copy Trading', 'Grid Trading', 'Launchpad'],
     requiresPassphrase: true,
@@ -190,7 +190,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'coinex',
     displayName: 'CoinEx',
-    logo: 'https://cryptologos.cc/logos/coinex-token-cet-logo.svg',
+    logo: 'https://assets.coingecko.com/markets/images/53/small/coinex.png',
     description: 'ViaBTC-backed exchange with comprehensive trading features',
     features: ['Spot Trading', 'Futures', 'Margin', 'AMM', 'Mining Pool'],
     requiresPassphrase: false,
@@ -200,7 +200,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'phemex',
     displayName: 'Phemex',
-    logo: 'https://cryptologos.cc/logos/phemex-token-pt-logo.svg',
+    logo: 'https://assets.coingecko.com/markets/images/331/small/Phemex_logo_circle.png',
     description: 'High-performance derivatives trading platform',
     features: ['Spot Trading', 'Futures', 'Options', 'Copy Trading', 'Premium'],
     requiresPassphrase: false,
@@ -210,7 +210,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'deribit',
     displayName: 'Deribit',
-    logo: 'https://cryptologos.cc/logos/deribit-logo.svg',
+    logo: 'https://assets.coingecko.com/markets/images/85/small/deribit.png',
     description: 'Leading Bitcoin and Ethereum options and futures exchange',
     features: ['Options', 'Futures', 'Perpetuals', 'Index Trading'],
     requiresPassphrase: false,
@@ -220,7 +220,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'bittrex',
     displayName: 'Bittrex',
-    logo: 'https://cryptologos.cc/logos/bittrex-logo.svg',
+    logo: 'https://cdn.jsdelivr.net/gh/Cryptofonts/cryptofonts@1.0.0/SVG/bittrex.svg',
     description: 'US-based exchange with strong security and regulatory compliance',
     features: ['Spot Trading', 'Institutional', 'API Access'],
     requiresPassphrase: false,
@@ -230,7 +230,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'poloniex',
     displayName: 'Poloniex',
-    logo: 'https://cryptologos.cc/logos/poloniex-logo.svg',
+    logo: 'https://cdn.jsdelivr.net/gh/Cryptofonts/cryptofonts@1.0.0/SVG/poloniex.svg',
     description: 'Established exchange with margin trading and lending features',
     features: ['Spot Trading', 'Margin', 'Lending', 'Futures'],
     requiresPassphrase: false,
@@ -240,7 +240,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'bitmex',
     displayName: 'BitMEX',
-    logo: 'https://cryptologos.cc/logos/bitmex-logo.svg',
+    logo: 'https://assets.coingecko.com/markets/images/378/small/BitMEX-icon.png',
     description: 'Professional Bitcoin derivatives trading platform',
     features: ['Perpetuals', 'Futures', 'Options', 'Spot Trading'],
     requiresPassphrase: false,
@@ -250,7 +250,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'upbit',
     displayName: 'Upbit',
-    logo: 'https://cryptologos.cc/logos/upbit-logo.svg',
+    logo: 'https://assets.coingecko.com/markets/images/117/small/upbit.png',
     description: 'Leading South Korean cryptocurrency exchange',
     features: ['Spot Trading', 'KRW Pairs', 'Staking', 'NFT'],
     requiresPassphrase: false,
@@ -260,7 +260,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'bithumb',
     displayName: 'Bithumb',
-    logo: 'https://cryptologos.cc/logos/bithumb-logo.svg',
+    logo: 'https://assets.coingecko.com/markets/images/6/small/bithumb_1.png',
     description: 'Major Korean exchange with high trading volumes',
     features: ['Spot Trading', 'KRW Trading', 'Staking'],
     requiresPassphrase: false,
@@ -270,7 +270,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'bitflyer',
     displayName: 'bitFlyer',
-    logo: 'https://cryptologos.cc/logos/bitflyer-logo.svg',
+    logo: 'https://assets.coingecko.com/markets/images/5/small/bitflyer.jpg',
     description: 'Japan\'s largest Bitcoin exchange by volume',
     features: ['Spot Trading', 'Lightning Network', 'Institutional'],
     requiresPassphrase: false,
@@ -280,7 +280,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'lbank',
     displayName: 'LBank',
-    logo: 'https://cryptologos.cc/logos/lbank-logo.svg',
+    logo: 'https://assets.coingecko.com/markets/images/118/small/LBank_logo.png',
     description: 'Global digital asset trading platform',
     features: ['Spot Trading', 'Futures', 'Margin', 'Launchpad'],
     requiresPassphrase: false,
@@ -290,7 +290,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'probit',
     displayName: 'ProBit Global',
-    logo: 'https://cryptologos.cc/logos/probit-logo.svg',
+    logo: 'https://assets.coingecko.com/markets/images/294/small/2019-11-14-Favicon.png',
     description: 'Korean exchange with global reach and IEO platform',
     features: ['Spot Trading', 'IEO', 'Staking', 'Futures'],
     requiresPassphrase: false,
