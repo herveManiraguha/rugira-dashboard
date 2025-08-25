@@ -52,6 +52,7 @@ import {
 import { cn } from '@/lib/utils';
 import KillSwitchButton from '@/components/KillSwitch/KillSwitchButton';
 import KillSwitchBanner from '@/components/KillSwitch/KillSwitchBanner';
+import AIAssistantFloat from '@/components/AI/AIAssistantFloat';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -650,6 +651,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
           <Footer />
         </main>
       </div>
+
+      {/* AI Assistant Float */}
+      <AIAssistantFloat />
     </div>
   );
 }
