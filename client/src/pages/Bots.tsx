@@ -8,6 +8,7 @@ import { EmptyState } from '@/components/ui/empty-state';
 import { EnhancedTable, type ColumnDef } from '@/components/ui/enhanced-table';
 import { MobileBotsTable } from '@/components/UI/MobileBotsTable';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
+import CreateBotModal from '@/components/Modals/CreateBotModal';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   Bot, 
@@ -181,6 +182,8 @@ export default function Bots() {
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('table');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
+  const [isCreateBotModalOpen, setIsCreateBotModalOpen] = useState(false);
+  const [bots, setBots] = useState<BotData[]>(mockBots);
   const pageSize = 10;
 
   const handleStartBot = (botId: string) => {
@@ -193,6 +196,33 @@ export default function Bots() {
 
   const handleDeleteBot = (botId: string) => {
     console.log('Deleting bot:', botId);
+    setBots(prevBots => prevBots.filter(bot => bot.id !== botId));
+  };
+
+  const handleCreateBot = (botData: any) => {
+    console.log('Creating bot:', botData);
+    const newBot: BotData = {
+      id: (bots.length + 1).toString(),
+      name: botData.name,
+      strategy: botData.strategy === 'arbitrage' ? 'Arbitrage' : 
+                botData.strategy === 'ma_crossover' ? 'Moving Average' :
+                botData.strategy === 'grid_trading' ? 'Grid Trading' :
+                botData.strategy === 'dca' ? 'DCA' :
+                botData.strategy === 'momentum' ? 'Momentum' : 'Custom',
+      status: 'stopped',
+      exchange: botData.exchange === 'binance' ? 'Binance' :
+                botData.exchange === 'coinbase' ? 'Coinbase Pro' :
+                botData.exchange === 'kraken' ? 'Kraken' :
+                botData.exchange === 'bybit' ? 'Bybit' :
+                botData.exchange === 'okx' ? 'OKX' : botData.exchange,
+      pair: botData.tradingPair || 'BTC/USDT',
+      pnl24h: 0,
+      totalPnl: 0,
+      uptime: '0m',
+      lastTrade: 'Never'
+    };
+    setBots(prevBots => [newBot, ...prevBots]);
+    setIsCreateBotModalOpen(false);
   };
 
   const handleBulkStart = () => {
@@ -212,7 +242,7 @@ export default function Bots() {
     }
     setSelectedBotIds(newIds);
     
-    const selected_bots = mockBots.filter(bot => newIds.has(bot.id));
+    const selected_bots = bots.filter(bot => newIds.has(bot.id));
     setSelectedBots(selected_bots);
   };
 
@@ -229,7 +259,7 @@ export default function Bots() {
 
   // Filter and search data
   const filteredBots = useMemo(() => {
-    let result = mockBots;
+    let result = bots;
 
     // Apply search
     if (searchTerm) {
@@ -479,6 +509,7 @@ export default function Bots() {
             </Button>
           </div>
           <Button 
+            onClick={() => setIsCreateBotModalOpen(true)}
             data-testid="create-bot"
             className="w-full sm:w-auto h-12 sm:h-10 text-base sm:text-sm"
           >
@@ -489,14 +520,14 @@ export default function Bots() {
       </div>
 
       <div id="bots-table">
-        {mockBots.length === 0 ? (
+        {bots.length === 0 ? (
           <EmptyState
             icon={<Bot className="h-12 w-12" />}
             title="No trading bots found"
             description="Get started by creating your first automated trading bot to begin generating profits."
             action={{
               label: "Create Your First Bot",
-              onClick: () => console.log('Create bot')
+              onClick: () => setIsCreateBotModalOpen(true)
             }}
           />
         ) : viewMode === 'cards' ? (
@@ -577,7 +608,7 @@ export default function Bots() {
           </div>
         ) : (
           <EnhancedTable
-            data={mockBots}
+            data={bots}
             columns={columns}
             searchPlaceholder="Search bots by name, strategy, or exchange..."
             filters={tableFilters}
@@ -589,6 +620,13 @@ export default function Bots() {
           />
         )}
       </div>
+
+      {/* Create Bot Modal */}
+      <CreateBotModal
+        isOpen={isCreateBotModalOpen}
+        onClose={() => setIsCreateBotModalOpen(false)}
+        onSubmit={handleCreateBot}
+      />
     </div>
   );
 }
