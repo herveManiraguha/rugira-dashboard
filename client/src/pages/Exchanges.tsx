@@ -8,6 +8,7 @@ import { StatusBadge } from '@/components/ui/status-badge';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { ExchangeIcon } from '@/components/ui/exchange-icon';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import AddExchangeModal from '@/components/Exchange/AddExchangeModal';
 import { 
   Settings, 
   Plus,
@@ -188,8 +189,9 @@ const mockExchanges: ExchangeData[] = [
 ];
 
 export default function Exchanges() {
-  const [exchanges] = useState(mockExchanges);
+  const [exchanges, setExchanges] = useState(mockExchanges);
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const handleConnect = (exchangeId: string) => {
     console.log('Connecting to exchange:', exchangeId);
@@ -201,6 +203,51 @@ export default function Exchanges() {
 
   const handleRefresh = (exchangeId: string) => {
     console.log('Refreshing exchange data:', exchangeId);
+  };
+
+  const handleAddExchange = async (data: any) => {
+    console.log('Adding exchange:', data);
+    // TODO: Implement actual API call to add exchange
+    // For now, simulate adding to the list
+    const newExchange = {
+      id: (exchanges.length + 1).toString(),
+      name: data.exchange === 'binance' ? 'Binance' : 
+            data.exchange === 'coinbase' ? 'Coinbase Pro' :
+            data.exchange === 'kraken' ? 'Kraken' :
+            data.exchange === 'bybit' ? 'Bybit' :
+            data.exchange === 'okx' ? 'OKX' :
+            data.exchange === 'kucoin' ? 'KuCoin' : 'Unknown',
+      status: 'connecting' as const,
+      lastSync: new Date().toISOString(),
+      tradingFees: { maker: 0.1, taker: 0.1 },
+      apiLimits: { used: 0, total: 1000 },
+      balance: { total: 0, available: 0, currency: 'USDT' },
+      supportedPairs: 1000,
+      activeBots: 0,
+      logo: getExchangeLogo(data.exchange),
+      features: ['Spot Trading', 'API Access']
+    };
+    
+    setExchanges(prev => [newExchange, ...prev]);
+    
+    // Simulate connection success after 3 seconds
+    setTimeout(() => {
+      setExchanges(prev => prev.map(ex => 
+        ex.id === newExchange.id ? { ...ex, status: 'connected' as const } : ex
+      ));
+    }, 3000);
+  };
+
+  const getExchangeLogo = (exchangeName: string) => {
+    const logos: Record<string, string> = {
+      'binance': 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/binance-logo-icon.svg',
+      'coinbase': 'https://altcoinsbox.com/wp-content/uploads/2023/01/coinbase-logo.svg',
+      'kraken': 'https://altcoinsbox.com/wp-content/uploads/2023/01/kraken-logo.svg',
+      'bybit': 'https://altcoinsbox.com/wp-content/uploads/2023/01/bybit-logo.svg',
+      'okx': 'https://altcoinsbox.com/wp-content/uploads/2023/01/okx-logo.svg',
+      'kucoin': 'https://altcoinsbox.com/wp-content/uploads/2023/01/kucoin-logo.svg'
+    };
+    return logos[exchangeName] || '';
   };
 
   const getStatusBadge = (status: ExchangeData['status']) => {
@@ -266,7 +313,7 @@ export default function Exchanges() {
                 <List className="h-4 w-4" />
               </Button>
             </div>
-            <Button data-testid="add-exchange">
+            <Button onClick={() => setIsAddModalOpen(true)} data-testid="add-exchange">
               <Plus className="h-4 w-4 mr-2" />
               Add Exchange
             </Button>
@@ -282,7 +329,7 @@ export default function Exchanges() {
             description="Connect your first exchange to start automated trading across multiple platforms."
             action={{
               label: "Connect Exchange",
-              onClick: () => console.log('Connect exchange')
+              onClick: () => setIsAddModalOpen(true)
             }}
           />
         ) : viewMode === 'table' ? (
@@ -307,6 +354,12 @@ export default function Exchanges() {
           />
         )}
       </main>
+      
+      <AddExchangeModal 
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSubmit={handleAddExchange}
+      />
     </div>
   );
 }
