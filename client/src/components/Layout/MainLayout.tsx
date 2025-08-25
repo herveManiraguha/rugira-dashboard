@@ -59,16 +59,16 @@ interface MainLayoutProps {
 }
 
 const navigation = [
-  { name: 'Overview', href: '/overview', icon: Activity },
-  { name: 'Bots', href: '/bots', icon: Bot },
-  { name: 'Strategies', href: '/strategies', icon: Target },
-  { name: 'Exchanges', href: '/exchanges', icon: Building2 },
-  { name: 'Compliance', href: '/compliance', icon: Shield },
-  { name: 'Reports', href: '/reports', icon: BarChart3 },
-  { name: 'Backtesting', href: '/backtesting', icon: TrendingUp },
-  { name: 'Monitoring', href: '/monitoring', icon: Monitor },
-  { name: 'Admin', href: '/admin', icon: Shield },
-  { name: 'Help', href: '/help', icon: HelpCircle },
+  { name: 'Overview', href: '/overview', icon: Activity, group: null },
+  { name: 'Exchanges', href: '/exchanges', icon: Building2, group: 'Build' },
+  { name: 'Strategies', href: '/strategies', icon: Target, group: 'Build' },
+  { name: 'Backtesting', href: '/backtesting', icon: TrendingUp, group: 'Build' },
+  { name: 'Bots', href: '/bots', icon: Bot, group: 'Run' },
+  { name: 'Monitoring', href: '/monitoring', icon: Monitor, group: 'Run' },
+  { name: 'Reports', href: '/reports', icon: BarChart3, group: 'Govern' },
+  { name: 'Compliance', href: '/compliance', icon: Shield, group: 'Govern' },
+  { name: 'Admin', href: '/admin', icon: Settings, group: 'System' },
+  { name: 'Help', href: '/help', icon: HelpCircle, group: 'System' },
 ];
 
 export default function MainLayout({ children }: MainLayoutProps) {
@@ -390,28 +390,41 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
               <nav className="flex-1 p-4 sm:p-6">
                 <ul className="space-y-2">
-                  {navigation.map((item) => {
+                  {navigation.map((item, index) => {
                     const Icon = item.icon;
                     const isActive = location === item.href || 
                       (item.href !== '/' && location.startsWith(item.href));
                     
+                    // Check if we need to show a group header
+                    const showGroupHeader = item.group && 
+                      (index === 0 || navigation[index - 1].group !== item.group);
+                    
                     return (
-                      <li key={item.name}>
-                        <Link href={item.href}>
-                          <Button
-                            variant={isActive ? "secondary" : "ghost"}
-                            className={cn(
-                              "w-full justify-start text-left h-12 text-base font-medium",
-                              isActive ? "bg-red-50 text-red-700 border-l-4 border-red-500" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                            )}
-                            data-testid={`nav-mobile-${item.name.toLowerCase()}`}
-                            onClick={() => setMobileMenuOpen(false)}
-                          >
-                            <Icon className="mr-4 h-5 w-5 flex-shrink-0" />
-                            <span className="truncate">{item.name}</span>
-                          </Button>
-                        </Link>
-                      </li>
+                      <React.Fragment key={item.name}>
+                        {showGroupHeader && (
+                          <li className="pt-4 first:pt-0">
+                            <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                              {item.group}
+                            </div>
+                          </li>
+                        )}
+                        <li>
+                          <Link href={item.href}>
+                            <Button
+                              variant={isActive ? "secondary" : "ghost"}
+                              className={cn(
+                                "w-full justify-start text-left h-12 text-base font-medium",
+                                isActive ? "bg-red-50 text-red-700 border-l-4 border-red-500" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                              )}
+                              data-testid={`nav-mobile-${item.name.toLowerCase()}`}
+                              onClick={() => setMobileMenuOpen(false)}
+                            >
+                              <Icon className="mr-4 h-5 w-5 flex-shrink-0" />
+                              <span className="truncate">{item.name}</span>
+                            </Button>
+                          </Link>
+                        </li>
+                      </React.Fragment>
                     );
                   })}
                 </ul>
@@ -529,29 +542,42 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
           <div className="flex-1 p-3">
             <ul className="space-y-1">
-              {navigation.map((item) => {
+              {navigation.map((item, index) => {
                 const Icon = item.icon;
                 const isActive = location === item.href || 
                   (item.href !== '/' && location.startsWith(item.href));
                 
+                // Check if we need to show a group header
+                const showGroupHeader = item.group && 
+                  (index === 0 || navigation[index - 1].group !== item.group);
+                
                 return (
-                  <li key={item.name}>
-                    <Link href={item.href}>
-                      <Button
-                        variant={isActive ? "secondary" : "ghost"}
-                        className={cn(
-                          "w-full justify-start text-left",
-                          sidebarCollapsed ? "h-10 w-10 p-0" : "h-10",
-                          isActive ? "bg-gray-100 text-gray-900" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                        )}
-                        data-testid={`nav-${item.name.toLowerCase()}`}
-                        title={sidebarCollapsed ? item.name : undefined}
-                      >
-                        <Icon className={cn("h-5 w-5", !sidebarCollapsed && "mr-3")} />
-                        {!sidebarCollapsed && item.name}
-                      </Button>
-                    </Link>
-                  </li>
+                  <React.Fragment key={item.name}>
+                    {showGroupHeader && !sidebarCollapsed && (
+                      <li className="pt-4 first:pt-0">
+                        <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                          {item.group}
+                        </div>
+                      </li>
+                    )}
+                    <li>
+                      <Link href={item.href}>
+                        <Button
+                          variant={isActive ? "secondary" : "ghost"}
+                          className={cn(
+                            "w-full justify-start text-left",
+                            sidebarCollapsed ? "h-10 w-10 p-0" : "h-10",
+                            isActive ? "bg-gray-100 text-gray-900" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                          )}
+                          data-testid={`nav-${item.name.toLowerCase()}`}
+                          title={sidebarCollapsed ? item.name : undefined}
+                        >
+                          <Icon className={cn("h-5 w-5", !sidebarCollapsed && "mr-3")} />
+                          {!sidebarCollapsed && item.name}
+                        </Button>
+                      </Link>
+                    </li>
+                  </React.Fragment>
                 );
               })}
             </ul>
