@@ -66,7 +66,7 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 12450.32, available: 8921.45, currency: 'USDT' },
     supportedPairs: 1800,
     activeBots: 4,
-    logo: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/binance-logo-icon.svg',
+    logo: 'https://cryptologos.cc/logos/binance-coin-bnb-logo.svg',
     features: ['Spot Trading', 'Futures', 'Margin', 'Options', 'P2P', 'Staking']
   },
   {
@@ -79,7 +79,7 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 5620.78, available: 4150.23, currency: 'USD' },
     supportedPairs: 180,
     activeBots: 2,
-    logo: 'https://altcoinsbox.com/wp-content/uploads/2023/01/coinbase-logo.svg',
+    logo: 'https://cryptologos.cc/logos/coinbase-coin-logo.svg',
     features: ['Spot Trading', 'Institutional', 'Advanced Trading', 'API Access']
   },
   {
@@ -92,7 +92,7 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 0, available: 0, currency: 'EUR' },
     supportedPairs: 220,
     activeBots: 0,
-    logo: 'https://altcoinsbox.com/wp-content/uploads/2023/01/kraken-logo.svg',
+    logo: 'https://cryptologos.cc/logos/kraken-logo.svg',
     features: ['Spot Trading', 'Futures', 'Margin', 'Staking', 'DeFi']
   },
   {
@@ -105,7 +105,7 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 3420.15, available: 2890.67, currency: 'USDT' },
     supportedPairs: 400,
     activeBots: 3,
-    logo: 'https://altcoinsbox.com/wp-content/uploads/2023/01/bybit-logo.svg',
+    logo: 'https://cryptologos.cc/logos/bybit-logo.svg',
     features: ['Spot Trading', 'Futures', 'Options', 'Copy Trading', 'NFT']
   },
   {
@@ -118,7 +118,7 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 7850.92, available: 6120.45, currency: 'USDT' },
     supportedPairs: 500,
     activeBots: 5,
-    logo: 'https://altcoinsbox.com/wp-content/uploads/2023/01/okx-logo.svg',
+    logo: 'https://cryptologos.cc/logos/okx-logo.svg',
     features: ['Spot Trading', 'Futures', 'Options', 'DeFi', 'Web3 Wallet']
   },
   {
@@ -131,7 +131,7 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 2940.78, available: 2340.12, currency: 'USDT' },
     supportedPairs: 750,
     activeBots: 2,
-    logo: 'https://altcoinsbox.com/wp-content/uploads/2023/01/kucoin-logo.svg',
+    logo: 'https://cryptologos.cc/logos/kucoin-shares-kcs-logo.svg',
     features: ['Spot Trading', 'Futures', 'Margin', 'Pool-X', 'Trading Bots']
   },
   {
@@ -144,7 +144,7 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 0, available: 0, currency: 'USDT' },
     supportedPairs: 600,
     activeBots: 0,
-    logo: 'https://altcoinsbox.com/wp-content/uploads/2023/01/huobi-logo.svg',
+    logo: 'https://cryptologos.cc/logos/huobi-token-ht-logo.svg',
     features: ['Spot Trading', 'Futures', 'Margin', 'DeFi', 'Prime Pool']
   },
   {
@@ -157,7 +157,7 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 1850.45, available: 1420.33, currency: 'USDT' },
     supportedPairs: 900,
     activeBots: 1,
-    logo: 'https://altcoinsbox.com/wp-content/uploads/2023/01/gate.io-logo.svg',
+    logo: 'https://cryptologos.cc/logos/gateio-logo.svg',
     features: ['Spot Trading', 'Futures', 'Options', 'Copy Trading', 'Startup']
   },
   {
@@ -170,7 +170,7 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 0, available: 0, currency: 'USD' },
     supportedPairs: 350,
     activeBots: 0,
-    logo: 'https://altcoinsbox.com/wp-content/uploads/2023/01/bitfinex-logo.svg',
+    logo: 'https://cryptologos.cc/logos/bitfinex-logo.svg',
     features: ['Spot Trading', 'Margin', 'Derivatives', 'Lending', 'OTC']
   },
   {
@@ -183,7 +183,7 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 0, available: 0, currency: 'USD' },
     supportedPairs: 80,
     activeBots: 0,
-    logo: 'https://altcoinsbox.com/wp-content/uploads/2023/01/gemini-logo.svg',
+    logo: 'https://cryptologos.cc/logos/gemini-dollar-gusd-logo.svg',
     features: ['Spot Trading', 'Custody', 'Institutional', 'ActiveTrader']
   }
 ];

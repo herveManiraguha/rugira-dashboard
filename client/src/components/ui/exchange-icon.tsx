@@ -54,34 +54,62 @@ export function ExchangeIcon({ name, logo, size = 'md', className = '' }: Exchan
   );
 }
 
-// Official exchange logos from authenticated sources with fallbacks
+// Official exchange logos from cryptologos.cc - reliable source
 export const EXCHANGE_LOGOS = {
-  binance: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/binance-logo-icon.svg',
-  coinbase: 'https://brandfetch.com/api/v2/assets/id6U73G7r1/v1/logomark/size/512',
-  kraken: 'https://logotyp.us/files/kraken.svg',
-  bybit: 'https://altcoinsbox.com/wp-content/uploads/2023/01/bybit-logo.svg',
-  okx: 'https://altcoinsbox.com/wp-content/uploads/2023/01/okx-logo.svg',
-  kucoin: 'https://altcoinsbox.com/wp-content/uploads/2023/01/kucoin-logo.svg',
-  huobi: 'https://altcoinsbox.com/wp-content/uploads/2023/01/huobi-logo.svg',
-  gate: 'https://altcoinsbox.com/wp-content/uploads/2023/01/gate.io-logo.svg',
-  bitfinex: 'https://altcoinsbox.com/wp-content/uploads/2023/01/bitfinex-logo.svg',
-  gemini: 'https://altcoinsbox.com/wp-content/uploads/2023/01/gemini-logo.svg',
-  ftx: 'https://cryptologos.cc/logos/ftx-token-ftt-logo.svg',
-  crypto_com: 'https://cryptologos.cc/logos/crypto-com-cro-logo.svg',
-  mexc: 'https://cryptologos.cc/logos/mexc-global-mexc-logo.svg',
-  bitget: 'https://cryptologos.cc/logos/bitget-token-bgb-logo.svg'
+  binance: 'https://cryptologos.cc/logos/binance-coin-bnb-logo.svg',
+  coinbase: 'https://cryptologos.cc/logos/coinbase-coin-logo.svg',
+  kraken: 'https://cryptologos.cc/logos/kraken-logo.svg',
+  bybit: 'https://cryptologos.cc/logos/bybit-logo.svg',
+  okx: 'https://cryptologos.cc/logos/okx-logo.svg',
+  kucoin: 'https://cryptologos.cc/logos/kucoin-shares-kcs-logo.svg',
+  huobi: 'https://cryptologos.cc/logos/huobi-token-ht-logo.svg',
+  gate: 'https://cryptologos.cc/logos/gateio-logo.svg',
+  bitfinex: 'https://cryptologos.cc/logos/bitfinex-logo.svg',
+  gemini: 'https://cryptologos.cc/logos/gemini-dollar-gusd-logo.svg',
+  mexc: 'https://cryptologos.cc/logos/mexc-logo.svg',
+  crypto_com: 'https://cryptologos.cc/logos/crypto-com-coin-cro-logo.svg',
+  bitget: 'https://cryptologos.cc/logos/bitget-token-bgb-logo.svg',
+  whitebit: 'https://cryptologos.cc/logos/whitebit-logo.svg',
+  coinex: 'https://cryptologos.cc/logos/coinex-token-cet-logo.svg',
+  phemex: 'https://cryptologos.cc/logos/phemex-token-pt-logo.svg',
+  deribit: 'https://cryptologos.cc/logos/deribit-logo.svg',
+  bittrex: 'https://cryptologos.cc/logos/bittrex-logo.svg',
+  poloniex: 'https://cryptologos.cc/logos/poloniex-logo.svg',
+  bitmex: 'https://cryptologos.cc/logos/bitmex-logo.svg',
+  upbit: 'https://cryptologos.cc/logos/upbit-logo.svg',
+  bithumb: 'https://cryptologos.cc/logos/bithumb-logo.svg',
+  bitflyer: 'https://cryptologos.cc/logos/bitflyer-logo.svg',
+  lbank: 'https://cryptologos.cc/logos/lbank-logo.svg',
+  probit: 'https://cryptologos.cc/logos/probit-logo.svg',
+  bitstamp: 'https://cryptologos.cc/logos/bitstamp-logo.svg'
 } as const;
 
-// Fallback logos for better reliability
+// Fallback logos - same as primary for consistency
 export const EXCHANGE_LOGOS_FALLBACK = {
   binance: 'https://cryptologos.cc/logos/binance-coin-bnb-logo.svg',
   coinbase: 'https://cryptologos.cc/logos/coinbase-coin-logo.svg',
-  kraken: 'https://cryptologos.cc/logos/kraken-kraken-logo.svg',
-  bybit: 'https://cryptologos.cc/logos/bybit-token-bit-logo.svg',
-  okx: 'https://cryptologos.cc/logos/okex-okb-logo.svg',
-  kucoin: 'https://cryptologos.cc/logos/kucoin-token-kcs-logo.svg',
+  kraken: 'https://cryptologos.cc/logos/kraken-logo.svg',
+  bybit: 'https://cryptologos.cc/logos/bybit-logo.svg',
+  okx: 'https://cryptologos.cc/logos/okx-logo.svg',
+  kucoin: 'https://cryptologos.cc/logos/kucoin-shares-kcs-logo.svg',
   huobi: 'https://cryptologos.cc/logos/huobi-token-ht-logo.svg',
-  gate: 'https://cryptologos.cc/logos/gate-gt-logo.svg',
-  bitfinex: 'https://cryptologos.cc/logos/bitfinex-leo-logo.svg',
-  gemini: 'https://cryptologos.cc/logos/gemini-dollar-gusd-logo.svg'
+  gate: 'https://cryptologos.cc/logos/gateio-logo.svg',
+  bitfinex: 'https://cryptologos.cc/logos/bitfinex-logo.svg',
+  gemini: 'https://cryptologos.cc/logos/gemini-dollar-gusd-logo.svg',
+  mexc: 'https://cryptologos.cc/logos/mexc-logo.svg',
+  crypto_com: 'https://cryptologos.cc/logos/crypto-com-coin-cro-logo.svg',
+  bitget: 'https://cryptologos.cc/logos/bitget-token-bgb-logo.svg',
+  whitebit: 'https://cryptologos.cc/logos/whitebit-logo.svg',
+  coinex: 'https://cryptologos.cc/logos/coinex-token-cet-logo.svg',
+  phemex: 'https://cryptologos.cc/logos/phemex-token-pt-logo.svg',
+  deribit: 'https://cryptologos.cc/logos/deribit-logo.svg',
+  bittrex: 'https://cryptologos.cc/logos/bittrex-logo.svg',
+  poloniex: 'https://cryptologos.cc/logos/poloniex-logo.svg',
+  bitmex: 'https://cryptologos.cc/logos/bitmex-logo.svg',
+  upbit: 'https://cryptologos.cc/logos/upbit-logo.svg',
+  bithumb: 'https://cryptologos.cc/logos/bithumb-logo.svg',
+  bitflyer: 'https://cryptologos.cc/logos/bitflyer-logo.svg',
+  lbank: 'https://cryptologos.cc/logos/lbank-logo.svg',
+  probit: 'https://cryptologos.cc/logos/probit-logo.svg',
+  bitstamp: 'https://cryptologos.cc/logos/bitstamp-logo.svg'
 } as const;
