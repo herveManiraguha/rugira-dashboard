@@ -326,6 +326,7 @@ export default function AddExchangeModal({ isOpen, onClose, onSubmit }: AddExcha
   const [showPassphrase, setShowPassphrase] = useState<boolean>(false);
   const [isTestingConnection, setIsTestingConnection] = useState<boolean>(false);
   const [connectionTestResult, setConnectionTestResult] = useState<'idle' | 'success' | 'error'>('idle');
+  const [isAPITested, setIsAPITested] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const selectedExchangeInfo = supportedExchanges.find(ex => ex.name === selectedExchange);
@@ -340,6 +341,7 @@ export default function AddExchangeModal({ isOpen, onClose, onSubmit }: AddExcha
     setShowApiSecret(false);
     setShowPassphrase(false);
     setConnectionTestResult('idle');
+    setIsAPITested(false);
   };
 
   const handleClose = () => {
@@ -359,8 +361,10 @@ export default function AddExchangeModal({ isOpen, onClose, onSubmit }: AddExcha
       
       // Mock successful connection (in real app, this would be an actual API call)
       setConnectionTestResult('success');
+      setIsAPITested(true);
     } catch (error) {
       setConnectionTestResult('error');
+      setIsAPITested(false);
     } finally {
       setIsTestingConnection(false);
     }
@@ -391,7 +395,7 @@ export default function AddExchangeModal({ isOpen, onClose, onSubmit }: AddExcha
   };
 
   const isFormValid = selectedExchange && apiKey && apiSecret && accountAlias &&
-    (!selectedExchangeInfo?.requiresPassphrase || passphrase);
+    (!selectedExchangeInfo?.requiresPassphrase || passphrase) && isAPITested;
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -585,11 +589,70 @@ export default function AddExchangeModal({ isOpen, onClose, onSubmit }: AddExcha
                   </div>
                 )}
 
+                {/* API Test Section - Mandatory */}
+                <Card className="border-orange-200 bg-orange-50">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm flex items-center space-x-2 text-orange-800">
+                      <AlertTriangle className="w-4 h-4" />
+                      <span>Required: Test API Connection</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-sm text-orange-700">
+                      Before adding this exchange, you must test your API credentials to ensure they work properly.
+                    </p>
+                    
+                    <div className="flex flex-col space-y-3">
+                      <Button
+                        onClick={handleTestConnection}
+                        disabled={!apiKey || !apiSecret || isTestingConnection || !selectedExchange || (!selectedExchangeInfo?.requiresPassphrase ? false : !passphrase)}
+                        data-testid="button-test-connection"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5"
+                        size="lg"
+                      >
+                        {isTestingConnection ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Testing API Connection...
+                          </>
+                        ) : (
+                          <>
+                            <Shield className="w-4 h-4 mr-2" />
+                            Test API Connection
+                          </>
+                        )}
+                      </Button>
+                      
+                      {connectionTestResult === 'success' && (
+                        <Button
+                          onClick={handleSubmit}
+                          disabled={!isFormValid || isSubmitting}
+                          data-testid="button-add-exchange"
+                          className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2.5"
+                          size="lg"
+                        >
+                          {isSubmitting ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Adding Exchange...
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle className="w-4 h-4 mr-2" />
+                              Add Exchange Connection
+                            </>
+                          )}
+                        </Button>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+
                 {/* Security Notice */}
                 <Card className="bg-yellow-50 border-yellow-200">
                   <CardContent className="pt-4">
                     <div className="flex items-start space-x-2">
-                      <AlertTriangle className="w-4 h-4 text-yellow-600 mt-0.5" />
+                      <Shield className="w-4 h-4 text-yellow-600 mt-0.5" />
                       <div className="text-sm text-yellow-800">
                         <p className="font-medium">Security Best Practices</p>
                         <ul className="list-disc list-inside mt-1 space-y-1">
@@ -673,35 +736,6 @@ export default function AddExchangeModal({ isOpen, onClose, onSubmit }: AddExcha
           <div className="flex space-x-2">
             <Button variant="outline" onClick={handleClose} data-testid="button-cancel">
               Cancel
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleTestConnection}
-              disabled={!apiKey || !apiSecret || isTestingConnection || !selectedExchange}
-              data-testid="button-test-connection"
-            >
-              {isTestingConnection ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Testing...
-                </>
-              ) : (
-                'Test API Connection'
-              )}
-            </Button>
-            <Button
-              onClick={handleSubmit}
-              disabled={!isFormValid || isSubmitting}
-              data-testid="button-add-exchange"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Adding Exchange...
-                </>
-              ) : (
-                'Add Exchange'
-              )}
             </Button>
           </div>
         </DialogFooter>
