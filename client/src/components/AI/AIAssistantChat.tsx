@@ -122,8 +122,8 @@ export default function AIAssistantChat({
 
   if (isMinimized) {
     return (
-      <Card className={cn("w-80 h-14", className)}>
-        <CardContent className="p-3">
+      <Card className={cn("w-80 h-14 bg-white border shadow-lg", className)}>
+        <CardContent className="p-3 bg-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
@@ -149,9 +149,9 @@ export default function AIAssistantChat({
   }
 
   return (
-    <Card className={cn("w-80 h-96 flex flex-col", className)}>
+    <Card className={cn("w-80 h-96 flex flex-col bg-white border shadow-xl", className)}>
       {/* Header */}
-      <div className="p-4 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
+      <div className="p-4 border-b bg-gradient-to-r from-blue-50 to-indigo-50 bg-opacity-100">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
@@ -191,7 +191,7 @@ export default function AIAssistantChat({
       </div>
 
       {/* Messages */}
-      <ScrollArea className="flex-1 p-4">
+      <ScrollArea className="flex-1 p-4 bg-white">
         <div className="space-y-4">
           {messages.map((message) => (
             <div
@@ -203,10 +203,10 @@ export default function AIAssistantChat({
             >
               <div
                 className={cn(
-                  "rounded-lg px-3 py-2 text-sm",
+                  "rounded-lg px-3 py-2 text-sm shadow-sm",
                   message.role === 'user'
                     ? "bg-blue-600 text-white"
-                    : "bg-gray-100 text-gray-900"
+                    : "bg-gray-100 text-gray-900 border border-gray-200"
                 )}
               >
                 <div className="flex items-start space-x-2">
@@ -249,7 +249,7 @@ export default function AIAssistantChat({
       </ScrollArea>
 
       {/* Input */}
-      <div className="p-4 border-t bg-gray-50">
+      <div className="p-4 border-t bg-gray-50 bg-opacity-100">
         <div className="flex space-x-2">
           <Input
             ref={inputRef}
