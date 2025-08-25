@@ -9,22 +9,22 @@ interface MobileMenuProps {
 }
 
 export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
-  const location = useLocation();
+  const [location] = useLocation();
   const { activeBotCount } = useBotsStore();
   
   const isActive = (path: string) => {
-    return location.pathname === path;
+    return location === path;
   };
 
   const menuItems = [
     { path: '/', icon: Home, label: 'Overview' },
-    { path: '/bots', icon: Bot, label: 'Bots', badge: activeBotCount },
-    { path: '/strategies', icon: TrendingUp, label: 'Strategies' },
     { path: '/exchanges', icon: Building2, label: 'Exchanges' },
-    { path: '/compliance', icon: Shield, label: 'Compliance', badge: 2 },
-    { path: '/reports', icon: FileText, label: 'Reports' },
+    { path: '/strategies', icon: TrendingUp, label: 'Strategies' },
     { path: '/backtesting', icon: FlaskConical, label: 'Backtesting' },
+    { path: '/bots', icon: Bot, label: 'Bots', badge: activeBotCount },
     { path: '/monitoring', icon: Activity, label: 'Monitoring' },
+    { path: '/reports', icon: FileText, label: 'Reports' },
+    { path: '/compliance', icon: Shield, label: 'Compliance', badge: 2 },
     { path: '/admin', icon: Settings, label: 'Admin' },
     { path: '/help', icon: HelpCircle, label: 'Help' },
   ];

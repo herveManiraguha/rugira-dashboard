@@ -4,7 +4,7 @@ import { useBotsStore, useApiStore } from "../../stores";
 import StatusIndicator from "../UI/StatusIndicator";
 
 export default function Sidebar() {
-  const location = useLocation();
+  const [location] = useLocation();
   const { activeBotCount } = useBotsStore();
   const { isConnected, lastUpdate } = useApiStore();
   
@@ -23,7 +23,7 @@ export default function Sidebar() {
   };
 
   const isActive = (path: string) => {
-    return location.pathname === path;
+    return location === path;
   };
 
   return (
@@ -44,6 +44,7 @@ export default function Sidebar() {
       {/* Navigation Menu */}
       <nav className="p-4">
         <ul className="space-y-2">
+          {/* Overview */}
           <li>
             <Link
               to="/"
@@ -53,6 +54,50 @@ export default function Sidebar() {
               <i className="fas fa-chart-area w-5"></i>
               <span>Overview</span>
             </Link>
+          </li>
+
+          {/* Build Group */}
+          <li className="pt-4">
+            <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Build
+            </div>
+          </li>
+          <li>
+            <Link
+              to="/exchanges"
+              className={`nav-item flex items-center space-x-3 px-3 py-2 text-sm ${isActive('/exchanges') ? 'active' : ''}`}
+              data-testid="nav-exchanges"
+            >
+              <i className="fas fa-building w-5"></i>
+              <span>Exchanges</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/strategies"
+              className={`nav-item flex items-center space-x-3 px-3 py-2 text-sm ${isActive('/strategies') ? 'active' : ''}`}
+              data-testid="nav-strategies"
+            >
+              <i className="fas fa-brain w-5"></i>
+              <span>Strategies</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/backtesting"
+              className={`nav-item flex items-center space-x-3 px-3 py-2 text-sm ${isActive('/backtesting') ? 'active' : ''}`}
+              data-testid="nav-backtesting"
+            >
+              <i className="fas fa-flask w-5"></i>
+              <span>Backtesting</span>
+            </Link>
+          </li>
+
+          {/* Run Group */}
+          <li className="pt-4">
+            <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Run
+            </div>
           </li>
           <li>
             <Link
@@ -74,22 +119,29 @@ export default function Sidebar() {
           </li>
           <li>
             <Link
-              to="/strategies"
-              className={`nav-item flex items-center space-x-3 px-3 py-2 text-sm ${isActive('/strategies') ? 'active' : ''}`}
-              data-testid="nav-strategies"
+              to="/monitoring"
+              className={`nav-item flex items-center space-x-3 px-3 py-2 text-sm ${isActive('/monitoring') ? 'active' : ''}`}
+              data-testid="nav-monitoring"
             >
-              <i className="fas fa-brain w-5"></i>
-              <span>Strategies</span>
+              <i className="fas fa-eye w-5"></i>
+              <span>Monitoring</span>
             </Link>
+          </li>
+
+          {/* Govern Group */}
+          <li className="pt-4">
+            <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Govern
+            </div>
           </li>
           <li>
             <Link
-              to="/exchanges"
-              className={`nav-item flex items-center space-x-3 px-3 py-2 text-sm ${isActive('/exchanges') ? 'active' : ''}`}
-              data-testid="nav-exchanges"
+              to="/reports"
+              className={`nav-item flex items-center space-x-3 px-3 py-2 text-sm ${isActive('/reports') ? 'active' : ''}`}
+              data-testid="nav-reports"
             >
-              <i className="fas fa-building w-5"></i>
-              <span>Exchanges</span>
+              <i className="fas fa-chart-bar w-5"></i>
+              <span>Reports</span>
             </Link>
           </li>
           <li>
@@ -110,35 +162,12 @@ export default function Sidebar() {
               )}
             </Link>
           </li>
-          <li>
-            <Link
-              to="/reports"
-              className={`nav-item flex items-center space-x-3 px-3 py-2 text-sm ${isActive('/reports') ? 'active' : ''}`}
-              data-testid="nav-reports"
-            >
-              <i className="fas fa-chart-bar w-5"></i>
-              <span>Reports</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/backtesting"
-              className={`nav-item flex items-center space-x-3 px-3 py-2 text-sm ${isActive('/backtesting') ? 'active' : ''}`}
-              data-testid="nav-backtesting"
-            >
-              <i className="fas fa-flask w-5"></i>
-              <span>Backtesting</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/monitoring"
-              className={`nav-item flex items-center space-x-3 px-3 py-2 text-sm ${isActive('/monitoring') ? 'active' : ''}`}
-              data-testid="nav-monitoring"
-            >
-              <i className="fas fa-eye w-5"></i>
-              <span>Monitoring</span>
-            </Link>
+
+          {/* System Group */}
+          <li className="pt-4">
+            <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              System
+            </div>
           </li>
           <li>
             <Link
