@@ -367,47 +367,23 @@ export default function AddExchangeModal({ isOpen, onClose, onSubmit }: AddExcha
               </div>
 
               <div className="space-y-4">
-                {/* Connection Test */}
-                <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm">Test Connection</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <Button
-                      variant="outline"
-                      onClick={handleTestConnection}
-                      disabled={!apiKey || !apiSecret || isTestingConnection}
-                      className="w-full"
-                      data-testid="button-test-connection"
-                    >
-                      {isTestingConnection ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Testing Connection...
-                        </>
-                      ) : (
-                        'Test API Connection'
-                      )}
-                    </Button>
+                {/* Connection Test Results */}
+                {connectionTestResult === 'success' && (
+                  <div className="flex items-center space-x-2 text-green-600 bg-green-50 p-3 rounded-lg">
+                    <CheckCircle className="w-4 h-4" />
+                    <span className="text-sm">Connection successful!</span>
+                  </div>
+                )}
 
-                    {connectionTestResult === 'success' && (
-                      <div className="flex items-center space-x-2 text-green-600 bg-green-50 p-3 rounded-lg">
-                        <CheckCircle className="w-4 h-4" />
-                        <span className="text-sm">Connection successful!</span>
-                      </div>
-                    )}
-
-                    {connectionTestResult === 'error' && (
-                      <div className="flex items-start space-x-2 text-red-600 bg-red-50 p-3 rounded-lg">
-                        <AlertCircle className="w-4 h-4 mt-0.5" />
-                        <div className="text-sm">
-                          <p className="font-medium">Connection failed</p>
-                          <p>Please check your API credentials and permissions</p>
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                {connectionTestResult === 'error' && (
+                  <div className="flex items-start space-x-2 text-red-600 bg-red-50 p-3 rounded-lg">
+                    <AlertCircle className="w-4 h-4 mt-0.5" />
+                    <div className="text-sm">
+                      <p className="font-medium">Connection failed</p>
+                      <p>Please check your API credentials and permissions</p>
+                    </div>
+                  </div>
+                )}
 
                 {/* Security Notice */}
                 <Card className="bg-yellow-50 border-yellow-200">
@@ -497,6 +473,21 @@ export default function AddExchangeModal({ isOpen, onClose, onSubmit }: AddExcha
           <div className="flex space-x-2">
             <Button variant="outline" onClick={handleClose} data-testid="button-cancel">
               Cancel
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleTestConnection}
+              disabled={!apiKey || !apiSecret || isTestingConnection || !selectedExchange}
+              data-testid="button-test-connection"
+            >
+              {isTestingConnection ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Testing...
+                </>
+              ) : (
+                'Test API Connection'
+              )}
             </Button>
             <Button
               onClick={handleSubmit}
