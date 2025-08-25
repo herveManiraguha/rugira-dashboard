@@ -16,6 +16,7 @@
     <!-- Navigation Menu -->
     <nav class="p-4">
       <ul class="space-y-2">
+        <!-- Overview -->
         <li>
           <router-link
             to="/"
@@ -26,6 +27,53 @@
             <i class="fas fa-chart-area w-5"></i>
             <span>Overview</span>
           </router-link>
+        </li>
+
+        <!-- Build Group -->
+        <li class="pt-4">
+          <div class="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Build
+          </div>
+        </li>
+        <li>
+          <router-link
+            to="/exchanges"
+            class="nav-item flex items-center space-x-3 px-3 py-2 text-sm"
+            :class="{ 'active': $route.name === 'exchanges' }"
+            data-testid="nav-exchanges"
+          >
+            <i class="fas fa-building w-5"></i>
+            <span>Exchanges</span>
+          </router-link>
+        </li>
+        <li>
+          <router-link
+            to="/strategies"
+            class="nav-item flex items-center space-x-3 px-3 py-2 text-sm"
+            :class="{ 'active': $route.name === 'strategies' }"
+            data-testid="nav-strategies"
+          >
+            <i class="fas fa-brain w-5"></i>
+            <span>Strategies</span>
+          </router-link>
+        </li>
+        <li>
+          <router-link
+            to="/backtesting"
+            class="nav-item flex items-center space-x-3 px-3 py-2 text-sm"
+            :class="{ 'active': $route.name === 'backtesting' }"
+            data-testid="nav-backtesting"
+          >
+            <i class="fas fa-flask w-5"></i>
+            <span>Backtesting</span>
+          </router-link>
+        </li>
+
+        <!-- Run Group -->
+        <li class="pt-4">
+          <div class="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Run
+          </div>
         </li>
         <li>
           <router-link
@@ -47,24 +95,31 @@
         </li>
         <li>
           <router-link
-            to="/strategies"
+            to="/monitoring"
             class="nav-item flex items-center space-x-3 px-3 py-2 text-sm"
-            :class="{ 'active': $route.name === 'strategies' }"
-            data-testid="nav-strategies"
+            :class="{ 'active': $route.name === 'monitoring' }"
+            data-testid="nav-monitoring"
           >
-            <i class="fas fa-brain w-5"></i>
-            <span>Strategies</span>
+            <i class="fas fa-eye w-5"></i>
+            <span>Monitoring</span>
           </router-link>
+        </li>
+
+        <!-- Govern Group -->
+        <li class="pt-4">
+          <div class="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Govern
+          </div>
         </li>
         <li>
           <router-link
-            to="/exchanges"
+            to="/reports"
             class="nav-item flex items-center space-x-3 px-3 py-2 text-sm"
-            :class="{ 'active': $route.name === 'exchanges' }"
-            data-testid="nav-exchanges"
+            :class="{ 'active': $route.name === 'reports' }"
+            data-testid="nav-reports"
           >
-            <i class="fas fa-building w-5"></i>
-            <span>Exchanges</span>
+            <i class="fas fa-chart-bar w-5"></i>
+            <span>Reports</span>
           </router-link>
         </li>
         <li>
@@ -85,38 +140,12 @@
             </span>
           </router-link>
         </li>
-        <li>
-          <router-link
-            to="/reports"
-            class="nav-item flex items-center space-x-3 px-3 py-2 text-sm"
-            :class="{ 'active': $route.name === 'reports' }"
-            data-testid="nav-reports"
-          >
-            <i class="fas fa-chart-bar w-5"></i>
-            <span>Reports</span>
-          </router-link>
-        </li>
-        <li>
-          <router-link
-            to="/backtesting"
-            class="nav-item flex items-center space-x-3 px-3 py-2 text-sm"
-            :class="{ 'active': $route.name === 'backtesting' }"
-            data-testid="nav-backtesting"
-          >
-            <i class="fas fa-flask w-5"></i>
-            <span>Backtesting</span>
-          </router-link>
-        </li>
-        <li>
-          <router-link
-            to="/monitoring"
-            class="nav-item flex items-center space-x-3 px-3 py-2 text-sm"
-            :class="{ 'active': $route.name === 'monitoring' }"
-            data-testid="nav-monitoring"
-          >
-            <i class="fas fa-eye w-5"></i>
-            <span>Monitoring</span>
-          </router-link>
+
+        <!-- System Group -->
+        <li class="pt-4">
+          <div class="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            System
+          </div>
         </li>
         <li>
           <router-link
