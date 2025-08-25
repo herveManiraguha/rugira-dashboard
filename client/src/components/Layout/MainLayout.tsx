@@ -400,7 +400,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
                       (index === 0 || navigation[index - 1].group !== item.group);
                     
                     return (
-                      <React.Fragment key={item.name}>
+                      <div key={item.name}>
                         {showGroupHeader && (
                           <li className="pt-4 first:pt-0">
                             <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -424,7 +424,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
                             </Button>
                           </Link>
                         </li>
-                      </React.Fragment>
+                      </div>
                     );
                   })}
                 </ul>
@@ -552,7 +552,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
                   (index === 0 || navigation[index - 1].group !== item.group);
                 
                 return (
-                  <React.Fragment key={item.name}>
+                  <div key={item.name}>
                     {showGroupHeader && !sidebarCollapsed && (
                       <li className="pt-4 first:pt-0">
                         <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -577,7 +577,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
                         </Button>
                       </Link>
                     </li>
-                  </React.Fragment>
+                  </div>
                 );
               })}
             </ul>
