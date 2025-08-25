@@ -209,14 +209,38 @@ export default function Exchanges() {
     console.log('Adding exchange:', data);
     // TODO: Implement actual API call to add exchange
     // For now, simulate adding to the list
+    const exchangeNames: Record<string, string> = {
+      'binance': 'Binance',
+      'coinbase': 'Coinbase Pro',
+      'kraken': 'Kraken',
+      'bybit': 'Bybit',
+      'okx': 'OKX',
+      'kucoin': 'KuCoin',
+      'gateio': 'Gate.io',
+      'mexc': 'MEXC',
+      'huobi': 'Huobi Global',
+      'gemini': 'Gemini',
+      'bitfinex': 'Bitfinex',
+      'bitstamp': 'Bitstamp',
+      'cryptocom': 'Crypto.com',
+      'whitebit': 'WhiteBIT',
+      'bitget': 'Bitget',
+      'coinex': 'CoinEx',
+      'phemex': 'Phemex',
+      'deribit': 'Deribit',
+      'bittrex': 'Bittrex',
+      'poloniex': 'Poloniex',
+      'bitmex': 'BitMEX',
+      'upbit': 'Upbit',
+      'bithumb': 'Bithumb',
+      'bitflyer': 'bitFlyer',
+      'lbank': 'LBank',
+      'probit': 'ProBit Global'
+    };
+
     const newExchange = {
       id: (exchanges.length + 1).toString(),
-      name: data.exchange === 'binance' ? 'Binance' : 
-            data.exchange === 'coinbase' ? 'Coinbase Pro' :
-            data.exchange === 'kraken' ? 'Kraken' :
-            data.exchange === 'bybit' ? 'Bybit' :
-            data.exchange === 'okx' ? 'OKX' :
-            data.exchange === 'kucoin' ? 'KuCoin' : 'Unknown',
+      name: exchangeNames[data.exchange] || 'Unknown',
       status: 'connecting' as const,
       lastSync: new Date().toISOString(),
       tradingFees: { maker: 0.1, taker: 0.1 },
@@ -240,12 +264,32 @@ export default function Exchanges() {
 
   const getExchangeLogo = (exchangeName: string) => {
     const logos: Record<string, string> = {
-      'binance': 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/binance-logo-icon.svg',
-      'coinbase': 'https://altcoinsbox.com/wp-content/uploads/2023/01/coinbase-logo.svg',
-      'kraken': 'https://altcoinsbox.com/wp-content/uploads/2023/01/kraken-logo.svg',
-      'bybit': 'https://altcoinsbox.com/wp-content/uploads/2023/01/bybit-logo.svg',
-      'okx': 'https://altcoinsbox.com/wp-content/uploads/2023/01/okx-logo.svg',
-      'kucoin': 'https://altcoinsbox.com/wp-content/uploads/2023/01/kucoin-logo.svg'
+      'binance': 'https://cryptologos.cc/logos/binance-coin-bnb-logo.svg',
+      'coinbase': 'https://cryptologos.cc/logos/coinbase-coin-logo.svg',
+      'kraken': 'https://cryptologos.cc/logos/kraken-logo.svg',
+      'bybit': 'https://cryptologos.cc/logos/bybit-logo.svg',
+      'okx': 'https://cryptologos.cc/logos/okx-logo.svg',
+      'kucoin': 'https://cryptologos.cc/logos/kucoin-shares-kcs-logo.svg',
+      'gateio': 'https://cryptologos.cc/logos/gateio-logo.svg',
+      'mexc': 'https://cryptologos.cc/logos/mexc-logo.svg',
+      'huobi': 'https://cryptologos.cc/logos/huobi-token-ht-logo.svg',
+      'gemini': 'https://cryptologos.cc/logos/gemini-dollar-gusd-logo.svg',
+      'bitfinex': 'https://cryptologos.cc/logos/bitfinex-logo.svg',
+      'bitstamp': 'https://cryptologos.cc/logos/bitstamp-logo.svg',
+      'cryptocom': 'https://cryptologos.cc/logos/crypto-com-coin-cro-logo.svg',
+      'whitebit': 'https://cryptologos.cc/logos/whitebit-logo.svg',
+      'bitget': 'https://cryptologos.cc/logos/bitget-token-bgb-logo.svg',
+      'coinex': 'https://cryptologos.cc/logos/coinex-token-cet-logo.svg',
+      'phemex': 'https://cryptologos.cc/logos/phemex-token-pt-logo.svg',
+      'deribit': 'https://cryptologos.cc/logos/deribit-logo.svg',
+      'bittrex': 'https://cryptologos.cc/logos/bittrex-logo.svg',
+      'poloniex': 'https://cryptologos.cc/logos/poloniex-logo.svg',
+      'bitmex': 'https://cryptologos.cc/logos/bitmex-logo.svg',
+      'upbit': 'https://cryptologos.cc/logos/upbit-logo.svg',
+      'bithumb': 'https://cryptologos.cc/logos/bithumb-logo.svg',
+      'bitflyer': 'https://cryptologos.cc/logos/bitflyer-logo.svg',
+      'lbank': 'https://cryptologos.cc/logos/lbank-logo.svg',
+      'probit': 'https://cryptologos.cc/logos/probit-logo.svg'
     };
     return logos[exchangeName] || '';
   };

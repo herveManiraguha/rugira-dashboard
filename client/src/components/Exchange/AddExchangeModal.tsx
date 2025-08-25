@@ -40,7 +40,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'binance',
     displayName: 'Binance',
-    logo: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/binance-logo-icon.svg',
+    logo: 'https://cryptologos.cc/logos/binance-coin-bnb-logo.svg',
     description: 'World\'s largest cryptocurrency exchange by trading volume',
     features: ['Spot Trading', 'Futures', 'Margin', 'Options', 'P2P', 'Staking'],
     requiresPassphrase: false,
@@ -50,7 +50,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'coinbase',
     displayName: 'Coinbase Advanced',
-    logo: 'https://altcoinsbox.com/wp-content/uploads/2023/01/coinbase-logo.svg',
+    logo: 'https://cryptologos.cc/logos/coinbase-coin-logo.svg',
     description: 'Leading US-based cryptocurrency exchange with advanced trading features',
     features: ['Spot Trading', 'Institutional', 'Advanced Trading', 'API Access'],
     requiresPassphrase: true,
@@ -60,7 +60,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'kraken',
     displayName: 'Kraken',
-    logo: 'https://altcoinsbox.com/wp-content/uploads/2023/01/kraken-logo.svg',
+    logo: 'https://cryptologos.cc/logos/kraken-logo.svg',
     description: 'Established European exchange with comprehensive trading features',
     features: ['Spot Trading', 'Futures', 'Margin', 'Staking', 'DeFi'],
     requiresPassphrase: false,
@@ -70,7 +70,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'bybit',
     displayName: 'Bybit',
-    logo: 'https://altcoinsbox.com/wp-content/uploads/2023/01/bybit-logo.svg',
+    logo: 'https://cryptologos.cc/logos/bybit-logo.svg',
     description: 'Popular derivatives exchange with spot and futures trading',
     features: ['Spot Trading', 'Futures', 'Options', 'Copy Trading', 'NFT'],
     requiresPassphrase: false,
@@ -80,7 +80,7 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'okx',
     displayName: 'OKX',
-    logo: 'https://altcoinsbox.com/wp-content/uploads/2023/01/okx-logo.svg',
+    logo: 'https://cryptologos.cc/logos/okx-logo.svg',
     description: 'Comprehensive crypto exchange with DeFi and Web3 features',
     features: ['Spot Trading', 'Futures', 'Options', 'DeFi', 'Web3 Wallet'],
     requiresPassphrase: true,
@@ -90,12 +90,212 @@ const supportedExchanges: ExchangeInfo[] = [
   {
     name: 'kucoin',
     displayName: 'KuCoin',
-    logo: 'https://altcoinsbox.com/wp-content/uploads/2023/01/kucoin-logo.svg',
+    logo: 'https://cryptologos.cc/logos/kucoin-shares-kcs-logo.svg',
     description: 'Global exchange known for altcoin variety and trading bots',
     features: ['Spot Trading', 'Futures', 'Margin', 'Pool-X', 'Trading Bots'],
     requiresPassphrase: true,
     supportsSandbox: true,
     apiDocsUrl: 'https://docs.kucoin.com/'
+  },
+  {
+    name: 'gateio',
+    displayName: 'Gate.io',
+    logo: 'https://cryptologos.cc/logos/gateio-logo.svg',
+    description: 'Leading exchange with largest selection of altcoins and early-stage projects',
+    features: ['Spot Trading', 'Futures', 'Options', 'Copy Trading', 'Startup', 'NFT'],
+    requiresPassphrase: false,
+    supportsSandbox: true,
+    apiDocsUrl: 'https://www.gate.io/docs/apiv4/'
+  },
+  {
+    name: 'mexc',
+    displayName: 'MEXC',
+    logo: 'https://cryptologos.cc/logos/mexc-logo.svg',
+    description: 'Fast-growing global exchange with quick listings and low fees',
+    features: ['Spot Trading', 'Futures', 'Margin', 'Copy Trading', 'Launchpad'],
+    requiresPassphrase: false,
+    supportsSandbox: true,
+    apiDocsUrl: 'https://mexcdevelop.github.io/apidocs/'
+  },
+  {
+    name: 'huobi',
+    displayName: 'Huobi Global',
+    logo: 'https://cryptologos.cc/logos/huobi-token-ht-logo.svg',
+    description: 'Established global exchange with comprehensive trading features',
+    features: ['Spot Trading', 'Futures', 'Margin', 'DeFi', 'Prime Pool'],
+    requiresPassphrase: false,
+    supportsSandbox: true,
+    apiDocsUrl: 'https://huobiapi.github.io/docs/'
+  },
+  {
+    name: 'gemini',
+    displayName: 'Gemini',
+    logo: 'https://cryptologos.cc/logos/gemini-dollar-gusd-logo.svg',
+    description: 'US-regulated exchange founded by the Winklevoss twins',
+    features: ['Spot Trading', 'Custody', 'Institutional', 'ActiveTrader'],
+    requiresPassphrase: false,
+    supportsSandbox: true,
+    apiDocsUrl: 'https://docs.gemini.com/'
+  },
+  {
+    name: 'bitfinex',
+    displayName: 'Bitfinex',
+    logo: 'https://cryptologos.cc/logos/bitfinex-logo.svg',
+    description: 'Professional trading platform with advanced tools and liquidity',
+    features: ['Spot Trading', 'Margin', 'Derivatives', 'Lending', 'OTC'],
+    requiresPassphrase: false,
+    supportsSandbox: false,
+    apiDocsUrl: 'https://docs.bitfinex.com/docs/'
+  },
+  {
+    name: 'bitstamp',
+    displayName: 'Bitstamp',
+    logo: 'https://cryptologos.cc/logos/bitstamp-logo.svg',
+    description: 'One of the oldest and most trusted European crypto exchanges',
+    features: ['Spot Trading', 'Institutional', 'API Access', 'Pro Trading'],
+    requiresPassphrase: false,
+    supportsSandbox: false,
+    apiDocsUrl: 'https://www.bitstamp.net/api/'
+  },
+  {
+    name: 'cryptocom',
+    displayName: 'Crypto.com',
+    logo: 'https://cryptologos.cc/logos/crypto-com-coin-cro-logo.svg',
+    description: 'Popular exchange with crypto debit cards and broad ecosystem',
+    features: ['Spot Trading', 'Derivatives', 'DeFi', 'Cards', 'Staking', 'NFT'],
+    requiresPassphrase: false,
+    supportsSandbox: true,
+    apiDocsUrl: 'https://exchange-docs.crypto.com/'
+  },
+  {
+    name: 'whitebit',
+    displayName: 'WhiteBIT',
+    logo: 'https://cryptologos.cc/logos/whitebit-logo.svg',
+    description: 'Europe\'s largest crypto exchange by traffic and user base',
+    features: ['Spot Trading', 'Futures', 'Margin', 'Lending', 'Staking'],
+    requiresPassphrase: false,
+    supportsSandbox: false,
+    apiDocsUrl: 'https://github.com/whitebit-exchange/api-docs'
+  },
+  {
+    name: 'bitget',
+    displayName: 'Bitget',
+    logo: 'https://cryptologos.cc/logos/bitget-token-bgb-logo.svg',
+    description: 'Leading copy trading exchange with social trading features',
+    features: ['Spot Trading', 'Futures', 'Copy Trading', 'Grid Trading', 'Launchpad'],
+    requiresPassphrase: true,
+    supportsSandbox: true,
+    apiDocsUrl: 'https://bitgetlimited.github.io/apidoc/'
+  },
+  {
+    name: 'coinex',
+    displayName: 'CoinEx',
+    logo: 'https://cryptologos.cc/logos/coinex-token-cet-logo.svg',
+    description: 'ViaBTC-backed exchange with comprehensive trading features',
+    features: ['Spot Trading', 'Futures', 'Margin', 'AMM', 'Mining Pool'],
+    requiresPassphrase: false,
+    supportsSandbox: false,
+    apiDocsUrl: 'https://viabtc.github.io/coinex_api_en_doc/'
+  },
+  {
+    name: 'phemex',
+    displayName: 'Phemex',
+    logo: 'https://cryptologos.cc/logos/phemex-token-pt-logo.svg',
+    description: 'High-performance derivatives trading platform',
+    features: ['Spot Trading', 'Futures', 'Options', 'Copy Trading', 'Premium'],
+    requiresPassphrase: false,
+    supportsSandbox: true,
+    apiDocsUrl: 'https://github.com/phemex/phemex-api-docs'
+  },
+  {
+    name: 'deribit',
+    displayName: 'Deribit',
+    logo: 'https://cryptologos.cc/logos/deribit-logo.svg',
+    description: 'Leading Bitcoin and Ethereum options and futures exchange',
+    features: ['Options', 'Futures', 'Perpetuals', 'Index Trading'],
+    requiresPassphrase: false,
+    supportsSandbox: true,
+    apiDocsUrl: 'https://docs.deribit.com/'
+  },
+  {
+    name: 'bittrex',
+    displayName: 'Bittrex',
+    logo: 'https://cryptologos.cc/logos/bittrex-logo.svg',
+    description: 'US-based exchange with strong security and regulatory compliance',
+    features: ['Spot Trading', 'Institutional', 'API Access'],
+    requiresPassphrase: false,
+    supportsSandbox: false,
+    apiDocsUrl: 'https://bittrex.github.io/api/v3'
+  },
+  {
+    name: 'poloniex',
+    displayName: 'Poloniex',
+    logo: 'https://cryptologos.cc/logos/poloniex-logo.svg',
+    description: 'Established exchange with margin trading and lending features',
+    features: ['Spot Trading', 'Margin', 'Lending', 'Futures'],
+    requiresPassphrase: false,
+    supportsSandbox: true,
+    apiDocsUrl: 'https://docs.poloniex.com/'
+  },
+  {
+    name: 'bitmex',
+    displayName: 'BitMEX',
+    logo: 'https://cryptologos.cc/logos/bitmex-logo.svg',
+    description: 'Professional Bitcoin derivatives trading platform',
+    features: ['Perpetuals', 'Futures', 'Options', 'Spot Trading'],
+    requiresPassphrase: false,
+    supportsSandbox: true,
+    apiDocsUrl: 'https://www.bitmex.com/api/explorer/'
+  },
+  {
+    name: 'upbit',
+    displayName: 'Upbit',
+    logo: 'https://cryptologos.cc/logos/upbit-logo.svg',
+    description: 'Leading South Korean cryptocurrency exchange',
+    features: ['Spot Trading', 'KRW Pairs', 'Staking', 'NFT'],
+    requiresPassphrase: false,
+    supportsSandbox: false,
+    apiDocsUrl: 'https://docs.upbit.com/'
+  },
+  {
+    name: 'bithumb',
+    displayName: 'Bithumb',
+    logo: 'https://cryptologos.cc/logos/bithumb-logo.svg',
+    description: 'Major Korean exchange with high trading volumes',
+    features: ['Spot Trading', 'KRW Trading', 'Staking'],
+    requiresPassphrase: false,
+    supportsSandbox: false,
+    apiDocsUrl: 'https://apidocs.bithumb.com/'
+  },
+  {
+    name: 'bitflyer',
+    displayName: 'bitFlyer',
+    logo: 'https://cryptologos.cc/logos/bitflyer-logo.svg',
+    description: 'Japan\'s largest Bitcoin exchange by volume',
+    features: ['Spot Trading', 'Lightning Network', 'Institutional'],
+    requiresPassphrase: false,
+    supportsSandbox: false,
+    apiDocsUrl: 'https://lightning.bitflyer.com/docs'
+  },
+  {
+    name: 'lbank',
+    displayName: 'LBank',
+    logo: 'https://cryptologos.cc/logos/lbank-logo.svg',
+    description: 'Global digital asset trading platform',
+    features: ['Spot Trading', 'Futures', 'Margin', 'Launchpad'],
+    requiresPassphrase: false,
+    supportsSandbox: false,
+    apiDocsUrl: 'https://github.com/LBank-exchange/lbank-official-api-docs'
+  },
+  {
+    name: 'probit',
+    displayName: 'ProBit Global',
+    logo: 'https://cryptologos.cc/logos/probit-logo.svg',
+    description: 'Korean exchange with global reach and IEO platform',
+    features: ['Spot Trading', 'IEO', 'Staking', 'Futures'],
+    requiresPassphrase: false,
+    supportsSandbox: false,
+    apiDocsUrl: 'https://docs-en.probit.com/'
   }
 ];
 
@@ -215,7 +415,7 @@ export default function AddExchangeModal({ isOpen, onClose, onSubmit }: AddExcha
 
           {/* Exchange Selection */}
           <TabsContent value="exchange" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {supportedExchanges.map((exchange) => (
                 <Card 
                   key={exchange.name}
@@ -225,28 +425,28 @@ export default function AddExchangeModal({ isOpen, onClose, onSubmit }: AddExcha
                   )}
                   onClick={() => setSelectedExchange(exchange.name)}
                 >
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center space-x-3">
-                      <ExchangeIcon name={exchange.displayName} logo={exchange.logo} size="md" />
-                      <div className="flex-1">
-                        <CardTitle className="text-lg">{exchange.displayName}</CardTitle>
-                        <p className="text-sm text-gray-600 mt-1">{exchange.description}</p>
+                  <CardHeader className="pb-2">
+                    <div className="flex items-start space-x-2">
+                      <ExchangeIcon name={exchange.displayName} logo={exchange.logo} size="sm" />
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-base truncate">{exchange.displayName}</CardTitle>
+                        <p className="text-xs text-gray-600 mt-1 line-clamp-2 leading-tight">{exchange.description}</p>
                       </div>
                       {selectedExchange === exchange.name && (
-                        <CheckCircle className="w-5 h-5 text-blue-500" />
+                        <CheckCircle className="w-4 h-4 text-blue-500 flex-shrink-0" />
                       )}
                     </div>
                   </CardHeader>
                   <CardContent className="pt-0">
                     <div className="flex flex-wrap gap-1">
-                      {exchange.features.slice(0, 3).map((feature, index) => (
+                      {exchange.features.slice(0, 2).map((feature, index) => (
                         <Badge key={index} variant="outline" className="text-xs">
                           {feature}
                         </Badge>
                       ))}
-                      {exchange.features.length > 3 && (
+                      {exchange.features.length > 2 && (
                         <Badge variant="outline" className="text-xs">
-                          +{exchange.features.length - 3} more
+                          +{exchange.features.length - 2}
                         </Badge>
                       )}
                     </div>
