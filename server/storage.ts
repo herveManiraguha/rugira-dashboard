@@ -168,9 +168,6 @@ export class MemStorage implements IStorage {
     ];
   }
 
-  async getAllBots(): Promise<Bot[]> {
-    return Array.from(this.bots.values());
-  }
 
   async createBot(botData: Partial<Bot>): Promise<Bot> {
     const id = randomUUID();
@@ -216,30 +213,6 @@ export class MemStorage implements IStorage {
     });
   }
 
-  async getKPIs(): Promise<KPI[]> {
-    const totalPnL = Array.from(this.bots.values()).reduce((sum, bot) => sum + bot.performance.pnl, 0);
-    const runningBots = Array.from(this.bots.values()).filter(bot => bot.status === 'running').length;
-    
-    return [
-      {
-        id: '1',
-        label: 'Total P/L (24h)',
-        value: totalPnL,
-        change: 12.5,
-        comparison: 'vs. yesterday',
-        icon: 'chart-line',
-        type: 'currency'
-      },
-      {
-        id: '2',
-        label: 'Active Bots',
-        value: runningBots,
-        comparison: 'All systems operational',
-        icon: 'robot',
-        type: 'number'
-      }
-    ];
-  }
 
   async getActivities(): Promise<ActivityFeed[]> {
     return this.activities;
@@ -259,19 +232,7 @@ export class MemStorage implements IStorage {
     return { uptime: 99.8, avgLatency: 125, errorRate: 0.02 };
   }
 
-  async getStrategies(): Promise<any[]> {
-    return [
-      { id: '1', name: 'Arbitrage', description: 'Cross-exchange arbitrage' },
-      { id: '2', name: 'Grid Trading', description: 'Grid-based market making' }
-    ];
-  }
 
-  async getExchangeConnections(): Promise<any[]> {
-    return [
-      { id: '1', name: 'Binance', status: 'connected', balance: { BTC: 0.5, USDT: 10000 } },
-      { id: '2', name: 'Coinbase', status: 'connected', balance: { ETH: 5.2, USDT: 8500 } }
-    ];
-  }
 
   async getBacktests(): Promise<any[]> {
     return [
