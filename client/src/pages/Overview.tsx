@@ -382,20 +382,30 @@ export default function Overview() {
             />
           ))
         ) : (
-          kpis?.map((kpi) => (
-            <KPICard
-              key={kpi.id}
-              title={kpi.label}
-              value={kpi.value}
-              delta={kpi.change ? {
-                value: kpi.change,
-                period: kpi.comparison,
-                isPositive: kpi.change > 0
-              } : undefined}
-              icon={getIcon(kpi.icon)}
-              formatter={(value) => formatValue(value, kpi.type)}
-            />
-          ))
+          kpis?.map((kpi) => {
+            // Generate sample sparkline data
+            const sparklineData = Array.from({ length: 12 }, (_, i) => {
+              const base = typeof kpi.value === 'number' ? kpi.value : 100;
+              const variation = base * 0.1;
+              return base + (Math.random() - 0.5) * variation - (variation * 0.3 * (11 - i) / 11);
+            });
+            
+            return (
+              <KPICard
+                key={kpi.id}
+                title={kpi.label}
+                value={kpi.value}
+                delta={kpi.change ? {
+                  value: kpi.change,
+                  period: kpi.comparison,
+                  isPositive: kpi.change > 0
+                } : undefined}
+                icon={getIcon(kpi.icon)}
+                formatter={(value) => formatValue(value, kpi.type)}
+                sparklineData={sparklineData}
+              />
+            );
+          })
         )}
       </KPICardGrid>
 

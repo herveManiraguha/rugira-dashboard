@@ -15,6 +15,7 @@ interface KPICardProps {
   formatter?: (value: string | number) => string;
   className?: string;
   loading?: boolean;
+  sparklineData?: number[];
 }
 
 export function KPICard({ 
@@ -24,7 +25,8 @@ export function KPICard({
   icon, 
   formatter = (v) => String(v),
   className,
-  loading = false
+  loading = false,
+  sparklineData
 }: KPICardProps) {
   const formatDelta = (deltaValue: number) => {
     const sign = deltaValue >= 0 ? '+' : '';
@@ -74,31 +76,76 @@ export function KPICard({
     );
   }
 
+  // Generate SVG sparkline path
+  const generateSparklinePath = (data: number[]) => {
+    if (!data || data.length < 2) return '';
+    
+    const width = 120;
+    const height = 40;
+    const padding = 2;
+    
+    const min = Math.min(...data);
+    const max = Math.max(...data);
+    const range = max - min || 1;
+    
+    const points = data.map((val, i) => {
+      const x = padding + (i / (data.length - 1)) * (width - padding * 2);
+      const y = padding + ((max - val) / range) * (height - padding * 2);
+      return `${x},${y}`;
+    });
+    
+    return `M ${points.join(' L ')}`;
+  };
+
   return (
-    <Card className={cn("p-4 sm:p-6 hover:shadow-md transition-shadow", className)}>
-      <CardContent className="p-0">
+    <Card className={cn("relative overflow-hidden group hover:shadow-md transition-all duration-160", className)}>
+      {/* Sparkline background */}
+      {sparklineData && sparklineData.length > 1 && (
+        <div className="absolute inset-0 opacity-[0.08] group-hover:opacity-[0.12] transition-opacity">
+          <svg 
+            className="absolute right-0 top-1/2 -translate-y-1/2" 
+            width="120" 
+            height="40"
+            viewBox="0 0 120 40"
+            preserveAspectRatio="none"
+          >
+            <path
+              d={generateSparklinePath(sparklineData)}
+              fill="none"
+              stroke={delta && delta.value >= 0 ? '#1B7A46' : '#E10600'}
+              strokeWidth="2"
+              opacity="0.5"
+            />
+          </svg>
+        </div>
+      )}
+      
+      <CardContent className="p-5 relative z-10">
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-600 mb-2" data-testid="kpi-title">
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5" data-testid="kpi-title">
               {title}
             </p>
-            <p className="text-2xl sm:text-3xl font-bold text-gray-900 tabular-nums mb-2 truncate" data-testid="kpi-value">
+            <p className="text-2xl sm:text-3xl font-semibold text-gray-900 tabular-nums mb-1.5 truncate" data-testid="kpi-value">
               {formatter(value)}
             </p>
             {delta && (
               <div className={cn(
-                "flex items-center gap-1 text-sm",
+                "flex items-center gap-1 text-xs",
                 getDeltaColor()
               )} data-testid="kpi-delta">
                 {getDeltaIcon()}
-                <span className="tabular-nums truncate">
-                  {formatDelta(delta.value)} {delta.period}
+                <span className="tabular-nums font-medium">
+                  {formatDelta(delta.value)}
+                </span>
+                <span className="text-gray-500 font-normal">
+                  {delta.period}
                 </span>
               </div>
             )}
           </div>
           {icon && (
-            <div className="text-gray-400 flex-shrink-0 ml-3" data-testid="kpi-icon">
+            <div className="text-gray-300 flex-shrink-0 ml-3 opacity-50" data-testid="kpi-icon">
               {icon}
             </div>
           )}

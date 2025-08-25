@@ -302,16 +302,31 @@ export default function Bots() {
   const totalPages = Math.ceil(filteredBots.length / pageSize);
 
   const getStatusBadge = (status: BotData['status']) => {
-    const variants = {
-      running: 'bg-green-100 text-green-800',
-      stopped: 'bg-gray-100 text-gray-800', 
-      error: 'bg-red-100 text-red-800'
+    const statusConfig = {
+      running: {
+        className: 'badge-success',
+        icon: <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />,
+        label: 'Running'
+      },
+      stopped: {
+        className: 'badge-neutral',
+        icon: <div className="w-2 h-2 bg-gray-400 rounded-full" />,
+        label: 'Stopped'
+      },
+      error: {
+        className: 'badge-error', 
+        icon: <AlertTriangle className="w-3 h-3" />,
+        label: 'Error'
+      }
     };
     
+    const config = statusConfig[status];
+    
     return (
-      <Badge className={variants[status]}>
-        {status.charAt(0).toUpperCase() + status.slice(1)}
-      </Badge>
+      <div className={`badge-status ${config.className}`}>
+        {config.icon}
+        <span>{config.label}</span>
+      </div>
     );
   };
 

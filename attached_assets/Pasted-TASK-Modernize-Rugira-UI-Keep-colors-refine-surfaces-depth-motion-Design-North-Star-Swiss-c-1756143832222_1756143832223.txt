@@ -1,0 +1,219 @@
+TASK — Modernize Rugira UI (Keep colors; refine surfaces, depth, motion)
+
+Design North Star
+
+Swiss-clean, quiet confidence. Low noise, high clarity.
+
+Fewer visible lines, more negative space, and precise micro-motion.
+
+Keep the current color palette; adjust only usage (no new hues).
+
+1) Visual Foundation
+
+Spacing scale: 4/8/12/16/24/32/48. Use bigger gaps between groups (24–32), tighter within components (8–12).
+
+Typography: Headings semibold, body regular; increase heading–body contrast via size/spacing, not color. Line-height airy (1.4–1.6).
+
+Color usage (keep existing colors):
+
+Use green strictly for positive metrics and “good” statuses; red only for negatives/alerts.
+
+Neutrals do the heavy lifting. Prefer subtle neutral text for secondary info (60–70% opacity).
+
+Borders vs depth:
+
+Replace most card borders with subtle elevation and a faint hairline divider inside the card header only.
+
+Default card: no border, soft shadow (barely-there), 12–16px radius.
+
+Use a thin 1px neutral border only where layout needs hard separation (tables, drawers).
+
+Shadows (two levels only):
+
+Level 1 (cards): very soft ambient.
+
+Level 2 (popover/modals): slightly stronger; still soft edges. No harsh drop shadows.
+
+Iconography & badges:
+
+Use stroke-style icons consistently. Badge colors stay, but make badges lighter—solid text + pale background pill.
+
+2) Navigation & Layout
+
+Sidebar:
+
+Keep section labels (BUILD / RUN / GOVERN / SYSTEM) but make them smaller, uppercase, 60% neutral, and add 16px spacing above each section.
+
+Active item: pale background pill + bold label; indicator bar only 2–3px wide.
+
+Offer a collapse state that shows only icons; on hover, a fly-out shows labels.
+
+Top bar:
+
+Consolidate environment/status into a single compact area: Tenant selector, “Paper” chip, “OK” chip, bell.
+
+Show Last updated with a small refresh icon; on click, refresh and animate a quick spinner.
+
+3) Cards & Key Metrics
+
+Stat cards (Overview, Reports):
+
+Each stat card includes a tiny sparkline (muted neutral) behind the main number for trend context.
+
+Secondary deltas (e.g., “+5.2% vs last month”) in smaller text, neutral color with a tiny up/down arrow; use green/red text only for the sign, not the whole sentence.
+
+Align iconography to the top-right, faint.
+
+Content cards:
+
+More white space (20–24 padding). Title row with a subtle hairline divider below; body area free of strong lines.
+
+Use “Export” as a small ghost button with icon; avoid heavy buttons inside cards unless primary action.
+
+4) Tables & Lists
+
+Row density: Comfortable by default; compact option in table toolbar.
+
+Row styling: No outer gridlines; just a light row divider. On hover, raise the row very slightly (shadow level 1) and tint background by 2–3%.
+
+Status first: Left-aligned colored status dot + label. Use consistent wording (“Running”, “Stopped”, “Error”).
+
+Batch actions: When rows are selected, reveal a slim sticky action bar at the bottom.
+
+Empty/zero states: Replace bare empties with short copy, a tiny icon, and one primary action.
+
+5) Filters, Search, and Tags
+
+Filters live above content in a single slim bar with compact chips.
+
+Active filters appear as pale chips with an “x”; clicking clears. Provide a “Reset” ghost button to the far right.
+
+Search fields use quiet placeholders; on focus they gently expand in width (motion ≤ 160ms).
+
+6) Buttons & Interactions
+
+Primary buttons: minimal fill, smooth corners (12–16). Only one primary per view.
+
+Secondary/tertiary become ghost or subtle outline; keep palette colors, lower emphasis.
+
+Hover/press states rely on opacity/elevation, not color shifts.
+
+Replace the floating blue FAB with:
+
+Desktop: top-right “Create…” button group per page.
+
+Mobile: keep a single FAB.
+
+7) Charts (keep colors; refine presentation)
+
+Reduce gridline contrast; use thin, soft grid.
+
+Tooltips: compact, numeric with consistent decimals (e.g., 2 dp); show delta vs previous point subtly.
+
+Legends: move inside the chart corner; smaller, neutral labels with color dots.
+
+Add tiny baseline markers (e.g., $0, target lines) as faint hairlines.
+
+8) Feedback & System States
+
+Alerts/Compliance lists: Use a colored left border per severity (green/amber/red), neutral card body, and clear status pill (“Open”, “Acknowledged”, “Resolved”).
+
+Toasts: top-right, low-contrast background, auto-dismiss. Never cover primary controls.
+
+Skeletons: For graphs/tables, show skeleton shimmers for ~400–800ms on load/refresh.
+
+9) Motion & Micro-interactions (subtle, purposeful)
+
+Global timing: 120–160ms for most UI; 200–240ms for overlays/drawers.
+
+Easing: standard ease-out on entrances, ease-in on exits; no bounce.
+
+Cards, rows, and chips get 2–4px translate/scale at most on hover to feel responsive, not “gamey”.
+
+On successful actions (save, connect), show a brief checkmark micro-animation in place.
+
+10) Page-Specific Polishing
+
+Overview
+
+Add micro-sparklines in each KPI card; unify card heights.
+
+Portfolio & P&L charts: soften grid, smaller legends, consistent y-axis currency formatting.
+
+Bots
+
+Add small platform icons next to exchange names.
+
+Make Error rows lightly tinted; the “…” menu becomes visible on hover only.
+
+Top filter chips for Running/Stopped/Error + exchange names; add “Clear filters”.
+
+Exchanges
+
+Connection cards: top-right compact status chip (“Connected”, “Error”). API usage bar thinner, with soft rounded ends.
+
+For errors, show a single-line tip (“Check API key…”) with a discreet “Fix” action.
+
+Strategies
+
+Each tile gets a quiet header bar with the strategy icon; advantage/consideration lists use minimal bullets and shorter copy. “Popular / Low Risk” tags become pale compact pills.
+
+Backtesting
+
+Results card: big headline metrics (Total Return, Sharpe, Max DD) in a clean 3-up row.
+
+Below, keep the equity curve and monthly returns; reduce bar saturation; add a quick “Compare” toggle.
+
+Monitoring
+
+Status grid uses colored indicator bars but lighter fills; labels under each metric in neutral text.
+
+Trend panels (CPU/Memory, Network/Disk) reduce line thickness and grid weight; add “Last 15m / 1h / 24h” quick toggles.
+
+Reports
+
+Make the “7 Days” range selector a segmented control (7D/30D/90D/Custom).
+
+Performance by Bot: limit y-axis labels, add value labels on hover only.
+
+Compliance
+
+Alerts list with severity left border, clear “Open/Ack/Resolved” pill, and a compact filter row (Severity, Bot, Time).
+
+“View Details” becomes the sole emphasized action; avoid stacking equal-weight buttons.
+
+Admin
+
+User avatars circular; subscription pill with soft color. Show last login as relative time (“2d ago”) with exact time on hover.
+
+Help
+
+Knowledge base search gets a quiet hero area: large field, subtle shadow, small helper text (“Try: connect Binance”).
+
+FAQ accordions: increase vertical rhythm; chevrons rotate smoothly.
+
+11) Copy & Microcopy
+
+Prefer short, neutral, factual labels. Avoid exclamation points.
+
+Consistent capitalization (Title Case for nav/pages; Sentence case for controls).
+
+Confirmations are calm and brief (“Connection saved”).
+
+12) Acceptance Checklist
+
+No new colors introduced; palette usage refined only.
+
+Cards mostly borderless with soft elevation; tables keep thin dividers.
+
+Hover/focus/press feedback everywhere; timing ≤ 160ms.
+
+KPI cards include micro-sparklines; legends and tooltips are compact and consistent.
+
+Filters always visible as compact chips; easy to clear.
+
+Empty/skeleton states present and helpful.
+
+Floating FAB removed on desktop; creation actions live top-right.
+
+Error/critical states are visible but not loud; left-border pattern used consistently.

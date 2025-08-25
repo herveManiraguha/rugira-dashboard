@@ -402,8 +402,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
                     return (
                       <div key={item.name}>
                         {showGroupHeader && (
-                          <li className="pt-4 first:pt-0">
-                            <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                          <li className="pt-6 first:pt-0">
+                            <div className="px-3 py-1 text-[11px] font-medium text-gray-400 uppercase tracking-wider opacity-60">
                               {item.group}
                             </div>
                           </li>
@@ -413,13 +413,14 @@ export default function MainLayout({ children }: MainLayoutProps) {
                             <Button
                               variant={isActive ? "secondary" : "ghost"}
                               className={cn(
-                                "w-full justify-start text-left h-12 text-base font-medium",
-                                isActive ? "bg-red-50 text-red-700 border-l-4 border-red-500" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                                "w-full justify-start text-left h-11 text-base font-medium relative transition-all duration-120 ease-out",
+                                isActive ? "bg-gray-50 text-gray-900 font-semibold" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50/50"
                               )}
                               data-testid={`nav-mobile-${item.name.toLowerCase()}`}
                               onClick={() => setMobileMenuOpen(false)}
                             >
-                              <Icon className="mr-4 h-5 w-5 flex-shrink-0" />
+                              {isActive && <span className="absolute left-0 top-2 bottom-2 w-0.5 bg-red-500 rounded-r" />}
+                              <Icon className={cn("mr-3 h-5 w-5 flex-shrink-0", isActive && "ml-2")} />
                               <span className="truncate">{item.name}</span>
                             </Button>
                           </Link>
@@ -555,7 +556,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
                   <div key={item.name}>
                     {showGroupHeader && !sidebarCollapsed && (
                       <li className="pt-4 first:pt-0">
-                        <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <div className="px-3 py-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider opacity-60">
                           {item.group}
                         </div>
                       </li>
@@ -565,15 +566,16 @@ export default function MainLayout({ children }: MainLayoutProps) {
                         <Button
                           variant={isActive ? "secondary" : "ghost"}
                           className={cn(
-                            "w-full justify-start text-left",
-                            sidebarCollapsed ? "h-10 w-10 p-0" : "h-10",
-                            isActive ? "bg-gray-100 text-gray-900" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                            "w-full justify-start text-left relative transition-all duration-120 ease-out group",
+                            sidebarCollapsed ? "h-10 w-10 p-0 justify-center" : "h-9 px-3",
+                            isActive ? "bg-gray-50 text-gray-900 font-semibold" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50/50"
                           )}
                           data-testid={`nav-${item.name.toLowerCase()}`}
                           title={sidebarCollapsed ? item.name : undefined}
                         >
-                          <Icon className={cn("h-5 w-5", !sidebarCollapsed && "mr-3")} />
-                          {!sidebarCollapsed && item.name}
+                          {isActive && !sidebarCollapsed && <span className="absolute left-0 top-2 bottom-2 w-0.5 bg-red-500 rounded-r" />}
+                          <Icon className={cn("h-4 w-4", !sidebarCollapsed && "mr-2.5", isActive && !sidebarCollapsed && "ml-1")} />
+                          {!sidebarCollapsed && <span className="text-sm">{item.name}</span>}
                         </Button>
                       </Link>
                     </li>
