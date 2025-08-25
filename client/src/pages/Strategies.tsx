@@ -30,94 +30,163 @@ import {
 interface StrategyData {
   id: string;
   name: string;
-  type: 'grid' | 'arbitrage' | 'momentum' | 'mean-reversion';
-  status: 'active' | 'inactive' | 'testing';
-  performance: {
-    winRate: number;
-    avgReturn: number;
-    maxDrawdown: number;
-    sharpeRatio: number;
-  };
+  type: 'grid' | 'arbitrage' | 'momentum' | 'mean-reversion' | 'scalping' | 'swing' | 'dca' | 'breakout' | 'pairs' | 'trend-following';
+  status: 'available' | 'popular' | 'advanced';
+  complexity: 'beginner' | 'intermediate' | 'advanced';
+  marketCondition: 'trending' | 'ranging' | 'volatile' | 'any';
   riskLevel: 'low' | 'medium' | 'high';
   timeframe: string;
-  lastUpdated: string;
   description: string;
-  activeBots: number;
+  pros: string[];
+  cons: string[];
+  bestFor: string;
 }
 
-const mockStrategies: StrategyData[] = [
+const cryptoTradingStrategies: StrategyData[] = [
   {
     id: '1',
-    name: 'Conservative Grid',
+    name: 'Grid Trading',
     type: 'grid',
-    status: 'active',
-    performance: {
-      winRate: 78.5,
-      avgReturn: 2.4,
-      maxDrawdown: -5.2,
-      sharpeRatio: 1.8
-    },
+    status: 'popular',
+    complexity: 'beginner',
+    marketCondition: 'ranging',
     riskLevel: 'low',
     timeframe: '15m - 1h',
-    lastUpdated: '2024-01-15',
-    description: 'Low-risk grid trading strategy with tight ranges for stable returns',
-    activeBots: 3
+    description: 'Places buy and sell orders at regular intervals above and below current price',
+    pros: ['Works well in sideways markets', 'Consistent profits', 'Automatic profit taking'],
+    cons: ['Vulnerable to strong trends', 'Requires ranging markets'],
+    bestFor: 'Stable coins and low-volatility periods'
   },
   {
     id: '2',
-    name: 'Cross-Exchange Arbitrage',
-    type: 'arbitrage',
-    status: 'active',
-    performance: {
-      winRate: 92.1,
-      avgReturn: 0.8,
-      maxDrawdown: -1.1,
-      sharpeRatio: 3.2
-    },
+    name: 'DCA (Dollar Cost Averaging)',
+    type: 'dca',
+    status: 'popular',
+    complexity: 'beginner',
+    marketCondition: 'any',
     riskLevel: 'low',
-    timeframe: '1m - 5m',
-    lastUpdated: '2024-01-14',
-    description: 'Exploit price differences between major exchanges',
-    activeBots: 2
+    timeframe: '1d - 1w',
+    description: 'Invests fixed amount at regular intervals regardless of price',
+    pros: ['Reduces average cost', 'Simple to implement', 'Reduces timing risk'],
+    cons: ['No profit in sideways markets', 'Requires long-term commitment'],
+    bestFor: 'Long-term investors and volatile markets'
   },
   {
     id: '3',
-    name: 'Momentum Breakout',
-    type: 'momentum',
-    status: 'testing',
-    performance: {
-      winRate: 65.3,
-      avgReturn: 4.7,
-      maxDrawdown: -12.8,
-      sharpeRatio: 1.4
-    },
-    riskLevel: 'high',
-    timeframe: '4h - 1d',
-    lastUpdated: '2024-01-13',
-    description: 'Aggressive momentum-based strategy for trending markets',
-    activeBots: 1
+    name: 'Arbitrage Trading',
+    type: 'arbitrage',
+    status: 'advanced',
+    complexity: 'advanced',
+    marketCondition: 'any',
+    riskLevel: 'low',
+    timeframe: '1s - 5m',
+    description: 'Exploits price differences between different exchanges or trading pairs',
+    pros: ['Low risk', 'Market neutral', 'Quick profits'],
+    cons: ['Requires high capital', 'Opportunities are rare', 'Complex execution'],
+    bestFor: 'High-frequency traders with substantial capital'
   },
   {
     id: '4',
-    name: 'Mean Reversion Pro',
+    name: 'Momentum Trading',
+    type: 'momentum',
+    status: 'popular',
+    complexity: 'intermediate',
+    marketCondition: 'trending',
+    riskLevel: 'high',
+    timeframe: '15m - 4h',
+    description: 'Follows price trends and momentum indicators to enter positions',
+    pros: ['High profit potential', 'Captures strong moves', 'Clear signals'],
+    cons: ['High risk', 'Frequent false signals', 'Requires discipline'],
+    bestFor: 'Trending markets and news-driven movements'
+  },
+  {
+    id: '5',
+    name: 'Mean Reversion',
     type: 'mean-reversion',
-    status: 'inactive',
-    performance: {
-      winRate: 71.2,
-      avgReturn: 3.1,
-      maxDrawdown: -8.5,
-      sharpeRatio: 1.6
-    },
+    status: 'available',
+    complexity: 'intermediate',
+    marketCondition: 'ranging',
     riskLevel: 'medium',
-    timeframe: '1h - 4h',
-    lastUpdated: '2024-01-10',
-    description: 'Statistical mean reversion with dynamic thresholds',
-    activeBots: 0
+    timeframe: '1h - 1d',
+    description: 'Trades based on the assumption that prices return to their historical average',
+    pros: ['Works in range-bound markets', 'Statistical edge', 'Clear entry/exit'],
+    cons: ['Fails in trending markets', 'Complex calculations'],
+    bestFor: 'Established cryptocurrencies with predictable patterns'
+  },
+  {
+    id: '6',
+    name: 'Scalping',
+    type: 'scalping',
+    status: 'advanced',
+    complexity: 'advanced',
+    marketCondition: 'volatile',
+    riskLevel: 'high',
+    timeframe: '1m - 15m',
+    description: 'Makes numerous small profits from tiny price movements throughout the day',
+    pros: ['Many opportunities', 'Quick profits', 'Limited exposure'],
+    cons: ['High transaction costs', 'Requires constant monitoring', 'Stressful'],
+    bestFor: 'Experienced traders with low-latency connections'
+  },
+  {
+    id: '7',
+    name: 'Swing Trading',
+    type: 'swing',
+    status: 'popular',
+    complexity: 'intermediate',
+    marketCondition: 'trending',
+    riskLevel: 'medium',
+    timeframe: '4h - 1w',
+    description: 'Captures price swings over several days to weeks using technical analysis',
+    pros: ['Less time intensive', 'Good risk-reward', 'Flexible timing'],
+    cons: ['Overnight risk', 'Requires patience', 'Market gaps'],
+    bestFor: 'Part-time traders and medium-term opportunities'
+  },
+  {
+    id: '8',
+    name: 'Breakout Trading',
+    type: 'breakout',
+    status: 'available',
+    complexity: 'intermediate',
+    marketCondition: 'volatile',
+    riskLevel: 'high',
+    timeframe: '15m - 4h',
+    description: 'Enters trades when price breaks through significant support or resistance levels',
+    pros: ['Catches big moves early', 'Clear entry signals', 'High profit potential'],
+    cons: ['Many false breakouts', 'Requires quick execution', 'High risk'],
+    bestFor: 'Volatile crypto markets and key technical levels'
+  },
+  {
+    id: '9',
+    name: 'Pairs Trading',
+    type: 'pairs',
+    status: 'advanced',
+    complexity: 'advanced',
+    marketCondition: 'any',
+    riskLevel: 'medium',
+    timeframe: '1h - 1d',
+    description: 'Trades correlation between two related cryptocurrencies',
+    pros: ['Market neutral', 'Statistical advantage', 'Reduced market risk'],
+    cons: ['Complex analysis', 'Correlations can break', 'Limited pairs'],
+    bestFor: 'Sophisticated traders with strong analytical skills'
+  },
+  {
+    id: '10',
+    name: 'Trend Following',
+    type: 'trend-following',
+    status: 'popular',
+    complexity: 'beginner',
+    marketCondition: 'trending',
+    riskLevel: 'medium',
+    timeframe: '1d - 1w',
+    description: 'Follows established trends using moving averages and trend indicators',
+    pros: ['Simple concept', 'Catches big moves', 'Clear rules'],
+    cons: ['Late entries', 'Whipsaws in choppy markets', 'Requires trending markets'],
+    bestFor: 'Long-term trending cryptocurrencies like Bitcoin and Ethereum'
   }
 ];
 
 export default function Strategies() {
-  const [strategies] = useState(mockStrategies);
+  const [strategies] = useState(cryptoTradingStrategies);
 
   const handleActivateStrategy = (strategyId: string) => {
     console.log('Activating strategy:', strategyId);
@@ -137,15 +206,21 @@ export default function Strategies() {
       case 'arbitrage': return <BarChart3 className="h-4 w-4" />;
       case 'momentum': return <TrendingUp className="h-4 w-4" />;
       case 'mean-reversion': return <AlertCircle className="h-4 w-4" />;
+      case 'scalping': return <TrendingUp className="h-4 w-4" />;
+      case 'swing': return <BarChart3 className="h-4 w-4" />;
+      case 'dca': return <Settings className="h-4 w-4" />;
+      case 'breakout': return <TrendingUp className="h-4 w-4" />;
+      case 'pairs': return <BarChart3 className="h-4 w-4" />;
+      case 'trend-following': return <TrendingUp className="h-4 w-4" />;
       default: return <Settings className="h-4 w-4" />;
     }
   };
 
   const getRiskBadge = (risk: StrategyData['riskLevel']) => {
     const variants = {
-      low: 'bg-green-100 text-green-800',
-      medium: 'bg-yellow-100 text-yellow-800',
-      high: 'bg-red-100 text-red-800'
+      low: 'bg-green-100 text-green-800 border-green-200',
+      medium: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+      high: 'bg-red-100 text-red-800 border-red-200'
     };
     
     return (
@@ -155,16 +230,45 @@ export default function Strategies() {
     );
   };
 
-  const getStatusBadge = (status: StrategyData['status']) => {
+  const getComplexityBadge = (complexity: StrategyData['complexity']) => {
     const variants = {
-      active: 'bg-green-100 text-green-800 border-green-200',
-      inactive: 'bg-gray-100 text-gray-800 border-gray-200',
-      testing: 'bg-yellow-100 text-yellow-800 border-yellow-200'
+      beginner: 'bg-blue-100 text-blue-800 border-blue-200',
+      intermediate: 'bg-purple-100 text-purple-800 border-purple-200',
+      advanced: 'bg-orange-100 text-orange-800 border-orange-200'
     };
     
     return (
-      <Badge className={variants[status] || variants.inactive}>
+      <Badge className={variants[complexity]}>
+        {complexity.charAt(0).toUpperCase() + complexity.slice(1)}
+      </Badge>
+    );
+  };
+
+  const getStatusBadge = (status: StrategyData['status']) => {
+    const variants = {
+      available: 'bg-gray-100 text-gray-800 border-gray-200',
+      popular: 'bg-green-100 text-green-800 border-green-200',
+      advanced: 'bg-purple-100 text-purple-800 border-purple-200'
+    };
+    
+    return (
+      <Badge className={variants[status] || variants.available}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
+      </Badge>
+    );
+  };
+
+  const getMarketConditionBadge = (condition: StrategyData['marketCondition']) => {
+    const variants = {
+      trending: 'bg-blue-100 text-blue-800 border-blue-200',
+      ranging: 'bg-indigo-100 text-indigo-800 border-indigo-200',
+      volatile: 'bg-red-100 text-red-800 border-red-200',
+      any: 'bg-green-100 text-green-800 border-green-200'
+    };
+    
+    return (
+      <Badge className={variants[condition]}>
+        {condition.charAt(0).toUpperCase() + condition.slice(1)}
       </Badge>
     );
   };
@@ -172,14 +276,8 @@ export default function Strategies() {
   return (
     <div className="space-y-6 p-6">
       <PageHeader
-        title="Trading Strategies"
-        description="Configure and manage your automated trading strategies"
-        actions={
-          <Button data-testid="create-strategy">
-            <Plus className="h-4 w-4 mr-2" />
-            Create Strategy
-          </Button>
-        }
+        title="Crypto Trading Strategies"
+        description="Comprehensive collection of proven crypto trading strategies for automated trading"
       />
 
       <main id="main-content">
@@ -219,71 +317,67 @@ export default function Strategies() {
                           Duplicate
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        {strategy.status === 'active' ? (
-                          <DropdownMenuItem onClick={() => handleDeactivateStrategy(strategy.id)}>
-                            <Square className="h-4 w-4 mr-2" />
-                            Deactivate
-                          </DropdownMenuItem>
-                        ) : (
-                          <DropdownMenuItem onClick={() => handleActivateStrategy(strategy.id)}>
-                            <Play className="h-4 w-4 mr-2" />
-                            Activate
-                          </DropdownMenuItem>
-                        )}
-                        <DropdownMenuSeparator />
-                        <ConfirmationDialog
-                          trigger={
-                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-red-600">
-                              <Trash className="h-4 w-4 mr-2" />
-                              Delete
-                            </DropdownMenuItem>
-                          }
-                          title="Delete Strategy"
-                          description={`Are you sure you want to delete "${strategy.name}"? This action cannot be undone and will stop all associated bots.`}
-                          confirmText="Delete Strategy"
-                          requiresTyping="DELETE"
-                          onConfirm={() => handleDeleteStrategy(strategy.id)}
-                          variant="destructive"
-                        />
+                        <DropdownMenuItem onClick={() => handleActivateStrategy(strategy.id)}>
+                          <Play className="h-4 w-4 mr-2" />
+                          Use Strategy
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <BarChart3 className="h-4 w-4 mr-2" />
+                          View Details
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
                   
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
                     {getStatusBadge(strategy.status)}
                     {getRiskBadge(strategy.riskLevel)}
+                  </div>
+                  
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {getComplexityBadge(strategy.complexity)}
+                    {getMarketConditionBadge(strategy.marketCondition)}
                   </div>
                 </CardHeader>
 
                 <CardContent className="space-y-4">
-                  <p className="text-sm text-gray-600">{strategy.description}</p>
+                  <p className="text-sm text-gray-600 leading-relaxed">{strategy.description}</p>
                   
-                  <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="space-y-3">
                     <div>
-                      <span className="text-gray-500">Win Rate</span>
-                      <p className="font-semibold text-green-600">{strategy.performance.winRate}%</p>
+                      <h4 className="text-sm font-medium text-green-700 mb-1">✓ Advantages</h4>
+                      <ul className="text-sm text-gray-600 space-y-1">
+                        {strategy.pros.map((pro, index) => (
+                          <li key={index} className="flex items-start">
+                            <span className="text-green-500 mr-2">•</span>
+                            <span>{pro}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
+                    
                     <div>
-                      <span className="text-gray-500">Avg Return</span>
-                      <p className="font-semibold">{strategy.performance.avgReturn}%</p>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Max Drawdown</span>
-                      <p className="font-semibold text-red-600">{strategy.performance.maxDrawdown}%</p>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Sharpe Ratio</span>
-                      <p className="font-semibold">{strategy.performance.sharpeRatio}</p>
+                      <h4 className="text-sm font-medium text-red-700 mb-1">⚠ Considerations</h4>
+                      <ul className="text-sm text-gray-600 space-y-1">
+                        {strategy.cons.map((con, index) => (
+                          <li key={index} className="flex items-start">
+                            <span className="text-red-500 mr-2">•</span>
+                            <span>{con}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between text-sm text-gray-500 pt-2 border-t">
-                    <span>{strategy.timeframe}</span>
-                    <span>{strategy.activeBots} active bot{strategy.activeBots !== 1 ? 's' : ''}</span>
-                  </div>
-
-                  <div className="text-xs text-gray-400">
-                    Last updated: {new Date(strategy.lastUpdated).toLocaleDateString()}
+                  <div className="pt-3 border-t border-gray-100">
+                    <div className="text-sm">
+                      <span className="text-gray-500 font-medium">Best for: </span>
+                      <span className="text-gray-900">{strategy.bestFor}</span>
+                    </div>
+                    <div className="text-sm mt-1">
+                      <span className="text-gray-500 font-medium">Timeframe: </span>
+                      <span className="text-gray-900">{strategy.timeframe}</span>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
