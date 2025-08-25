@@ -17,7 +17,18 @@ import {
   BarChart3,
   TrendingUp,
   AlertCircle,
-  CheckCircle
+  CheckCircle,
+  Grid3X3,
+  DollarSign,
+  ArrowRightLeft,
+  Zap,
+  Activity,
+  ScissorsLineDashed,
+  GitBranchPlus,
+  Crosshair,
+  GitCompare,
+  TrendingDown,
+  MoreVertical
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -202,17 +213,17 @@ export default function Strategies() {
 
   const getTypeIcon = (type: StrategyData['type']) => {
     switch (type) {
-      case 'grid': return <Settings className="h-4 w-4" />;
-      case 'arbitrage': return <BarChart3 className="h-4 w-4" />;
-      case 'momentum': return <TrendingUp className="h-4 w-4" />;
-      case 'mean-reversion': return <AlertCircle className="h-4 w-4" />;
-      case 'scalping': return <TrendingUp className="h-4 w-4" />;
-      case 'swing': return <BarChart3 className="h-4 w-4" />;
-      case 'dca': return <Settings className="h-4 w-4" />;
-      case 'breakout': return <TrendingUp className="h-4 w-4" />;
-      case 'pairs': return <BarChart3 className="h-4 w-4" />;
-      case 'trend-following': return <TrendingUp className="h-4 w-4" />;
-      default: return <Settings className="h-4 w-4" />;
+      case 'grid': return <Grid3X3 className="h-5 w-5" />;
+      case 'arbitrage': return <ArrowRightLeft className="h-5 w-5" />;
+      case 'momentum': return <Zap className="h-5 w-5" />;
+      case 'mean-reversion': return <Activity className="h-5 w-5" />;
+      case 'scalping': return <ScissorsLineDashed className="h-5 w-5" />;
+      case 'swing': return <GitBranchPlus className="h-5 w-5" />;
+      case 'dca': return <DollarSign className="h-5 w-5" />;
+      case 'breakout': return <Crosshair className="h-5 w-5" />;
+      case 'pairs': return <GitCompare className="h-5 w-5" />;
+      case 'trend-following': return <TrendingUp className="h-5 w-5" />;
+      default: return <BarChart3 className="h-5 w-5" />;
     }
   };
 
@@ -297,14 +308,16 @@ export default function Strategies() {
               <Card key={strategy.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      {getTypeIcon(strategy.type)}
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 rounded-lg bg-gray-50 text-gray-600">
+                        {getTypeIcon(strategy.type)}
+                      </div>
                       <CardTitle className="text-lg">{strategy.name}</CardTitle>
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="sm" data-testid={`strategy-actions-${strategy.id}`}>
-                          <Settings className="h-4 w-4" />
+                          <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">

@@ -8,12 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 
   Bot, 
-  TrendingUp, 
-  Activity, 
+  Grid3X3,
+  ArrowRightLeft,
   DollarSign,
   Zap,
-  BarChart3,
-  ArrowUpDown,
+  GitBranchPlus,
+  Activity,
   Target,
   Loader2,
   Settings
@@ -37,20 +37,20 @@ interface BotCreationData {
 
 const strategies = [
   {
-    id: 'arbitrage',
-    name: 'Arbitrage',
-    description: 'Profit from price differences across exchanges',
-    icon: <TrendingUp className="w-5 h-5 text-green-500" />,
-    difficulty: 'Advanced',
-    timeframe: '1-5m'
-  },
-  {
     id: 'grid_trading',
     name: 'Grid Trading',
     description: 'Automated buy/sell orders in a price range',
-    icon: <Activity className="w-5 h-5 text-blue-500" />,
+    icon: <Grid3X3 className="w-5 h-5 text-blue-500" />,
     difficulty: 'Intermediate',
     timeframe: '1h-1d'
+  },
+  {
+    id: 'arbitrage',
+    name: 'Arbitrage',
+    description: 'Profit from price differences across exchanges',
+    icon: <ArrowRightLeft className="w-5 h-5 text-green-500" />,
+    difficulty: 'Advanced',
+    timeframe: '1-5m'
   },
   {
     id: 'dca',
@@ -72,7 +72,7 @@ const strategies = [
     id: 'ma_crossover',
     name: 'Moving Average Crossover',
     description: 'Trade based on moving average signals',
-    icon: <BarChart3 className="w-5 h-5 text-orange-500" />,
+    icon: <GitBranchPlus className="w-5 h-5 text-orange-500" />,
     difficulty: 'Intermediate',
     timeframe: '15m-4h'
   },
@@ -80,7 +80,7 @@ const strategies = [
     id: 'mean_reversion',
     name: 'Mean Reversion',
     description: 'Buy low and sell high around average price',
-    icon: <ArrowUpDown className="w-5 h-5 text-pink-500" />,
+    icon: <Activity className="w-5 h-5 text-pink-500" />,
     difficulty: 'Intermediate',
     timeframe: '30m-2h'
   }
