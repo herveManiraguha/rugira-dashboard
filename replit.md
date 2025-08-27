@@ -8,6 +8,36 @@ Rugira is a professional trading bot management dashboard built as a Single Page
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes (Aug 27, 2025)
+
+### Production-Ready Mocked Backend Implementation
+- **Comprehensive Mock Data Service** created with realistic data generators for all features
+- **Full API Endpoints** implemented for all dashboard functionalities:
+  - Bots management (CRUD operations, start/stop)
+  - Exchanges integration and monitoring
+  - Strategies configuration and backtesting
+  - Portfolio tracking and performance metrics
+  - Market data and pricing feeds
+  - Monitoring alerts and system metrics
+  - Compliance reports and violations tracking
+  - User profiles and session management
+  - Admin statistics and activity logs
+  - Settings management across all categories
+  - Help articles and FAQs
+- **API Service Layer** created with TypeScript-typed client functions
+- **React Query Integration** for efficient data fetching and caching
+- **Real-time Updates** through SSE (Server-Sent Events) fallback
+- **Production-grade Error Handling** with proper HTTP status codes
+- **Data Consistency** across all pages with shared mock data generators
+
+### Backtesting Compare Strategies Enhancement
+- **Strategy Comparison Dashboard** with side-by-side analysis
+- **Performance Metrics Table** comparing key indicators across strategies
+- **Equity Curves Visualization** showing portfolio growth over time
+- **Risk vs Return Analysis** with scatter plot visualization
+- **Monthly Performance Comparison** with bar charts
+- **Strategy Selection Interface** for choosing strategies to compare
+
 ## Recent Changes (Aug 15, 2025)
 
 ### Authentication System Implementation

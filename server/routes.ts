@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { WebSocketServer } from "ws";
 import { storage } from "./storage";
 import { authRoutes, optionalAuth } from "./auth";
+import * as mockData from "./mockData";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
@@ -192,6 +193,250 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch activities" });
     }
+  });
+
+  // ===== COMPREHENSIVE MOCKED API ENDPOINTS =====
+  
+  // Bots API with full mock data
+  app.get("/api/v2/bots", optionalAuth, async (req, res) => {
+    res.json(mockData.generateBotData());
+  });
+  
+  app.get("/api/v2/bots/:id", optionalAuth, async (req, res) => {
+    const bots = mockData.generateBotData();
+    const bot = bots.find(b => b.id === req.params.id);
+    if (bot) {
+      res.json(bot);
+    } else {
+      res.status(404).json({ message: "Bot not found" });
+    }
+  });
+  
+  // Exchanges API
+  app.get("/api/exchanges", optionalAuth, async (req, res) => {
+    res.json(mockData.generateExchangeData());
+  });
+  
+  app.get("/api/exchanges/:id", optionalAuth, async (req, res) => {
+    const exchanges = mockData.generateExchangeData();
+    const exchange = exchanges.find(e => e.id === req.params.id);
+    if (exchange) {
+      res.json(exchange);
+    } else {
+      res.status(404).json({ message: "Exchange not found" });
+    }
+  });
+  
+  // Strategies API
+  app.get("/api/strategies", optionalAuth, async (req, res) => {
+    res.json(mockData.generateStrategyData());
+  });
+  
+  app.get("/api/strategies/:id", optionalAuth, async (req, res) => {
+    const strategies = mockData.generateStrategyData();
+    const strategy = strategies.find(s => s.id === req.params.id);
+    if (strategy) {
+      res.json(strategy);
+    } else {
+      res.status(404).json({ message: "Strategy not found" });
+    }
+  });
+  
+  // Backtesting API
+  app.get("/api/backtests", optionalAuth, async (req, res) => {
+    res.json(mockData.generateBacktestResults());
+  });
+  
+  app.post("/api/backtests", optionalAuth, async (req, res) => {
+    // Mock creating a new backtest
+    res.status(201).json({
+      id: `backtest-${Date.now()}`,
+      ...req.body,
+      status: 'running',
+      progress: 0,
+      createdAt: new Date().toISOString()
+    });
+  });
+  
+  // Monitoring API
+  app.get("/api/monitoring/alerts", optionalAuth, async (req, res) => {
+    res.json(mockData.generateMonitoringAlerts());
+  });
+  
+  app.get("/api/monitoring/metrics", optionalAuth, async (req, res) => {
+    res.json({
+      cpu: Math.round(Math.random() * 60 + 20),
+      memory: Math.round(Math.random() * 50 + 30),
+      disk: Math.round(Math.random() * 40 + 20),
+      network: Math.round(Math.random() * 100),
+      uptime: 99.98,
+      responseTime: Math.round(Math.random() * 100 + 50)
+    });
+  });
+  
+  // Compliance API
+  app.get("/api/compliance/reports", optionalAuth, async (req, res) => {
+    res.json(mockData.generateComplianceReports());
+  });
+  
+  app.get("/api/compliance/violations", optionalAuth, async (req, res) => {
+    res.json([
+      { id: 'v1', date: '2024-12-01', type: 'position_limit', severity: 'warning', resolved: true },
+      { id: 'v2', date: '2024-12-15', type: 'rate_limit', severity: 'info', resolved: true }
+    ]);
+  });
+  
+  // Portfolio API
+  app.get("/api/portfolio", optionalAuth, async (req, res) => {
+    res.json(mockData.generatePortfolioData());
+  });
+  
+  app.get("/api/portfolio/positions", optionalAuth, async (req, res) => {
+    const portfolio = mockData.generatePortfolioData();
+    res.json(portfolio.positions);
+  });
+  
+  app.get("/api/portfolio/performance", optionalAuth, async (req, res) => {
+    const portfolio = mockData.generatePortfolioData();
+    res.json({
+      daily: portfolio.dailyChangePercent,
+      weekly: portfolio.weeklyChangePercent,
+      monthly: portfolio.monthlyChangePercent,
+      data: portfolio.performance
+    });
+  });
+  
+  // Market Data API
+  app.get("/api/market", optionalAuth, async (req, res) => {
+    res.json(mockData.generateMarketData());
+  });
+  
+  app.get("/api/market/prices", optionalAuth, async (req, res) => {
+    const market = mockData.generateMarketData();
+    res.json(market.prices);
+  });
+  
+  // User Profile API
+  app.get("/api/user/profile", optionalAuth, async (req, res) => {
+    res.json(mockData.generateUserProfile());
+  });
+  
+  app.patch("/api/user/profile", optionalAuth, async (req, res) => {
+    const profile = mockData.generateUserProfile();
+    res.json({ ...profile, ...req.body });
+  });
+  
+  // Admin API
+  app.get("/api/admin/stats", optionalAuth, async (req, res) => {
+    res.json(mockData.generateAdminStats());
+  });
+  
+  app.get("/api/admin/users", optionalAuth, async (req, res) => {
+    res.json([
+      { id: 'user-1', name: 'Hanz Mueller', email: 'hanz.mueller@rugira.ch', role: 'admin', status: 'active' },
+      { id: 'user-2', name: 'Anna Schmidt', email: 'anna.schmidt@rugira.ch', role: 'trader', status: 'active' },
+      { id: 'user-3', name: 'Peter Weber', email: 'peter.weber@rugira.ch', role: 'readonly', status: 'active' }
+    ]);
+  });
+  
+  app.get("/api/admin/logs", optionalAuth, async (req, res) => {
+    res.json(mockData.generateActivityLogs());
+  });
+  
+  // Reports API
+  app.get("/api/reports/:type", optionalAuth, async (req, res) => {
+    const reportData = mockData.generateReportData(req.params.type);
+    res.json(reportData);
+  });
+  
+  app.post("/api/reports/generate", optionalAuth, async (req, res) => {
+    res.status(201).json({
+      id: `report-${Date.now()}`,
+      type: req.body.type,
+      status: 'generating',
+      createdAt: new Date().toISOString()
+    });
+  });
+  
+  // Settings API
+  app.get("/api/settings", optionalAuth, async (req, res) => {
+    res.json({
+      general: {
+        timezone: 'Europe/Zurich',
+        language: 'en',
+        currency: 'USD',
+        dateFormat: 'DD/MM/YYYY'
+      },
+      trading: {
+        defaultExchange: 'Binance',
+        riskLevel: 'medium',
+        autoRebalance: true,
+        maxPositionSize: 10000
+      },
+      notifications: {
+        email: true,
+        sms: false,
+        push: true,
+        alerts: {
+          trades: true,
+          errors: true,
+          compliance: true
+        }
+      },
+      security: {
+        twoFactorEnabled: true,
+        sessionTimeout: 30,
+        ipWhitelist: []
+      }
+    });
+  });
+  
+  app.patch("/api/settings", optionalAuth, async (req, res) => {
+    res.json({ success: true, updated: req.body });
+  });
+  
+  // Help/Support API
+  app.get("/api/help/articles", optionalAuth, async (req, res) => {
+    res.json([
+      { id: '1', title: 'Getting Started with Rugira', category: 'basics', views: 1234 },
+      { id: '2', title: 'Understanding Bot Strategies', category: 'trading', views: 892 },
+      { id: '3', title: 'Risk Management Best Practices', category: 'risk', views: 756 },
+      { id: '4', title: 'API Integration Guide', category: 'technical', views: 423 }
+    ]);
+  });
+  
+  app.get("/api/help/faqs", optionalAuth, async (req, res) => {
+    res.json([
+      { question: 'How do I connect an exchange?', answer: 'Navigate to Exchanges page and click Add Exchange...' },
+      { question: 'What is the kill switch?', answer: 'The kill switch instantly halts all trading activity...' },
+      { question: 'How often are reports generated?', answer: 'Reports are generated daily, weekly, and monthly...' }
+    ]);
+  });
+  
+  // Dashboard Overview API
+  app.get("/api/overview", optionalAuth, async (req, res) => {
+    const portfolio = mockData.generatePortfolioData();
+    const bots = mockData.generateBotData();
+    const alerts = mockData.generateMonitoringAlerts();
+    
+    res.json({
+      portfolio: {
+        totalValue: portfolio.totalValue,
+        dailyChange: portfolio.dailyChangePercent,
+        weeklyChange: portfolio.weeklyChangePercent
+      },
+      bots: {
+        total: bots.length,
+        active: bots.filter(b => b.status === 'active').length,
+        totalPnL: bots.reduce((sum, b) => sum + b.dailyPnL, 0)
+      },
+      alerts: {
+        total: alerts.length,
+        unacknowledged: alerts.filter(a => !a.acknowledged).length,
+        critical: alerts.filter(a => a.severity === 'critical').length
+      },
+      recentActivity: mockData.generateActivityLogs().slice(0, 5)
+    });
   });
 
   // Server-Sent Events for real-time updates

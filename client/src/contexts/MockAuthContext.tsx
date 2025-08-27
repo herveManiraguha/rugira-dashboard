@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { setAuthTokenGetter } from '@/services/api';
 
 interface User {
   id: string;
@@ -79,10 +78,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }, 100);
   }, []); // Empty dependency array to run only on mount
 
-  useEffect(() => {
-    // Set up API client auth token getter whenever user changes
-    setAuthTokenGetter(() => user?.access_token || null);
-  }, [user]); // Only depend on user
+  // Remove the setAuthTokenGetter call since we're using session-based auth
+  // Authentication is now handled via session cookies
 
   const login = async (returnPath?: string) => {
     setIsLoading(true);

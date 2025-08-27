@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useDemoMode } from "@/contexts/DemoContext";
 import DemoStoryViewer from "@/components/Demo/DemoStoryViewer";
 import SampleExportModal from "@/components/Demo/SampleExportModal";
-import { DEMO_BOTS, DEMO_METRICS, DEMO_TRADES, DEMO_ALERTS } from "../../../shared/demo-data";
+import { overviewAPI, portfolioAPI, botAPI, monitoringAPI } from "@/services/api";
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -49,6 +49,25 @@ export default function Overview() {
   const [timeRange, setTimeRange] = useState('24h' as const);
   const [showExportModal, setShowExportModal] = useState(false);
   const { isDemoMode, isReadOnly } = useDemoMode();
+  
+  // Fetch overview data from API
+  const { data: overviewData, isLoading: overviewLoading } = useQuery({
+    queryKey: ['/api/overview'],
+    refetchInterval: 30000, // Refresh every 30 seconds
+    retry: 2
+  });
+  
+  // Fetch portfolio data from API
+  const { data: portfolioData, isLoading: portfolioLoading } = useQuery({
+    queryKey: ['/api/portfolio'],
+    refetchInterval: 30000
+  });
+  
+  // Fetch monitoring alerts
+  const { data: alertsData } = useQuery({
+    queryKey: ['/api/monitoring/alerts'],
+    refetchInterval: 60000
+  });
 
   // Generate mock KPI data
   const generateKPIData = (): KPI[] => {
