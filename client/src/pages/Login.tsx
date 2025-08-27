@@ -167,7 +167,7 @@ export default function Login() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Visit rugira.ch
+                Visit www.rugira.ch
               </a>
             </div>
           </CardFooter>
