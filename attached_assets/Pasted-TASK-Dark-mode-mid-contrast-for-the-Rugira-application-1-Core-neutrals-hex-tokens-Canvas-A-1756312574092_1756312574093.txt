@@ -1,0 +1,118 @@
+TASK — Dark mode (mid-contrast) for the Rugira application
+1) Core neutrals (hex tokens)
+
+Canvas / App background: #0F1115
+
+Sidebar / Left rail: #0D1117 (slightly darker than canvas)
+
+Top navbar: #0B0E13
+
+Footer: #10131A
+
+Card / Primary surface: #161B22
+
+Sub-surface (table headers, subtle panels): #121722
+
+Input background: #121722
+
+Row/List hover tint: #1B2230 (a touch brighter to read as “lift”)
+
+2) Dividers, borders, focus (visible on poor screens)
+
+Hairline divider (inside cards/rows): #232B36
+
+Card/Panel outer border (1px): #2B3440
+
+Strong divider (section seams, sticky bars): #374150
+
+Navbar bottom rule: #1F2833
+
+Neutral focus ring (for inputs/buttons): #3A66FF (soft glow, not neon)
+
+3) Text neutrals (refined, readable)
+
+Headings / Strong: #F5F7FA
+
+Body / Default: #E3E6EC
+
+Secondary: #C7CFD9
+
+Muted / Meta: #9AA3B2
+
+Disabled: #5E6877
+
+4) Brand & status colors (keep your hues; adjust only tints on dark)
+
+Use your existing brand red/green/blue for lines, icons, and solid buttons. For tinted backgrounds (chips, alerts, subtle states), use darker washes so they read on dark without shouting:
+
+Positive (bg / text / border): #0D2A1E / #8FE3C0 / #1B5E3D
+
+Warning: #2A2313 / #F2D088 / #6B4E16
+
+Error: #2A1412 / #F2A29E / #7D2D2A
+
+Info / Neutral: #121D2E / #9EC5FF / #2C4A7C
+
+5) Where to apply (so contrast is consistent)
+
+App background → #0F1115.
+
+Sidebar → #0D1117; keep icons/text at Secondary or Body levels; active item uses a pale brand-tinted pill on #1B2230.
+
+Top navbar → #0B0E13 with #1F2833 bottom rule.
+
+Cards & stat tiles → #161B22 with #2B3440 outer border and #232B36 internal dividers.
+
+Tables: header cells on #121722, body rows #161B22; row hover #1B2230; gridlines #232B36.
+
+Inputs: background #121722, border #2B3440; focus ring #3A66FF (subtle glow).
+
+Footer: #10131A with a top rule #1F2833; body text #C7CFD9.
+
+6) Buttons & interactive elements
+
+Primary buttons: keep solid brand red with white text; hover slightly brighter red (no neon), focus ring #3A66FF.
+
+Secondary/Outline: surface #161B22, border #2B3440; hover background #1B2230 so outlines don’t vanish.
+
+Ghost/Icon buttons: rest on #161B22; icon/text #E3E6EC; hover #1B2230.
+
+7) Charts (subtle, legible on dark)
+
+Plot area: #161B22
+
+Major gridlines: #293241
+
+Minor gridlines: #1E2633
+
+Axis labels: #A2A9B5
+
+Legend text: #C7CFD9
+
+Series colors stay on brand; the neutral backdrop makes them pop without oversaturation.
+
+8) Overlays, modals, toasts
+
+Modal backdrop: black at ~55–60% opacity (no blur needed).
+
+Modal surface: #161B22 with #2B3440 border; heading #F5F7FA.
+
+Toasts: #161B22 with #2B3440 border; icon uses the status tints above.
+
+9) Shadows & elevation (keep refined)
+
+Use very soft shadows on dark (avoid grey haze). Prefer 1–2px of lift plus the border tokens to suggest layers.
+
+Avoid pure-black shadows; if needed, keep them subtle and transparent.
+
+10) Accessibility & QA checks
+
+Body text on card surface achieves ≥ 4.5:1 contrast.
+
+Secondary text on card surface achieves ≥ 3:1.
+
+Tinted chips keep AA for their text against the provided backgrounds.
+
+At 60% screen brightness, you can clearly distinguish canvas vs sidebar vs navbar vs card without squinting.
+
+Hover states remain obvious (background step to #1B2230 or similar) even with adaptive brightness.

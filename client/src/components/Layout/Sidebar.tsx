@@ -27,16 +27,16 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="hidden xl:block w-64 bg-white border-r border-gray-200 fixed h-full z-30 overflow-y-auto">
+    <aside className="hidden xl:block w-64 bg-sidebar border-r border-sidebar-border fixed h-full z-30 overflow-y-auto">
       {/* Brand Header */}
-      <div className="p-6 border-b border-gray-200">
+      <div className="p-6 border-b border-sidebar-border">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 bg-brand-red rounded-lg flex items-center justify-center">
             <i className="fas fa-chart-line text-white text-sm"></i>
           </div>
           <div>
-            <h2 className="text-lg font-bold text-text-900">Rugira</h2>
-            <p className="text-xs text-text-500">Trading Dashboard</p>
+            <h2 className="text-lg font-bold text-heading">Rugira</h2>
+            <p className="text-xs text-muted">Trading Dashboard</p>
           </div>
         </div>
       </div>
@@ -58,7 +58,7 @@ export default function Sidebar() {
 
           {/* Build Group */}
           <li className="pt-4">
-            <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <div className="px-3 py-1 text-xs font-semibold text-muted uppercase tracking-wider">
               Build
             </div>
           </li>
@@ -95,7 +95,7 @@ export default function Sidebar() {
 
           {/* Run Group */}
           <li className="pt-4">
-            <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <div className="px-3 py-1 text-xs font-semibold text-muted uppercase tracking-wider">
               Run
             </div>
           </li>
@@ -130,7 +130,7 @@ export default function Sidebar() {
 
           {/* Govern Group */}
           <li className="pt-4">
-            <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <div className="px-3 py-1 text-xs font-semibold text-muted uppercase tracking-wider">
               Govern
             </div>
           </li>
@@ -165,7 +165,7 @@ export default function Sidebar() {
 
           {/* System Group */}
           <li className="pt-4">
-            <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <div className="px-3 py-1 text-xs font-semibold text-muted uppercase tracking-wider">
               System
             </div>
           </li>
@@ -193,15 +193,15 @@ export default function Sidebar() {
       </nav>
 
       {/* Connection Status */}
-      <div className="p-4 mt-auto border-t border-gray-200">
-        <div className="flex items-center space-x-2 text-xs text-text-500">
+      <div className="p-4 mt-auto border-t border-sidebar-border">
+        <div className="flex items-center space-x-2 text-xs text-muted">
           <StatusIndicator status={isConnected ? 'connected' : 'disconnected'} />
           <span data-testid="text-api-status">
             API {isConnected ? 'Connected' : 'Disconnected'}
           </span>
         </div>
         {lastUpdate && (
-          <div className="text-xs text-text-500 mt-1" data-testid="text-last-update">
+          <div className="text-xs text-muted mt-1" data-testid="text-last-update">
             Last update: {formatLastUpdate(lastUpdate)}
           </div>
         )}

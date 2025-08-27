@@ -8,6 +8,7 @@ import { LiveIndicator } from "@/components/ui/live-indicator";
 import { LastUpdated } from "@/components/ui/last-updated";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { Bell, User, ChevronDown, StopCircle } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface TopBarProps {
   onMenuToggle?: () => void;
@@ -48,7 +49,7 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 px-3 sm:px-4 md:px-6 py-3 md:py-4 overflow-visible">
+    <header className="bg-navbar-bg border-b border-navbar-border px-3 sm:px-4 md:px-6 py-3 md:py-4 overflow-visible">
       <div className="flex items-center justify-between overflow-visible space-grid-md">
         {/* Left side - Mobile Menu and Tenant */}
         <div className="flex items-center space-x-2 sm:space-x-4">
@@ -56,7 +57,7 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
           {onMenuToggle && (
             <button
               onClick={onMenuToggle}
-              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              className="lg:hidden p-2 rounded-lg hover:bg-hover-surface transition-colors"
               data-testid="button-mobile-menu"
             >
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,6 +95,9 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
 
         {/* Top Bar Actions */}
         <div className="flex items-center space-x-2 md:space-x-4 overflow-visible">
+          {/* Theme Toggle */}
+          <ThemeToggle />
+          
           {/* Notifications */}
           <div className="relative" ref={notificationButtonRef}>
             <button 

@@ -6,6 +6,7 @@ import MainLayout from "@/components/Layout/MainLayout";
 import { AuthProvider } from "@/contexts/MockAuthContext";
 import { DemoProvider } from "@/contexts/DemoContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import "./index.css";
 
 // Import pages
@@ -39,9 +40,10 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <DemoProvider>
-        <AuthProvider>
-        <Switch>
+      <ThemeProvider>
+        <DemoProvider>
+          <AuthProvider>
+          <Switch>
           {/* Public routes */}
           <Route path="/" component={Login} />
           <Route path="/login" component={Login} />
@@ -159,6 +161,7 @@ function App() {
         </Switch>
         </AuthProvider>
       </DemoProvider>
+      </ThemeProvider>
       <Toaster />
     </QueryClientProvider>
   );
