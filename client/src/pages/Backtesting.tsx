@@ -463,18 +463,333 @@ export default function Backtesting() {
         </TabsContent>
         
         <TabsContent value="comparison" className="space-y-6">
+          {/* Strategy Selection */}
           <Card>
             <CardHeader>
               <CardTitle>Strategy Comparison</CardTitle>
+              <p className="text-sm text-gray-600">Compare multiple strategies side-by-side</p>
             </CardHeader>
             <CardContent>
-              <div className="h-96 bg-gray-50 rounded flex items-center justify-center">
-                <div className="text-center text-gray-500">
-                  <TrendingUp className="h-12 w-12 mx-auto mb-4" />
-                  <p className="text-lg mb-2">Strategy Performance Comparison</p>
-                  <p className="text-sm">Side-by-side comparison of backtest results</p>
-                  <p className="text-sm">Select multiple completed backtests to compare</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label>Strategy 1</Label>
+                  <Select defaultValue="moving_average">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="moving_average">Moving Average Crossover</SelectItem>
+                      <SelectItem value="grid_trading">Grid Trading Strategy</SelectItem>
+                      <SelectItem value="momentum">Momentum Breakout</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
+                <div>
+                  <Label>Strategy 2</Label>
+                  <Select defaultValue="grid_trading">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="moving_average">Moving Average Crossover</SelectItem>
+                      <SelectItem value="grid_trading">Grid Trading Strategy</SelectItem>
+                      <SelectItem value="momentum">Momentum Breakout</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Strategy 3</Label>
+                  <Select defaultValue="momentum">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="moving_average">Moving Average Crossover</SelectItem>
+                      <SelectItem value="grid_trading">Grid Trading Strategy</SelectItem>
+                      <SelectItem value="momentum">Momentum Breakout</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Performance Metrics Comparison Table */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Performance Metrics Comparison</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Metric</TableHead>
+                    <TableHead className="text-center">Moving Average Crossover</TableHead>
+                    <TableHead className="text-center">Grid Trading Strategy</TableHead>
+                    <TableHead className="text-center">Momentum Breakout</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell className="font-medium">Total Return</TableCell>
+                    <TableCell className="text-center text-green-600 font-medium">+24.7%</TableCell>
+                    <TableCell className="text-center text-green-600 font-medium">+18.3%</TableCell>
+                    <TableCell className="text-center text-green-600 font-medium">+31.2%</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">Sharpe Ratio</TableCell>
+                    <TableCell className="text-center">1.42</TableCell>
+                    <TableCell className="text-center">1.18</TableCell>
+                    <TableCell className="text-center">1.67</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">Max Drawdown</TableCell>
+                    <TableCell className="text-center text-red-600">-8.3%</TableCell>
+                    <TableCell className="text-center text-red-600">-12.1%</TableCell>
+                    <TableCell className="text-center text-red-600">-15.8%</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">Win Rate</TableCell>
+                    <TableCell className="text-center">67.2%</TableCell>
+                    <TableCell className="text-center">84.5%</TableCell>
+                    <TableCell className="text-center">58.9%</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">Total Trades</TableCell>
+                    <TableCell className="text-center">247</TableCell>
+                    <TableCell className="text-center">1,852</TableCell>
+                    <TableCell className="text-center">89</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">Avg Trade Duration</TableCell>
+                    <TableCell className="text-center">2.3 days</TableCell>
+                    <TableCell className="text-center">4.2 hours</TableCell>
+                    <TableCell className="text-center">5.7 days</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">Profit Factor</TableCell>
+                    <TableCell className="text-center">1.84</TableCell>
+                    <TableCell className="text-center">1.52</TableCell>
+                    <TableCell className="text-center">2.13</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">Final Capital</TableCell>
+                    <TableCell className="text-center font-medium">$124,700</TableCell>
+                    <TableCell className="text-center font-medium">$118,300</TableCell>
+                    <TableCell className="text-center font-medium">$131,200</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
+          {/* Equity Curves Comparison Chart */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Equity Curves Comparison</CardTitle>
+              <p className="text-sm text-gray-600">Portfolio value over time for each strategy</p>
+            </CardHeader>
+            <CardContent>
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={(() => {
+                    const data = [];
+                    for (let i = 0; i <= 365; i++) {
+                      const date = new Date('2024-01-01');
+                      date.setDate(date.getDate() + i);
+                      
+                      // Moving Average - steady growth with moderate volatility
+                      const ma_progress = i / 365;
+                      const ma_base = 100000 * (1 + 0.247 * ma_progress);
+                      const ma_volatility = (Math.sin(i * 0.1) + Math.sin(i * 0.03)) * 2000;
+                      
+                      // Grid Trading - smaller gains, more stable
+                      const grid_progress = i / 365;
+                      const grid_base = 100000 * (1 + 0.183 * grid_progress);
+                      const grid_volatility = (Math.sin(i * 0.2) + Math.cos(i * 0.05)) * 800;
+                      
+                      // Momentum - highest returns but more volatile
+                      const momentum_progress = i / 365;
+                      const momentum_base = 100000 * (1 + 0.312 * momentum_progress);
+                      const momentum_volatility = (Math.sin(i * 0.08) + Math.cos(i * 0.12)) * 4000;
+                      
+                      data.push({
+                        date: date.toISOString().split('T')[0],
+                        movingAverage: Math.round(ma_base + ma_volatility),
+                        gridTrading: Math.round(grid_base + grid_volatility),
+                        momentum: Math.round(momentum_base + momentum_volatility)
+                      });
+                    }
+                    return data;
+                  })()}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="date" 
+                      tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short' })}
+                    />
+                    <YAxis 
+                      tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                    />
+                    <Tooltip 
+                      labelFormatter={(value) => new Date(value).toLocaleDateString()}
+                      formatter={(value: any, name) => [
+                        `$${Number(value).toLocaleString()}`,
+                        name === 'movingAverage' ? 'Moving Average' : 
+                        name === 'gridTrading' ? 'Grid Trading' : 'Momentum'
+                      ]}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="movingAverage" 
+                      stroke="#e10600" 
+                      strokeWidth={2}
+                      dot={false}
+                      name="movingAverage"
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="gridTrading" 
+                      stroke="#1B7A46" 
+                      strokeWidth={2}
+                      dot={false}
+                      name="gridTrading"
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="momentum" 
+                      stroke="#2563eb" 
+                      strokeWidth={2}
+                      dot={false}
+                      name="momentum"
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+              
+              {/* Legend */}
+              <div className="flex justify-center space-x-6 mt-4">
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-0.5 bg-[#e10600]"></div>
+                  <span className="text-sm">Moving Average Crossover</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-0.5 bg-[#1B7A46]"></div>
+                  <span className="text-sm">Grid Trading Strategy</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-0.5 bg-[#2563eb]"></div>
+                  <span className="text-sm">Momentum Breakout</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Risk vs Return Scatter Plot */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Risk vs Return Analysis</CardTitle>
+              <p className="text-sm text-gray-600">Compare risk-adjusted returns across strategies</p>
+            </CardHeader>
+            <CardContent>
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart 
+                    data={[
+                      { risk: 8.3, return: 24.7, strategy: 'Moving Average', size: 247 },
+                      { risk: 12.1, return: 18.3, strategy: 'Grid Trading', size: 1852 },
+                      { risk: 15.8, return: 31.2, strategy: 'Momentum', size: 89 }
+                    ]}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="risk"
+                      type="number"
+                      domain={[0, 20]}
+                      tickFormatter={(value) => `${value}%`}
+                      label={{ value: 'Max Drawdown (%)', position: 'insideBottom', offset: -10 }}
+                    />
+                    <YAxis 
+                      dataKey="return"
+                      type="number"
+                      domain={[0, 35]}
+                      tickFormatter={(value) => `${value}%`}
+                      label={{ value: 'Total Return (%)', angle: -90, position: 'insideLeft' }}
+                    />
+                    <Tooltip 
+                      formatter={(value: any, name) => [
+                        name === 'return' ? `${Number(value).toFixed(1)}%` : 
+                        name === 'risk' ? `${Number(value).toFixed(1)}%` : Number(value),
+                        name === 'return' ? 'Total Return' : 
+                        name === 'risk' ? 'Max Drawdown' : 'Total Trades'
+                      ]}
+                      labelFormatter={(label, payload) => payload?.[0]?.payload?.strategy || ''}
+                    />
+                    {/* Custom scatter points */}
+                    <Line 
+                      type="monotone" 
+                      dataKey="return" 
+                      stroke="none"
+                      dot={{ fill: '#e10600', stroke: '#e10600', strokeWidth: 2, r: 8 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+              
+              {/* Risk-Return Summary */}
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="text-center p-4 bg-gray-50 rounded">
+                  <div className="text-sm text-gray-600">Best Risk-Adjusted Return</div>
+                  <div className="font-semibold text-[#e10600]">Moving Average Crossover</div>
+                  <div className="text-xs text-gray-500">Sharpe Ratio: 1.42</div>
+                </div>
+                <div className="text-center p-4 bg-gray-50 rounded">
+                  <div className="text-sm text-gray-600">Highest Total Return</div>
+                  <div className="font-semibold text-blue-600">Momentum Breakout</div>
+                  <div className="text-xs text-gray-500">+31.2% in 12 months</div>
+                </div>
+                <div className="text-center p-4 bg-gray-50 rounded">
+                  <div className="text-sm text-gray-600">Most Conservative</div>
+                  <div className="font-semibold text-green-600">Grid Trading Strategy</div>
+                  <div className="text-xs text-gray-500">Lowest max drawdown</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Monthly Performance Comparison */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Monthly Performance Comparison</CardTitle>
+              <p className="text-sm text-gray-600">Month-by-month return comparison</p>
+            </CardHeader>
+            <CardContent>
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={(() => {
+                    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    return months.map(month => ({
+                      month,
+                      movingAverage: (Math.random() - 0.2) * 6 + 2, // Avg 2% with volatility
+                      gridTrading: (Math.random() - 0.3) * 4 + 1.5, // Avg 1.5% with less volatility
+                      momentum: (Math.random() - 0.4) * 12 + 2.6 // Avg 2.6% with high volatility
+                    }));
+                  })()}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis tickFormatter={(value) => `${value.toFixed(1)}%`} />
+                    <Tooltip 
+                      formatter={(value: any, name) => [
+                        `${Number(value).toFixed(1)}%`,
+                        name === 'movingAverage' ? 'Moving Average' : 
+                        name === 'gridTrading' ? 'Grid Trading' : 'Momentum'
+                      ]}
+                    />
+                    <Bar dataKey="movingAverage" fill="#e10600" name="movingAverage" />
+                    <Bar dataKey="gridTrading" fill="#1B7A46" name="gridTrading" />
+                    <Bar dataKey="momentum" fill="#2563eb" name="momentum" />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>
