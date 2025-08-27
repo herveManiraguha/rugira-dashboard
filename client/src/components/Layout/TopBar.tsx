@@ -8,7 +8,6 @@ import { LiveIndicator } from "@/components/ui/live-indicator";
 import { LastUpdated } from "@/components/ui/last-updated";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { Bell, User, ChevronDown, StopCircle } from "lucide-react";
-import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface TopBarProps {
   onMenuToggle?: () => void;
@@ -95,9 +94,6 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
 
         {/* Top Bar Actions */}
         <div className="flex items-center space-x-2 md:space-x-4 overflow-visible">
-          {/* Theme Toggle */}
-          <ThemeToggle />
-          
           {/* Notifications */}
           <div className="relative" ref={notificationButtonRef}>
             <button 
