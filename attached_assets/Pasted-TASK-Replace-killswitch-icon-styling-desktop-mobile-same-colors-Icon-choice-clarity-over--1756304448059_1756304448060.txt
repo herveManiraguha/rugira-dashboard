@@ -1,0 +1,97 @@
+TASK — Replace killswitch icon & styling (desktop + mobile, same colors)
+
+Icon choice (clarity over the current “ban” symbol)
+
+Use a Stop Octagon as the base mark (international “stop” shape).
+
+Preferred: Octagon with an “X” inside (stroke).
+
+Acceptable alternates if needed: Octagon alone, or Square-Stop.
+
+Avoid: circle-slash (means “not allowed”), power symbol (means on/off, not emergency stop).
+
+Visual style (match Rugira’s refined, stroke-first language)
+
+Default container: subtle pill/lozenge, pale red wash (very light), soft shadow level-1, 12–14px radius.
+
+Icon treatment: stroke-only, 1.75–2px weight, corners slightly rounded.
+
+Sizing: 32–36px icon inside a 40–44px container (desktop). On compact toolbars, 28px inside 36px.
+
+States
+
+Safe (idle)
+
+Container: neutral wash (very light grey).
+
+Icon stroke: mid-neutral (not red yet).
+
+Tooltip: “Kill switch — hold to stop all trading”.
+
+Hover / Focus
+
+Container: pale red background; subtle elevate +1; cursor shows “danger/stop”.
+
+Icon stroke: brand red.
+
+Armed (press-and-hold in progress)
+
+Show a radial progress ring around the container (1200–1500 ms).
+
+Copy on hover: “Hold to confirm…”.
+
+Triggered
+
+Container: solid brand red; icon becomes white X in octagon.
+
+Brief “tick + fade” micro-animation (≤160 ms).
+
+Toast: “Trading halted. All bots stopped.”
+
+Disabled (nothing to stop / no perms)
+
+Container: neutral; icon 40% opacity; tooltip “Unavailable”.
+
+Micro-interactions
+
+Timing: 140–180 ms for hover/focus; 200–240 ms for modal/confirm.
+
+Easing: ease-out in; ease-in out.
+
+No bounce; 1–2px translate only.
+
+Accessibility & copy
+
+ARIA label: “Emergency kill switch — hold to stop all trading”.
+
+Keyboard: Shift + K triggers hold-to-confirm flow.
+
+Confirmation modal (after hold completes): title “Stop all trading?”, primary “Stop now”, secondary “Cancel”; note: “Halts all bots and new orders. Open orders remain per venue rules.”
+
+Placement
+
+Keep it in the top-right status cluster (next to bell).
+
+Add a thin left divider to separate it from routine status controls (Paper/OK/bell).
+
+In pages with dense actions (e.g., Bots), optionally mirror a small text link in the page header: “Stop all (kill switch)”.
+
+Color tokens (use existing palette; don’t introduce new hues)
+
+Neutral strokes/text: your 60–70% neutral.
+
+Pale red wash: your lightest brand-red tint for backgrounds.
+
+Brand red for emphasis and the Triggered fill.
+
+Acceptance checklist
+
+Icon is instantly read as STOP/EMERGENCY, not “ban”.
+
+Default state is calm; danger only on hover/armed/triggered.
+
+Press-and-hold prevents accidental taps; clear feedback ring.
+
+Works at 100% zoom on laptop header without crowding; readable at 28–36px.
+
+Tooltip, ARIA label, keyboard shortcut, and toast are present and consistent.

@@ -1,8 +1,9 @@
 import React from 'react';
-import { AlertTriangle, Ban, Clock } from 'lucide-react';
+import { AlertTriangle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useKillSwitch } from '@/hooks/useKillSwitch';
 import { cn } from '@/lib/utils';
+import OctagonX from '@/components/icons/OctagonX';
 
 interface KillSwitchBannerProps {
   className?: string;
@@ -43,7 +44,7 @@ export default function KillSwitchBanner({ className }: KillSwitchBannerProps) {
           {killSwitchState.scope === 'global' ? (
             <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
           ) : (
-            <Ban className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600" />
+            <OctagonX className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600" />
           )}
         </div>
         

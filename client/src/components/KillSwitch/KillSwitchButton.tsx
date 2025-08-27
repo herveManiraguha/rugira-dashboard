@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Ban, Power, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,9 +15,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
+import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useKillSwitch } from '@/hooks/useKillSwitch';
 import { useAuth } from '@/contexts/MockAuthContext';
+import OctagonX from '@/components/icons/OctagonX';
 import type { KillSwitchEngageRequest } from '@/../../shared/schema';
 
 interface KillSwitchButtonProps {
@@ -29,6 +31,13 @@ export default function KillSwitchButton({ className }: KillSwitchButtonProps) {
   const { killSwitchState, isLoading, engageKillSwitch, clearKillSwitch } = useKillSwitch();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [clearDialogOpen, setClearDialogOpen] = useState(false);
+  
+  // Press-and-hold state
+  const [isHolding, setIsHolding] = useState(false);
+  const [holdProgress, setHoldProgress] = useState(0);
+  const [isArmed, setIsArmed] = useState(false);
+  const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
   
   // Engage form state
   const [scope, setScope] = useState<'tenant' | 'global'>('tenant');
@@ -46,6 +55,14 @@ export default function KillSwitchButton({ className }: KillSwitchButtonProps) {
   const isActive = killSwitchState?.active;
   const canConfirmEngage = confirmText === 'PAUSE' && reason.trim() && (scope !== 'global' || globalConfirm);
   const canConfirmClear = clearConfirmText === 'RESUME';
+
+  // Get tooltip text based on state
+  const getTooltipText = () => {
+    if (!isAdmin) return "Unavailable";
+    if (isActive) return "Resume Trading - Clear Kill Switch";
+    if (isArmed) return "Hold to confirm…";
+    return "Kill switch — hold to stop all trading";
+  };
 
   const handleEngage = async () => {
     if (!canConfirmEngage || isLoading) return;
@@ -71,7 +88,9 @@ export default function KillSwitchButton({ className }: KillSwitchButtonProps) {
     try {
       await clearKillSwitch({ 
         scope: killSwitchState?.scope || 'tenant',
-        note: clearNote.trim() || undefined 
+        note: clearNote.trim() || undefined,
+        lastVerified: new Date(),
+        status: 'connected'
       });
       setClearDialogOpen(false);
       resetClearForm();
@@ -93,19 +112,153 @@ export default function KillSwitchButton({ className }: KillSwitchButtonProps) {
     setClearConfirmText('');
   };
 
+  // Press-and-hold functions
+  const handleHoldStart = () => {
+    if (isLoading || isActive) return;
+    
+    setIsHolding(true);
+    setHoldProgress(0);
+    setIsArmed(true);
+
+    // Progress animation (1400ms total)
+    const progressInterval = setInterval(() => {
+      setHoldProgress(prev => {
+        const next = prev + (100 / 70); // 70 intervals for 1400ms
+        if (next >= 100) {
+          clearInterval(progressInterval);
+          handleKillSwitchActivation();
+          return 100;
+        }
+        return next;
+      });
+    }, 20);
+
+    progressIntervalRef.current = progressInterval;
+
+    // Cleanup timer
+    holdTimerRef.current = setTimeout(() => {
+      handleHoldEnd();
+    }, 1400);
+  };
+
+  const handleHoldEnd = () => {
+    if (holdTimerRef.current) {
+      clearTimeout(holdTimerRef.current);
+      holdTimerRef.current = null;
+    }
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+    setIsHolding(false);
+    setHoldProgress(0);
+    setIsArmed(false);
+  };
+
+  const handleKillSwitchActivation = async () => {
+    try {
+      const request: KillSwitchEngageRequest = {
+        scope: 'tenant', // Default to tenant for quick activation
+        profile: 'soft', // Default to soft halt for emergency
+        reason: 'Emergency activation via kill switch'
+      };
+
+      await engageKillSwitch(request);
+      
+      toast({
+        title: "Trading halted",
+        description: "All bots stopped.",
+        variant: "destructive"
+      });
+      
+      // Brief tick animation effect
+      setTimeout(() => {
+        handleHoldEnd();
+      }, 160);
+      
+    } catch (error) {
+      console.error('Failed to engage kill switch:', error);
+      toast({
+        title: "Failed to halt trading",
+        description: "Please try again or use the detailed options.",
+        variant: "destructive"
+      });
+      handleHoldEnd();
+    }
+  };
+
+  // Keyboard shortcut (Shift + K)
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.shiftKey && event.key === 'K' && !isLoading && !isActive) {
+        event.preventDefault();
+        handleHoldStart();
+      }
+    };
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      if (event.key === 'Shift' || event.key === 'K') {
+        handleHoldEnd();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+      handleHoldEnd(); // Cleanup on unmount
+    };
+  }, [isLoading, isActive]);
+
+  // Progress ring component
+  const ProgressRing = ({ progress }: { progress: number }) => {
+    const radius = 18;
+    const strokeWidth = 2;
+    const normalizedRadius = radius - strokeWidth * 2;
+    const circumference = normalizedRadius * 2 * Math.PI;
+    const strokeDasharray = `${circumference} ${circumference}`;
+    const strokeDashoffset = circumference - (progress / 100) * circumference;
+
+    return (
+      <svg
+        className="absolute inset-0 transform -rotate-90"
+        width="40"
+        height="40"
+      >
+        <circle
+          stroke="#ef4444"
+          fill="transparent"
+          strokeWidth={strokeWidth}
+          strokeDasharray={strokeDasharray}
+          style={{ strokeDashoffset }}
+          r={normalizedRadius}
+          cx="20"
+          cy="20"
+        />
+      </svg>
+    );
+  };
+
   // Show disabled button for non-admins
   if (!isAdmin) {
     return (
-      <Button
-        variant="outline"
-        size="sm"
-        disabled
-        className={cn("text-gray-400 border-gray-300", className)}
-        title="Admin only"
-        data-testid="kill-switch-button-disabled"
-      >
-        <Ban className="h-4 w-4" />
-      </Button>
+      <div className="relative">
+        <button
+          disabled
+          className={cn(
+            "relative w-10 h-10 rounded-xl bg-gray-50 border border-gray-200 transition-all duration-200 cursor-not-allowed",
+            "flex items-center justify-center",
+            className
+          )}
+          title="Unavailable"
+          aria-label="Emergency kill switch — unavailable"
+          data-testid="kill-switch-button-disabled"
+        >
+          <OctagonX className="h-7 w-7 text-gray-400 opacity-40" />
+        </button>
+      </div>
     );
   }
 
@@ -114,16 +267,20 @@ export default function KillSwitchButton({ className }: KillSwitchButtonProps) {
     return (
       <Dialog open={clearDialogOpen} onOpenChange={setClearDialogOpen}>
         <DialogTrigger asChild>
-          <Button
-            variant="destructive"
-            size="sm"
-            className={cn("bg-red-600 hover:bg-red-700 text-white font-semibold min-h-[32px] px-2 sm:px-3", className)}
-            title="Resume Trading - Clear Kill Switch"
-            data-testid="kill-switch-button-active"
-          >
-            <Power className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
-            <span className="truncate text-xs sm:text-sm">TRADING HALTED</span>
-          </Button>
+          <div className="relative">
+            <button
+              className={cn(
+                "relative w-10 h-10 rounded-xl bg-red-600 hover:bg-red-700 transition-all duration-200 shadow-lg",
+                "flex items-center justify-center cursor-pointer",
+                className
+              )}
+              title={getTooltipText()}
+              aria-label="Emergency kill switch — trading halted, click to resume"
+              data-testid="kill-switch-button-active"
+            >
+              <OctagonX className="h-7 w-7 text-white" />
+            </button>
+          </div>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -196,21 +353,51 @@ export default function KillSwitchButton({ className }: KillSwitchButtonProps) {
     );
   }
 
-  // Show engage button when inactive
+  // Show engage button when inactive - press-and-hold to activate
   return (
-    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className={cn("border-red-300 text-red-600 hover:bg-red-50 min-h-[32px] p-2", className)}
-          title="Emergency Kill Switch"
+    <>
+      <div className="relative">
+        <button
+          className={cn(
+            "relative w-10 h-10 rounded-xl transition-all duration-200 shadow-sm",
+            "flex items-center justify-center cursor-pointer",
+            // Safe (idle) state
+            !isArmed && !isHolding && "bg-gray-50 border border-gray-200 hover:bg-red-50 hover:border-red-200",
+            // Armed/Holding state  
+            (isArmed || isHolding) && "bg-red-50 border border-red-300 shadow-md scale-105",
+            className
+          )}
+          style={{ cursor: isArmed ? 'progress' : 'pointer' }}
+          title={getTooltipText()}
+          aria-label="Emergency kill switch — hold to stop all trading"
           data-testid="kill-switch-button-inactive"
+          onMouseDown={handleHoldStart}
+          onMouseUp={handleHoldEnd}
+          onMouseLeave={handleHoldEnd}
+          onTouchStart={handleHoldStart}
+          onTouchEnd={handleHoldEnd}
+          disabled={isLoading}
         >
-          <Ban className="h-4 w-4" />
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+          <OctagonX 
+            className={cn(
+              "h-7 w-7 transition-colors duration-200",
+              // Safe state colors
+              !isArmed && !isHolding && "text-gray-500",
+              // Armed state colors
+              (isArmed || isHolding) && "text-red-600"
+            )} 
+          />
+          {/* Progress ring when holding */}
+          {isHolding && <ProgressRing progress={holdProgress} />}
+        </button>
+      </div>
+
+      {/* Keep detailed configuration dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogTrigger asChild>
+          <button className="hidden" />
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2 text-base sm:text-lg">
             <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-red-600" />
@@ -329,7 +516,8 @@ export default function KillSwitchButton({ className }: KillSwitchButtonProps) {
             {isLoading ? 'Engaging...' : 'Engage Kill Switch'}
           </Button>
         </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
