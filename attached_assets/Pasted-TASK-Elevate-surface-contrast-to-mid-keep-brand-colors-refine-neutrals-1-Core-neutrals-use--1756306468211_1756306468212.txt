@@ -1,0 +1,110 @@
+TASK — Elevate surface contrast to “mid” (keep brand colors; refine neutrals)
+1) Core neutrals (use these HEX tokens)
+
+Canvas / App background: #F1F3F5 (cool light grey for clear separation from white cards)
+
+Sidebar / Panel background: #EEF1F4 (one step darker than canvas)
+
+Navbar background: #FFFFFF
+
+Footer background: #F6F7F9
+
+Card / Surface default: #FFFFFF
+
+Table header / Sub-surface: #FAFBFC
+
+Input field background: #FAFBFC
+
+Hover surface tint (rows, list items): #F7F9FC
+
+2) Dividers & borders (make edges read on bad screens)
+
+Hairline divider (inside cards/rows): #E7ECF2
+
+Card/Panel outer border (1px): #D9E0E8
+
+Strong divider (section seams, sticky bars): #CBD5E1
+
+Focus ring (neutral version): #C9D6F2 (very light bluish-grey halo)
+
+Navbar bottom rule: #E3E8EF (subtle, always visible)
+
+3) Text neutrals (keep your current “shades of black” idea, just nudge)
+
+Headings / Strong: #0E0F11
+
+Body / Default: #2F343A
+
+Secondary: #475467
+
+Muted / Meta: #667085
+
+Disabled: #98A2B3
+
+(These suppress the “washed” look on pale backgrounds without going harsh.)
+
+4) Interactive & state tints (same brand hues, better legibility)
+
+Keep your brand red/green/blue for icons, lines, and solid buttons. Update the tinted backgrounds behind chips, badges, and subtle states so they read on low-contrast screens:
+
+Positive (bg / text / border): #ECFDF3 / #146C43 / #ABEFC6
+
+Warning: #FFF7E6 / #B54708 / #FCD58B
+
+Error: #FEEDEC / #B42318 / #F4C7C5
+
+Info / Neutral: #EEF6FF / #1D5BBF / #C7DDFB
+
+5) Where to apply (so contrast is consistent)
+
+App background → #F1F3F5.
+
+Left sidebar rail → #EEF1F4 (keeps it distinct from cards without a heavy border).
+
+Top navbar stays #FFFFFF with a visible #E3E8EF bottom rule.
+
+Cards, charts, and stats → #FFFFFF with #D9E0E8 outer border and #E7ECF2 internal dividers.
+
+Tables: header cells on #FAFBFC, body rows #FFFFFF; row hover #F7F9FC; gridlines #E7ECF2.
+
+Inputs: background #FAFBFC, border #D9E0E8; focus ring #C9D6F2 + brand tint where appropriate.
+
+Footer: #F6F7F9 plus a top rule #E3E8EF for crisp separation.
+
+6) Buttons & clickable elements (keep hierarchy, boost clarity)
+
+Primary buttons: unchanged (brand red fill, white text).
+
+Secondary/Outline: white background, #D9E0E8 border by default; on hover use #F7F9FC background so outlines don’t disappear.
+
+Ghost/Icon buttons: default on #FFFFFF with icon/text #2F343A; hover background #F7F9FC.
+
+7) Charts (subtle but readable)
+
+Plot area: #FFFFFF
+
+Gridlines: #E7ECF2 (major) / #EEF2F6 (minor)
+
+Axes labels: #667085
+
+Legend text: #475467
+
+Lines/bars keep your brand colors; this neutral set makes them pop without extra saturation.
+
+8) Overlays & toasts
+
+Modal backdrop: neutral black at ~30–36% with #FFFFFF modal on card styling (border #D9E0E8).
+
+Toast background: #FFFFFF with border #D9E0E8; icon uses state tints above.
+
+9) Acceptance checklist (visual test)
+
+With screen brightness at ~60% and no True Tone/Night Shift, cards clearly “float” on the canvas without feeling heavy.
+
+Sidebar, navbar, and footer are visually distinct from both the canvas and the cards.
+
+Table rows, inputs, and ghost buttons show obvious hover/focus states.
+
+Status chips remain pale but legible; text on tinted chips meets AA against its background.
+
+No element uses a border lighter than #E7ECF2 or darker than #CBD5E1 unless it’s a deliberate emphasis.
