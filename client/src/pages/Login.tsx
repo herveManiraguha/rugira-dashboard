@@ -107,7 +107,7 @@ export default function Login() {
                   required
                   disabled={isLoading}
                   data-testid="input-username"
-                  className="h-11 sm:h-12 text-base" // Larger touch targets
+                  className="h-11 sm:h-12 text-base border border-gray-300 dark:border-gray-600 focus:border-[#E10600] focus:ring-1 focus:ring-[#E10600]" // Larger touch targets with borders
                 />
               </div>
 
@@ -123,7 +123,7 @@ export default function Login() {
                     required
                     disabled={isLoading}
                     data-testid="input-password"
-                    className="pr-12 h-11 sm:h-12 text-base" // Larger touch targets
+                    className="pr-12 h-11 sm:h-12 text-base border border-gray-300 dark:border-gray-600 focus:border-[#E10600] focus:ring-1 focus:ring-[#E10600]" // Larger touch targets with borders
                   />
                   <button
                     type="button"
