@@ -64,9 +64,9 @@ export default function Sidebar() {
           </li>
           <li>
             <Link
-              to="/exchanges"
-              className={`nav-item flex items-center space-x-3 px-3 py-2 text-sm ${isActive('/exchanges') ? 'active' : ''}`}
-              data-testid="nav-exchanges"
+              to="/venues"
+              className={`nav-item flex items-center space-x-3 px-3 py-2 text-sm ${isActive('/venues') ? 'active' : ''}`}
+              data-testid="nav-venues"
             >
               <i className="fas fa-building w-5"></i>
               <span>Venues</span>

@@ -75,7 +75,7 @@ function App() {
             </ProtectedRoute>
           </Route>
           
-          <Route path="/exchanges">
+          <Route path="/venues">
             <ProtectedRoute>
               <MainLayout>
                 <Venues />
