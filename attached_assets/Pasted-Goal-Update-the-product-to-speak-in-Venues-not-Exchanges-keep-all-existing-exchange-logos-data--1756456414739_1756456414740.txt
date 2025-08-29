@@ -1,0 +1,149 @@
+Goal
+Update the product to speak in Venues (not “Exchanges”), keep all existing exchange logos/data intact, and add a second section for Tokenized Venues with realistic, demo-ready placeholders. No backend refactor; UI/labels + mocked data only.
+
+1) Global renames (UI labels only)
+
+Sidebar: Exchanges → Venues.
+
+Page title: Exchange Connections → Venue Connections.
+
+Buttons: Add Exchange → Add Venue.
+
+Filters, column headers, CSV exports, Compliance/Reports filters: replace “Exchange” with “Venue.”
+
+In Bots list/details: field Exchange → Venue; add a read-only field Route via (e.g., Direct, InCore (participant), Member broker).
+
+2) Venues page layout
+
+Keep all current exchange tiles (Binance, Coinbase Pro, Kraken, Bybit, OKX, KuCoin) in a section titled Crypto Exchanges (unchanged logos/data).
+
+Add a second section titled Tokenized Venues with these cards (use logos if available; otherwise neutral placeholders):
+
+A) BX Digital (via InCore)
+
+Subtitle: Tokenized Venue — routed via InCore (participant)
+
+Chips: Venue type: DLT-TF • Connectivity: FIX + Drop-copy • Route via: InCore • Eligibility: Pro/Inst • Status: Pilot-ready (Paper)
+
+Actions: Open Venue (panel) • Docs (links to our internal help)
+
+Footnote: “Orders routed via InCore participant connectivity; Rugirinka enforces pre-trade limits and reconciles via drop-copy (T+0).”
+
+B) SDX (via member broker)
+
+Chips: Venue type: Exchange + CSD • Connectivity: FIX + Drop-copy • Route via: Member broker • Eligibility: Pro/Inst • Status: Coming soon (Paper)
+
+Action: Open Venue (panel in read-only preview)
+
+C) Taurus TDX (OTF)
+
+Chips: Venue type: OTF • Connectivity: API/FIX • Route via: Partner bank/broker • Eligibility: Pro/Retail • Status: Partner route (Paper)
+
+Action: Open Venue
+
+D) Issuer Platforms (RWA Funds) — show two mini cards side-by-side:
+
+Securitize (e.g., BUIDL) — Venue type: Issuer Platform • Connectivity: API • Route via: Custodian/bank • Eligibility: Qualified/Pro • Status: Issuer-led (external)
+
+Franklin (BENJI) — same chip pattern as above
+
+Action: Learn more (opens our Help article)
+
+Top-of-page helper text (one line):
+“Venues lists all routable markets. Tokenized venues are accessed directly or via a participant (e.g., InCore). Rugirinka applies pre-trade limits, audit logging, and drop-copy/T+0 reconciliation where available.”
+
+3) “Open Venue” panel (for BX Digital; similar for others)
+
+Create a right-side panel with tabs and mocked content:
+
+Overview: short description + chips repeated; Trading hours: “Per venue calendar”; Paper/Live badge (Paper).
+
+Connectivity: read-only values (mask the sensitive parts): SenderCompID=RUGIRA-SIM, TargetCompID=BX-SIM, Heartbeats OK, Gap 0, Last HB 00:00:07.
+
+Eligibility: “Pro/Institutional; ISIN allow-list; no leverage; limit-only.”
+
+Instruments (table, 3 rows):
+
+ISIN-TEST-001 | “Alpha Equity Token” | Equity | CHF | Tick 0.01
+
+ISIN-TEST-002 | “Bravo Bond Token 2028” | Bond | CHF | Tick 0.01
+
+ISIN-TEST-003 | “Charlie Fund Token” | Fund | CHF | Tick 0.01
+
+Routing Policy: Order types: Limit/Day only • Max notional/order: CHF 1,000 (Paper) • Daily turnover cap: 0.6× AUC • Throttle: 1/sec.
+
+Logs (mock): last 5 lines of ExecutionReport and Drop-copy with timestamps (use believable FIX tags, not real secrets).
+
+Replicate the same panel for SDX (read-only preview) and TDX (API/FIX supported) with copy adjusted to their chips.
+
+4) Bots updates (mocked only)
+
+In Bots table add columns/fields: Venue and Route via.
+
+Add one example bot: DLT-BX-01 (Paper)
+
+Strategy: “DLT Conservative (windowed TWAP)” (Risk: Low; Maker-Checker: Enabled)
+
+Venue: BX Digital (via InCore)
+
+Route via: InCore (participant)
+
+Add a Send test order (Paper) button → simulate a small Limit order (CHF 500).
+
+On click, show: pre-trade check passed → simulated FIX NewOrderSingle → ExecutionReport (partial/filled) → drop-copy entry → success toast.
+
+5) Reports additions (mocked)
+
+On Reports & Analytics, add a small card “T+0 Reconciliation” with a filter by Venue.
+
+For BX Digital (via InCore) show: Matched: 1 • Unmatched: 0 (Paper).
+
+Provide Export CSV (mock) with columns: Venue, OrderID, ExecID, Qty, Price, Side, MatchStatus, Timestamp.
+
+6) Compliance seeds (mocked)
+
+On Compliance → Alerts Inbox, add two seeded items with Venue field:
+
+High — “Daily loss limit exceeded (blocked pre-trade)” — Venue: BX Digital (via InCore) — Resolved
+
+Low — “Position size limit approached” — Venue: BX Digital (via InCore) — Acknowledged
+
+7) Help → FAQ pins
+
+Pin/update 3 FAQs at the top:
+
+“What venues are supported?” (list Crypto Exchanges + Tokenized Venues as above)
+
+“How does drop-copy/T+0 reconciliation work?” (short explainer)
+
+“What does ‘Route via InCore (participant)’ mean?” (one-liner: “Orders are sent via InCore’s participant connectivity; Rugirinka does not provide custody.”)
+
+8) Filters & search on Venues page
+
+Add pills to filter by: Venue type (CEX, DLT-TF, OTF, Exchange+CSD, Issuer Platform), Connectivity (API, FIX, FIX+Drop-copy), Eligibility (Retail, Pro, Inst, Qualified), Status (Connected, Ready, Pilot-ready, Coming soon). Keep search bar working across both sections.
+
+9) Demo-safe behavior
+
+Everything runs in Paper; do not attempt real connectivity.
+
+Heartbeats, drop-copy, and logs are mocked with realistic timestamps.
+
+Do not alter existing exchange data/logos; only add the new section and panels.
+
+Keep the Kraken error tile exactly as is (if present).
+
+10) Acceptance criteria (visual + functional)
+
+Sidebar reads Venues; page title is Venue Connections; Crypto Exchanges section displays existing tiles unchanged.
+
+Tokenized Venues section shows 4 cards as specified; BX Digital opens a panel with the 6 tabs and mocked content.
+
+Bots shows DLT-BX-01 (Paper) with Venue and Route via fields, and the Send test order (Paper) simulates a limit order and produces a log line.
+
+Reports shows T+0 Reconciliation card with Matched: 1 • Unmatched: 0 for BX Digital (via InCore) and CSV export works (mock).
+
+Compliance lists the two seeded alerts with the Venue field visible.
+
+No backend errors; existing exchange tiles and data remain intact.
+
+End of prompt.
