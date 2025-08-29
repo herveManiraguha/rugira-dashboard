@@ -8,6 +8,26 @@ Rugira is a professional trading bot management dashboard built as a Single Page
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes (Dec 29, 2024)
+
+### Comprehensive "Exchanges" to "Venues" Rename
+- **Global UI Terminology Update**: Renamed all "Exchanges" references to "Venues" throughout the application
+- **Sidebar Navigation**: Updated navigation from "Exchanges" to "Venues"
+- **Page Title**: Changed from "Exchange Connections" to "Venue Connections"
+- **Button Labels**: Updated "Add Exchange" to "Add Venue" across all interfaces
+- **New Tokenized Venues Section**: Added comprehensive support for tokenized trading venues
+  - BX Digital (via InCore participant) with FIX + Drop-copy connectivity
+  - SDX (via member broker) - Coming soon
+  - Taurus TDX (OTF) with API/FIX support
+  - Issuer Platforms (RWA Funds): Securitize and Franklin
+- **Venue Details Panel**: Created interactive right-side panel with tabs for Overview, Connectivity, and Instruments
+- **Bot Updates**: Added "Venue" and "Route via" fields to bot listings
+  - Added DLT-BX-01 (Paper) bot for tokenized venue testing
+  - Implemented "Send test order (Paper)" functionality for BX Digital venue
+- **T+0 Reconciliation**: Added reconciliation card in Reports page with venue filtering
+- **Compliance Integration**: Updated alerts to include venue field for tokenized venue monitoring
+- **Help Documentation**: Updated FAQs with venue-specific questions and drop-copy/reconciliation explanations
+
 ## Recent Changes (Aug 27, 2025)
 
 ### Production-Ready Mocked Backend Implementation

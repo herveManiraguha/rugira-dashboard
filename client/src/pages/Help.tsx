@@ -36,14 +36,24 @@ export default function Help() {
   
   const faqs: FAQItem[] = [
     {
-      question: "How do I create my first trading bot?",
-      answer: "To create your first trading bot, navigate to the Bots section, click 'Create Bot', select a strategy template, configure your parameters, and connect to an exchange. Start with paper trading to test your configuration before going live.",
+      question: "What venues are supported?",
+      answer: "Rugira supports two types of venues: Crypto Exchanges (Binance, Coinbase Pro, Kraken, Bybit, OKX, KuCoin) with direct API connectivity, and Tokenized Venues including BX Digital (via InCore participant), SDX (via member broker), Taurus TDX (OTF), and Issuer Platforms like Securitize and Franklin for RWA funds. Each venue has specific connectivity requirements and eligibility criteria.",
       category: 'getting-started'
     },
     {
-      question: "What exchanges are supported?",
-      answer: "Rugira currently supports Binance, Coinbase Pro, Kraken, and FTX. Each exchange requires API keys with trade-only permissions for security. You can manage your exchange connections in the Exchanges section.",
+      question: "How does drop-copy/T+0 reconciliation work?",
+      answer: "Drop-copy provides real-time trade confirmations directly from the venue, enabling T+0 (same-day) reconciliation. For tokenized venues like BX Digital, Rugirinka receives execution reports via FIX drop-copy, automatically matching them against your orders to ensure all trades are properly accounted for within the same trading day. This provides immediate confirmation and reduces settlement risk.",
+      category: 'technical'
+    },
+    {
+      question: "What does 'Route via InCore (participant)' mean?",
+      answer: "Orders are sent via InCore's participant connectivity to access tokenized venues. Rugirinka does not provide custody - your assets remain with your chosen custodian while we handle order routing and execution through InCore's infrastructure.",
       category: 'trading'
+    },
+    {
+      question: "How do I create my first trading bot?",
+      answer: "To create your first trading bot, navigate to the Bots section, click 'Create Bot', select a strategy template, configure your parameters, and connect to a venue. Start with paper trading to test your configuration before going live.",
+      category: 'getting-started'
     },
     {
       question: "How do I interpret the performance metrics?",

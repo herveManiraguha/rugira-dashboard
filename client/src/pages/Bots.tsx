@@ -32,7 +32,8 @@ import {
   Zap,
   Shield,
   Search,
-  Filter
+  Filter,
+  Send
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -47,21 +48,40 @@ interface BotData {
   name: string;
   strategy: string;
   status: 'running' | 'stopped' | 'error';
-  exchange: string;
+  venue: string;  // Changed from exchange to venue
+  routeVia?: string;  // New field for routing
   pair: string;
   pnl24h: number;
   totalPnl: number;
   uptime: string;
   lastTrade: string;
+  riskLevel?: 'Low' | 'Medium' | 'High';
+  makerChecker?: boolean;
 }
 
 const mockBots: BotData[] = [
+  {
+    id: 'dlt-bx-01',
+    name: 'DLT-BX-01 (Paper)',
+    strategy: 'DLT Conservative (windowed TWAP)',
+    status: 'running',
+    venue: 'BX Digital (via InCore)',
+    routeVia: 'InCore (participant)',
+    pair: 'ISIN-TEST-001/CHF',
+    pnl24h: 0,
+    totalPnl: 0,
+    uptime: '0h 5m',
+    lastTrade: 'Never',
+    riskLevel: 'Low',
+    makerChecker: true
+  },
   {
     id: '1',
     name: 'Alpha Grid Bot',
     strategy: 'Grid Trading',
     status: 'running',
-    exchange: 'Binance',
+    venue: 'Binance',
+    routeVia: 'Direct',
     pair: 'BTC/USDT',
     pnl24h: 247.83,
     totalPnl: 1247.83,
@@ -73,7 +93,8 @@ const mockBots: BotData[] = [
     name: 'Beta Arbitrage',
     strategy: 'Arbitrage',
     status: 'running',
-    exchange: 'Coinbase Pro',
+    venue: 'Coinbase Pro',
+    routeVia: 'Direct',
     pair: 'ETH/USD',
     pnl24h: -45.20,
     totalPnl: 892.41,
@@ -85,7 +106,8 @@ const mockBots: BotData[] = [
     name: 'Gamma Momentum',
     strategy: 'Momentum',
     status: 'error',
-    exchange: 'Kraken',
+    venue: 'Kraken',
+    routeVia: 'Direct',
     pair: 'SOL/EUR',
     pnl24h: 0,
     totalPnl: -125.67,
@@ -97,7 +119,8 @@ const mockBots: BotData[] = [
     name: 'Delta Mean Reversion',
     strategy: 'Mean Reversion',
     status: 'stopped',
-    exchange: 'Binance',
+    venue: 'Binance',
+    routeVia: 'Direct',
     pair: 'ADA/USDT',
     pnl24h: 0,
     totalPnl: 456.78,
@@ -109,7 +132,8 @@ const mockBots: BotData[] = [
     name: 'Epsilon DCA Bot',
     strategy: 'DCA',
     status: 'running',
-    exchange: 'Bybit',
+    venue: 'Bybit',
+    routeVia: 'Direct',
     pair: 'MATIC/USDT',
     pnl24h: 125.40,
     totalPnl: 890.32,
@@ -121,7 +145,8 @@ const mockBots: BotData[] = [
     name: 'Zeta Futures Bot',
     strategy: 'Futures Hedging',
     status: 'running',
-    exchange: 'OKX',
+    venue: 'OKX',
+    routeVia: 'Direct',
     pair: 'DOGE/USDT',
     pnl24h: 98.76,
     totalPnl: 654.21,
@@ -133,7 +158,8 @@ const mockBots: BotData[] = [
     name: 'Theta Scalping',
     strategy: 'Scalping',
     status: 'running',
-    exchange: 'KuCoin',
+    venue: 'KuCoin',
+    routeVia: 'Direct',
     pair: 'LINK/USDT',
     pnl24h: 76.89,
     totalPnl: 432.10,
@@ -143,9 +169,10 @@ const mockBots: BotData[] = [
   {
     id: '8',
     name: 'Iota Cross Bot',
-    strategy: 'Cross Exchange',
+    strategy: 'Cross Venue',
     status: 'stopped',
-    exchange: 'Gate.io',
+    venue: 'Gate.io',
+    routeVia: 'Direct',
     pair: 'UNI/USDT',
     pnl24h: 0,
     totalPnl: 234.56,
@@ -157,7 +184,8 @@ const mockBots: BotData[] = [
     name: 'Kappa Range Bot',
     strategy: 'Range Trading',
     status: 'running',
-    exchange: 'Bitfinex',
+    venue: 'Bitfinex',
+    routeVia: 'Direct',
     pair: 'LTC/USD',
     pnl24h: 156.78,
     totalPnl: 1089.45,
@@ -169,7 +197,8 @@ const mockBots: BotData[] = [
     name: 'Lambda Swing Bot',
     strategy: 'Swing Trading',
     status: 'error',
-    exchange: 'Gemini',
+    venue: 'Gemini',
+    routeVia: 'Direct',
     pair: 'BTC/USD',
     pnl24h: 0,
     totalPnl: -89.12,
@@ -180,6 +209,7 @@ const mockBots: BotData[] = [
 
 export default function Bots() {
   const isMobile = useIsMobile();
+  const { toast } = useToast();
   const [selectedBots, setSelectedBots] = useState<BotData[]>([]);
   const [selectedBotIds, setSelectedBotIds] = useState<Set<string>>(new Set());
   const [filters, setFilters] = useState<string[]>([]);
@@ -203,6 +233,18 @@ export default function Bots() {
     setBots(prevBots => prevBots.filter(bot => bot.id !== botId));
   };
 
+  const handleSendTestOrder = (botId: string) => {
+    const bot = bots.find(b => b.id === botId);
+    if (bot && bot.venue.includes('BX Digital')) {
+      toast({
+        title: "Test Order Sent (Paper)",
+        description: "Pre-trade check passed → FIX NewOrderSingle → ExecutionReport (partial filled) → Drop-copy confirmed → Success",
+        duration: 5000
+      });
+      console.log('Test order sent for bot:', botId);
+    }
+  };
+
   const handleCreateBot = (botData: any) => {
     console.log('Creating bot:', botData);
     const newBot: BotData = {
@@ -214,11 +256,12 @@ export default function Bots() {
                 botData.strategy === 'dca' ? 'DCA' :
                 botData.strategy === 'momentum' ? 'Momentum' : 'Custom',
       status: 'stopped',
-      exchange: botData.exchange === 'binance' ? 'Binance' :
+      venue: botData.exchange === 'binance' ? 'Binance' :
                 botData.exchange === 'coinbase' ? 'Coinbase Pro' :
                 botData.exchange === 'kraken' ? 'Kraken' :
                 botData.exchange === 'bybit' ? 'Bybit' :
                 botData.exchange === 'okx' ? 'OKX' : botData.exchange,
+      routeVia: 'Direct',
       pair: botData.tradingPair || 'BTC/USDT',
       pnl24h: 0,
       totalPnl: 0,
@@ -272,7 +315,7 @@ export default function Bots() {
         return (
           bot.name.toLowerCase().includes(searchLower) ||
           bot.strategy.toLowerCase().includes(searchLower) ||
-          bot.exchange.toLowerCase().includes(searchLower) ||
+          bot.venue.toLowerCase().includes(searchLower) ||
           bot.pair.toLowerCase().includes(searchLower)
         );
       });
@@ -288,7 +331,7 @@ export default function Bots() {
           const filterValue = filter.value.toLowerCase();
           return (
             bot.status.toLowerCase().includes(filterValue) ||
-            bot.exchange.toLowerCase().includes(filterValue)
+            bot.venue.toLowerCase().includes(filterValue)
           );
         });
       });
@@ -361,16 +404,28 @@ export default function Bots() {
       cell: (bot) => getStatusBadge(bot.status)
     },
     {
-      id: 'exchange',
-      header: 'Exchange',
-      accessorKey: 'exchange',
+      id: 'venue',
+      header: 'Venue',
+      accessorKey: 'venue',
       sortable: true,
       filterable: true,
       priority: 'medium',
       cell: (bot) => (
         <div className="min-w-0">
-          <div className="font-medium text-sm truncate">{bot.exchange}</div>
+          <div className="font-medium text-sm truncate">{bot.venue}</div>
           <div className="text-xs text-gray-500 truncate">{bot.pair}</div>
+        </div>
+      )
+    },
+    {
+      id: 'routeVia',
+      header: 'Route via',
+      accessorKey: 'routeVia',
+      sortable: true,
+      priority: 'low',
+      cell: (bot) => (
+        <div className="text-sm text-gray-600">
+          {bot.routeVia || 'Direct'}
         </div>
       )
     },
@@ -444,6 +499,14 @@ export default function Bots() {
               <Settings className="h-4 w-4 mr-2" />
               Configure
             </DropdownMenuItem>
+            {bot.venue.includes('BX Digital') && (
+              <DropdownMenuItem 
+                onClick={() => handleSendTestOrder(bot.id)}
+              >
+                <Send className="h-4 w-4 mr-2" />
+                Send test order (Paper)
+              </DropdownMenuItem>
+            )}
             <DropdownMenuSeparator />
             <DropdownMenuItem 
               onClick={() => handleDeleteBot(bot.id)}
@@ -777,8 +840,8 @@ function BotCardsView({ bots, onStartBot, onStopBot, onDeleteBot, getStatusBadge
                   <p className="font-semibold">{bot.strategy}</p>
                 </div>
                 <div>
-                  <span className="text-gray-500">Exchange</span>
-                  <p className="font-semibold">{bot.exchange}</p>
+                  <span className="text-gray-500">Venue</span>
+                  <p className="font-semibold">{bot.venue}</p>
                 </div>
               </div>
               <div className="mt-2 pt-2 border-t">

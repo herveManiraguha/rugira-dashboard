@@ -14,6 +14,7 @@ interface ComplianceAlert {
   severity: 'high' | 'medium' | 'low';
   reason: string;
   impactedBot: string;
+  venue?: string;
   timestamp: string;
   status: 'open' | 'acknowledged' | 'resolved';
   details: string;
@@ -32,10 +33,10 @@ export default function Compliance() {
   // Generate comprehensive compliance alerts
   const generateComplianceAlerts = (): ComplianceAlert[] => {
     const alertTypes = [
+      { reason: 'Daily loss limit exceeded (blocked pre-trade)', severity: 'high' as const, details: 'Bot exceeded maximum daily loss threshold of 5%', venue: 'BX Digital (via InCore)' },
+      { reason: 'Position size limit approached', severity: 'low' as const, details: 'Bot approaching 90% of maximum position size', venue: 'BX Digital (via InCore)' },
       { reason: 'KYT risk detected', severity: 'medium' as const, details: 'Transaction flagged by compliance screening' },
-      { reason: 'Position size limit approached', severity: 'low' as const, details: 'Bot approaching 90% of maximum position size' },
       { reason: 'Unusual trading pattern detected', severity: 'high' as const, details: 'Abnormal volume spike detected in trading behavior' },
-      { reason: 'Daily loss limit exceeded', severity: 'high' as const, details: 'Bot exceeded maximum daily loss threshold of 5%' },
       { reason: 'AML screening triggered', severity: 'high' as const, details: 'Counterparty address flagged in sanctions database' },
       { reason: 'Regulatory reporting required', severity: 'medium' as const, details: 'Large transaction requires regulatory filing' },
       { reason: 'Market manipulation risk', severity: 'high' as const, details: 'Trading pattern may appear as market manipulation' },
@@ -67,8 +68,9 @@ export default function Compliance() {
         severity: alert.severity,
         reason: alert.reason,
         impactedBot: bots[botIndex],
+        venue: alert.venue,
         timestamp: new Date(Date.now() - (hoursAgo * 3600000)).toISOString(),
-        status: statuses[statusIndex],
+        status: statuses[statusIndex === 0 && index < 2 ? 2 : statusIndex],
         details: alert.details
       };
     });
@@ -194,6 +196,7 @@ export default function Compliance() {
                     <TableHead>Severity</TableHead>
                     <TableHead>Reason</TableHead>
                     <TableHead>Impacted Bot</TableHead>
+                    <TableHead>Venue</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Timestamp</TableHead>
                     <TableHead>Actions</TableHead>
@@ -205,6 +208,7 @@ export default function Compliance() {
                       <TableCell>{getSeverityBadge(alert.severity)}</TableCell>
                       <TableCell className="font-medium">{alert.reason}</TableCell>
                       <TableCell>{alert.impactedBot}</TableCell>
+                      <TableCell>{alert.venue || '-'}</TableCell>
                       <TableCell>{getStatusBadge(alert.status)}</TableCell>
                       <TableCell className="text-sm text-gray-500">
                         {new Date(alert.timestamp).toLocaleString()}

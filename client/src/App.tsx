@@ -14,7 +14,7 @@ import AuthCallback from "@/pages/AuthCallback";
 import Overview from "@/pages/Overview";
 import DemoOverview from "@/pages/DemoOverview";
 import Strategies from "@/pages/Strategies";
-import Exchanges from "@/pages/Exchanges";
+import Venues from "@/pages/Venues";
 import Compliance from "@/pages/Compliance";
 import Reports from "@/pages/Reports";
 import Backtesting from "@/pages/Backtesting";
@@ -78,7 +78,7 @@ function App() {
           <Route path="/exchanges">
             <ProtectedRoute>
               <MainLayout>
-                <Exchanges />
+                <Venues />
               </MainLayout>
             </ProtectedRoute>
           </Route>

@@ -403,7 +403,7 @@ export default function AddExchangeModal({ isOpen, onClose, onSubmit }: AddExcha
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <Plus className="w-5 h-5" />
-            <span>Add Exchange Connection</span>
+            <span>Add Venue Connection</span>
           </DialogTitle>
           <DialogDescription>
             Connect a new cryptocurrency exchange to enable automated trading. Your API credentials are encrypted and stored securely.
@@ -639,7 +639,7 @@ export default function AddExchangeModal({ isOpen, onClose, onSubmit }: AddExcha
                           ) : (
                             <>
                               <CheckCircle className="w-4 h-4 mr-2" />
-                              Add Exchange Connection
+                              Add Venue Connection
                             </>
                           )}
                         </Button>

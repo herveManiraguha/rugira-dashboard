@@ -5,7 +5,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { BarChart3, TrendingUp, Download, Calendar, DollarSign, Target, Clock } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { BarChart3, TrendingUp, Download, Calendar, DollarSign, Target, Clock, CheckCircle, XCircle } from "lucide-react";
 import { useDemoMode } from "@/contexts/DemoContext";
 import SampleExportModal from "@/components/Demo/SampleExportModal";
 import { 
@@ -285,6 +286,51 @@ export default function Reports() {
               </CardContent>
             </Card>
           </div>
+
+          {/* T+0 Reconciliation Card */}
+          <Card>
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle>T+0 Reconciliation</CardTitle>
+                <Select defaultValue="bx-digital">
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="Select Venue" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="bx-digital">BX Digital (via InCore)</SelectItem>
+                    <SelectItem value="sdx">SDX (via member broker)</SelectItem>
+                    <SelectItem value="taurus-tdx">Taurus TDX (OTF)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="text-center p-4 bg-green-50 rounded-lg">
+                  <CheckCircle className="h-8 w-8 text-green-600 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-green-600">1</div>
+                  <p className="text-sm text-gray-600">Matched</p>
+                  <Badge variant="outline" className="mt-2">Paper</Badge>
+                </div>
+                <div className="text-center p-4 bg-gray-50 rounded-lg">
+                  <XCircle className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-gray-600">0</div>
+                  <p className="text-sm text-gray-600">Unmatched</p>
+                </div>
+                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                  <Clock className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-blue-600">100%</div>
+                  <p className="text-sm text-gray-600">Match Rate</p>
+                </div>
+              </div>
+              <div className="mt-4 flex justify-end">
+                <Button variant="outline" size="sm">
+                  <Download className="h-4 w-4 mr-2" />
+                  Export CSV
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
         
         <TabsContent value="risk" className="space-y-6">

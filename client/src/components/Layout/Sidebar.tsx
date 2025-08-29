@@ -69,7 +69,7 @@ export default function Sidebar() {
               data-testid="nav-exchanges"
             >
               <i className="fas fa-building w-5"></i>
-              <span>Exchanges</span>
+              <span>Venues</span>
             </Link>
           </li>
           <li>

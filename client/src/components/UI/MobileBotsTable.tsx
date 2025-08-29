@@ -17,12 +17,15 @@ interface BotData {
   name: string;
   strategy: string;
   status: 'running' | 'stopped' | 'error';
-  exchange: string;
+  venue: string;
+  routeVia?: string;
   pair: string;
   pnl24h: number;
   totalPnl: number;
   uptime: string;
   lastTrade: string;
+  riskLevel?: 'Low' | 'Medium' | 'High';
+  makerChecker?: boolean;
 }
 
 interface MobileBotsTableProps {
@@ -159,8 +162,8 @@ export function MobileBotsTable({
             {/* Trading Info */}
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div>
-                <p className="text-gray-500">Exchange</p>
-                <p className="font-medium">{bot.exchange}</p>
+                <p className="text-gray-500">Venue</p>
+                <p className="font-medium">{bot.venue}</p>
                 <p className="text-xs text-gray-500">{bot.pair}</p>
               </div>
               <div>
