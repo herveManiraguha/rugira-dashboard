@@ -18,7 +18,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
 
   const menuItems = [
     { path: '/', icon: Home, label: 'Overview' },
-    { path: '/exchanges', icon: Building2, label: 'Exchanges' },
+    { path: '/venues', icon: Building2, label: 'Venues' },
     { path: '/strategies', icon: TrendingUp, label: 'Strategies' },
     { path: '/backtesting', icon: FlaskConical, label: 'Backtesting' },
     { path: '/bots', icon: Bot, label: 'Bots', badge: activeBotCount },

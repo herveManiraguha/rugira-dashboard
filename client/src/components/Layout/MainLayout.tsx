@@ -60,7 +60,7 @@ interface MainLayoutProps {
 
 const navigation = [
   { name: 'Overview', href: '/overview', icon: Activity, group: null },
-  { name: 'Exchanges', href: '/exchanges', icon: Building2, group: 'Build' },
+  { name: 'Venues', href: '/venues', icon: Building2, group: 'Build' },
   { name: 'Strategies', href: '/strategies', icon: Target, group: 'Build' },
   { name: 'Backtesting', href: '/backtesting', icon: TrendingUp, group: 'Build' },
   { name: 'Bots', href: '/bots', icon: Bot, group: 'Run' },

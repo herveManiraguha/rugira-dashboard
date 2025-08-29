@@ -579,56 +579,91 @@ export default function Venues() {
       {/* Tokenized Venues Section */}
       <div className="space-y-4">
         <h2 className="text-lg font-semibold">Tokenized Venues</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {tokenizedVenues.map((venue) => (
-            <Card key={venue.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-4">
-                <div className="space-y-2">
-                  <CardTitle className="text-base">{venue.name}</CardTitle>
-                  <p className="text-xs text-gray-500">{venue.subtitle}</p>
-                  <div className="flex flex-wrap gap-1">
-                    <Badge variant="secondary" className="text-xs">
-                      Venue type: {venue.venueType}
-                    </Badge>
-                    <Badge variant="secondary" className="text-xs">
-                      {venue.connectivity}
-                    </Badge>
-                    <Badge variant="secondary" className="text-xs">
-                      Route via: {venue.routeVia}
-                    </Badge>
-                    <Badge variant="secondary" className="text-xs">
-                      {venue.eligibility}
-                    </Badge>
-                    <Badge variant="outline" className="text-xs">
-                      {venue.status}
-                    </Badge>
+        {viewMode === 'cards' ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {tokenizedVenues.map((venue) => (
+              <Card key={venue.id} className="hover:shadow-lg transition-shadow">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                        <Shield className="h-6 w-6 text-gray-600" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-base">{venue.name}</CardTitle>
+                        <div className="flex items-center space-x-2 mt-1">
+                          <div className="w-2 h-2 bg-gray-400 rounded-full" />
+                          <span className="text-xs text-gray-500">{venue.subtitle}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleOpenVenue(venue)}>
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          Open Venue
+                        </DropdownMenuItem>
+                        {venue.actions.includes('Docs') && (
+                          <DropdownMenuItem>
+                            <FileText className="h-4 w-4 mr-2" />
+                            Documentation
+                          </DropdownMenuItem>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {venue.footnote && (
-                    <p className="text-xs text-gray-600 italic">{venue.footnote}</p>
-                  )}
-                  <div className="flex gap-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="flex-1"
-                      onClick={() => handleOpenVenue(venue)}
-                    >
-                      Open Venue
-                    </Button>
-                    {venue.actions.includes('Docs') && (
-                      <Button size="sm" variant="ghost">
-                        <FileText className="h-4 w-4" />
-                      </Button>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div>
+                      <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">Venue Details</div>
+                      <div className="space-y-1">
+                        <div className="flex justify-between items-baseline">
+                          <span className="text-xs text-gray-600">Venue type</span>
+                          <span className="text-sm font-medium text-gray-900">{venue.venueType}</span>
+                        </div>
+                        <div className="flex justify-between items-baseline">
+                          <span className="text-xs text-gray-600">Route via</span>
+                          <span className="text-sm text-gray-700">{venue.routeVia}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">Connectivity</div>
+                      <div className="flex items-center justify-between">
+                        <Badge variant="secondary" className="text-xs">{venue.connectivity}</Badge>
+                        <Badge variant="outline" className="text-xs">{venue.status}</Badge>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-2 pt-2">
+                      <div>
+                        <div className="text-xs text-gray-500">Eligibility</div>
+                        <div className="text-xs font-medium text-gray-900">{venue.eligibility}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500">Pilot Status</div>
+                        <div className="text-xs font-medium text-gray-900">
+                          {venue.status === 'Pilot-ready (Paper)' ? 'Ready' : 'Pending'}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {venue.footnote && (
+                      <div className="pt-2 border-t">
+                        <p className="text-xs text-gray-600 italic">{venue.footnote}</p>
+                      </div>
                     )}
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            ))}
 
           {/* Issuer Platforms Card */}
           <Card className="hover:shadow-lg transition-shadow">
@@ -665,6 +700,96 @@ export default function Venues() {
             </CardContent>
           </Card>
         </div>
+        ) : (
+          <Card>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Venue</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Connectivity</TableHead>
+                  <TableHead>Route via</TableHead>
+                  <TableHead>Eligibility</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {tokenizedVenues.map((venue) => (
+                  <TableRow key={venue.id}>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <Shield className="h-5 w-5 text-gray-600" />
+                        <div>
+                          <div className="font-medium">{venue.name}</div>
+                          <div className="text-xs text-gray-500">{venue.subtitle}</div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-sm">{venue.venueType}</TableCell>
+                    <TableCell>
+                      <Badge variant="secondary" className="text-xs">{venue.connectivity}</Badge>
+                    </TableCell>
+                    <TableCell className="text-sm">{venue.routeVia}</TableCell>
+                    <TableCell className="text-sm">{venue.eligibility}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="text-xs">{venue.status}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleOpenVenue(venue)}>
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            Open Venue
+                          </DropdownMenuItem>
+                          {venue.actions.includes('Docs') && (
+                            <DropdownMenuItem>
+                              <FileText className="h-4 w-4 mr-2" />
+                              Documentation
+                            </DropdownMenuItem>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {/* Issuer Platforms in table */}
+                {issuerPlatforms.map((platform) => (
+                  <TableRow key={platform.id}>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <Shield className="h-5 w-5 text-gray-600" />
+                        <div>
+                          <div className="font-medium">{platform.name}</div>
+                          <div className="text-xs text-gray-500">Example: {platform.example}</div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-sm">{platform.venueType}</TableCell>
+                    <TableCell>
+                      <Badge variant="secondary" className="text-xs">{platform.connectivity}</Badge>
+                    </TableCell>
+                    <TableCell className="text-sm">{platform.routeVia}</TableCell>
+                    <TableCell className="text-sm">{platform.eligibility}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="text-xs">{platform.status}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Button variant="ghost" size="sm">
+                        <Info className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
+        )}
       </div>
 
       {/* Venue Details Sheet */}
