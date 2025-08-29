@@ -322,12 +322,33 @@ export default function Venues() {
       <PageHeader
         title="Venue Connections"
         description="Venues lists all routable markets. Tokenized venues are accessed directly or via a participant (e.g., InCore). Rugirinka applies pre-trade limits, audit logging, and drop-copy/T+0 reconciliation where available."
-      >
-        <Button onClick={() => setIsAddModalOpen(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Venue
-        </Button>
-      </PageHeader>
+        actions={
+          <div className="flex gap-2">
+            <div className="flex items-center bg-gray-100 rounded-lg p-1">
+              <Button
+                variant={viewMode === 'cards' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('cards')}
+                className="px-3"
+              >
+                <Grid3X3 className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === 'table' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('table')}
+                className="px-3"
+              >
+                <List className="h-4 w-4" />
+              </Button>
+            </div>
+            <Button onClick={() => setIsAddModalOpen(true)} variant="default" className="bg-red-600 hover:bg-red-700">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Venue
+            </Button>
+          </div>
+        }
+      />
 
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
@@ -357,13 +378,14 @@ export default function Venues() {
       {/* Crypto Exchanges Section */}
       <div className="space-y-4">
         <h2 className="text-lg font-semibold">Crypto Exchanges</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {exchanges.map((exchange) => (
+        {viewMode === 'cards' ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {exchanges.map((exchange) => (
             <Card key={exchange.id} className="hover:shadow-lg transition-shadow">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <ExchangeIcon name={exchange.name} className="w-10 h-10" />
+                    <ExchangeIcon name={exchange.name} logo={exchange.logo} className="w-10 h-10" />
                     <div>
                       <CardTitle className="text-base">{exchange.name}</CardTitle>
                       <div className="flex items-center space-x-2 mt-1">
@@ -405,38 +427,153 @@ export default function Venues() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Balance</span>
-                    <span className="font-medium">
-                      {exchange.balance.total.toLocaleString()} {exchange.balance.currency}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Active Bots</span>
-                    <span className="font-medium">{exchange.activeBots}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">API Usage</span>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-20 bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="bg-blue-500 h-2 rounded-full"
-                          style={{ width: `${(exchange.apiLimits.used / exchange.apiLimits.total) * 100}%` }}
-                        />
+                  <div className="space-y-3">
+                    <div>
+                      <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">Account Balance</div>
+                      <div className="space-y-1">
+                        <div className="flex justify-between items-baseline">
+                          <span className="text-xs text-gray-600">Total</span>
+                          <span className="font-semibold text-gray-900">{exchange.balance.total.toLocaleString()} {exchange.balance.currency}</span>
+                        </div>
+                        <div className="flex justify-between items-baseline">
+                          <span className="text-xs text-gray-600">Available</span>
+                          <span className="text-sm text-gray-700">{exchange.balance.available.toLocaleString()} {exchange.balance.currency}</span>
+                        </div>
                       </div>
-                      <span className="text-xs text-gray-500">
-                        {exchange.apiLimits.used}/{exchange.apiLimits.total}
-                      </span>
                     </div>
-                  </div>
-                  <div className="pt-2 text-xs text-gray-500">
-                    Last sync: {formatDate(exchange.lastSync)}
+                    
+                    <div>
+                      <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">API Usage</div>
+                      <div className="flex items-center space-x-2">
+                        <div className="flex-1 bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${(exchange.apiLimits.used / exchange.apiLimits.total) * 100}%` }}
+                          />
+                        </div>
+                        <span className="text-xs font-medium text-gray-700">
+                          {exchange.apiLimits.used}/{exchange.apiLimits.total}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-2 pt-2">
+                      <div>
+                        <div className="text-xs text-gray-500">Maker Fee</div>
+                        <div className="text-sm font-medium text-gray-900">{exchange.tradingFees.maker}%</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500">Taker Fee</div>
+                        <div className="text-sm font-medium text-gray-900">{exchange.tradingFees.taker}%</div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center pt-2 border-t">
+                      <span className="text-xs text-gray-500">Last sync: {formatDate(exchange.lastSync)}</span>
+                      <span className="text-xs font-medium text-gray-700">{exchange.activeBots} active bots</span>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <Card>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Venue</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Balance</TableHead>
+                  <TableHead>Active Bots</TableHead>
+                  <TableHead>API Usage</TableHead>
+                  <TableHead>Fees</TableHead>
+                  <TableHead>Last Sync</TableHead>
+                  <TableHead></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {exchanges.map((exchange) => (
+                  <TableRow key={exchange.id}>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <ExchangeIcon name={exchange.name} logo={exchange.logo} className="w-8 h-8" />
+                        <span className="font-medium">{exchange.name}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        {getStatusIcon(exchange.status)}
+                        <span className="text-sm">
+                          {exchange.status === 'connected' ? 'Connected' : 
+                           exchange.status === 'error' ? 'Error' :
+                           exchange.status === 'connecting' ? 'Connecting' : 'Disconnected'}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm">
+                        <div className="font-medium">{exchange.balance.total.toLocaleString()} {exchange.balance.currency}</div>
+                        <div className="text-gray-500">Available: {exchange.balance.available.toLocaleString()}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>{exchange.activeBots} active bots</TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-16 bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="bg-blue-500 h-2 rounded-full"
+                            style={{ width: `${(exchange.apiLimits.used / exchange.apiLimits.total) * 100}%` }}
+                          />
+                        </div>
+                        <span className="text-xs text-gray-500">
+                          {exchange.apiLimits.used}/{exchange.apiLimits.total}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm">
+                        <div>Maker: {exchange.tradingFees.maker}%</div>
+                        <div>Taker: {exchange.tradingFees.taker}%</div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-sm text-gray-500">
+                      {formatDate(exchange.lastSync)}
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleRefresh(exchange.id)}>
+                            <RefreshCw className="h-4 w-4 mr-2" />
+                            Refresh
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Settings className="h-4 w-4 mr-2" />
+                            Configure
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem 
+                            onClick={() => handleDisconnect(exchange.id)}
+                            className="text-red-600"
+                          >
+                            <Unlink className="h-4 w-4 mr-2" />
+                            Disconnect
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
+        )}
       </div>
 
       {/* Tokenized Venues Section */}

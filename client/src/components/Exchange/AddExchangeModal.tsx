@@ -406,7 +406,7 @@ export default function AddExchangeModal({ isOpen, onClose, onSubmit }: AddExcha
             <span>Add Venue Connection</span>
           </DialogTitle>
           <DialogDescription>
-            Connect a new cryptocurrency exchange to enable automated trading. Your API credentials are encrypted and stored securely.
+            Connect a new trading venue to enable automated trading. Your API credentials are encrypted and stored securely.
           </DialogDescription>
         </DialogHeader>
 
