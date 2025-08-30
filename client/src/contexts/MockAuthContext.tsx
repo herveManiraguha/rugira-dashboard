@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { authStore } from '@/lib/authStore';
 
 interface User {
   id: string;
@@ -59,23 +60,37 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Check for existing session on mount
-    const storedUser = sessionStorage.getItem('rugira_mock_user');
+    // Check for existing session in memory store
+    const storedUser = authStore.getUser();
     if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        setUser(parsedUser);
-        setIsAuthenticated(true);
-      } catch (error) {
-        console.error('Error parsing stored user:', error);
-        sessionStorage.removeItem('rugira_mock_user');
-      }
+      setUser(storedUser);
+      setIsAuthenticated(true);
     }
+    
+    // Listen for auth events
+    const handleLocked = () => {
+      // Show lock screen UI
+      window.location.href = '/lock';
+    };
+    
+    const handleExpired = () => {
+      setUser(null);
+      setIsAuthenticated(false);
+    };
+    
+    window.addEventListener('auth:locked', handleLocked);
+    window.addEventListener('auth:expired', handleExpired);
     
     // Add a small delay to ensure state is properly updated before components check
     setTimeout(() => {
       setIsLoading(false);
     }, 100);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('auth:locked', handleLocked);
+      window.removeEventListener('auth:expired', handleExpired);
+    };
   }, []); // Empty dependency array to run only on mount
 
   // Remove the setAuthTokenGetter call since we're using session-based auth
@@ -102,8 +117,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(authenticatedUser);
       setIsAuthenticated(true);
       
-      // Store in session storage (not localStorage for security)
-      sessionStorage.setItem('rugira_mock_user', JSON.stringify(authenticatedUser));
+      // Store in memory store instead of sessionStorage
+      authStore.setAuth(authenticatedUser.access_token, undefined, authenticatedUser);
       
       return true;
     }
@@ -114,7 +129,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const logout = async () => {
     setUser(null);
     setIsAuthenticated(false);
-    sessionStorage.removeItem('rugira_mock_user');
+    
+    // Clear memory store and broadcast logout
+    authStore.logout();
+    
+    // Clear session storage items  
     sessionStorage.removeItem('rugira_return_path');
     
     // Redirect to main site

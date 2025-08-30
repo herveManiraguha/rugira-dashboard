@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
+import { authStore } from '@/lib/authStore';
 import {
   User,
   Shield,
@@ -25,7 +26,8 @@ import {
   Upload,
   Trash2,
   Eye,
-  EyeOff
+  EyeOff,
+  HardDrive
 } from 'lucide-react';
 
 export default function Settings() {
@@ -136,7 +138,7 @@ export default function Settings() {
       </div>
 
       <Tabs defaultValue="profile" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
+        <TabsList className="grid w-full grid-cols-3 md:grid-cols-6">
           <TabsTrigger value="profile" className="text-xs md:text-sm">
             <User className="h-4 w-4 mr-1 md:mr-2" />
             <span className="hidden sm:inline">Profile</span>
@@ -156,6 +158,10 @@ export default function Settings() {
           <TabsTrigger value="api" className="text-xs md:text-sm">
             <Key className="h-4 w-4 mr-1 md:mr-2" />
             <span className="hidden sm:inline">API</span>
+          </TabsTrigger>
+          <TabsTrigger value="data" className="text-xs md:text-sm">
+            <HardDrive className="h-4 w-4 mr-1 md:mr-2" />
+            <span className="hidden sm:inline">Data</span>
           </TabsTrigger>
         </TabsList>
 
@@ -674,6 +680,93 @@ export default function Settings() {
                   <Trash2 className="h-4 w-4 mr-2" />
                   Clear All Keys
                 </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Data Management Settings */}
+        <TabsContent value="data" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <HardDrive className="h-5 w-5" />
+                Data Management
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <Database className="h-5 w-5 text-blue-600 mt-1" />
+                  <div className="flex-1">
+                    <h4 className="font-medium text-blue-900">Local Cache Management</h4>
+                    <p className="text-sm text-blue-700 mt-1">
+                      Clear all locally stored data including cache, temporary files, and browser storage.
+                      This is safe to run and will not affect your account data.
+                    </p>
+                    <div className="mt-4 space-y-2">
+                      <Button 
+                        variant="outline" 
+                        onClick={() => {
+                          authStore.clearAllStorage();
+                          toast({
+                            title: "Cache Cleared",
+                            description: "All local storage, session storage, and IndexedDB have been cleared successfully."
+                          });
+                        }}
+                        data-testid="button-clear-cache"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Clear Local Cache
+                      </Button>
+                      <p className="text-xs text-gray-500">
+                        Note: You may need to log in again after clearing cache.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="p-4 bg-amber-50 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="h-5 w-5 text-amber-600 mt-1" />
+                  <div className="flex-1">
+                    <h4 className="font-medium text-amber-900">Data Export</h4>
+                    <p className="text-sm text-amber-700 mt-1">
+                      Export your trading data, strategies, and settings for backup or analysis.
+                    </p>
+                    <div className="mt-4 flex gap-2">
+                      <Button variant="outline" size="sm">
+                        <Download className="h-4 w-4 mr-2" />
+                        Export Trading Data
+                      </Button>
+                      <Button variant="outline" size="sm">
+                        <Download className="h-4 w-4 mr-2" />
+                        Export Settings
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <Upload className="h-5 w-5 text-gray-600 mt-1" />
+                  <div className="flex-1">
+                    <h4 className="font-medium text-gray-900">Data Import</h4>
+                    <p className="text-sm text-gray-700 mt-1">
+                      Import previously exported data or settings.
+                    </p>
+                    <div className="mt-4">
+                      <Button variant="outline" size="sm" disabled>
+                        <Upload className="h-4 w-4 mr-2" />
+                        Import Data (Coming Soon)
+                      </Button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>

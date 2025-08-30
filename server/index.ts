@@ -21,12 +21,58 @@ const allowedOrigins = isProduction ? [
   // Allow Replit domains in development only
 ];
 
-// Middleware to block Replit preview domains entirely
+// Security headers middleware
+app.use((req, res, next) => {
+  // Set comprehensive security headers
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+  
+  // Content Security Policy for dashboard
+  const cspDirectives = [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline'", // unsafe-inline needed for Vite in dev
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "img-src 'self' data: https: blob:",
+    "font-src 'self' data: https://fonts.gstatic.com",
+    "connect-src 'self' https://api.rugira.ch wss://api.rugira.ch ws://localhost:* wss://localhost:*",
+    "frame-ancestors 'none'",
+    "base-uri 'none'",
+    "object-src 'none'",
+    "form-action 'self'"
+  ];
+  
+  res.setHeader('Content-Security-Policy', cspDirectives.join('; '));
+  
+  // HSTS header for production
+  if (isProduction) {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  }
+  
+  next();
+});
+
+// Domain and HTTPS redirect middleware
 app.use((req, res, next) => {
   const host = req.get('host') || '';
+  const protocol = req.get('X-Forwarded-Proto') || req.protocol;
   const origin = req.get('origin') || '';
   
-  // In production, block rugira-dashboard.replit.app and all Replit preview domains
+  // Redirect if not on app.rugira.ch (production only)
+  if (isProduction && host !== 'app.rugira.ch') {
+    console.log(`301 Redirect: ${host} -> app.rugira.ch`);
+    return res.redirect(301, `https://app.rugira.ch${req.url}`);
+  }
+  
+  // Redirect HTTP to HTTPS
+  if (isProduction && protocol === 'http') {
+    console.log(`301 Redirect: HTTP -> HTTPS`);
+    return res.redirect(301, `https://app.rugira.ch${req.url}`);
+  }
+  
+  // Block Replit domains in production
   if (isProduction && (host.includes('replit.app') || 
       host.includes('replit.dev') || 
       host.includes('repl.co') ||
@@ -34,7 +80,7 @@ app.use((req, res, next) => {
       origin.includes('replit.dev') || 
       origin.includes('repl.co'))) {
     
-    console.log(`🚫 Blocked Replit domain access: ${host} (origin: ${origin})`);
+    console.log(`Blocked Replit domain access: ${host}`);
     
     // For HTML requests, redirect to the official domain
     if (req.headers.accept?.includes('text/html')) {
