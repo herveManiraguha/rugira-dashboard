@@ -1,0 +1,63 @@
+Task (Dashboard app.rugira.ch) — No Cloudflare, set headers + tighten auth client
+
+Goal: harden the dashboard with server‑side headers (on Replit), and remove risky token storage.
+
+Please:
+
+Serve the SPA via a tiny Node/Express server (like the marketing site) and set the same headers, with a dashboard‑specific CSP:
+
+Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://api.rugira.ch wss://api.rugira.ch; frame-ancestors 'none'; base-uri 'none'; object-src 'none'
+
+(Adjust connect-src to the real API/WSS.)
+
+Add 301 redirects:
+
+If host != app.rugira.ch, 301 to https://app.rugira.ch${req.url}
+
+If X‑Forwarded‑Proto is http, 301 → https://app.rugira.ch${req.url}
+
+Token storage: search for any use of localStorage/sessionStorage with auth tokens:
+
+Replace with a module‑level in‑memory store, with logout broadcast via BroadcastChannel.
+
+Clear tokens on tab close, visibility hidden, and logout.
+
+Add a Settings action “Clear local cache” that wipes local/session storage and IndexedDB (safe to run).
+
+Document the target future state (HttpOnly __Host- cookies) in /docs/security/cookies.md (just a note; no backend change now).
+
+Session UX:
+
+Idle timeout: lock screen after 15 min inactivity.
+
+Absolute session TTL: 12 h → force re‑auth.
+
+Guard all private routes; display tenant badge in the header to reduce operator mistakes.
+
+Clickjacking: with frame-ancestors 'none' in CSP (header), also include a small runtime check to break out of unwanted iframes (defense‑in‑depth).
+
+XSS scan:
+
+Remove/replace any innerHTML/dangerous HTML sinks. If you must render rich HTML, gate it through a sanitizer at that single boundary and note it in /docs/security/xss_surface.md.
+
+Service worker:
+
+If present, ensure it does not cache authenticated API responses; simplest is to disable SW until you have a vetted caching plan.
+
+Internal QA page /internal/app-checks.html:
+
+“Headers present (HSTS/CSP)”
+
+“No mixed content”
+
+“No tokens in local/session; in‑memory store active”
+
+“Idle lock at 15 min, absolute TTL at 12 h”
+
+“All API calls go only to https://api.rugira.ch”
+
+“Service worker not caching sensitive content”
+
+Infomaniak (DNS/redirects) — optional:
+
+If you want registrar‑level redirects for http://app.rugira.ch/* → https://app.rugira.ch/$1, set them in Infomaniak. Otherwise, the Express 301s above handle it.
