@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import MainLayout from "@/components/Layout/MainLayout";
 import { AuthProvider } from "@/contexts/MockAuthContext";
 import { DemoProvider } from "@/contexts/DemoContext";
+import { EnvironmentProvider } from "@/contexts/EnvironmentContext";
+import { AppInitializer } from "@/components/AppInitializer";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import "./index.css";
 
@@ -39,9 +41,11 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <DemoProvider>
-        <AuthProvider>
-          <Switch>
+      <EnvironmentProvider>
+        <DemoProvider>
+          <AuthProvider>
+            <AppInitializer>
+              <Switch>
           {/* Public routes */}
           <Route path="/" component={Login} />
           <Route path="/login" component={Login} />
@@ -157,8 +161,10 @@ function App() {
           
           <Route component={NotFound} />
         </Switch>
-        </AuthProvider>
-      </DemoProvider>
+            </AppInitializer>
+          </AuthProvider>
+        </DemoProvider>
+      </EnvironmentProvider>
       <Toaster />
     </QueryClientProvider>
   );

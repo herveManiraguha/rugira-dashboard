@@ -4,13 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import logoSvg from "@/assets/logo.svg";
 import { useAuth } from '@/contexts/MockAuthContext';
+import { useEnvironment } from '@/contexts/EnvironmentContext';
 import DemoRibbon from '@/components/Demo/DemoRibbon';
 import Footer from '@/components/Layout/Footer';
 import StatusBadge from '@/components/Layout/StatusBadge';
 import AWSStatusIndicator from '@/components/Layout/AWSStatusIndicator';
 import NotificationButton from '@/components/Layout/NotificationButton';
 import EnvironmentChip from '@/components/Layout/EnvironmentChip';
-import { useEnvironment } from '@/hooks/useEnvironment';
 import { 
   Bell, 
   User, 
@@ -75,7 +75,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
   const [location, setLocation] = useLocation();
   const { user, logout } = useAuth();
   const [isKillSwitchEnabled, setIsKillSwitchEnabled] = useState(false);
-  const { environment, switchEnvironment, isLive } = useEnvironment();
+  const { environment, setEnvironment, isLive } = useEnvironment();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileOverflowOpen, setMobileOverflowOpen] = useState(false);
@@ -169,10 +169,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
           <div className="flex items-center space-x-2">
             {/* Desktop - show all controls */}
             <div className="hidden lg:flex items-center space-x-4">
-              <EnvironmentChip 
-                environment={environment}
-                onEnvironmentChange={switchEnvironment}
-              />
+              <EnvironmentChip />
               <AWSStatusIndicator />
               <NotificationButton />
               <KillSwitchButton />
@@ -180,10 +177,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
             {/* Medium screens - Environment chip + overflow menu */}
             <div className="hidden md:flex lg:hidden items-center space-x-2">
-              <EnvironmentChip 
-                environment={environment}
-                onEnvironmentChange={switchEnvironment}
-              />
+              <EnvironmentChip />
               <Sheet open={mobileOverflowOpen} onOpenChange={setMobileOverflowOpen}>
                 <SheetTrigger asChild>
                   <Button variant="outline" size="sm" aria-label="More options">
@@ -264,11 +258,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
                   <div className="space-y-6">
                     <div className="space-y-3">
                       <label className="block text-sm font-medium text-gray-900">Environment</label>
-                      <EnvironmentChip 
-                        environment={environment}
-                        onEnvironmentChange={switchEnvironment}
-                        className="w-full"
-                      />
+                      <EnvironmentChip />
                     </div>
                     
                     <div className="space-y-3">
@@ -435,11 +425,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
               <div className="p-4 sm:p-6 border-t border-gray-200 bg-gray-50">
                 <h3 className="text-sm font-medium text-gray-900 mb-4">Quick Controls</h3>
                 <div className="space-y-3">
-                  <EnvironmentChip 
-                    environment={environment}
-                    onEnvironmentChange={switchEnvironment}
-                    className="w-full"
-                  />
+                  <EnvironmentChip />
                   <div className="flex items-center justify-between">
                     <AWSStatusIndicator />
                     <div className="flex items-center space-x-2">
