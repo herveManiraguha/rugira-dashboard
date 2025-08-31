@@ -17,6 +17,8 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { ChevronDown, TestTube, FileText, DollarSign, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -24,6 +26,7 @@ export default function EnvironmentChip() {
   const { environment, setEnvironment } = useEnvironment();
   const [showLiveWarning, setShowLiveWarning] = useState(false);
   const [showDemoToLiveWarning, setShowDemoToLiveWarning] = useState(false);
+  const [confirmationText, setConfirmationText] = useState('');
 
   const handleEnvironmentChange = (newEnvironment: 'Demo' | 'Paper' | 'Live') => {
     if (newEnvironment === 'Live' && environment === 'Demo') {
@@ -39,10 +42,23 @@ export default function EnvironmentChip() {
   };
 
   const confirmLiveMode = () => {
-    setEnvironment('Live');
-    setShowLiveWarning(false);
-    setShowDemoToLiveWarning(false);
+    if (confirmationText.toUpperCase() === 'LIVE') {
+      setEnvironment('Live');
+      setShowLiveWarning(false);
+      setShowDemoToLiveWarning(false);
+      setConfirmationText('');
+    }
   };
+
+  const handleDialogClose = (open: boolean) => {
+    if (!open) {
+      setConfirmationText('');
+      setShowLiveWarning(false);
+      setShowDemoToLiveWarning(false);
+    }
+  };
+
+  const isConfirmationValid = confirmationText.toUpperCase() === 'LIVE';
 
   const getEnvironmentConfig = () => {
     switch (environment) {
@@ -151,7 +167,7 @@ export default function EnvironmentChip() {
     </DropdownMenu>
 
     {/* Demo to Live Warning Dialog */}
-    <AlertDialog open={showDemoToLiveWarning} onOpenChange={setShowDemoToLiveWarning}>
+    <AlertDialog open={showDemoToLiveWarning} onOpenChange={handleDialogClose}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
@@ -177,6 +193,21 @@ export default function EnvironmentChip() {
             <p className="font-medium">
               Do you want to switch to Paper Trading first, or continue to Live Trading?
             </p>
+            
+            {/* Confirmation Input for Live Mode */}
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
+              <Label htmlFor="live-confirmation" className="text-sm font-medium text-red-900">
+                To continue to Live Trading, type "LIVE" below:
+              </Label>
+              <Input
+                id="live-confirmation"
+                value={confirmationText}
+                onChange={(e) => setConfirmationText(e.target.value)}
+                placeholder="Type LIVE to confirm"
+                className="mt-2 border-red-300 focus:border-red-500"
+                data-testid="input-live-confirmation"
+              />
+            </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -185,6 +216,7 @@ export default function EnvironmentChip() {
             onClick={() => {
               setEnvironment('Paper');
               setShowDemoToLiveWarning(false);
+              setConfirmationText('');
             }}
             className="bg-blue-600 hover:bg-blue-700"
           >
@@ -192,7 +224,11 @@ export default function EnvironmentChip() {
           </AlertDialogAction>
           <AlertDialogAction 
             onClick={confirmLiveMode}
-            className="bg-red-600 hover:bg-red-700"
+            disabled={!isConfirmationValid}
+            className={cn(
+              "bg-red-600 hover:bg-red-700",
+              !isConfirmationValid && "opacity-50 cursor-not-allowed"
+            )}
           >
             Continue to Live
           </AlertDialogAction>
@@ -201,7 +237,7 @@ export default function EnvironmentChip() {
     </AlertDialog>
 
     {/* Standard Live Mode Warning Dialog */}
-    <AlertDialog open={showLiveWarning} onOpenChange={setShowLiveWarning}>
+    <AlertDialog open={showLiveWarning} onOpenChange={handleDialogClose}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
@@ -221,13 +257,32 @@ export default function EnvironmentChip() {
             <p className="font-medium">
               Please confirm that you understand the risks and want to proceed with live trading.
             </p>
+            
+            {/* Confirmation Input */}
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
+              <Label htmlFor="live-confirmation-standard" className="text-sm font-medium text-red-900">
+                To confirm, type "LIVE" below:
+              </Label>
+              <Input
+                id="live-confirmation-standard"
+                value={confirmationText}
+                onChange={(e) => setConfirmationText(e.target.value)}
+                placeholder="Type LIVE to confirm"
+                className="mt-2 border-red-300 focus:border-red-500"
+                data-testid="input-live-confirmation-standard"
+              />
+            </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction 
             onClick={confirmLiveMode}
-            className="bg-red-600 hover:bg-red-700"
+            disabled={!isConfirmationValid}
+            className={cn(
+              "bg-red-600 hover:bg-red-700",
+              !isConfirmationValid && "opacity-50 cursor-not-allowed"
+            )}
           >
             I Understand, Switch to Live
           </AlertDialogAction>
