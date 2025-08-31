@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useEnvironment } from '@/contexts/EnvironmentContext';
 import {
   DropdownMenu,
@@ -6,12 +6,43 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
-import { ChevronDown, TestTube, FileText, DollarSign } from 'lucide-react';
+import { ChevronDown, TestTube, FileText, DollarSign, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function EnvironmentChip() {
   const { environment, setEnvironment } = useEnvironment();
+  const [showLiveWarning, setShowLiveWarning] = useState(false);
+  const [showDemoToLiveWarning, setShowDemoToLiveWarning] = useState(false);
+
+  const handleEnvironmentChange = (newEnvironment: 'Demo' | 'Paper' | 'Live') => {
+    if (newEnvironment === 'Live' && environment === 'Demo') {
+      // Show special warning when going from Demo to Live
+      setShowDemoToLiveWarning(true);
+    } else if (newEnvironment === 'Live' && environment !== 'Live') {
+      // Show standard warning for Live mode
+      setShowLiveWarning(true);
+    } else {
+      // Direct switch for Demo and Paper modes
+      setEnvironment(newEnvironment);
+    }
+  };
+
+  const confirmLiveMode = () => {
+    setEnvironment('Live');
+    setShowLiveWarning(false);
+    setShowDemoToLiveWarning(false);
+  };
 
   const getEnvironmentConfig = () => {
     switch (environment) {
@@ -50,6 +81,7 @@ export default function EnvironmentChip() {
   const Icon = config.icon;
 
   return (
+    <>
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
@@ -66,7 +98,7 @@ export default function EnvironmentChip() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuItem
-          onClick={() => setEnvironment('Demo')}
+          onClick={() => handleEnvironmentChange('Demo')}
           className={cn(
             "flex items-start gap-3 cursor-pointer",
             environment === 'Demo' && "bg-accent"
@@ -83,7 +115,7 @@ export default function EnvironmentChip() {
         </DropdownMenuItem>
         
         <DropdownMenuItem
-          onClick={() => setEnvironment('Paper')}
+          onClick={() => handleEnvironmentChange('Paper')}
           className={cn(
             "flex items-start gap-3 cursor-pointer",
             environment === 'Paper' && "bg-accent"
@@ -100,7 +132,7 @@ export default function EnvironmentChip() {
         </DropdownMenuItem>
         
         <DropdownMenuItem
-          onClick={() => setEnvironment('Live')}
+          onClick={() => handleEnvironmentChange('Live')}
           className={cn(
             "flex items-start gap-3 cursor-pointer",
             environment === 'Live' && "bg-accent"
@@ -117,5 +149,91 @@ export default function EnvironmentChip() {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+
+    {/* Demo to Live Warning Dialog */}
+    <AlertDialog open={showDemoToLiveWarning} onOpenChange={setShowDemoToLiveWarning}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-orange-600" />
+            Skip Paper Trading?
+          </AlertDialogTitle>
+          <AlertDialogDescription className="space-y-3">
+            <p>
+              You are switching directly from <strong>Demo Mode</strong> to <strong>Live Trading</strong>.
+            </p>
+            <p className="text-orange-600 font-medium">
+              We strongly recommend testing your strategies in Paper Trading mode first.
+            </p>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <p className="text-sm font-medium text-blue-900">Paper Trading allows you to:</p>
+              <ul className="list-disc pl-5 space-y-1 text-sm text-blue-800 mt-2">
+                <li>Test with real market connections</li>
+                <li>Validate your strategies without risk</li>
+                <li>Practice with virtual money</li>
+                <li>Ensure everything works before risking real funds</li>
+              </ul>
+            </div>
+            <p className="font-medium">
+              Do you want to switch to Paper Trading first, or continue to Live Trading?
+            </p>
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction 
+            onClick={() => {
+              setEnvironment('Paper');
+              setShowDemoToLiveWarning(false);
+            }}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            Switch to Paper Trading
+          </AlertDialogAction>
+          <AlertDialogAction 
+            onClick={confirmLiveMode}
+            className="bg-red-600 hover:bg-red-700"
+          >
+            Continue to Live
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+
+    {/* Standard Live Mode Warning Dialog */}
+    <AlertDialog open={showLiveWarning} onOpenChange={setShowLiveWarning}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-red-600" />
+            Switch to Live Trading Mode?
+          </AlertDialogTitle>
+          <AlertDialogDescription className="space-y-3">
+            <p>
+              You are about to switch to <strong>Live Trading Mode</strong>. This means:
+            </p>
+            <ul className="list-disc pl-5 space-y-1">
+              <li className="text-red-600 font-medium">Real money will be at risk</li>
+              <li>All trades will be executed on live markets</li>
+              <li>Trading fees and commissions will apply</li>
+              <li>Losses are permanent and cannot be reversed</li>
+            </ul>
+            <p className="font-medium">
+              Please confirm that you understand the risks and want to proceed with live trading.
+            </p>
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction 
+            onClick={confirmLiveMode}
+            className="bg-red-600 hover:bg-red-700"
+          >
+            I Understand, Switch to Live
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 }
