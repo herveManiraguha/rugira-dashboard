@@ -1,0 +1,161 @@
+Task: Add realistic sample downloads for the two buttons (PDF + CSV) and store them on the instance
+
+Please create two realistic sample files and wire the existing buttons to download them. Keep them lightweight and clearly labeled as sample / simulated data.
+
+1) File locations (under the public web root)
+
+Create a folder: /public/samples/ (or the equivalent web‑served folder in this project).
+
+Save the files as:
+
+/public/samples/rugira_monthly_performance_report_sample.pdf
+
+/public/samples/rugira_audit_extract_sample.csv
+
+Make sure they are accessible over HTTPS (openable in a new tab if navigated directly).
+
+2) Monthly Performance Report — PDF (≤ 1.5 MB)
+
+Purpose: a board‑ready monthly report showing performance, risk, breakdowns, and charts—based on simulated data.
+
+Document spec (in order):
+
+Cover
+
+Title: “Rugira — Monthly Performance Report (Sample / Simulated Data)”
+
+Period: “Last 12 months ending [current month + year]”
+
+Company: Rugira AG · Zug, Switzerland
+
+Executive Summary (1 page max)
+
+Starting equity: 100’000–
+
+Ending equity: 105’247.32–
+
+Net return: +5.2% (vs last month +2.8%)
+
+Volatility (ann.): 7.9% · Sharpe 1.42 · Max drawdown −8.3%
+
+Trades: 247 · Strategies: 3 · Venues: 5
+
+Today’s P&L: 1’247.83 (USD; keep mixed currency note in footnote)
+
+Footnote: “Simulated data for demonstration; non‑custodial software; no investment advice.”
+
+Performance Overview
+
+Monthly returns table for the last 12 months (values summing realistically to +5.2%).
+
+Cumulative return line.
+
+Charts (generated and embedded)
+
+Equity curve (monthly/every‑few‑days granularity).
+
+Monthly returns bar chart (green/red where appropriate).
+
+Drawdown curve (peak‑to‑trough %).
+
+Risk Metrics & Limits
+
+Daily VaR (simple proxy ok), realized volatility, max single‑day loss, average position size.
+
+Guardrails configured: SL/TP on, daily drawdown cap on, kill‑switch enabled.
+
+“0 risk‑limit breaches” (or 1 demo breach recorded and auto‑halted—state which one you choose).
+
+Breakdowns
+
+By strategy (e.g., Grid +2.1%, Momentum +3.4%, Arb −0.3%) with P&L and hit ratios.
+
+By venue (e.g., Binance 52% notional, Coinbase Pro 28%, OKX 20%) with fees paid.
+
+Trading & Fees Summary
+
+Order count, fill ratio, maker/taker split, effective fees (bps), slippage estimate.
+
+Compliance & Audit
+
+Statement: “All actions are tenant‑scoped, time‑stamped, and exportable; see Audit Extract sample CSV.”
+
+Note on data lineage and UTC timestamps.
+
+Disclaimers & Methodology
+
+Simulated data, no financial advice, non‑custodial execution, figures indicative only.
+
+FX note: values shown in USD/CHF where relevant with single EOD FX policy.
+
+Acceptance: file opens cleanly, text selectable (not just images), charts readable, total size ≤ 1.5 MB, and “Simulated Data” appears on cover and footer.
+
+3) Audit Extract — CSV (200–500 rows, ≤ 500 KB)
+
+Purpose: a compliance‑friendly, tamper‑evident‑style extract mixing orders, fills, and risk events for a single month.
+
+Schema (header row exactly in this order):
+
+timestamp_utc,tenant_id,account_id,venue,market,base,quote,event_type,order_id,client_order_id,parent_order_id,side,order_type,time_in_force,post_only,decision_quote,decision_latency_ms,status,price,qty,quote_qty,trade_id,fill_price,fill_qty,fill_quote,fee,fee_asset,liquidity,slippage_bps,risk_check_passed,risk_reason,kyt_action,prev_hash,curr_hash,day_root
+
+
+Population rules:
+
+timestamp_utc: ISO‑8601 with milliseconds (e.g., 2025-08-20T10:15:23.145Z) across a recent 30‑day window.
+
+venue: realistic set (e.g., binance, coinbasepro, okx).
+
+market/base/quote: BTC/USDT, ETH/USDT, SOL/EUR (mixed ok).
+
+event_type: mix of order_submitted, order_acked, filled, cancelled, risk_block, kyt_flag.
+
+order_id/client_order_id: consistent per flow; parent_order_id for child orders if used (blank otherwise).
+
+side: buy|sell; order_type: limit|market; time_in_force: GTC|IOC; post_only: true|false.
+
+decision_quote: mid price snapshot when decision made; decision_latency_ms: 20–900 ms.
+
+status: final status (acked|filled|cancelled|rejected).
+
+price/qty/quote_qty: numeric; make fills plausible relative to market.
+
+trade_id / fill_ / fee / fee_asset / liquidity:* present only on fills; liquidity: maker|taker.
+
+slippage_bps: (VWAP_fill - decision_quote)/decision_quote * 10000 rounded; negative/positive both appear.
+
+risk_check_passed / risk_reason: include a few false with reasons (max_drawdown_cap, position_limit).
+
+kyt_action: allow|review|block (mostly allow, a few review).
+
+prev_hash/curr_hash: compute a simple SHA‑256 chain over the CSV row payload (stringified). First row of each day has prev_hash empty.
+
+day_root: same for all rows of a given day (a fake “Merkle root” placeholder like root_2025-08-20_<hex>).
+
+Acceptance: first row is the header; at least 200 rows; values parse cleanly in a spreadsheet; hash chain fields non‑empty (except first of day); file size ≤ 500 KB.
+
+4) Wire the buttons to these files
+
+“Download Sample Report (PDF)” → href="/samples/rugira_monthly_performance_report_sample.pdf" and set download attribute if used in this codebase.
+
+“Download Sample Extract (CSV)” → href="/samples/rugira_audit_extract_sample.csv" similarly.
+
+5) Small UI/content tweaks
+
+Under each card’s “Sample / Simulated Data” label, add a small note:
+“Figures are simulated and for demonstration only. Not investment advice.”
+
+Ensure both links work in a new incognito window and return 200 OK.
+
+6) Deliverables checklist (mark each when done)
+
+ PDF generated and saved at /public/samples/rugira_monthly_performance_report_sample.pdf (≤ 1.5 MB)
+
+ CSV generated and saved at /public/samples/rugira_audit_extract_sample.csv (200–500 rows, ≤ 500 KB)
+
+ Buttons link to the above paths and trigger downloads
+
+ “Simulated Data” disclaimer visible near both buttons
+
+ Manual test in browser: both links download, files open, charts/columns as specified
+
+Please implement exactly as described and keep both artifacts under version control so they persist with the Replit instance.

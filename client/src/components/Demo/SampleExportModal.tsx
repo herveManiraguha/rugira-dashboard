@@ -13,74 +13,35 @@ export default function SampleExportModal({ isOpen, onClose }: SampleExportModal
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedFiles, setGeneratedFiles] = useState<string[]>([]);
 
-  const generatePDF = async () => {
+  const downloadPDF = async () => {
     setIsGenerating(true);
     try {
-      const reportData = generateSamplePerformanceReport();
-      
-      // Create a simple PDF-like text content
-      const pdfContent = `
-SAMPLE MONTHLY PERFORMANCE REPORT
-${reportData.disclaimer}
-
-Period: ${reportData.period}
-Generated: ${new Date(reportData.generated).toLocaleDateString()}
-
-SUMMARY
-Total Return: ${reportData.summary.totalReturn}
-Sharpe Ratio: ${reportData.summary.sharpeRatio}
-Max Drawdown: ${reportData.summary.maxDrawdown}
-Total Trades: ${reportData.summary.totalTrades}
-Win Rate: ${reportData.summary.winRate}
-
-BOT PERFORMANCE
-${reportData.bots.map(bot => 
-  `${bot.name} (${bot.strategy}): $${bot.pnl} PnL, ${bot.trades} trades`
-).join('\n')}
-
-DISCLAIMER: This is simulated data for demonstration purposes only.
-Not actual trading results. Not investment advice.
-      `.trim();
-
-      const blob = new Blob([pdfContent], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
+      // Download the pre-generated PDF sample
       const link = document.createElement('a');
-      link.href = url;
-      link.download = `Sample_Performance_Report_${new Date().toISOString().split('T')[0]}.txt`;
+      link.href = '/samples/rugira_monthly_performance_report_sample.pdf';
+      link.download = 'rugira_monthly_performance_report_sample.pdf';
       link.click();
-      URL.revokeObjectURL(url);
       
       setGeneratedFiles(prev => [...prev, 'Performance Report']);
     } catch (error) {
-      console.error('Error generating PDF:', error);
+      console.error('Error downloading PDF:', error);
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const generateCSV = async () => {
+  const downloadCSV = async () => {
     setIsGenerating(true);
     try {
-      const auditData = generateSampleAuditData();
-      
-      const csvHeader = 'Timestamp,Bot Name,Symbol,Side,Amount,Price,PnL,Status,Disclaimer\n';
-      const csvRows = auditData.map(row => 
-        `${row.timestamp},${row.bot_name},${row.symbol},${row.side},${row.amount},${row.price},${row.pnl},${row.status},"${row.disclaimer}"`
-      ).join('\n');
-      
-      const csvContent = csvHeader + csvRows;
-      
-      const blob = new Blob([csvContent], { type: 'text/csv' });
-      const url = URL.createObjectURL(blob);
+      // Download the pre-generated CSV sample
       const link = document.createElement('a');
-      link.href = url;
-      link.download = `Sample_Audit_Extract_${new Date().toISOString().split('T')[0]}.csv`;
+      link.href = '/samples/rugira_audit_extract_sample.csv';
+      link.download = 'rugira_audit_extract_sample.csv';
       link.click();
-      URL.revokeObjectURL(url);
       
       setGeneratedFiles(prev => [...prev, 'Audit Extract']);
     } catch (error) {
-      console.error('Error generating CSV:', error);
+      console.error('Error downloading CSV:', error);
     } finally {
       setIsGenerating(false);
     }
@@ -125,6 +86,7 @@ Not actual trading results. Not investment advice.
                 <div>
                   <h4 className="font-medium text-gray-900 dark:text-white">Performance Report</h4>
                   <p className="text-sm text-gray-500 dark:text-gray-400">Monthly summary PDF</p>
+                  <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">Sample / Simulated Data</p>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
@@ -132,13 +94,13 @@ Not actual trading results. Not investment advice.
                   <CheckCircle2 className="w-4 h-4 text-green-600" />
                 )}
                 <Button 
-                  onClick={generatePDF}
+                  onClick={downloadPDF}
                   disabled={isGenerating}
                   size="sm"
                   data-testid="button-export-pdf"
                 >
                   <Download className="w-4 h-4 mr-1" />
-                  Download
+                  Download Sample (PDF)
                 </Button>
               </div>
             </div>
@@ -149,6 +111,7 @@ Not actual trading results. Not investment advice.
                 <div>
                   <h4 className="font-medium text-gray-900 dark:text-white">Audit Extract</h4>
                   <p className="text-sm text-gray-500 dark:text-gray-400">Trade history CSV</p>
+                  <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">Sample / Simulated Data</p>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
@@ -156,16 +119,23 @@ Not actual trading results. Not investment advice.
                   <CheckCircle2 className="w-4 h-4 text-green-600" />
                 )}
                 <Button 
-                  onClick={generateCSV}
+                  onClick={downloadCSV}
                   disabled={isGenerating}
                   size="sm"
                   data-testid="button-export-csv"
                 >
                   <Download className="w-4 h-4 mr-1" />
-                  Download
+                  Download Sample (CSV)
                 </Button>
               </div>
             </div>
+          </div>
+
+          {/* Disclaimer */}
+          <div className="text-center py-3 border-t border-gray-200 dark:border-gray-700">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Figures are simulated and for demonstration only. Not investment advice.
+            </p>
           </div>
 
           {generatedFiles.length > 0 && (

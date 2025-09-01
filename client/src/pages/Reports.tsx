@@ -94,7 +94,7 @@ export default function Reports() {
               <SelectItem value="90d">90 Days</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => setShowExportModal(true)}>
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
@@ -324,9 +324,18 @@ export default function Reports() {
                 </div>
               </div>
               <div className="mt-4 flex justify-end">
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => {
+                    const link = document.createElement('a');
+                    link.href = '/samples/rugira_audit_extract_sample.csv';
+                    link.download = 'rugira_audit_extract_sample.csv';
+                    link.click();
+                  }}
+                >
                   <Download className="h-4 w-4 mr-2" />
-                  Export CSV
+                  Export CSV (Sample)
                 </Button>
               </div>
             </CardContent>
