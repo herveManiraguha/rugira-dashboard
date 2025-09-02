@@ -80,62 +80,63 @@ export default function SampleExportModal({ isOpen, onClose }: SampleExportModal
 
           {/* Export Options */}
           <div className="space-y-3">
-            <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-              <div className="flex items-center space-x-3">
+            <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+              <div className="flex items-center space-x-3 mb-3">
                 <FileText className="w-5 h-5 text-red-600" />
-                <div>
-                  <h4 className="font-medium text-gray-900 dark:text-white">Performance Report</h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Monthly summary PDF</p>
-                  <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">Sample / Simulated Data</p>
+                <div className="flex-1">
+                  <h4 className="font-medium text-gray-900 dark:text-white">Monthly Performance</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Comprehensive trading performance analysis with risk metrics, P&L breakdown, and compliance reports.</p>
                 </div>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded p-2 mb-3">
+                <p className="text-xs text-red-700 dark:text-red-300">
+                  Sample / Simulated Data<br/>
+                  Figures are simulated and for demonstration only. Not investment advice.
+                </p>
+              </div>
+              <Button 
+                onClick={downloadPDF}
+                disabled={isGenerating}
+                className="w-full"
+                variant="destructive"
+                data-testid="button-export-pdf"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Sample Report (PDF)
                 {generatedFiles.includes('Performance Report') && (
-                  <CheckCircle2 className="w-4 h-4 text-green-600" />
+                  <CheckCircle2 className="w-4 h-4 ml-2" />
                 )}
-                <Button 
-                  onClick={downloadPDF}
-                  disabled={isGenerating}
-                  size="sm"
-                  data-testid="button-export-pdf"
-                >
-                  <Download className="w-4 h-4 mr-1" />
-                  Download Sample (PDF)
-                </Button>
-              </div>
+              </Button>
             </div>
 
-            <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-              <div className="flex items-center space-x-3">
+            <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+              <div className="flex items-center space-x-3 mb-3">
                 <Table className="w-5 h-5 text-green-600" />
-                <div>
+                <div className="flex-1">
                   <h4 className="font-medium text-gray-900 dark:text-white">Audit Extract</h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Trade history CSV</p>
-                  <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">Sample / Simulated Data</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Detailed transaction logs and audit trail data formatted for compliance review and formal reporting.</p>
                 </div>
               </div>
-              <div className="flex items-center space-x-2">
-                {generatedFiles.includes('Audit Extract') && (
-                  <CheckCircle2 className="w-4 h-4 text-green-600" />
-                )}
-                <Button 
-                  onClick={downloadCSV}
-                  disabled={isGenerating}
-                  size="sm"
-                  data-testid="button-export-csv"
-                >
-                  <Download className="w-4 h-4 mr-1" />
-                  Download Sample (CSV)
-                </Button>
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded p-2 mb-3">
+                <p className="text-xs text-red-700 dark:text-red-300">
+                  Sample / Simulated Data<br/>
+                  Figures are simulated and for demonstration only. Not investment advice.
+                </p>
               </div>
+              <Button 
+                onClick={downloadCSV}
+                disabled={isGenerating}
+                className="w-full"
+                variant="destructive"
+                data-testid="button-export-csv"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Sample Extract (CSV)
+                {generatedFiles.includes('Audit Extract') && (
+                  <CheckCircle2 className="w-4 h-4 ml-2" />
+                )}
+              </Button>
             </div>
-          </div>
-
-          {/* Disclaimer */}
-          <div className="text-center py-3 border-t border-gray-200 dark:border-gray-700">
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              Figures are simulated and for demonstration only. Not investment advice.
-            </p>
           </div>
 
           {generatedFiles.length > 0 && (
