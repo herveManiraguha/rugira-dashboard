@@ -27,8 +27,11 @@ import Profile from "@/pages/Profile";
 import Admin from "@/pages/Admin";
 import UserDetail from "@/pages/UserDetail";
 import Help from "@/pages/Help";
-import NotFound from "@/pages/not-found";
+import NotFound from "@/pages/NotFound";
+import InternalChecks from "@/pages/InternalChecks";
 import Bots from "@/pages/Bots";
+
+
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -157,6 +160,14 @@ function App() {
             <ProtectedRoute>
               <MainLayout>
                 <Help />
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+          
+          <Route path="/internal/checks">
+            <ProtectedRoute>
+              <MainLayout>
+                <InternalChecks />
               </MainLayout>
             </ProtectedRoute>
           </Route>

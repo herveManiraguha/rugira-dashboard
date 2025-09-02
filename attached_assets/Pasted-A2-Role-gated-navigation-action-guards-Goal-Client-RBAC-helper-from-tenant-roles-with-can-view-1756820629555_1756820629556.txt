@@ -1,0 +1,73 @@
+A2. Role‑gated navigation & action guards
+Goal: Client RBAC helper (from tenant_roles) with can(view|edit|export) checks per the matrix. Hide/disable controls; tooltip: “Requires Compliance approval” etc.
+Acceptance: Viewer cannot start/stop bots/connect venues/export audits; Compliance sees export buttons.
+
+A3. Tenant badge and mode indicator
+Goal: Show Tenant + Mode (Paper/Live) in header. In bot forms, default to Paper; render a Paper/Live banner.
+Acceptance: Badge shows on all core pages; bot mode change updates banner.
+
+A4. Approvals UX (maker‑checker)
+Goal: Approvals drawer/inbox. Users can propose changes (paper→live, risk increase). Approvers see requests and Approve/Reject.
+Acceptance: “Awaiting approval” chip appears; approver can approve and requester gets a toast.
+
+A5. Exports & step‑up consent
+Goal: Reports/Compliance exports that trigger step‑up modal if backend asks for re‑auth; proceed after confirmation.
+Acceptance: Non‑eligible users see disabled export with reason; eligible download with stamped filename.
+
+A6. Sample downloads (Pricing page)
+Goal: Link to /samples/rugira_monthly_performance_report_sample.pdf and /samples/rugira_audit_extract_sample.csv. Show Sample/Simulated Data disclaimer.
+Acceptance: Both files download (HTTP 200) in incognito; accessible labels and keyboard focus.
+
+A7. Demo data fixtures
+Goal: With DEMO_AUTH=true, render venue cards, 6–8 demo bots (varied status), and 2 backtests; badge “Demo data”.
+Acceptance: Overview, Bots, Strategies, Backtesting populated; toggle in profile drawer controls visibility.
+
+A8. Bot wizard (paper)
+Goal: 3 steps—Strategy → Market & Venue → Risk & Start—enforcing SL/TP, daily DD cap, kill‑switch defaults.
+Acceptance: Paper bot goes to Running; invalid/unsafe inputs blocked.
+
+A9. Monitoring screen polish
+Goal: Latency tiles (p50/p95), error badges, and a small log tail per bot.
+Acceptance: Tiles update every 10 s; error causes render (rate‑limit, auth, risk‑block).
+
+A10. Accessibility & keyboard navigation
+Goal: a11y audit—aria‑labels, focus rings, tab order, contrast for light/dark.
+Acceptance: Lighthouse a11y ≥ 95 on Overview & Bots; modals Esc‑close and trap focus.
+
+A11. Internal checks page
+Goal: /internal/checks showing: no GA before consent, CSP present, demo badge visible, 404 works.
+Acceptance: Green checks when OK; page not in main nav.
+
+A12. 404 & empty states
+Goal: Branded 404; empty state illustrations for Bots/Strategies when empty.
+Acceptance: 404 renders; empty states show in new tenant.
+
+A13. Local config drawer
+Goal: (Demo only) Developer drawer to view decoded token (no secrets), roles, tenant, flags.
+Acceptance: Drawer shows token claims + feature flags.
+
+A14. Privacy & consent banner
+Goal: GA loads only after consent; Privacy Policy link near form.
+Acceptance: DevTools shows no GA before Accept; state persists.
+
+A15. Performance hygiene
+Goal: Preload key fonts, defer non‑critical scripts, lazy‑load charts.
+Acceptance: FCP < 2s on Replit preview; below‑fold charts lazy‑render.
+
+Demo users for Replit demo (DO NOT use in prod)
+
+hanz.mueller / Hanz1234! — Admin
+
+clara.fischer / Clara1234! — Compliance
+
+martin.keller / Martin1234! — Trading Lead
+
+lin.zhang / Lin1234! — Trader
+
+emma.sanchez / Emma1234! — Analyst
+
+viktor.meier / Viktor1234! — Viewer
+
+audit.guest / Audit1234! — External Auditor (time‑boxed)
+
+Store passwords as bcrypt in demo only; show a purple “Demo mode” badge when DEMO_AUTH=true.

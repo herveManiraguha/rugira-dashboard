@@ -12,6 +12,8 @@ import AWSStatusIndicator from '@/components/Layout/AWSStatusIndicator';
 import NotificationButton from '@/components/Layout/NotificationButton';
 import EnvironmentChip from '@/components/Layout/EnvironmentChip';
 import { TenantSwitcher } from '@/components/TenantSwitcher';
+import { TenantModeBadge } from '@/components/Layout/TenantModeBadge';
+import { ApprovalsDrawer } from '@/components/Approvals/ApprovalsDrawer';
 import { 
   Bell, 
   User, 
@@ -159,7 +161,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
           <div className="flex items-center space-x-2">
             {/* Desktop - show all controls */}
             <div className="hidden lg:flex items-center space-x-4">
-              <EnvironmentChip />
+              <TenantModeBadge />
+              <ApprovalsDrawer />
               <AWSStatusIndicator />
               <NotificationButton />
               <KillSwitchButton />

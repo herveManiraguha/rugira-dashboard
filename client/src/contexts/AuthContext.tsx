@@ -159,10 +159,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    if (username === DEMO_CREDENTIALS.username && password === DEMO_CREDENTIALS.password) {
-      const authenticatedUser = { 
-        ...MOCK_USER, 
-        access_token: 'demo-jwt-token-' + Date.now() 
+    // Import demo users dynamically
+    const { demoUsers } = await import('@/lib/demoUsers');
+    
+    // Find matching user
+    const demoUser = demoUsers.find(u => u.username === username && u.password === password);
+    
+    if (demoUser) {
+      const authenticatedUser: ExtendedUser = {
+        id: `demo-${username}`,
+        email: demoUser.email,
+        name: demoUser.name,
+        profile: {
+          name: demoUser.name,
+          email: demoUser.email,
+          given_name: demoUser.name.split(' ')[0],
+          family_name: demoUser.name.split(' ')[1] || '',
+          picture: 'https://www.gravatar.com/avatar/placeholder?d=mp&s=200'
+        },
+        access_token: 'demo-jwt-token-' + Date.now(),
+        expired: false,
+        tenant_roles: demoUser.tenantRoles,
+        current_tenant: Object.keys(demoUser.tenantRoles)[0] || 'rugira-prod'
       };
       
       setUser(authenticatedUser);
