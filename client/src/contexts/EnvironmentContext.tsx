@@ -40,11 +40,11 @@ export function EnvironmentProvider({ children }: EnvironmentProviderProps) {
   };
 
   useEffect(() => {
-    // Check for stored environment preference (session only, not persistent)
-    const stored = sessionStorage.getItem('rugira_environment') as TradingEnvironment;
-    if (stored && ['Demo', 'Paper', 'Live'].includes(stored)) {
-      setEnvironmentState(stored);
-    }
+    // For this demo application, always start in Demo mode
+    // Clear any stored preferences to ensure clean demo experience
+    sessionStorage.removeItem('rugira_environment');
+    setEnvironmentState('Demo');
+    console.log('Environment initialized: Demo mode (SSE disabled)');
   }, []);
 
   const contextValue: EnvironmentContextType = {

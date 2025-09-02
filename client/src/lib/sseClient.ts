@@ -14,16 +14,25 @@ export class SSEClient {
 
   setEnvironment(env: 'Demo' | 'Paper' | 'Live') {
     this.environment = env;
-    // Reconnect if already connected
+    // Always disconnect when changing environment
     if (this.eventSource) {
       this.disconnect();
+    }
+    // Only reconnect if not Demo mode
+    if (env !== 'Demo') {
       this.connect();
     }
   }
 
   connect() {
     if (this.environment === 'Demo') {
-      // No SSE in demo mode, use polling instead
+      // No SSE in demo mode, disconnect any existing connection
+      this.disconnect();
+      return;
+    }
+
+    // Don't create multiple connections
+    if (this.eventSource && this.eventSource.readyState === EventSource.OPEN) {
       return;
     }
 
@@ -42,7 +51,10 @@ export class SSEClient {
 
       this.eventSource.onerror = (error) => {
         console.error('SSE connection error:', error);
-        this.handleReconnect();
+        // Only attempt reconnect if not in Demo mode
+        if (this.environment !== 'Demo') {
+          this.handleReconnect();
+        }
       };
 
       // Handle specific event types
@@ -104,6 +116,11 @@ export class SSEClient {
   }
 
   private handleReconnect() {
+    // Don't reconnect in Demo mode
+    if (this.environment === 'Demo') {
+      return;
+    }
+
     if (this.eventSource) {
       this.eventSource.close();
       this.eventSource = null;
