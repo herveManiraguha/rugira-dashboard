@@ -13,13 +13,13 @@ export function useApiClient() {
     // Update SSE client environment
     sseClient.setEnvironment(environment);
     
-    // Always disconnect SSE in Demo mode to prevent connection attempts
+    // Handle SSE connections based on environment
     if (environment === 'Demo') {
       console.log('Demo mode: SSE disabled');
       sseClient.disconnect();
     } else {
-      // Only connect SSE for Paper/Live modes
-      console.log(`${environment} mode: connecting SSE client`);
+      // Connect SSE for Paper/Live modes
+      console.log(`${environment} mode: SSE enabled`);
       sseClient.connect();
     }
 
