@@ -30,23 +30,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register authentication routes
   authRoutes(app);
   
-  // Register Okta auth config route
+  // Register auth config route - always return demo mode for demonstration
   app.get('/api/auth/config', (req, res) => {
-    const hasOktaConfig = !!(process.env.OKTA_DOMAIN && process.env.OKTA_CLIENT_ID && process.env.OKTA_CLIENT_SECRET);
-    
-    if (hasOktaConfig) {
-      res.json({
-        domain: process.env.OKTA_DOMAIN,
-        clientId: process.env.OKTA_CLIENT_ID,
-        hasConfig: true,
-        isDemoMode: false
-      });
-    } else {
-      res.json({
-        hasConfig: false,
-        isDemoMode: true
-      });
-    }
+    res.json({
+      hasConfig: false,
+      isDemoMode: true,
+      message: 'Demo mode active - using placeholder credentials'
+    });
   });
 
   // Health check endpoints

@@ -1,6 +1,6 @@
 import { UserManagerSettings } from 'oidc-client-ts';
 
-// For now, use a simple check - will be demo mode initially
+// Always use demo mode for demonstration purposes
 export const isDemoMode = true;
 
 // Get base URL for redirects

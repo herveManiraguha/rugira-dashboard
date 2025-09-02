@@ -81,66 +81,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const initOktaAuth = async () => {
-    // Skip Okta initialization in demo mode
-    if (isDemoMode) {
-      return initDemoAuth();
-    }
-    
-    try {
-      // In real implementation, fetch Okta config from server
-      const oktaConfig = {
-        authority: `https://dev-placeholder.okta.com`,
-        client_id: 'placeholder-client-id',
-        redirect_uri: `${window.location.origin}/auth/callback`,
-        post_logout_redirect_uri: `${window.location.origin}/`,
-        response_type: 'code',
-        scope: 'openid profile email groups',
-        loadUserInfo: true,
-        automaticSilentRenew: true,
-        silent_redirect_uri: `${window.location.origin}/auth/silent-callback`,
-      };
-      
-      const manager = new UserManager(oktaConfig);
-      setUserManager(manager);
-
-      // Check for existing session
-      const oidcUser = await manager.getUser();
-      if (oidcUser && !oidcUser.expired) {
-        const extendedUser = mapOidcUserToExtended(oidcUser);
-        setUser(extendedUser);
-        setIsAuthenticated(true);
-        setCurrentTenant(extendedUser.current_tenant || Object.keys(extendedUser.tenant_roles || {})[0] || null);
-        authStore.setAuth(oidcUser.access_token, oidcUser.refresh_token, extendedUser);
-      }
-
-      // Handle token events
-      manager.events.addUserLoaded((user: OidcUser) => {
-        const extendedUser = mapOidcUserToExtended(user);
-        setUser(extendedUser);
-        setIsAuthenticated(true);
-        authStore.setAuth(user.access_token, user.refresh_token, extendedUser);
-      });
-
-      manager.events.addUserUnloaded(() => {
-        setUser(null);
-        setIsAuthenticated(false);
-        setCurrentTenant(null);
-        authStore.clear();
-      });
-
-      manager.events.addAccessTokenExpired(() => {
-        setUser(null);
-        setIsAuthenticated(false);
-        setCurrentTenant(null);
-        authStore.clear();
-      });
-
-    } catch (error) {
-      console.error('Failed to initialize Okta auth:', error);
-    }
-    
-    setupAuthEventListeners();
-    setIsLoading(false);
+    // Always use demo mode for demonstration
+    return initDemoAuth();
   };
 
   const setupAuthEventListeners = () => {

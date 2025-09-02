@@ -4,6 +4,22 @@
 
 Rugira is a professional trading bot management dashboard built as a Single Page Application (SPA) for app.rugira.ch. The application provides real-time monitoring, compliance tools, and comprehensive bot management capabilities with a clean Swiss-inspired design. It features a React frontend with TypeScript, Express backend, and PostgreSQL database integration, designed for professional trading bot users.
 
+## Recent Changes (September 2, 2025)
+
+### Okta Authentication Integration with Demo Mode
+- **Dual Authentication System**: Implemented AuthContext supporting both Okta OIDC and demo mode
+- **Demo Mode Active**: Currently configured for demonstration with placeholder Okta integration
+- **Tenant Role Management**: Added multi-tenant support with role-based access control
+  - Demo user has access to 3 tenants: Rugira Prod (admin/trader), Rugira Test (trader), Client Alpha (viewer)
+  - TenantSwitcher component with visual role badges (admin=red, trader=blue, viewer=gray)
+  - Tenant switching updates user context and visible data permissions
+- **User Interface Updates**: 
+  - Login page shows demo credentials and simplified authentication flow
+  - Navigation includes tenant switcher with current tenant and role display
+  - User profile integration showing authenticated user name and tenant roles
+- **Backend Integration**: Added auth config endpoint that returns demo mode status
+- **Session Management**: Maintains existing session timeout and security features
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
