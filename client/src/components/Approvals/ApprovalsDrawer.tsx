@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Bell, Check, X, Clock, AlertTriangle } from 'lucide-react';
+import { FileCheck, Check, X, Clock, AlertTriangle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRBAC } from '@/lib/rbac';
 import { useToast } from '@/hooks/use-toast';
@@ -94,7 +94,7 @@ export function ApprovalsDrawer() {
       case 'risk_increase':
         return <AlertTriangle className="w-4 h-4" />;
       case 'venue_connection':
-        return <Bell className="w-4 h-4" />;
+        return <FileCheck className="w-4 h-4" />;
     }
   };
 
@@ -104,7 +104,7 @@ export function ApprovalsDrawer() {
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="outline" size="sm" className="relative">
-          <Bell className="w-4 h-4" />
+          <FileCheck className="w-4 h-4" />
           {pendingCount > 0 && (
             <Badge 
               variant="destructive" 
