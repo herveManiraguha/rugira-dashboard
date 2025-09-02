@@ -69,13 +69,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
     
     // Listen for auth events
     const handleLocked = () => {
-      // Show lock screen UI
-      window.location.href = '/lock';
+      // Clear auth state and redirect to login
+      setUser(null);
+      setIsAuthenticated(false);
+      authStore.clear();
+      window.location.href = '/';
     };
     
     const handleExpired = () => {
       setUser(null);
       setIsAuthenticated(false);
+      authStore.clear();
+      window.location.href = '/';
     };
     
     window.addEventListener('auth:locked', handleLocked);

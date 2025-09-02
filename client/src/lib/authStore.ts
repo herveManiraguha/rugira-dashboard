@@ -35,7 +35,7 @@ class InMemoryAuthStore {
       this.broadcastChannel.onmessage = (event) => {
         if (event.data.type === 'logout') {
           this.clear();
-          window.location.href = '/login';
+          window.location.href = '/';
         }
         if (event.data.type === 'auth_update') {
           this.authData = event.data.authData;
@@ -141,7 +141,7 @@ class InMemoryAuthStore {
     window.dispatchEvent(new CustomEvent('auth:expired', {
       detail: { reason: 'session_expired' }
     }));
-    window.location.href = '/login';
+    window.location.href = '/';
   }
   
   // Public methods
