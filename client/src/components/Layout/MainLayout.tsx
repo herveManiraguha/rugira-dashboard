@@ -13,6 +13,7 @@ import NotificationButton from '@/components/Layout/NotificationButton';
 import EnvironmentChip from '@/components/Layout/EnvironmentChip';
 
 import { TenantModeBadge } from '@/components/Layout/TenantModeBadge';
+import { TenantSwitcher } from '@/components/TenantSwitcher';
 import { ApprovalsDrawer } from '@/components/Approvals/ApprovalsDrawer';
 import { 
   Bell, 
@@ -151,6 +152,10 @@ export default function MainLayout({ children }: MainLayoutProps) {
               <span className="text-lg lg:text-xl font-semibold text-gray-900 hidden sm:block">Rugira</span>
             </div>
             
+            {/* Tenant Switcher - shown on medium screens and up */}
+            <div className="hidden md:block">
+              <TenantSwitcher />
+            </div>
 
           </div>
 
@@ -247,6 +252,11 @@ export default function MainLayout({ children }: MainLayoutProps) {
                   </SheetHeader>
                   <div className="space-y-6">
                     <div className="space-y-3">
+                      <label className="block text-sm font-medium text-gray-900">Tenant</label>
+                      <TenantSwitcher />
+                    </div>
+                    
+                    <div className="space-y-3">
                       <label className="block text-sm font-medium text-gray-900">Environment</label>
                       <EnvironmentChip />
                     </div>
@@ -256,7 +266,12 @@ export default function MainLayout({ children }: MainLayoutProps) {
                       <AWSStatusIndicator />
                     </div>
                     
-
+                    <div className="space-y-3">
+                      <label className="block text-sm font-medium text-gray-900">Notifications</label>
+                      <div className="w-full">
+                        <NotificationButton />
+                      </div>
+                    </div>
                     
                     <div className="space-y-3">
                       <label className="block text-sm font-medium text-gray-900">Emergency Controls</label>
@@ -410,6 +425,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
               <div className="p-4 sm:p-6 border-t border-gray-200 bg-gray-50">
                 <h3 className="text-sm font-medium text-gray-900 mb-4">Quick Controls</h3>
                 <div className="space-y-3">
+                  <TenantSwitcher />
                   <EnvironmentChip />
                   <div className="flex items-center justify-between">
                     <AWSStatusIndicator />
