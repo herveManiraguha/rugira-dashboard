@@ -11,7 +11,7 @@ import StatusBadge from '@/components/Layout/StatusBadge';
 import AWSStatusIndicator from '@/components/Layout/AWSStatusIndicator';
 import NotificationButton from '@/components/Layout/NotificationButton';
 import EnvironmentChip from '@/components/Layout/EnvironmentChip';
-import { TenantSwitcher } from '@/components/TenantSwitcher';
+
 import { TenantModeBadge } from '@/components/Layout/TenantModeBadge';
 import { ApprovalsDrawer } from '@/components/Approvals/ApprovalsDrawer';
 import { 
@@ -151,10 +151,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
               <span className="text-lg lg:text-xl font-semibold text-gray-900 hidden sm:block">Rugira</span>
             </div>
             
-            {/* Tenant Switcher - hidden on small screens */}
-            <div className="hidden md:block">
-              <TenantSwitcher />
-            </div>
+
           </div>
 
           {/* Right side - Responsive layout */}
@@ -162,7 +159,6 @@ export default function MainLayout({ children }: MainLayoutProps) {
             {/* Desktop - show all controls */}
             <div className="hidden lg:flex items-center space-x-4">
               <EnvironmentChip />
-              <TenantModeBadge />
               <ApprovalsDrawer />
               <AWSStatusIndicator />
               <NotificationButton />
@@ -191,10 +187,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
                       <label className="text-sm font-medium">Status</label>
                       <AWSStatusIndicator />
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Notifications</label>
-                      <NotificationButton />
-                    </div>
+
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Emergency Controls</label>
                       <KillSwitchButton />
@@ -263,12 +256,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
                       <AWSStatusIndicator />
                     </div>
                     
-                    <div className="space-y-3">
-                      <label className="block text-sm font-medium text-gray-900">Notifications</label>
-                      <div className="w-full">
-                        <NotificationButton />
-                      </div>
-                    </div>
+
                     
                     <div className="space-y-3">
                       <label className="block text-sm font-medium text-gray-900">Emergency Controls</label>
@@ -425,10 +413,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
                   <EnvironmentChip />
                   <div className="flex items-center justify-between">
                     <AWSStatusIndicator />
-                    <div className="flex items-center space-x-2">
-                      <NotificationButton />
-                      <KillSwitchButton />
-                    </div>
+                    <KillSwitchButton />
                   </div>
                 </div>
 
