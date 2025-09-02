@@ -169,9 +169,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
               <KillSwitchButton />
             </div>
 
-            {/* Medium screens - Environment chip + overflow menu */}
+            {/* Medium screens - overflow menu */}
             <div className="hidden md:flex lg:hidden items-center space-x-2">
-              <EnvironmentChip />
               <Sheet open={mobileOverflowOpen} onOpenChange={setMobileOverflowOpen}>
                 <SheetTrigger asChild>
                   <Button variant="outline" size="sm" aria-label="More options">
@@ -184,6 +183,10 @@ export default function MainLayout({ children }: MainLayoutProps) {
                     <SheetDescription>Access additional dashboard features</SheetDescription>
                   </SheetHeader>
                   <div className="mt-6 space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Environment</label>
+                      <EnvironmentChip />
+                    </div>
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Status</label>
                       <AWSStatusIndicator />
