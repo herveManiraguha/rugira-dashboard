@@ -95,17 +95,6 @@ export default function Login() {
               <CardDescription className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mt-2">
                 Demo Mode - Trading Dashboard
               </CardDescription>
-              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 mt-4">
-                <p className="text-xs text-blue-700 dark:text-blue-300 text-center">
-                  Demo credentials:
-                </p>
-                <div className="grid grid-cols-2 gap-2 mt-2 text-xs">
-                  <div>Admin: hanz.mueller / Hanz1234!</div>
-                  <div>Compliance: clara.fischer / Clara1234!</div>
-                  <div>Trader: lin.zhang / Lin1234!</div>
-                  <div>Viewer: viktor.meier / Viktor1234!</div>
-                </div>
-              </div>
             </div>
           </CardHeader>
 
