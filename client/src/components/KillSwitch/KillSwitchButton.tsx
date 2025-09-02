@@ -18,7 +18,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useKillSwitch } from '@/hooks/useKillSwitch';
-import { useAuth } from '@/contexts/MockAuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import OctagonX from '@/components/icons/OctagonX';
 import type { KillSwitchEngageRequest } from '@/../../shared/schema';
 

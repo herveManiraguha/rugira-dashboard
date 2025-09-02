@@ -42,19 +42,19 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      if (!performDemoLogin) {
-        throw new Error('Demo authentication system not initialized');
-      }
-
-      const success = await performDemoLogin(username, password);
-      
-      if (success) {
-        // Add a small delay to ensure state is updated before redirect
-        setTimeout(() => {
-          setLocation(nextPath);
-        }, 150);
+      if (isDemoMode && performDemoLogin) {
+        const success = await performDemoLogin(username, password);
+        
+        if (success) {
+          // Add a small delay to ensure state is updated before redirect
+          setTimeout(() => {
+            setLocation(nextPath);
+          }, 150);
+        } else {
+          setError('Invalid username or password. Please try again.');
+        }
       } else {
-        setError('Invalid username or password. Please try again.');
+        setError('Authentication system not available.');
       }
     } catch (error: any) {
       setError(error.message || 'Authentication failed. Please try again.');
