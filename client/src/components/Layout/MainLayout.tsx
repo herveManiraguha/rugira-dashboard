@@ -185,6 +185,10 @@ export default function MainLayout({ children }: MainLayoutProps) {
                   </SheetHeader>
                   <div className="mt-6 space-y-4">
                     <div className="space-y-2">
+                      <label className="text-sm font-medium">Tenant</label>
+                      <TenantSwitcher />
+                    </div>
+                    <div className="space-y-2">
                       <label className="text-sm font-medium">Environment</label>
                       <EnvironmentChip />
                     </div>
@@ -192,7 +196,10 @@ export default function MainLayout({ children }: MainLayoutProps) {
                       <label className="text-sm font-medium">Status</label>
                       <AWSStatusIndicator />
                     </div>
-
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Notifications</label>
+                      <NotificationButton />
+                    </div>
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Emergency Controls</label>
                       <KillSwitchButton />
@@ -429,7 +436,10 @@ export default function MainLayout({ children }: MainLayoutProps) {
                   <EnvironmentChip />
                   <div className="flex items-center justify-between">
                     <AWSStatusIndicator />
-                    <KillSwitchButton />
+                    <div className="flex items-center space-x-2">
+                      <NotificationButton />
+                      <KillSwitchButton />
+                    </div>
                   </div>
                 </div>
 
