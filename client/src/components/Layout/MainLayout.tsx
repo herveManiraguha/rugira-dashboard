@@ -161,6 +161,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
           <div className="flex items-center space-x-2">
             {/* Desktop - show all controls */}
             <div className="hidden lg:flex items-center space-x-4">
+              <EnvironmentChip />
               <TenantModeBadge />
               <ApprovalsDrawer />
               <AWSStatusIndicator />
