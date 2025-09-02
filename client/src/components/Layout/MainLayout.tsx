@@ -3,7 +3,7 @@ import { Route, Switch, useLocation, Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import logoSvg from "@/assets/logo.svg";
-import { useAuth } from '@/contexts/MockAuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useEnvironment } from '@/contexts/EnvironmentContext';
 import DemoRibbon from '@/components/Demo/DemoRibbon';
 import Footer from '@/components/Layout/Footer';
@@ -11,6 +11,7 @@ import StatusBadge from '@/components/Layout/StatusBadge';
 import AWSStatusIndicator from '@/components/Layout/AWSStatusIndicator';
 import NotificationButton from '@/components/Layout/NotificationButton';
 import EnvironmentChip from '@/components/Layout/EnvironmentChip';
+import { TenantSwitcher } from '@/components/TenantSwitcher';
 import { 
   Bell, 
   User, 
@@ -150,18 +151,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
             
             {/* Tenant Switcher - hidden on small screens */}
             <div className="hidden md:block">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="ml-2 lg:ml-4">
-                    Default Tenant
-                    <ChevronDown className="ml-2 h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>Default Tenant</DropdownMenuItem>
-                  <DropdownMenuItem disabled>Switch Tenant (Pro)</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <TenantSwitcher />
             </div>
           </div>
 

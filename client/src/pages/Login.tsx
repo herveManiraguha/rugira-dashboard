@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
-import { useAuth } from '@/contexts/MockAuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,7 +12,7 @@ import logoSvg from "@/assets/logo.svg";
 
 export default function Login() {
   const [, setLocation] = useLocation();
-  const { performLogin, isAuthenticated } = useAuth();
+  const { performDemoLogin, isAuthenticated, isDemoMode, login } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -42,23 +42,39 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      if (!performLogin) {
-        throw new Error('Authentication system not initialized');
-      }
+      if (isDemoMode) {
+        if (!performDemoLogin) {
+          throw new Error('Demo authentication system not initialized');
+        }
 
-      const success = await performLogin(username, password);
-      
-      if (success) {
-        // Add a small delay to ensure state is updated before redirect
-        setTimeout(() => {
-          setLocation(nextPath);
-        }, 150);
+        const success = await performDemoLogin(username, password);
+        
+        if (success) {
+          // Add a small delay to ensure state is updated before redirect
+          setTimeout(() => {
+            setLocation(nextPath);
+          }, 150);
+        } else {
+          setError('Invalid username or password. Please try again.');
+        }
       } else {
-        setError('Invalid username or password. Please try again.');
+        // For Okta mode, redirect to Okta login
+        await login(nextPath);
       }
     } catch (error: any) {
       setError(error.message || 'Authentication failed. Please try again.');
     } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle Okta login (skip form for non-demo mode)
+  const handleOktaLogin = async () => {
+    setIsLoading(true);
+    try {
+      await login(nextPath);
+    } catch (error: any) {
+      setError(error.message || 'Authentication failed. Please try again.');
       setIsLoading(false);
     }
   };
@@ -82,13 +98,21 @@ export default function Login() {
                 Welcome Back
               </CardTitle>
               <CardDescription className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mt-2">
-                Sign in to your Rugira Trading Dashboard
+                {isDemoMode ? 'Demo Mode - Trading Dashboard' : 'Enterprise SSO Authentication'}
               </CardDescription>
+              {isDemoMode && (
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 mt-4">
+                  <p className="text-xs text-blue-700 dark:text-blue-300 text-center">
+                    Demo credentials: hanz.mueller / Hanz1234!
+                  </p>
+                </div>
+              )}
             </div>
           </CardHeader>
 
           <CardContent className="p-6 sm:p-8 pt-0">
-            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+            {isDemoMode ? (
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               {error && (
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
@@ -157,6 +181,31 @@ export default function Login() {
                 )}
               </Button>
             </form>
+            ) : (
+              <div className="space-y-4">
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+                <Button
+                  onClick={handleOktaLogin}
+                  className="w-full bg-[#E10600] hover:bg-[#C10500] text-white h-11 sm:h-12 text-base font-semibold"
+                  disabled={isLoading}
+                  data-testid="button-okta-login"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Redirecting to Okta...
+                    </>
+                  ) : (
+                    'Sign in with Okta'
+                  )}
+                </Button>
+              </div>
+            )}
           </CardContent>
 
           <CardFooter className="flex flex-col space-y-4 text-center p-6 sm:p-8 pt-4">

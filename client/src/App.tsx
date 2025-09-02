@@ -3,7 +3,7 @@ import { Route, Switch } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import MainLayout from "@/components/Layout/MainLayout";
-import { AuthProvider } from "@/contexts/MockAuthContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { DemoProvider } from "@/contexts/DemoContext";
 import { EnvironmentProvider } from "@/contexts/EnvironmentContext";
 import { AppInitializer } from "@/components/AppInitializer";
@@ -13,6 +13,7 @@ import "./index.css";
 // Import pages
 import Login from "@/pages/Login";
 import AuthCallback from "@/pages/AuthCallback";
+import SilentCallback from "@/pages/SilentCallback";
 import Overview from "@/pages/Overview";
 import DemoOverview from "@/pages/DemoOverview";
 import Strategies from "@/pages/Strategies";
@@ -50,6 +51,7 @@ function App() {
           <Route path="/" component={Login} />
           <Route path="/login" component={Login} />
           <Route path="/auth/callback" component={AuthCallback} />
+          <Route path="/auth/silent-callback" component={SilentCallback} />
           
           {/* Public demo route */}
           <Route path="/demo" component={DemoOverview} />

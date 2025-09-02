@@ -29,6 +29,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Register authentication routes
   authRoutes(app);
+  
+  // Register Okta auth config route
+  app.get('/api/auth/config', (req, res) => {
+    const hasOktaConfig = !!(process.env.OKTA_DOMAIN && process.env.OKTA_CLIENT_ID && process.env.OKTA_CLIENT_SECRET);
+    
+    if (hasOktaConfig) {
+      res.json({
+        domain: process.env.OKTA_DOMAIN,
+        clientId: process.env.OKTA_CLIENT_ID,
+        hasConfig: true,
+        isDemoMode: false
+      });
+    } else {
+      res.json({
+        hasConfig: false,
+        isDemoMode: true
+      });
+    }
+  });
 
   // Health check endpoints
   app.get("/api/health", (req, res) => {
