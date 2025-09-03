@@ -4,6 +4,7 @@ import { WebSocketServer } from "ws";
 import { storage } from "./storage";
 import { authRoutes, optionalAuth } from "./auth";
 import * as mockData from "./mockData";
+import healthRoutes from "./routes/health";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
@@ -39,18 +40,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Health check endpoints
-  app.get("/api/health", (req, res) => {
-    res.json({ 
-      status: "ok", 
-      timestamp: new Date(),
-      services: {
-        api: "operational",
-        database: "operational", 
-        orchestrator: "operational"
-      }
-    });
-  });
+  // Register health routes
+  app.use(healthRoutes);
 
   // Kill Switch middleware - checks if trading is halted
   const checkKillSwitch = async (req: any, res: any, next: any) => {

@@ -182,22 +182,7 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
               ))}
             </nav>
             
-            {/* User info in sidebar */}
-            {user && !sidebarCollapsed && (
-              <div className="p-4 border-t">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-[#E10600] rounded-full flex items-center justify-center">
-                      <User className="w-4 h-4 text-white" />
-                    </div>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-900">{user.profile.name}</p>
-                    <p className="text-xs text-gray-500">{user.profile.email}</p>
-                  </div>
-                </div>
-              </div>
-            )}
+
           </div>
         </aside>
         
@@ -248,22 +233,7 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
                 ))}
               </nav>
               
-              {/* User info in mobile sidebar */}
-              {user && (
-                <div className="p-4 border-t">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <div className="w-10 h-10 bg-[#E10600] rounded-full flex items-center justify-center">
-                        <User className="w-5 h-5 text-white" />
-                      </div>
-                    </div>
-                    <div className="ml-3">
-                      <p className="text-sm font-medium text-gray-900">{user.profile.name}</p>
-                      <p className="text-xs text-gray-500">{user.profile.email}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
+
             </div>
           </SheetContent>
         </Sheet>

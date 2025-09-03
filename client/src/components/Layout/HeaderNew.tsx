@@ -40,7 +40,7 @@ import { useEnvironment } from '@/contexts/EnvironmentContext';
 import { useDemoMode } from '@/contexts/DemoContext';
 import { useRBAC } from '@/lib/rbac';
 import { ApprovalsDrawer } from '@/components/Approvals/ApprovalsDrawer';
-import AWSStatusIndicator from './AWSStatusIndicator';
+import HealthStatus from '@/components/HealthStatus';
 import NotificationButton from './NotificationButton';
 import { TenantSwitcher } from '@/components/TenantSwitcher';
 import {
@@ -340,23 +340,7 @@ export default function HeaderNew({ onKillSwitch, onMobileMenuToggle }: HeaderNe
               </div>
               
               {/* Health Status */}
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 px-3 text-xs font-medium rounded-full border border-green-200 bg-green-50 text-green-700"
-                  >
-                    <div className="flex items-center gap-1.5">
-                      <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                      <span>OK</span>
-                    </div>
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80" align="end">
-                  <AWSStatusIndicator />
-                </PopoverContent>
-              </Popover>
+              <HealthStatus />
               
               {/* Help Menu */}
               <DropdownMenu>
