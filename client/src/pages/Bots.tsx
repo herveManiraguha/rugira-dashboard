@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { SkipLink } from '@/components/ui/skip-link';
 import { EmptyState } from '@/components/ui/empty-state';
+import { PageHeader } from '@/components/ui/page-header';
 import { EnhancedTable, type ColumnDef } from '@/components/ui/enhanced-table';
 import { MobileBotsTable } from '@/components/UI/MobileBotsTable';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
@@ -560,46 +561,44 @@ export default function Bots() {
 
   return (
     <div className="space-y-4 sm:space-y-6 p-4 sm:p-6 pb-4">
-      <SkipLink href="#bots-table">Skip to bots table</SkipLink>
-      
-      <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Trading Bots</h1>
-          <p className="text-sm sm:text-base text-gray-600">Manage and monitor your automated trading strategies</p>
-        </div>
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-3">
-          <div className="flex border rounded-lg p-1 w-full sm:w-auto">
-            <Button
-              variant={viewMode === 'cards' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setViewMode('cards')}
-              data-testid="view-cards"
-              className="flex-1 sm:flex-initial px-3 h-10 text-sm"
+      <PageHeader
+        skipToId="bots-table"
+        title="Trading Bots"
+        description="Manage and monitor your automated trading strategies"
+        actions={
+          <div className="flex gap-2">
+            <div className="flex items-center bg-gray-100 rounded-lg p-1">
+              <Button
+                variant={viewMode === 'cards' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('cards')}
+                data-testid="view-cards"
+                className="px-3"
+              >
+                <Grid3X3 className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === 'table' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('table')}
+                data-testid="view-table"
+                className="px-3"
+              >
+                <List className="h-4 w-4" />
+              </Button>
+            </div>
+            <Button 
+              onClick={() => setIsCreateBotModalOpen(true)}
+              data-testid="create-bot"
+              variant="default"
+              className="bg-red-600 hover:bg-red-700"
             >
-              <Grid3X3 className="h-4 w-4 mr-2 sm:mr-0" />
-              <span className="sm:hidden">Cards</span>
-            </Button>
-            <Button
-              variant={viewMode === 'table' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setViewMode('table')}
-              data-testid="view-table"
-              className="flex-1 sm:flex-initial px-3 h-10 text-sm"
-            >
-              <List className="h-4 w-4 mr-2 sm:mr-0" />
-              <span className="sm:hidden">Table</span>
+              <Plus className="h-4 w-4 mr-2" />
+              Create Bot
             </Button>
           </div>
-          <Button 
-            onClick={() => setIsCreateBotModalOpen(true)}
-            data-testid="create-bot"
-            className="w-full sm:w-auto h-12 sm:h-10 text-base sm:text-sm"
-          >
-            <Plus className="h-5 w-5 mr-2" />
-            Create Bot
-          </Button>
-        </div>
-      </div>
+        }
+      />
 
       <div id="bots-table">
         {bots.length === 0 ? (
