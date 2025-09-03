@@ -54,24 +54,36 @@ export function StandardPageLayout({
             
             {/* View Mode Toggle - Consistent position */}
             {showViewModes && onViewModeChange && (
-              <div className="hidden sm:flex items-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-1">
+              <div className="hidden sm:flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1 gap-1">
                 <Button
-                  variant={viewMode === 'cards' ? 'secondary' : 'ghost'}
+                  variant={viewMode === 'cards' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => onViewModeChange('cards')}
-                  className="h-8 px-3"
+                  className={cn(
+                    "h-8 px-3 transition-all",
+                    viewMode === 'cards' 
+                      ? "bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white" 
+                      : "hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400"
+                  )}
                   data-testid="view-mode-cards"
                 >
                   <Grid3X3 className="h-4 w-4" />
+                  <span className="ml-1.5 text-xs">Cards</span>
                 </Button>
                 <Button
-                  variant={viewMode === 'list' || viewMode === 'grid' ? 'secondary' : 'ghost'}
+                  variant={viewMode === 'list' || viewMode === 'grid' ? 'default' : 'ghost'}
                   size="sm"
-                  onClick={() => onViewModeChange(viewMode === 'list' ? 'list' : 'grid')}
-                  className="h-8 px-3"
+                  onClick={() => onViewModeChange(viewMode === 'list' ? 'grid' : 'list')}
+                  className={cn(
+                    "h-8 px-3 transition-all",
+                    (viewMode === 'list' || viewMode === 'grid')
+                      ? "bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white" 
+                      : "hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400"
+                  )}
                   data-testid="view-mode-list"
                 >
                   <List className="h-4 w-4" />
+                  <span className="ml-1.5 text-xs">List</span>
                 </Button>
               </div>
             )}

@@ -245,10 +245,8 @@ export default function HeaderNew({ onKillSwitch, onMobileMenuToggle }: HeaderNe
               )}
               
               {/* Logo */}
-              <Link href="/overview">
-                <a className="flex items-center">
-                  <img src={logoSvg} alt="Rugira" className="h-7 w-auto" />
-                </a>
+              <Link href="/overview" className="flex items-center">
+                <img src={logoSvg} alt="Rugira" className="h-7 w-auto" />
               </Link>
               
               {/* Tenant Switcher */}
