@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { SkipLink } from '@/components/ui/skip-link';
 import { EmptyState } from '@/components/ui/empty-state';
-import { PageHeader } from '@/components/ui/page-header';
+import { StandardPageLayout } from '@/components/ui/standard-page-layout';
 import { EnhancedTable, type ColumnDef } from '@/components/ui/enhanced-table';
 import { MobileBotsTable } from '@/components/UI/MobileBotsTable';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
@@ -561,47 +561,18 @@ export default function Bots() {
   );
 
   return (
-    <div className="space-y-4 sm:space-y-6 w-full">
-      <PageHeader
-        skipToId="bots-table"
-        title="Trading Bots"
-        description="Manage and monitor your automated trading strategies"
-        actions={
-          <div className="flex gap-2">
-            <div className="hidden sm:flex items-center bg-gray-100 rounded-lg p-1">
-              <Button
-                variant={viewMode === 'cards' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('cards')}
-                data-testid="view-cards"
-                className="px-3"
-              >
-                <Grid3X3 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === 'table' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('table')}
-                data-testid="view-table"
-                className="px-3"
-              >
-                <List className="h-4 w-4" />
-              </Button>
-            </div>
-            <Button 
-              onClick={() => setIsCreateBotModalOpen(true)}
-              data-testid="create-bot"
-              variant="default"
-              className="bg-red-600 hover:bg-red-700 sm:px-4 px-0 w-10 h-10 sm:w-auto sm:h-auto"
-            >
-              <Plus className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Create Bot</span>
-            </Button>
-          </div>
-        }
-      />
-
-      <div id="bots-table" className="w-full overflow-hidden">
+    <StandardPageLayout
+      title="Trading Bots"
+      subtitle="Manage and monitor your automated trading strategies"
+      viewMode={viewMode === 'table' ? 'list' : 'cards'}
+      onViewModeChange={(mode) => setViewMode(mode === 'list' ? 'table' : 'cards')}
+      showViewModes={true}
+      actionButton={{
+        label: "Create Bot",
+        onClick: () => setIsCreateBotModalOpen(true)
+      }}
+    >
+      <div className="space-y-6" id="bots-table">
         {bots.length === 0 ? (
           <EmptyState
             icon={<Bot className="h-12 w-12" />}
@@ -636,15 +607,15 @@ export default function Bots() {
             />
           </div>
         )}
-      </div>
 
-      {/* Create Bot Modal */}
-      <CreateBotModal
-        isOpen={isCreateBotModalOpen}
-        onClose={() => setIsCreateBotModalOpen(false)}
-        onSubmit={handleCreateBot}
-      />
-    </div>
+        {/* Create Bot Modal */}
+        <CreateBotModal
+          isOpen={isCreateBotModalOpen}
+          onClose={() => setIsCreateBotModalOpen(false)}
+          onSubmit={handleCreateBot}
+        />
+      </div>
+    </StandardPageLayout>
   );
 }
 

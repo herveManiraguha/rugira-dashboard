@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { PageHeader } from '@/components/ui/page-header';
+import { StandardPageLayout } from '@/components/ui/standard-page-layout';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { ExchangeIcon } from '@/components/ui/exchange-icon';
 import { Input } from '@/components/ui/input';
@@ -326,41 +326,18 @@ export default function Venues() {
   };
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Venue Connections"
-        description="Connect and monitor trading venues in one place, with pre-trade limits, audit logs, and T+0 reconciliation when supported."
-        actions={
-          <div className="flex gap-2">
-            <div className="hidden sm:flex items-center bg-gray-100 rounded-lg p-1">
-              <Button
-                variant={viewMode === 'cards' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('cards')}
-                className="px-3"
-              >
-                <Grid3X3 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === 'table' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('table')}
-                className="px-3"
-              >
-                <List className="h-4 w-4" />
-              </Button>
-            </div>
-            <Button 
-              onClick={() => setIsAddModalOpen(true)} 
-              variant="default" 
-              className="bg-red-600 hover:bg-red-700 sm:px-4 px-0 w-10 h-10 sm:w-auto sm:h-auto"
-            >
-              <Plus className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Add Venue</span>
-            </Button>
-          </div>
-        }
-      />
+    <StandardPageLayout
+      title="Venue Connections"
+      subtitle="Connect and monitor trading venues in one place, with pre-trade limits, audit logs, and T+0 reconciliation when supported."
+      viewMode={viewMode === 'table' ? 'list' : 'cards'}
+      onViewModeChange={(mode) => setViewMode(mode === 'list' ? 'table' : 'cards')}
+      showViewModes={true}
+      actionButton={{
+        label: "Add Venue",
+        onClick: () => setIsAddModalOpen(true)
+      }}
+    >
+      <div className="space-y-6">
 
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
@@ -960,6 +937,7 @@ export default function Venues() {
         onClose={() => setIsAddModalOpen(false)}
         onSubmit={handleAddExchange}
       />
-    </div>
+      </div>
+    </StandardPageLayout>
   );
 }

@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { StandardPageLayout } from "@/components/ui/standard-page-layout";
 import { useDemoMode } from "@/contexts/DemoContext";
 import DemoStoryViewer from "@/components/Demo/DemoStoryViewer";
 import SampleExportModal from "@/components/Demo/SampleExportModal";
@@ -385,16 +386,16 @@ export default function Overview() {
   };
 
   return (
-    <div className="space-y-4 md:space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-semibold text-gray-900">Overview</h1>
-          <p className="text-sm text-gray-600 mt-1">Trading performance and system status</p>
-        </div>
+    <StandardPageLayout
+      title="Overview"
+      subtitle="Trading performance and system status"
+      additionalControls={
         <div className="text-xs text-gray-500">
           Last updated: {lastUpdated.toLocaleTimeString()} UTC
         </div>
-      </div>
+      }
+    >
+      <div className="space-y-4 md:space-y-6">
 
       {/* Enhanced KPI Cards */}
       <KPICardGrid>
@@ -689,6 +690,7 @@ export default function Overview() {
         isOpen={showExportModal} 
         onClose={() => setShowExportModal(false)} 
       />
-    </div>
+      </div>
+    </StandardPageLayout>
   );
 }
