@@ -16,7 +16,10 @@ import {
   Clock,
   DollarSign,
   Activity,
-  AlertTriangle
+  AlertTriangle,
+  Bell,
+  FileCheck,
+  X
 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 import { KPICard, KPICardGrid } from "@/components/ui/kpi-card";
@@ -24,7 +27,8 @@ import { EnhancedChart } from "@/components/ui/enhanced-chart";
 import { SkipLink } from "@/components/ui/skip-link";
 import { TimeRangeSelector } from "@/components/ui/time-range-selector";
 import { ExchangeSummary } from "@/components/ui/exchange-summary";
-import { UtilityRail } from "@/components/Layout/UtilityRail";
+import { useAuth } from "@/contexts/AuthContext";
+
 
 interface KPI {
   id: string;
@@ -50,6 +54,8 @@ export default function Overview() {
   const [timeRange, setTimeRange] = useState('24h' as const);
   const [showExportModal, setShowExportModal] = useState(false);
   const { isDemoMode, isReadOnly } = useDemoMode();
+  const { tenantRoles } = useAuth();
+  const canApprove = tenantRoles?.includes('admin') || tenantRoles?.includes('compliance');
   
   // Fetch overview data from API
   const { data: overviewData, isLoading: overviewLoading } = useQuery({
@@ -379,18 +385,16 @@ export default function Overview() {
   };
 
   return (
-    <div className="flex">
-      {/* Main Content Area */}
-      <div className="flex-1 space-y-4 md:space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900">Overview</h1>
-            <p className="text-sm text-gray-600 mt-1">Trading performance and system status</p>
-          </div>
-          <div className="text-xs text-gray-500">
-            Last updated: {lastUpdated.toLocaleTimeString()} UTC
-          </div>
+    <div className="space-y-4 md:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-semibold text-gray-900">Overview</h1>
+          <p className="text-sm text-gray-600 mt-1">Trading performance and system status</p>
         </div>
+        <div className="text-xs text-gray-500">
+          Last updated: {lastUpdated.toLocaleTimeString()} UTC
+        </div>
+      </div>
 
       {/* Enhanced KPI Cards */}
       <KPICardGrid>
@@ -431,56 +435,158 @@ export default function Overview() {
         )}
       </KPICardGrid>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-        {/* Enhanced Equity Curve Chart */}
-        <EnhancedChart
-          title="Portfolio Equity Curve"
-          description="Track your portfolio performance over time with key trading events marked"
-          data={equityData.map(d => ({ timestamp: d.date, value: d.value, pnl: d.pnl }))}
-          dataKeys={[
-            { key: 'value', label: 'Portfolio Value', color: '#16a34a' },
-            { key: 'pnl', label: 'P&L', color: '#dc2626' }
-          ]}
-          timeRange={timeRange}
-          onTimeRangeChange={(range) => setTimeRange(range.value)}
-          formatValue={(value) => `$${value.toLocaleString()}`}
-          className="lg:col-span-2"
-        />
+      {/* Main Content Grid - 2 column layout */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6">
+        {/* Left Column - Charts */}
+        <div className="xl:col-span-2 space-y-4 md:space-y-6">
+          {/* Charts Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+            {/* Enhanced Equity Curve Chart */}
+            <EnhancedChart
+              title="Portfolio Equity Curve"
+              description="Track your portfolio performance over time"
+              data={equityData.map(d => ({ timestamp: d.date, value: d.value, pnl: d.pnl }))}
+              dataKeys={[
+                { key: 'value', label: 'Portfolio Value', color: '#15803D' },
+                { key: 'pnl', label: 'P&L', color: '#DC2626' }
+              ]}
+              timeRange={timeRange}
+              onTimeRangeChange={(range) => setTimeRange(range.value)}
+              formatValue={(value) => `$${value.toLocaleString()}`}
+              className="lg:col-span-2"
+            />
 
-        {/* Enhanced Daily P&L Chart */}
-        <EnhancedChart
-          title="Daily P&L"
-          description="Daily profit and loss breakdown"
-          data={dailyPnLData.map(d => ({ timestamp: d.date, value: d.pnl, pnl: d.pnl }))}
-          dataKeys={[
-            { key: 'pnl', label: 'Daily P&L', color: '#dc2626' }
-          ]}
-          formatValue={(value) => `$${Number(value).toFixed(2)}`}
-        />
+            {/* Enhanced Daily P&L Chart */}
+            <EnhancedChart
+              title="Daily P&L"
+              description="Daily profit and loss breakdown"
+              data={dailyPnLData.map(d => ({ timestamp: d.date, value: d.pnl, pnl: d.pnl }))}
+              dataKeys={[
+                { key: 'pnl', label: 'Daily P&L', color: '#DC2626' }
+              ]}
+              formatValue={(value) => `$${Number(value).toFixed(2)}`}
+            />
 
-        {/* Trading Volume Chart */}
-        <EnhancedChart
-          title="Trading Volume"
-          description="Daily trading volume and number of trades"
-          data={volumeData.map(d => ({ timestamp: d.date, value: d.volume, volume: d.volume, trades: d.trades }))}
-          dataKeys={[
-            { key: 'volume', label: 'Volume ($)', color: '#3b82f6' },
-            { key: 'trades', label: 'Trades', color: '#f59e0b' }
-          ]}
-          formatValue={(value) => `$${value.toLocaleString()}`}
-        />
-      </div>
+            {/* Trading Volume Chart */}
+            <EnhancedChart
+              title="Trading Volume"
+              description="Daily trading volume and number of trades"
+              data={volumeData.map(d => ({ timestamp: d.date, value: d.volume, volume: d.volume, trades: d.trades }))}
+              dataKeys={[
+                { key: 'volume', label: 'Volume ($)', color: '#1E40AF' },
+                { key: 'trades', label: 'Trades', color: '#A16207' }
+              ]}
+              formatValue={(value) => `$${value.toLocaleString()}`}
+            />
+          </div>
 
-      {/* Exchange Summary */}
-      <ExchangeSummary 
-        exchanges={exchangeSummaryData}
-        onAddExchange={() => console.log('Add exchange')}
-        onExchangeClick={(id) => console.log('Exchange clicked:', id)}
-      />
+          {/* Exchange Summary */}
+          <ExchangeSummary 
+            exchanges={exchangeSummaryData}
+            onAddExchange={() => console.log('Add exchange')}
+            onExchangeClick={(id) => console.log('Exchange clicked:', id)}
+          />
+        </div>
 
-      {/* Live Activity Feed */}
-      <Card>
+        {/* Right Column - Activity and Alerts */}
+        <div className="space-y-4 md:space-y-6">
+          {/* Pending Approvals - Only show if user has approval permissions */}
+          {canApprove && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center text-base sm:text-lg">
+                <FileCheck className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                Pending Approvals
+              </CardTitle>
+              <Badge variant="destructive" className="text-xs">
+                2
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 hover:bg-gray-100 cursor-pointer transition-colors">
+                <div className="mb-1 flex items-center justify-between">
+                  <span className="text-xs font-medium text-gray-900">Mode Change</span>
+                  <Clock className="h-3 w-3 text-gray-400" />
+                </div>
+                <p className="mb-1 text-xs text-gray-600">
+                  BTCUSD-MM-01 from Paper to Live
+                </p>
+                <p className="text-xs text-gray-500">
+                  Martin Keller • 02/09/2025, 15:44:54
+                </p>
+              </div>
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 hover:bg-gray-100 cursor-pointer transition-colors">
+                <div className="mb-1 flex items-center justify-between">
+                  <span className="text-xs font-medium text-gray-900">Risk Increase</span>
+                  <Clock className="h-3 w-3 text-gray-400" />
+                </div>
+                <p className="mb-1 text-xs text-gray-600">
+                  ETHUSD-ARB-02 Daily loss limit: $5,000 → $10,000
+                </p>
+                <p className="text-xs text-gray-500">
+                  Lin Zhang • 02/09/2025, 14:44:54
+                </p>
+              </div>
+            </div>
+          </CardContent>
+          </Card>
+          )}
+
+          {/* System Alerts */}
+          <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center text-base sm:text-lg">
+            <Bell className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+            System Alerts
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
+              <div className="flex items-start justify-between">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="mt-0.5 h-3.5 w-3.5 text-amber-600" />
+                  <div>
+                    <p className="text-xs font-medium text-amber-700">API rate limit exceeded on Kraken</p>
+                    <p className="mt-1 text-xs text-amber-600">18m ago</p>
+                  </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 px-2 text-xs text-amber-700 hover:bg-amber-100"
+                >
+                  Dismiss
+                </Button>
+              </div>
+            </div>
+            <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
+              <div className="flex items-start justify-between">
+                <div className="flex items-start gap-2">
+                  <Bell className="mt-0.5 h-3.5 w-3.5 text-blue-600" />
+                  <div>
+                    <p className="text-xs font-medium text-blue-700">Scheduled maintenance tonight 2-3 AM</p>
+                    <p className="mt-1 text-xs text-blue-600">2h ago</p>
+                  </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 px-2 text-xs text-blue-700 hover:bg-blue-100"
+                >
+                  Dismiss
+                </Button>
+              </div>
+            </div>
+            </div>
+          </CardContent>
+        </Card>
+
+          {/* Recent Activity - Compact version */}
+          <Card>
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0">
             <CardTitle className="flex items-center text-base sm:text-lg">
@@ -545,6 +651,8 @@ export default function Overview() {
           )}
         </CardContent>
       </Card>
+        </div>
+      </div>
 
       {/* Demo Components */}
       {isDemoMode && (
@@ -581,10 +689,6 @@ export default function Overview() {
         isOpen={showExportModal} 
         onClose={() => setShowExportModal(false)} 
       />
-      </div>
-      
-      {/* Utility Rail */}
-      <UtilityRail />
     </div>
   );
 }
