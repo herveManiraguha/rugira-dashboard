@@ -264,8 +264,8 @@ export function EnhancedTable<T extends { id: string | number }>({
             <TableHeader>
               <TableRow>
                 {onSelectionChange && (
-                  <TableHead className="w-12 sticky left-0 bg-white z-10">
-                    <div className="flex items-center justify-center">
+                  <TableHead className="w-12 sticky left-0 bg-white z-10 !p-0">
+                    <div className="h-12 flex items-center justify-center">
                       <Checkbox
                         checked={allSelected || someSelected}
                         onCheckedChange={handleSelectAll}
@@ -306,8 +306,8 @@ export function EnhancedTable<T extends { id: string | number }>({
               {paginatedData.map((row) => (
                 <TableRow key={row.id} data-testid={`table-row-${row.id}`} className="hover:bg-gray-50">
                   {onSelectionChange && (
-                    <TableCell className="w-12 sticky left-0 bg-white z-10 px-3 py-3 sm:px-6 sm:py-4">
-                      <div className="flex items-center justify-center">
+                    <TableCell className="w-12 sticky left-0 bg-white z-10 !p-0">
+                      <div className="h-full min-h-[3rem] flex items-center justify-center">
                         <Checkbox
                           checked={selectedRows.has(row.id)}
                           onCheckedChange={(checked) => handleRowSelection(row.id, !!checked)}
