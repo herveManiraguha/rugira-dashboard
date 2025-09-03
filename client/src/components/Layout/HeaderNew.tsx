@@ -399,17 +399,17 @@ export default function HeaderNew({ onKillSwitch, onMobileMenuToggle }: HeaderNe
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setLocation('/profile')} className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
                     Profile
                   </DropdownMenuItem>
                   
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setLocation('/api-keys')} className="cursor-pointer">
                     <Key className="mr-2 h-4 w-4" />
                     API Keys
                   </DropdownMenuItem>
                   
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setLocation('/organization')} className="cursor-pointer">
                     <Building2 className="mr-2 h-4 w-4" />
                     Organization & Billing
                   </DropdownMenuItem>

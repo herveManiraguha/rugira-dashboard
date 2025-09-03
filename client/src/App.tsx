@@ -24,6 +24,8 @@ import Backtesting from "@/pages/Backtesting";
 import Monitoring from "@/pages/Monitoring";
 import Settings from "@/pages/Settings";
 import Profile from "@/pages/Profile";
+import ApiKeys from "@/pages/ApiKeys";
+import Organization from "@/pages/Organization";
 import Admin from "@/pages/Admin";
 import UserDetail from "@/pages/UserDetail";
 import Help from "@/pages/Help";
@@ -152,6 +154,30 @@ function App() {
             <ProtectedRoute>
               <MainLayout>
                 <UserDetail />
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+          
+          <Route path="/profile">
+            <ProtectedRoute>
+              <MainLayout>
+                <Profile />
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+          
+          <Route path="/api-keys">
+            <ProtectedRoute>
+              <MainLayout>
+                <ApiKeys />
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+          
+          <Route path="/organization">
+            <ProtectedRoute>
+              <MainLayout>
+                <Organization />
               </MainLayout>
             </ProtectedRoute>
           </Route>
