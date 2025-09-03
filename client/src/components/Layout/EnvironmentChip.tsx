@@ -66,28 +66,28 @@ export default function EnvironmentChip() {
         return {
           label: 'Demo',
           icon: TestTube,
-          className: 'bg-purple-100 text-purple-700 hover:bg-purple-200 border-purple-300',
+          className: 'bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-300', // Neutral for demo
           description: 'Simulated data for testing'
         };
       case 'Paper':
         return {
           label: 'Paper',
           icon: FileText,
-          className: 'bg-blue-100 text-blue-700 hover:bg-blue-200 border-blue-300',
+          className: 'bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200', // Lighter blue
           description: 'Real connections, virtual money'
         };
       case 'Live':
         return {
           label: 'Live',
           icon: DollarSign,
-          className: 'bg-red-100 text-red-700 hover:bg-red-200 border-red-300',
+          className: 'bg-red-50 text-red-700 hover:bg-red-100 border-red-200', // Lighter red
           description: 'Real money trading'
         };
       default:
         return {
           label: 'Demo',
           icon: TestTube,
-          className: 'bg-purple-100 text-purple-700 hover:bg-purple-200 border-purple-300',
+          className: 'bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-300',
           description: 'Simulated data for testing'
         };
     }

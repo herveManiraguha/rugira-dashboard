@@ -4,67 +4,72 @@
 @tailwind utilities;
 
 :root {
-  /* Primary Swiss Brand Colors */
-  --brand-red: hsl(1, 100%, 44%);          /* #E10600 */
-  --brand-red-600: hsl(0, 100%, 35%);      /* #B30000 */
-  --brand-green: hsl(155, 62%, 29%);       /* #1B7A46 */
+  /* Primary Swiss Brand Colors - Keep red as primary */
+  --brand-red: hsl(1, 100%, 44%);          /* #E10600 - Primary brand/CTA only */
+  --brand-red-600: hsl(0, 100%, 35%);      /* #B30000 - Primary hover */
   
-  /* Modern Spacing Scale */
+  /* Semantic Colors - For operational status */
+  --success: hsl(155, 62%, 29%);           /* Green for healthy/connected */
+  --warning: hsl(42, 93%, 56%);            /* Amber for warnings/rate-limit */
+  --error: hsl(1, 100%, 44%);              /* Red for errors only */
+  --info: hsl(210, 100%, 45%);             /* Blue for informational */
+  
+  /* Modern Spacing Scale - Base 16px/20px rhythm */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 12px;
   --spacing-lg: 16px;
-  --spacing-xl: 24px;
+  --spacing-xl: 20px;
   --spacing-2xl: 32px;
   --spacing-3xl: 48px;
   
-  /* Typography Scale with tabular figures */
-  --font-size-xs: 12px;
-  --font-size-sm: 14px;
-  --font-size-base: 16px;
-  --font-size-lg: 18px;
-  --font-size-xl: 20px;
-  --font-size-2xl: 24px;
-  --font-size-3xl: 30px;
-  --font-size-4xl: 36px;
+  /* Typography Scale - Consistent hierarchy */
+  --font-size-xs: 12px;   /* Meta text */
+  --font-size-sm: 13px;   /* Small labels */
+  --font-size-base: 14px; /* Body text */
+  --font-size-md: 16px;   /* Card titles */
+  --font-size-lg: 20px;   /* Section headers */
+  --font-size-xl: 22px;   /* Major sections */
+  --font-size-2xl: 28px;  /* Page titles */
+  --font-size-3xl: 32px;  /* Hero titles */
   
-  /* Core Neutrals - Elevated Contrast */
-  --canvas: #F1F3F5;                       /* App background */
-  --sidebar-bg: #EEF1F4;                   /* Sidebar background */
+  /* Core Neutrals - Soft, calm palette */
+  --canvas: #FAFBFC;                       /* App background - softer */
+  --sidebar-bg: #F7F8FA;                   /* Sidebar background */
   --navbar-bg: #FFFFFF;                    /* Navbar background */
   --footer-bg: #F6F7F9;                    /* Footer background */
   --surface: #FFFFFF;                      /* Card/Surface default */
-  --sub-surface: #FAFBFC;                  /* Table header/Sub-surface */
-  --input-bg: #FAFBFC;                     /* Input field background */
-  --hover-surface: #F7F9FC;                /* Hover surface tint */
+  --sub-surface: #F9FAFB;                  /* Table header/Sub-surface */
+  --input-bg: #F9FAFB;                     /* Input field background */
+  --hover-surface: #F3F4F6;                /* Hover surface tint */
   
-  /* Dividers & Borders */
-  --border-hairline: #E7ECF2;              /* Inside cards/rows */
-  --border-default: #D9E0E8;               /* Card/Panel outer border */
-  --border-strong: #CBD5E1;                /* Section seams */
-  --focus-ring-neutral: #C9D6F2;           /* Neutral focus ring */
-  --navbar-border: #E3E8EF;                /* Navbar bottom rule */
+  /* Dividers & Borders - Softer */
+  --border-hairline: #E5E7EB;              /* Inside cards/rows */
+  --border-default: #E5E7EB;               /* Card/Panel outer border - softer */
+  --border-strong: #D1D5DB;                /* Section seams */
+  --focus-ring-neutral: #93BBFD;           /* Neutral focus ring - AA compliant */
+  --navbar-border: #E5E7EB;                /* Navbar bottom rule */
   
-  /* Text Hierarchy - Better Contrast */
-  --text-heading: #0E0F11;                 /* Headings/Strong */
-  --text-body: #2F343A;                    /* Body/Default */
-  --text-secondary: #475467;               /* Secondary */
-  --text-muted: #667085;                   /* Muted/Meta */
-  --text-disabled: #98A2B3;                /* Disabled */
+  /* Text Hierarchy - Softer contrast for calm UI */
+  --text-heading: #111827;                 /* Headings/Strong */
+  --text-body: #374151;                    /* Body/Default */
+  --text-secondary: #6B7280;               /* Secondary */
+  --text-muted: #9CA3AF;                   /* Muted/Meta */
+  --text-disabled: #D1D5DB;                /* Disabled */
   
-  /* State Colors */
-  --positive-bg: #ECFDF3;
-  --positive-text: #146C43;
-  --positive-border: #ABEFC6;
-  --warning-bg: #FFF7E6;
-  --warning-text: #B54708;
-  --warning-border: #FCD58B;
-  --error-bg: #FEEDEC;
-  --error-text: #B42318;
-  --error-border: #F4C7C5;
-  --info-bg: #EEF6FF;
-  --info-text: #1D5BBF;
-  --info-border: #C7DDFB;
+  /* Semantic State Colors - Clear operational meaning */
+  --success-bg: #F0FDF4;
+  --success-text: #15803D;
+  --success-border: #86EFAC;
+  --warning-bg: #FFFBEB;
+  --warning-text: #A16207;
+  --warning-border: #FDE68A;
+  --error-bg: #FEF2F2;
+  --error-text: #B91C1C;
+  --error-border: #FCA5A5;
+  --info-bg: #EFF6FF;
+  --info-text: #1E40AF;
+  --info-border: #93C5FD;
   
   /* Motion */
   --transition-fast: 120ms;
@@ -87,12 +92,12 @@
   --card: var(--surface);
   --card-foreground: var(--text-body);
   
-  /* Chart colors */
+  /* Chart colors - Neutral palette with brand red for primary */
   --chart-1: var(--brand-red);
-  --chart-2: var(--brand-green);
-  --chart-3: hsl(42, 93%, 56%);
-  --chart-4: hsl(147, 79%, 42%);
-  --chart-5: hsl(341, 75%, 51%);
+  --chart-2: hsl(210, 100%, 45%);
+  --chart-3: hsl(155, 62%, 29%);
+  --chart-4: hsl(42, 93%, 56%);
+  --chart-5: hsl(280, 60%, 50%);
   
   /* Sidebar colors */
   --sidebar: var(--sidebar-bg);
@@ -119,6 +124,11 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: "tnum", "ss01"; /* Tabular numbers + stylistic alternates */
+  }
+  
+  /* Tabular numbers for all data */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
   }
   
   /* Typography Hierarchy */

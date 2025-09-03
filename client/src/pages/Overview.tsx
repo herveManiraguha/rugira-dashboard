@@ -24,6 +24,7 @@ import { EnhancedChart } from "@/components/ui/enhanced-chart";
 import { SkipLink } from "@/components/ui/skip-link";
 import { TimeRangeSelector } from "@/components/ui/time-range-selector";
 import { ExchangeSummary } from "@/components/ui/exchange-summary";
+import { UtilityRail } from "@/components/Layout/UtilityRail";
 
 interface KPI {
   id: string;
@@ -378,16 +379,18 @@ export default function Overview() {
   };
 
   return (
-    <div className="space-y-4 md:space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-        <div>
-          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900">Overview</h1>
-          <p className="text-sm md:text-base text-gray-600">Trading performance and system status</p>
+    <div className="flex">
+      {/* Main Content Area */}
+      <div className="flex-1 space-y-4 md:space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900">Overview</h1>
+            <p className="text-sm text-gray-600 mt-1">Trading performance and system status</p>
+          </div>
+          <div className="text-xs text-gray-500">
+            Last updated: {lastUpdated.toLocaleTimeString()} UTC
+          </div>
         </div>
-        <div className="text-xs md:text-sm text-gray-500">
-          Last updated: {lastUpdated.toLocaleTimeString()} UTC
-        </div>
-      </div>
 
       {/* Enhanced KPI Cards */}
       <KPICardGrid>
@@ -578,6 +581,10 @@ export default function Overview() {
         isOpen={showExportModal} 
         onClose={() => setShowExportModal(false)} 
       />
+      </div>
+      
+      {/* Utility Rail */}
+      <UtilityRail />
     </div>
   );
 }
