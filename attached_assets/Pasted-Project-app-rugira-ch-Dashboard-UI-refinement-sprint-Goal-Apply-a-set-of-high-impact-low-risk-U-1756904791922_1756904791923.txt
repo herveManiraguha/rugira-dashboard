@@ -1,0 +1,201 @@
+Project: app.rugira.ch — Dashboard UI refinement sprint
+Goal: Apply a set of high‑impact, low‑risk UI improvements that make the dashboard calmer, faster to scan, and enterprise‑ready while keeping Rugira Red as the brand primary. No changes to backend logic or routes. Respect existing auth/roles; this is a front‑end pass.
+
+A. Global design system updates
+
+Color tokens (do not change brand red)
+
+Keep Rugira Red as the only brand/primary color and for destructive actions where applicable.
+
+Introduce semantic tokens and use them consistently across pages:
+
+Success/Healthy: Green (health status, “Connected”, positive P&L).
+
+Warning: Amber (rate‑limit, stale sync).
+
+Error: Red (errors/kill‑switch only).
+
+Neutrals: a soft gray scale for borders, text, and containers; avoid hard black.
+
+Reduce decorative uses of red in neutral icons/text. If an element has no semantic meaning, keep it neutral.
+
+Acceptance: Non‑critical items no longer use red. Health chips = green, warnings = amber, errors = red. Primary CTA buttons remain Rugira Red.
+
+Typography & spacing
+
+Establish a consistent type scale:
+
+Page Title 28–32, Section 20–22, Card Title 14–16, Meta 12–13.
+
+Use tabular numerals for all data (cards/tables/charts labels) and right‑align currency/amount columns.
+
+Normalize vertical rhythm (16px or 20px base spacing) across cards, tables, rails.
+
+Acceptance: KPI numbers line up, tables right‑align numeric columns, and headings feel consistent across pages.
+
+Components to normalize globally
+
+Buttons: one primary (Rugira Red), one secondary (neutral outline), one ghost (text). Same height and icon spacing everywhere.
+
+Chips/Badges: lighten non‑critical chips; use filled chips only for warnings/errors and high‑attention items.
+
+Cards: soft borders + faint elevation; same padding; title → meta → body order.
+
+Skeleton loaders: add for KPI cards, charts and tables (2–3 sec shimmer).
+
+Export buttons: always top‑right inside the panel they export; same icon + label across the app.
+
+Acceptance: Buttons look/behave identically, skeletons render during load, export buttons are in a predictable place.
+
+Accessibility & performance
+
+Ensure AA contrast for all neutrals and chart lines in both themes.
+
+Visible focus rings, logical tab order, aria‑labels on actionable icons.
+
+Lazy‑load charts below the fold; keep FCP < 2s on a typical dashboard view.
+
+Acceptance: Lighthouse a11y score ≥ 95 on Overview and Bots; keyboard navigation works end‑to‑end.
+
+B. Page‑level changes
+B1) Overview (make the page have one clear focal point)
+
+Hero: Make Portfolio Equity Curve the hero (wider) with the time range control visible above it.
+
+KPI strip: Place a compact KPI strip (Portfolio Value, Active Bots, Today’s P&L, Avg Response Time) above the chart. Use tabular numerals and concise labels.
+
+Right rail (collapsible): Move secondary information to a new right‑side utility rail (see Section C).
+
+Keep primary CTA(s) minimal on this page.
+
+Acceptance: The equity chart is the visual anchor; KPIs are easy to scan; no competing visuals; right rail present.
+
+B2) Venues (optimize for operations)
+
+Default to List View (denser, faster triage). Keep Grid as a secondary toggle.
+
+Add a toolbar above the table: Search, Filter chips, Saved View selector, Density (Comfortable/Compact), and Export.
+
+Provide default saved views: All, Errors, High Fees, Stale Sync.
+
+Columns: Venue (pinned left), Status, Balance (right‑aligned), Active Bots, API Usage, Fees (right‑aligned), Last Sync, Actions.
+
+Use color semantics: green for connected, amber for rate‑limit/stale, red for error.
+
+Acceptance: On Venues load, List View appears with toolbar + saved views; numbers are right‑aligned; color semantics applied.
+
+B3) Backtesting (separate jobs from results)
+
+Split into two tabs:
+
+Results — KPIs + equity curve + returns bars (charts only).
+
+Jobs — backtest runs/history (table with status, date range, metrics).
+
+“New Backtest” lives in the Results header; Export in the panel’s top‑right.
+
+Acceptance: Results tab shows only charts/KPIs; Jobs tab lists runs cleanly; CTAs consistent.
+
+B4) Bots
+
+Keep existing layout; add density toggle on the toolbar and keep numeric columns right‑aligned.
+
+Ensure the Paper/Live “mode” indicator is visible near the bot header (and follows the semantic color set: neutral for Paper, clear emphasis for Live).
+
+Acceptance: Compact/Comfortable toggles work; numeric columns right‑aligned; Paper/Live clearly indicated.
+
+C. New right rail (utility panel) — present on Overview, Venues, Bots, Backtesting
+
+Collapsible panel on the right that contains:
+
+Approvals queue (pending maker‑checker items) with compact rows.
+
+Activity: latest ops events (bot starts/stops, venue state changes, exports).
+
+Alerts: rate‑limit, connection errors, stale data; quick “Acknowledge” control.
+
+Page filters/time range duplicated here for convenience (when applied, show selected chips).
+
+Use subdued neutrals for the rail so it never competes with the main canvas.
+
+Acceptance: Right rail toggles open/closed; contains Approvals/Activity/Alerts; actions work as they do today; styling is subtle.
+
+D. Empty, loading & error states (teach what to do next)
+
+Bots (empty): “No bots yet.” Actions: “Create Paper Bot” and “See Strategy Gallery”.
+
+Venues (empty): “No venues connected.” Actions: “Connect Exchange” and “View docs”.
+
+Backtesting (empty): “Run a backtest.” Actions: “Use a preset” and “Open docs”.
+
+Provide concise 1–2 line microcopy on what the section is for.
+
+Acceptance: Each empty state shows 1–2 helpful CTAs and short guidance; skeleton loaders precede content.
+
+E. Health & environment chips
+
+Keep existing chips (Tenant, Roles, Demo, Health) but lower visual weight of passive ones (outline or neutral).
+
+Make Health chip interactive: clicking opens a small popover with uptime, p50/p95 latency, last export status, and API reachability checks.
+
+Acceptance: Passive chips feel lighter; Health popover shows checks without navigating away.
+
+F. Chart controls & on‑chart context
+
+Standardize a time range control: 7D / 30D / 90D / YTD / 1Y / All. Applying the control should update all charts on that page.
+
+Include a small subtitle under each chart with the delta over the selected range (e.g., “+5.3% over 30D”).
+
+Keep legends concise and consistent.
+
+Acceptance: The same time control appears on all charted pages; delta subtitle visible; legends consistent.
+
+G. Microcopy & number formatting
+
+Use a single convention for numbers (Swiss dash format for prices where used; thousands separators uniformly).
+
+Align trend phrasings: “vs last month” and “vs yesterday” (do not mix alternative phrasing).
+
+Keep short, instructive microcopy; avoid jargon in empty states and CTAs.
+
+Acceptance: Numbers look uniform; trend lines use consistent phrases; empty state CTAs are succinct and helpful.
+
+H. Theme & branding reminders (do NOT change)
+
+Rugira Red remains the primary brand color and the main CTA color.
+
+Do not introduce a second brand color; use neutrals for container/background and semantic colors only where meaningful.
+
+Maintain existing logo usage and spacing.
+
+Acceptance: Brand red appears on primary call‑to‑action buttons, selection, and truly critical alerts only. The UI otherwise feels calm and neutral.
+
+I. QA checklist (complete before handing back)
+
+Overview: Equity chart is the hero; KPI strip above; right rail present; exports in panel top‑right.
+
+Venues: List by default; toolbar with saved views; numbers right‑aligned; semantic colors applied.
+
+Backtesting: Two tabs (Results vs Jobs); charts only in Results; “New Backtest” in header; Export on panel.
+
+Bots: Density toggle works; Paper/Live clearly indicated.
+
+Empty states added and visible where no data exists; skeleton loaders show during simulated fetch.
+
+Health chip opens a popover with status checks.
+
+Time range unified across charted pages and shows delta subtitles.
+
+Accessibility: a11y ≥ 95; keyboard navigation works; visible focus; AA contrast met.
+
+Performance: first contentful paint < 2s on the first dashboard load in a typical dev preview.
+
+Scope guardrails
+
+Do not modify backend endpoints, auth logic, or RBAC decisions.
+
+Keep current routes and state management; this sprint is purely UI/UX + component layer.
+
+Deliverable
+
+Updated UI with the above behaviors and visuals implemented, consistent across light/dark themes, ready to merge.
