@@ -265,11 +265,13 @@ export function EnhancedTable<T extends { id: string | number }>({
               <TableRow>
                 {onSelectionChange && (
                   <TableHead className="w-12 sticky left-0 bg-white z-10">
-                    <Checkbox
-                      checked={allSelected || someSelected}
-                      onCheckedChange={handleSelectAll}
-                      data-testid="select-all-checkbox"
-                    />
+                    <div className="flex items-center justify-center">
+                      <Checkbox
+                        checked={allSelected || someSelected}
+                        onCheckedChange={handleSelectAll}
+                        data-testid="select-all-checkbox"
+                      />
+                    </div>
                   </TableHead>
                 )}
                 {columns.map((column, index) => (
@@ -305,11 +307,13 @@ export function EnhancedTable<T extends { id: string | number }>({
                 <TableRow key={row.id} data-testid={`table-row-${row.id}`} className="hover:bg-gray-50">
                   {onSelectionChange && (
                     <TableCell className="w-12 sticky left-0 bg-white z-10 px-3 py-3 sm:px-6 sm:py-4">
-                      <Checkbox
-                        checked={selectedRows.has(row.id)}
-                        onCheckedChange={(checked) => handleRowSelection(row.id, !!checked)}
-                        data-testid={`row-checkbox-${row.id}`}
-                      />
+                      <div className="flex items-center justify-center">
+                        <Checkbox
+                          checked={selectedRows.has(row.id)}
+                          onCheckedChange={(checked) => handleRowSelection(row.id, !!checked)}
+                          data-testid={`row-checkbox-${row.id}`}
+                        />
+                      </div>
                     </TableCell>
                   )}
                   {columns.map((column, index) => (
