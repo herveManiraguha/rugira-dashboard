@@ -561,7 +561,7 @@ export default function Bots() {
   );
 
   return (
-    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6 pb-4">
+    <div className="space-y-4 sm:space-y-6 max-w-full overflow-hidden">
       <PageHeader
         skipToId="bots-table"
         title="Trading Bots"
@@ -601,7 +601,7 @@ export default function Bots() {
         }
       />
 
-      <div id="bots-table">
+      <div id="bots-table" className="w-full overflow-hidden">
         {bots.length === 0 ? (
           <EmptyState
             icon={<Bot className="h-12 w-12" />}
@@ -689,17 +689,19 @@ export default function Bots() {
             />
           </div>
         ) : (
-          <EnhancedTable
-            data={bots}
-            columns={columns}
-            searchPlaceholder="Search bots by name, strategy, or exchange..."
-            filters={tableFilters}
-            selectedFilters={filters}
-            onFilterChange={setFilters}
-            onSelectionChange={setSelectedBots}
-            bulkActions={bulkActions}
-            pageSize={10}
-          />
+          <div className="overflow-x-auto">
+            <EnhancedTable
+              data={bots}
+              columns={columns}
+              searchPlaceholder="Search bots by name, strategy, or exchange..."
+              filters={tableFilters}
+              selectedFilters={filters}
+              onFilterChange={setFilters}
+              onSelectionChange={setSelectedBots}
+              bulkActions={bulkActions}
+              pageSize={10}
+            />
+          </div>
         )}
       </div>
 
