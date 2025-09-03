@@ -1,10 +1,16 @@
-timestamp,bot_id,action,user,venue,symbol,side,quantity,price,status,notes
-2025-01-15T09:30:00Z,BTCUSD-MM-01,ORDER_PLACED,hanz.mueller,Binance,BTC/USDT,BUY,0.5,95000,FILLED,Sample data - Market making order
-2025-01-15T09:31:00Z,BTCUSD-MM-01,ORDER_PLACED,hanz.mueller,Binance,BTC/USDT,SELL,0.5,95100,FILLED,Sample data - Market making order
-2025-01-15T09:32:00Z,ETHUSD-ARB-02,ORDER_PLACED,lin.zhang,Coinbase,ETH/USD,BUY,10,3200,FILLED,Sample data - Arbitrage opportunity
-2025-01-15T09:32:05Z,ETHUSD-ARB-02,ORDER_PLACED,lin.zhang,Kraken,ETH/USD,SELL,10,3205,FILLED,Sample data - Arbitrage completion
-2025-01-15T09:35:00Z,BTCUSD-TREND-03,STOP_LOSS_TRIGGERED,system,Binance,BTC/USDT,SELL,1.0,94500,FILLED,Sample data - Risk management
-2025-01-15T09:40:00Z,SOLUSDT-GRID-04,GRID_LEVEL_HIT,system,Binance,SOL/USDT,BUY,50,180,FILLED,Sample data - Grid trading
-2025-01-15T09:45:00Z,BTCUSD-MM-01,MANUAL_STOP,clara.fischer,Binance,BTC/USDT,CLOSE,0,0,STOPPED,Sample data - Compliance intervention
-2025-01-15T09:50:00Z,SYSTEM,KILL_SWITCH_ACTIVATED,clara.fischer,ALL,ALL,HALT,0,0,EMERGENCY,Sample data - Emergency stop
-DISCLAIMER: This is simulated sample data for demonstration purposes only. Not for production use.
+timestamp,bot_id,bot_name,action,venue,pair,side,quantity,price,status,order_id,user,notes
+2025-01-15T09:00:12.345Z,bot-001,Alpha Arbitrage,ORDER_PLACED,Binance,BTC/USDT,BUY,0.05,42150.25,FILLED,ord-12345,hanz.mueller,Sample data
+2025-01-15T09:01:45.678Z,bot-001,Alpha Arbitrage,ORDER_PLACED,Binance,BTC/USDT,SELL,0.05,42175.50,FILLED,ord-12346,hanz.mueller,Sample data
+2025-01-15T09:15:23.456Z,bot-002,Beta Grid,ORDER_PLACED,Coinbase,ETH/USDT,BUY,0.5,2450.75,FILLED,ord-12347,clara.fischer,Sample data
+2025-01-15T09:17:56.789Z,bot-002,Beta Grid,ORDER_PLACED,Coinbase,ETH/USDT,SELL,0.5,2455.25,FILLED,ord-12348,clara.fischer,Sample data
+2025-01-15T09:30:12.123Z,bot-003,Gamma Momentum,ORDER_PLACED,Kraken,SOL/USDT,BUY,10,98.45,FILLED,ord-12349,martin.keller,Sample data
+2025-01-15T09:45:34.567Z,bot-003,Gamma Momentum,ORDER_PLACED,Kraken,SOL/USDT,SELL,10,99.15,FILLED,ord-12350,martin.keller,Sample data
+2025-01-15T10:00:45.890Z,bot-004,Delta Mean Rev,ORDER_PLACED,Bybit,AVAX/USDT,BUY,25,35.67,FILLED,ord-12351,lin.zhang,Sample data
+2025-01-15T10:15:23.234Z,bot-004,Delta Mean Rev,ORDER_PLACED,Bybit,AVAX/USDT,SELL,25,36.12,FILLED,ord-12352,lin.zhang,Sample data
+2025-01-15T10:30:56.678Z,bot-005,Epsilon Scalping,ORDER_PLACED,OKX,MATIC/USDT,BUY,100,0.8945,FILLED,ord-12353,emma.sanchez,Sample data
+2025-01-15T10:32:12.345Z,bot-005,Epsilon Scalping,ORDER_PLACED,OKX,MATIC/USDT,SELL,100,0.8965,FILLED,ord-12354,emma.sanchez,Sample data
+2025-01-15T10:45:34.789Z,bot-001,Alpha Arbitrage,STOP_LOSS_TRIGGERED,Binance,BTC/USDT,SELL,0.02,41900.00,FILLED,ord-12355,hanz.mueller,Sample data - Risk limit reached
+2025-01-15T11:00:23.456Z,bot-006,DLT-BX-01 (Paper),ORDER_PLACED,BX Digital,TOKEN-A,BUY,1000,12.50,FILLED,ord-12356,system,Sample data - Paper trading test
+2025-01-15T11:15:45.123Z,bot-006,DLT-BX-01 (Paper),ORDER_PLACED,BX Digital,TOKEN-A,SELL,1000,12.75,FILLED,ord-12357,system,Sample data - Paper trading test
+2025-01-15T11:30:12.567Z,bot-002,Beta Grid,GRID_ADJUSTED,Coinbase,ETH/USDT,BOTH,0.3,2448.00,PENDING,ord-12358,clara.fischer,Sample data - Grid recalibration
+2025-01-15T11:45:34.890Z,bot-003,Gamma Momentum,TAKE_PROFIT_TRIGGERED,Kraken,SOL/USDT,SELL,5,99.85,FILLED,ord-12359,martin.keller,Sample data - Target reached

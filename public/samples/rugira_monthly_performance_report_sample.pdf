@@ -6,51 +6,55 @@ endobj
 << /Type /Pages /Kids [3 0 R] /Count 1 >>
 endobj
 3 0 obj
-<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 4 0 R >> >> /MediaBox [0 0 612 792] /Contents 5 0 R >>
+<< /Type /Page /Parent 2 0 R /Resources 4 0 R /MediaBox [0 0 612 792] /Contents 5 0 R >>
 endobj
 4 0 obj
-<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+<< /Font << /F1 6 0 R >> >>
 endobj
 5 0 obj
 << /Length 500 >>
 stream
 BT
-/F1 20 Tf
-72 720 Td
+/F1 24 Tf
+50 700 Td
 (Rugira Monthly Performance Report - SAMPLE) Tj
 0 -30 Td
-/F1 12 Tf
-(This is simulated sample data for demonstration purposes only) Tj
-0 -20 Td
+/F1 14 Tf
 (Generated: January 2025) Tj
 0 -30 Td
-/F1 14 Tf
+(This is a sample/simulated data report for demonstration purposes only.) Tj
+0 -40 Td
+/F1 16 Tf
 (Performance Summary) Tj
-0 -20 Td
+0 -25 Td
 /F1 12 Tf
-(Total Return: +12.5%) Tj
-0 -15 Td
-(Sharpe Ratio: 1.8) Tj
-0 -15 Td
+(Total Return: +12.4%) Tj
+0 -20 Td
+(Sharpe Ratio: 1.84) Tj
+0 -20 Td
 (Max Drawdown: -3.2%) Tj
-0 -15 Td
-(Win Rate: 68%) Tj
-0 -30 Td
+0 -20 Td
+(Win Rate: 68.4%) Tj
+0 -40 Td
 /F1 10 Tf
-(DISCLAIMER: This is sample data only. Not for production use.) Tj
+(Note: All figures are simulated and for demonstration only. Not investment advice.) Tj
 ET
 endstream
 endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
 xref
-0 6
+0 7
 0000000000 65535 f
 0000000009 00000 n
 0000000058 00000 n
 0000000115 00000 n
-0000000241 00000 n
-0000000322 00000 n
+0000000214 00000 n
+0000000257 00000 n
+0000000807 00000 n
 trailer
-<< /Size 6 /Root 1 0 R >>
+<< /Size 7 /Root 1 0 R >>
 startxref
-873
+893
 %%EOF

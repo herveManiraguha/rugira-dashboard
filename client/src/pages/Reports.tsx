@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -6,16 +6,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { BarChart3, TrendingUp, Download, Calendar, DollarSign, Target, Clock, CheckCircle, XCircle } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { BarChart3, TrendingUp, Download, Calendar, DollarSign, Target, Clock, CheckCircle, XCircle, Lock, FileText, Table as TableIcon } from "lucide-react";
 import { useDemoMode } from "@/contexts/DemoContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRBAC } from "@/lib/rbac";
 import SampleExportModal from "@/components/Demo/SampleExportModal";
+import StepUpConsentModal from "@/components/StepUpConsentModal";
+import { useToast } from "@/hooks/use-toast";
 import { 
   BarChart, 
   Bar, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
-  Tooltip, 
+  Tooltip as RechartsTooltip, 
   ResponsiveContainer,
   LineChart,
   Line,
@@ -27,7 +32,16 @@ export default function Reports() {
   const [dateRange, setDateRange] = useState('7d');
   const [selectedBot, setSelectedBot] = useState('all');
   const [showExportModal, setShowExportModal] = useState(false);
+  const [showStepUpModal, setShowStepUpModal] = useState(false);
+  const [pendingExportType, setPendingExportType] = useState<'performance' | 'audit' | null>(null);
   const { isDemoMode, isReadOnly } = useDemoMode();
+  const authContext = useAuth();
+  const rbac = useRBAC(authContext?.user || null, authContext?.currentTenant || null);
+  const { toast } = useToast();
+  
+  const canExportReports = rbac.can('export_reports');
+  const canExportCompliance = rbac.can('export_compliance');
+  const exportDisabledReason = !canExportReports ? rbac.getDisabledReason('export_reports') : null;
 
   const performanceMetrics = {
     roi: '12.4%',
@@ -75,6 +89,69 @@ export default function Reports() {
 
   const cumulativeReturnsData = generateCumulativeReturns();
 
+  const handleExport = (type: 'performance' | 'audit') => {
+    // Check permissions first
+    if (type === 'performance' && !canExportReports) {
+      toast({
+        title: "Export Restricted",
+        description: exportDisabledReason || "You don't have permission to export reports",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (type === 'audit' && !canExportCompliance) {
+      toast({
+        title: "Export Restricted", 
+        description: rbac.getDisabledReason('export_compliance'),
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Show step-up consent for sensitive operations
+    setPendingExportType(type);
+    setShowStepUpModal(true);
+  };
+
+  const handleStepUpConfirm = () => {
+    setShowStepUpModal(false);
+    
+    if (pendingExportType === 'performance') {
+      // Generate timestamped filename
+      const timestamp = new Date().toISOString().split('T')[0];
+      const filename = `rugira_performance_${timestamp}_${authContext?.user?.email?.split('@')[0]}.pdf`;
+      
+      // Download sample PDF
+      const link = document.createElement('a');
+      link.href = '/samples/rugira_monthly_performance_report_sample.pdf';
+      link.download = filename;
+      link.click();
+      
+      toast({
+        title: "Report Downloaded",
+        description: `Performance report saved as ${filename}`,
+      });
+    } else if (pendingExportType === 'audit') {
+      // Generate timestamped filename
+      const timestamp = new Date().toISOString().split('T')[0];
+      const filename = `rugira_audit_${timestamp}_${authContext?.user?.email?.split('@')[0]}.csv`;
+      
+      // Download sample CSV
+      const link = document.createElement('a');
+      link.href = '/samples/rugira_audit_extract_sample.csv';
+      link.download = filename;
+      link.click();
+      
+      toast({
+        title: "Audit Extract Downloaded",
+        description: `Audit data saved as ${filename}`,
+      });
+    }
+    
+    setPendingExportType(null);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -94,10 +171,27 @@ export default function Reports() {
               <SelectItem value="90d">90 Days</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" onClick={() => setShowExportModal(true)}>
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  onClick={() => handleExport('performance')}
+                  disabled={!canExportReports}
+                  data-testid="button-export-reports"
+                >
+                  {!canExportReports && <Lock className="h-4 w-4 mr-2" />}
+                  <Download className="h-4 w-4 mr-2" />
+                  Export
+                </Button>
+              </TooltipTrigger>
+              {!canExportReports && (
+                <TooltipContent>
+                  <p>{exportDisabledReason}</p>
+                </TooltipContent>
+              )}
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
 
@@ -198,7 +292,7 @@ export default function Reports() {
                         fontSize={12}
                       />
                       <YAxis />
-                      <Tooltip 
+                      <RechartsTooltip 
                         formatter={(value, name) => [
                           name === 'pnl' ? `$${Number(value).toFixed(2)}` : `${value}`,
                           name === 'pnl' ? 'P&L' : name === 'trades' ? 'Trades' : 'Win Rate %'
@@ -230,7 +324,7 @@ export default function Reports() {
                       <YAxis 
                         tickFormatter={(value) => `$${(value / 1000).toFixed(1)}k`}
                       />
-                      <Tooltip 
+                      <RechartsTooltip 
                         labelFormatter={(value) => new Date(value).toLocaleDateString()}
                         formatter={(value: any) => [`$${value.toFixed(2)}`, 'Portfolio Value']}
                       />
@@ -324,19 +418,28 @@ export default function Reports() {
                 </div>
               </div>
               <div className="mt-4 flex justify-end">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => {
-                    const link = document.createElement('a');
-                    link.href = '/samples/rugira_audit_extract_sample.csv';
-                    link.download = 'rugira_audit_extract_sample.csv';
-                    link.click();
-                  }}
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Export CSV (Sample)
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleExport('audit')}
+                        disabled={!canExportCompliance}
+                        data-testid="button-export-audit"
+                      >
+                        {!canExportCompliance && <Lock className="h-3 w-3 mr-2" />}
+                        <Download className="h-4 w-4 mr-2" />
+                        Export CSV
+                      </Button>
+                    </TooltipTrigger>
+                    {!canExportCompliance && (
+                      <TooltipContent>
+                        <p>{rbac.getDisabledReason('export_compliance')}</p>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </CardContent>
           </Card>
@@ -365,9 +468,25 @@ export default function Reports() {
         </TabsContent>
       </Tabs>
 
+      {/* Modals */}
       <SampleExportModal 
         isOpen={showExportModal} 
         onClose={() => setShowExportModal(false)} 
+      />
+      
+      <StepUpConsentModal
+        isOpen={showStepUpModal}
+        onClose={() => {
+          setShowStepUpModal(false);
+          setPendingExportType(null);
+        }}
+        onConfirm={handleStepUpConfirm}
+        operation={pendingExportType === 'performance' ? 'Report Export' : 'Compliance Audit Export'}
+        description={
+          pendingExportType === 'performance' 
+            ? 'You are about to export a performance report containing trading data and metrics.'
+            : 'You are about to export an audit extract containing detailed transaction logs and compliance data.'
+        }
       />
     </div>
   );
