@@ -4,9 +4,16 @@
 
 Rugira is a professional trading bot management dashboard built as a Single Page Application (SPA) for app.rugira.ch. The application provides real-time monitoring, compliance tools, and comprehensive bot management capabilities with a clean Swiss-inspired design. It features a React frontend with TypeScript, Express backend, and PostgreSQL database integration, designed for professional trading bot users.
 
-## Recent Changes (September 2, 2025)
+## Recent Changes (September 3, 2025)
 
-### UI Navigation Cleanup and Consolidation
+### Mobile UI Improvements and Brand Cleanup
+- **Mobile-Optimized Views**: Forced cards-only view on mobile for Bots and Venues pages for better UX
+- **Simplified Mobile Controls**: Replaced "Create Bot" and "Add Venue" buttons with clean square "+" icons on mobile
+- **Brand Name Consistency**: Replaced all occurrences of "rugirinka" with "rugira" while maintaining functionality
+- **Table Overflow Fix**: Fixed table width issues by shortening long bot names and applying proper text truncation
+- **Responsive View Toggle**: Hidden view mode toggle buttons on mobile since only cards view is available
+
+### UI Navigation Cleanup and Consolidation (Sept 2)
 - **Removed Duplicate Elements**: Eliminated duplicate notification buttons and environment indicators
 - **Consolidated Notifications**: Merged all notification functionality into a single NotificationButton component
 - **Tenant Switcher**: Restored tenant switching functionality with cleaner implementation

@@ -184,7 +184,7 @@ const tokenizedVenues: TokenizedVenueData[] = [
     eligibility: 'Pro/Inst',
     status: 'Pilot-ready (Paper)',
     actions: ['Open Venue', 'Docs'],
-    footnote: 'Orders routed via InCore participant connectivity; Rugirinka enforces pre-trade limits and reconciles via drop-copy (T+0).'
+    footnote: 'Orders routed via InCore participant connectivity; Rugira enforces pre-trade limits and reconciles via drop-copy (T+0).'
   },
   {
     id: 'sdx',
@@ -329,7 +329,7 @@ export default function Venues() {
     <div className="space-y-6">
       <PageHeader
         title="Venue Connections"
-        description="Venues lists all routable markets. Tokenized venues are accessed directly or via a participant (e.g., InCore). Rugirinka applies pre-trade limits, audit logging, and drop-copy/T+0 reconciliation where available."
+        description="Venues lists all routable markets. Tokenized venues are accessed directly or via a participant (e.g., InCore). Rugira applies pre-trade limits, audit logging, and drop-copy/T+0 reconciliation where available."
         actions={
           <div className="flex gap-2">
             <div className="hidden sm:flex items-center bg-gray-100 rounded-lg p-1">
@@ -591,7 +591,7 @@ export default function Venues() {
       {/* Tokenized Venues Section */}
       <div className="space-y-4">
         <h2 className="text-lg font-semibold">Tokenized Venues</h2>
-        {viewMode === 'cards' ? (
+        {(viewMode === 'cards' || isMobile) ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {tokenizedVenues.map((venue) => (
               <Card key={venue.id} className="hover:shadow-lg transition-shadow">

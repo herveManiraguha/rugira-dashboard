@@ -42,12 +42,12 @@ export default function Help() {
     },
     {
       question: "How does drop-copy/T+0 reconciliation work?",
-      answer: "Drop-copy provides real-time trade confirmations directly from the venue, enabling T+0 (same-day) reconciliation. For tokenized venues like BX Digital, Rugirinka receives execution reports via FIX drop-copy, automatically matching them against your orders to ensure all trades are properly accounted for within the same trading day. This provides immediate confirmation and reduces settlement risk.",
+      answer: "Drop-copy provides real-time trade confirmations directly from the venue, enabling T+0 (same-day) reconciliation. For tokenized venues like BX Digital, Rugira receives execution reports via FIX drop-copy, automatically matching them against your orders to ensure all trades are properly accounted for within the same trading day. This provides immediate confirmation and reduces settlement risk.",
       category: 'technical'
     },
     {
       question: "What does 'Route via InCore (participant)' mean?",
-      answer: "Orders are sent via InCore's participant connectivity to access tokenized venues. Rugirinka does not provide custody - your assets remain with your chosen custodian while we handle order routing and execution through InCore's infrastructure.",
+      answer: "Orders are sent via InCore's participant connectivity to access tokenized venues. Rugira does not provide custody - your assets remain with your chosen custodian while we handle order routing and execution through InCore's infrastructure.",
       category: 'trading'
     },
     {
