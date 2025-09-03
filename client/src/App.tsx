@@ -19,7 +19,7 @@ import DemoOverview from "@/pages/DemoOverview";
 import Strategies from "@/pages/Strategies";
 import Venues from "@/pages/Venues";
 import Compliance from "@/pages/Compliance";
-import Reports from "@/pages/Reports";
+import Reports from "@/pages/ReportsNew";
 import Backtesting from "@/pages/Backtesting";
 import Monitoring from "@/pages/Monitoring";
 import Settings from "@/pages/Settings";

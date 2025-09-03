@@ -1,0 +1,207 @@
+Project: app.rugira.ch
+Screen: Reports & Analytics
+Goal: Turn this page into a complete, tabbed analytics workspace with investor‑grade Performance reporting, plus Operational and Risk Analysis views. Keep Rugira Red as the primary brand color; use semantic greens/amber/reds for status only.
+
+0) Scope & guardrails
+
+Front‑end only. Do not change routes or backend contracts. Where data is missing, compute from existing client data or use demo stubs guarded by DEMO_AUTH=true and show the “Sample/Simulated Data” micro‑disclaimer.
+
+Do not alter left‑nav items. Compliance remains a separate page in the nav.
+
+Export buttons remain inside the panel they export (top‑right), same icon/label everywhere.
+
+1) Page scaffold & tabs
+
+Keep the page title Reports & Analytics.
+
+Tabs across the top: Performance (default), Operational, Risk Analysis. Persist the active tab in the URL query (e.g., ?tab=operational) and in local storage.
+
+Add a toolbar under the title shared by all tabs:
+
+Time range: 7D / 30D / 90D / YTD / 1Y / All.
+
+Filters: Strategy (multi), Venue (multi), Bot State (Running/Stopped/Error).
+
+Saved Views dropdown: “Desk overview”, “Venue attribution”, “Risk posture”, “Ops health”. Allow Save/Update/Delete.
+
+Chips show the active filters and can be cleared individually.
+
+Acceptance: Tabs switch without layout shift; filters apply across all widgets on the active tab; saved views recall the exact filter state and time range.
+
+2) Performance tab (investor/desk view)
+
+2.1 KPI strip (6 cards)
+
+Net P&L (CHF) — right‑aligned value with ±color.
+
+ROI (%) — normalized to selected range.
+
+Sharpe Ratio — period Sharpe (annualize if range > 30D).
+
+Max Drawdown (%) — most negative drawdown over range.
+
+Win Rate (%) — winning trades / total trades.
+
+Fees (CHF) — total fees paid over range.
+
+Remove Avg Latency from this tab (move it to Operational).
+
+2.2 Charts
+
+Equity Curve (normalized) (main chart): subtitle shows delta over selected range (e.g., “+5.3% over 30D”). Tooltip: date, equity, delta vs prior day.
+
+Drawdown Curve (line under Equity): from 0 down to min DD; highlights the worst trough.
+
+P&L by Bot (bar): default CHF, toggle to %. Tooltip shows ROI, Sharpe, trades, fees per bot. (Rename from “Performance by Bot”.)
+
+(Optional if space allows) Monthly Returns Heatmap (month x year cells with color scale).
+
+2.3 Attribution tables
+
+P&L by Strategy — columns: Strategy, Net P&L (CHF), ROI %, Win Rate %, Trades, Fees (CHF).
+
+P&L by Venue — columns: Venue, Net P&L (CHF), Fees (CHF), Order Success %.
+
+Top/Bottom 5 Contributors — entity, Net P&L (CHF), ROI %.
+
+2.4 Export
+
+Export menu in Performance header:
+
+Monthly Performance Report (PDF) — use current range/filters; if backend is missing, stream the existing sample PDF; display “Sample/Simulated Data” label.
+
+Attribution (CSV) — table export (strategy & venue).
+
+Acceptance (Performance):
+
+KPI strip shows the six metrics above (no latency here).
+
+Equity + Drawdown charts render; P&L by Bot toggles CHF/% and right‑aligns numbers.
+
+Two attribution tables + Top/Bottom list appear; “Export” works.
+
+3) Operational tab (run‑ops view)
+
+3.1 KPI strip (6 cards)
+
+Order Success % — (fills + acked cancels) / submitted.
+
+Rate‑limit Hits — count over the period.
+
+Error Count — total errors; link to taxonomy.
+
+p95 Latency (ms) — decision‑to‑ack p95 (move from Performance).
+
+API Usage vs Cap — average % usage (e.g., 43%).
+
+Venue Uptime % — weighted by routed volume.
+
+3.2 Charts
+
+Latency Trend — p50/p95/p99 over time (legend chips).
+
+Error Taxonomy — stacked bars (auth / rate‑limit / network / validation).
+
+Throughput — orders & fills per hour (dual‑axis or two lines).
+
+3.3 Table
+
+Venue Health — Venue, State (Connected/Warning/Error), Last Sync, Retries, WS Reconnects, API Usage %, Order Success %.
+
+3.4 Export
+
+Operational Metrics (CSV) — KPI + charts rollups + venue health table for the selected range/filters.
+
+Acceptance (Operational):
+
+p95 Latency card present; error taxonomy and throughput visible; venue health table sortable.
+
+Export produces a CSV (or demo stub) reflecting the current range/filters.
+
+4) Risk Analysis tab (risk officer view)
+
+4.1 KPI strip (6 cards)
+
+VaR 95% (CHF) — simple/parametric over the portfolio.
+
+Exposure (CHF) — gross exposure for selected assets/venues.
+
+Largest Concentration % — max single asset/venue weight.
+
+DD Cap Triggers — count of daily drawdown guard activations.
+
+SL/TP Activations — count of stop‑loss/take‑profit triggers.
+
+Breaches — number of risk policy breaches.
+
+4.2 Charts
+
+Exposure Treemap — by asset and/or venue.
+
+Drawdown Distribution — histogram of DDs (tail focus).
+
+Risk‑Return Scatter — ROI vs stdev per bot/strategy.
+
+4.3 Table
+
+Breaches & Outcomes — Policy, Requested by, Approved by (maker‑checker), Action, Time, Notes (read‑only).
+
+4.4 Export
+
+Risk Pack (CSV/PDF) — KPI + visuals + breaches table; show “Sample/Simulated Data” if demo.
+
+Acceptance (Risk):
+
+KPI cards render; treemap + histogram + scatter render with tooltips; breaches table paginates; export available.
+
+5) Formatting & UX consistency
+
+Numbers: Right‑align numeric columns. Use tabular numerals for KPI cards, chart labels, and tables. Thousands separators; currency shown as CHF (prefix or suffix; be consistent).
+
+Color semantics: Brand Rugira Red = primary CTAs only; use green for positive, amber for warning, red for errors/kill‑switch.
+
+A11y: Ensure AA contrast; add aria‑labels for icons; keep focus rings.
+
+Skeletons: Show skeleton loaders for KPI cards, charts, and tables (~2s) while loading.
+
+Tooltips: Each KPI has a short tooltip (“Sharpe: mean return ÷ volatility; annualized for ranges > 30D”).
+
+Empty states: If a table/chart has no data after filters, show a neutral message + “Clear filters”.
+
+6) Calculations (front‑end formula hints for demo mode)
+
+ROI = (EndEquity ÷ StartEquity − 1).
+
+Sharpe (period) = mean(period returns) ÷ std(period returns); annualize if range > 30D.
+
+Max Drawdown = min((Equity − CumMax) ÷ CumMax).
+
+Win Rate = winning trades ÷ total trades.
+
+Order Success % = (fills + acked cancels) ÷ submitted.
+
+Latency = decision‑to‑ack; compute p50/p95/p99 from per‑order samples.
+
+(If underlying series are absent, synthesize demo series deterministically and mark as “Sample/Simulated Data”.)
+
+7) QA checklist (complete before handing back)
+
+Performance tab shows Net P&L (CHF), ROI, Sharpe, Max DD, Win Rate, Fees; no latency card here.
+
+Equity + Drawdown charts render; P&L by Bot toggles CHF/%.
+
+Attribution tables (Strategy + Venue) + Top/Bottom 5 present.
+
+Operational tab: p95 Latency, rate‑limit hits, error taxonomy, throughput, venue health table.
+
+Risk tab: VaR, Exposure, Concentration, DD cap triggers, SL/TP, Breaches; treemap + histogram + scatter; breaches table.
+
+Time range + filters work and persist with saved views.
+
+Export menus work for each tab (PDF/CSV), using demo files if necessary and clearly labeled as sample.
+
+Numbers are right‑aligned; tabular numerals used; consistent CHF formatting.
+
+a11y ≥ 95 on this route; keyboard navigation works.
+
+Deliverable: Updated Reports & Analytics route with the three tabs and all widgets above, styled consistently with existing Rugira design (Rugira Red primary; calm neutrals elsewhere), ready to merge.
