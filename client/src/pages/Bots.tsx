@@ -305,6 +305,22 @@ export default function Bots() {
     }
   };
 
+  // Define filters before using them
+  const tableFilters = useMemo(() => [
+    { id: 'running', label: 'Running', value: 'running' },
+    { id: 'stopped', label: 'Stopped', value: 'stopped' },
+    { id: 'error', label: 'Error', value: 'error' },
+    { id: 'binance', label: 'Binance', value: 'binance' },
+    { id: 'coinbase-pro', label: 'Coinbase Pro', value: 'coinbase pro' },
+    { id: 'kraken', label: 'Kraken', value: 'kraken' },
+    { id: 'bybit', label: 'Bybit', value: 'bybit' },
+    { id: 'okx', label: 'OKX', value: 'okx' },
+    { id: 'kucoin', label: 'KuCoin', value: 'kucoin' },
+    { id: 'gate-io', label: 'Gate.io', value: 'gate.io' },
+    { id: 'bitfinex', label: 'Bitfinex', value: 'bitfinex' },
+    { id: 'gemini', label: 'Gemini', value: 'gemini' }
+  ], []);
+
   // Filter and search data
   const filteredBots = useMemo(() => {
     let result = bots;
@@ -339,7 +355,7 @@ export default function Bots() {
     }
 
     return result;
-  }, [searchTerm, filters]);
+  }, [searchTerm, filters, tableFilters]);
 
   // Paginate data
   const paginatedBots = useMemo(() => {
@@ -521,21 +537,6 @@ export default function Bots() {
       )
     }
   ];
-
-  const tableFilters = useMemo(() => [
-    { id: 'running', label: 'Running', value: 'running' },
-    { id: 'stopped', label: 'Stopped', value: 'stopped' },
-    { id: 'error', label: 'Error', value: 'error' },
-    { id: 'binance', label: 'Binance', value: 'binance' },
-    { id: 'coinbase-pro', label: 'Coinbase Pro', value: 'coinbase pro' },
-    { id: 'kraken', label: 'Kraken', value: 'kraken' },
-    { id: 'bybit', label: 'Bybit', value: 'bybit' },
-    { id: 'okx', label: 'OKX', value: 'okx' },
-    { id: 'kucoin', label: 'KuCoin', value: 'kucoin' },
-    { id: 'gate-io', label: 'Gate.io', value: 'gate.io' },
-    { id: 'bitfinex', label: 'Bitfinex', value: 'bitfinex' },
-    { id: 'gemini', label: 'Gemini', value: 'gemini' }
-  ], []);
 
   const bulkActions = (
     <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
