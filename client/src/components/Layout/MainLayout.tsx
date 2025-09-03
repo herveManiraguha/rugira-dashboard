@@ -1,26 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Route, Switch, useLocation, Link } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import logoSvg from "@/assets/logo.svg";
 import { useAuth } from '@/contexts/AuthContext';
 import { useEnvironment } from '@/contexts/EnvironmentContext';
 import DemoRibbon from '@/components/Demo/DemoRibbon';
 import Footer from '@/components/Layout/Footer';
-import StatusBadge from '@/components/Layout/StatusBadge';
-import AWSStatusIndicator from '@/components/Layout/AWSStatusIndicator';
-import NotificationButton from '@/components/Layout/NotificationButton';
-import EnvironmentChip from '@/components/Layout/EnvironmentChip';
-
-import { TenantModeBadge } from '@/components/Layout/TenantModeBadge';
-import { TenantSwitcher } from '@/components/TenantSwitcher';
-import { ApprovalsDrawer } from '@/components/Approvals/ApprovalsDrawer';
+import HeaderNew from '@/components/Layout/HeaderNew';
 import { 
-  Bell, 
-  User, 
-  AlertTriangle, 
-  ChevronDown,
-  ChevronRight,
   Activity,
   Bot,
   Target,
@@ -31,19 +18,11 @@ import {
   Monitor,
   Settings,
   HelpCircle,
-  Power,
   Menu,
   X,
-  MoreHorizontal,
-  LogOut
+  User,
+  ChevronRight
 } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
 import {
   Sheet,
   SheetContent,
@@ -54,7 +33,6 @@ import {
   SheetClose
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import KillSwitchButton from '@/components/KillSwitch/KillSwitchButton';
 import KillSwitchBanner from '@/components/KillSwitch/KillSwitchBanner';
 import AIAssistantFloat from '@/components/AI/AIAssistantFloat';
 
@@ -75,19 +53,17 @@ const navigation = [
   { name: 'Help', href: '/help', icon: HelpCircle, group: 'System' },
 ];
 
-export default function MainLayout({ children }: MainLayoutProps) {
+export default function MainLayoutNew({ children }: MainLayoutProps) {
   const [location, setLocation] = useLocation();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [isKillSwitchEnabled, setIsKillSwitchEnabled] = useState(false);
-  const { environment, setEnvironment, isLive } = useEnvironment();
+  const { isLive } = useEnvironment();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [mobileOverflowOpen, setMobileOverflowOpen] = useState(false);
 
   // Close mobile menu on route change
   useEffect(() => {
     setMobileMenuOpen(false);
-    setMobileOverflowOpen(false);
   }, [location]);
 
   // Handle escape key for mobile menu
@@ -95,20 +71,28 @@ export default function MainLayout({ children }: MainLayoutProps) {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setMobileMenuOpen(false);
-        setMobileOverflowOpen(false);
       }
     };
 
-    if (mobileMenuOpen || mobileOverflowOpen) {
+    if (mobileMenuOpen) {
       document.addEventListener('keydown', handleEscape);
       return () => document.removeEventListener('keydown', handleEscape);
     }
-  }, [mobileMenuOpen, mobileOverflowOpen]);
+  }, [mobileMenuOpen]);
 
   const handleKillSwitch = () => {
-    // TODO: Implement kill switch functionality when backend supports it
+    setIsKillSwitchEnabled(true);
     console.log('Kill switch activated');
+    // TODO: Implement actual kill switch functionality when backend supports it
   };
+
+  // Group navigation items
+  const groupedNavigation = navigation.reduce((acc, item) => {
+    const group = item.group || 'Main';
+    if (!acc[group]) acc[group] = [];
+    acc[group].push(item);
+    return acc;
+  }, {} as Record<string, typeof navigation>);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -118,7 +102,6 @@ export default function MainLayout({ children }: MainLayoutProps) {
       {isLive && (
         <div className="fixed top-0 left-0 right-0 h-1 bg-red-400 z-[60]" />
       )}
-
       
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
@@ -128,552 +111,175 @@ export default function MainLayout({ children }: MainLayoutProps) {
         />
       )}
       
-      {/* Fixed Top Bar */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
-        <div className="flex items-center justify-between w-full px-4 py-3 lg:px-6 lg:py-4">
-          {/* Left side - Mobile Menu Button, Logo and tenant switcher */}
-          <div className="flex items-center space-x-3 lg:space-x-6">
-            {/* Mobile/Tablet Menu Button - visible up to lg screens */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 h-9 w-9"
-              aria-label="Toggle navigation menu"
-              data-testid="button-mobile-menu"
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
-            
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 flex items-center justify-center">
-                <img src={logoSvg} alt="Rugira" className="w-8 h-8" />
-              </div>
-              <span className="text-lg lg:text-xl font-semibold text-gray-900 hidden sm:block">Rugira</span>
+      {/* New Header */}
+      <HeaderNew onKillSwitch={handleKillSwitch} onMobileMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)} />
+      
+      {/* Kill Switch Banner */}
+      {isKillSwitchEnabled && (
+        <KillSwitchBanner 
+          onDismiss={() => setIsKillSwitchEnabled(false)} 
+        />
+      )}
+      
+      <div className="flex h-full pt-14">
+        {/* Desktop Sidebar - lg screens and above */}
+        <aside 
+          className={cn(
+            "hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 bg-white border-r border-gray-200 transition-all duration-300 z-30",
+            sidebarCollapsed ? "lg:w-16" : "lg:w-64",
+            "lg:pt-14"
+          )}
+        >
+          <div className="flex-1 flex flex-col overflow-y-auto">
+            {/* Collapse toggle for desktop */}
+            <div className="flex items-center justify-end p-2 border-b">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                className="p-2 h-8 w-8"
+                aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              >
+                <ChevronRight className={cn(
+                  "h-4 w-4 transition-transform",
+                  !sidebarCollapsed && "rotate-180"
+                )} />
+              </Button>
             </div>
             
-            {/* Tenant Switcher - shown on medium screens and up */}
-            <div className="hidden md:block">
-              <TenantSwitcher />
-            </div>
-
-          </div>
-
-          {/* Right side - Responsive layout */}
-          <div className="flex items-center space-x-2">
-            {/* Desktop - show all controls */}
-            <div className="hidden lg:flex items-center space-x-4">
-              <EnvironmentChip />
-              <ApprovalsDrawer />
-              <AWSStatusIndicator />
-              <NotificationButton />
-              <KillSwitchButton />
-            </div>
-
-            {/* Medium screens - overflow menu */}
-            <div className="hidden md:flex lg:hidden items-center space-x-2">
-              <Sheet open={mobileOverflowOpen} onOpenChange={setMobileOverflowOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="outline" size="sm" aria-label="More options">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="right" className="w-80">
-                  <SheetHeader>
-                    <SheetTitle>Dashboard Controls</SheetTitle>
-                    <SheetDescription>Access additional dashboard features</SheetDescription>
-                  </SheetHeader>
-                  <div className="mt-6 space-y-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Tenant</label>
-                      <TenantSwitcher />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Environment</label>
-                      <EnvironmentChip />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Status</label>
-                      <AWSStatusIndicator />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Notifications</label>
-                      <NotificationButton />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Emergency Controls</label>
-                      <KillSwitchButton />
-                    </div>
-                    {user && (
-                      <div className="pt-4 border-t">
-                        <div className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50">
-                          <div className="w-8 h-8 bg-[#E10600] rounded-full flex items-center justify-center">
-                            <User className="w-4 h-4 text-white" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">
-                              {user.profile.name}
-                            </p>
-                            <p className="text-xs text-gray-500 truncate">
-                              {user.profile.email}
-                            </p>
-                          </div>
-                        </div>
-                        <Button
-                          variant="outline"
-                          onClick={logout}
-                          className="w-full mt-3"
-                          data-testid="button-logout"
-                        >
-                          <LogOut className="w-4 h-4 mr-2" />
-                          Sign Out
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </SheetContent>
-              </Sheet>
-            </div>
-
-            {/* Small screens - overflow menu for controls */}
-            <div className="md:hidden">
-              <Sheet open={mobileOverflowOpen} onOpenChange={setMobileOverflowOpen}>
-                <SheetTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="h-10 w-10 p-0"
-                    aria-label="More controls"
-                    data-testid="button-mobile-overflow"
-                  >
-                    <MoreHorizontal className="h-5 w-5" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent 
-                  side="right" 
-                  className="w-[85vw] max-w-sm overflow-y-auto"
-                  aria-describedby={undefined}
-                >
-                  <SheetHeader className="pb-4">
-                    <SheetTitle className="text-left">Dashboard Controls</SheetTitle>
-                  </SheetHeader>
-                  <div className="space-y-6">
-                    <div className="space-y-3">
-                      <label className="block text-sm font-medium text-gray-900">Tenant</label>
-                      <TenantSwitcher />
-                    </div>
-                    
-                    <div className="space-y-3">
-                      <label className="block text-sm font-medium text-gray-900">Environment</label>
-                      <EnvironmentChip />
-                    </div>
-                    
-                    <div className="space-y-3">
-                      <label className="block text-sm font-medium text-gray-900">System Status</label>
-                      <AWSStatusIndicator />
-                    </div>
-                    
-                    <div className="space-y-3">
-                      <label className="block text-sm font-medium text-gray-900">Notifications</label>
-                      <div className="w-full">
-                        <NotificationButton />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-3">
-                      <label className="block text-sm font-medium text-gray-900">Emergency Controls</label>
-                      <KillSwitchButton className="w-full h-12" />
-                    </div>
-
-                    {user && (
-                      <div className="pt-4 border-t">
-                        <div className="flex items-center space-x-3 p-4 rounded-lg bg-gray-50 mb-4">
-                          <div className="w-12 h-12 bg-[#E10600] rounded-full flex items-center justify-center">
-                            <User className="w-6 h-6 text-white" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-base font-medium text-gray-900 truncate">
-                              {user.profile.name}
-                            </p>
-                            <p className="text-sm text-gray-500 truncate">
-                              {user.profile.email}
-                            </p>
-                          </div>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <Link to="/profile">
-                            <Button 
-                              variant="ghost" 
-                              className="w-full justify-start h-12 text-base"
-                              onClick={() => setMobileOverflowOpen(false)}
-                            >
-                              <User className="mr-4 h-5 w-5" />
-                              Profile
-                            </Button>
-                          </Link>
-                          <Link to="/settings">
-                            <Button 
-                              variant="ghost" 
-                              className="w-full justify-start h-12 text-base"
-                              onClick={() => setMobileOverflowOpen(false)}
-                            >
-                              <Settings className="mr-4 h-5 w-5" />
-                              Settings
-                            </Button>
-                          </Link>
-                          <Button
-                            variant="outline"
-                            onClick={() => {
-                              setMobileOverflowOpen(false);
-                              logout();
-                            }}
-                            className="w-full justify-start h-12 text-base text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
-                            data-testid="button-mobile-overflow-logout"
-                          >
-                            <LogOut className="mr-4 h-5 w-5" />
-                            Sign Out
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </SheetContent>
-              </Sheet>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="flex pt-16 lg:pt-20">
-        {/* Mobile Navigation Drawer */}
-        <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-          <SheetContent 
-            side="left" 
-            className="w-[85vw] max-w-sm p-0 lg:hidden overflow-y-auto"
-            aria-describedby={undefined}
-          >
-            <div className="flex flex-col h-full">
-              <SheetHeader className="p-4 sm:p-6 border-b bg-white sticky top-0 z-10">
-                <SheetTitle className="flex items-center space-x-3 text-left">
-                  <img src={logoSvg} alt="Rugira" className="w-8 h-8" />
-                  <div>
-                    <span className="text-lg font-semibold">Navigation</span>
-                    <p className="text-sm text-gray-500 font-normal">Trading Dashboard</p>
-                  </div>
-                </SheetTitle>
-              </SheetHeader>
-
-              {/* Mobile Tenant Switcher */}
-              <div className="p-4 sm:p-6 pb-4 border-b border-gray-100">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Current Tenant</label>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button 
-                      variant="outline" 
-                      className="w-full justify-between h-12 text-base"
-                      data-testid="button-mobile-tenant-switcher"
-                    >
-                      Default Tenant
-                      <ChevronDown className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-full">
-                    <DropdownMenuItem>Default Tenant</DropdownMenuItem>
-                    <DropdownMenuItem disabled>Switch Tenant (Pro)</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-
-              <nav className="flex-1 p-4 sm:p-6">
-                <ul className="space-y-2">
-                  {navigation.map((item, index) => {
-                    const Icon = item.icon;
-                    const isActive = location === item.href || 
-                      (item.href !== '/' && location.startsWith(item.href));
-                    
-                    // Check if we need to show a group header
-                    const showGroupHeader = item.group && 
-                      (index === 0 || navigation[index - 1].group !== item.group);
-                    
+            <nav className="flex-1 px-2 py-4 space-y-1">
+              {Object.entries(groupedNavigation).map(([group, items]) => (
+                <div key={group} className="mb-4">
+                  {group !== 'Main' && !sidebarCollapsed && (
+                    <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                      {group}
+                    </h3>
+                  )}
+                  {items.map((item) => {
+                    const isActive = location === item.href;
                     return (
-                      <div key={item.name}>
-                        {showGroupHeader && (
-                          <li className="pt-6 first:pt-0">
-                            <div className="px-3 py-1 text-[11px] font-medium text-gray-400 uppercase tracking-wider opacity-60">
-                              {item.group}
-                            </div>
-                          </li>
-                        )}
-                        <li>
-                          <Link href={item.href}>
-                            <Button
-                              variant={isActive ? "secondary" : "ghost"}
-                              className={cn(
-                                "w-full justify-start text-left h-11 text-base font-medium relative transition-all duration-120 ease-out",
-                                isActive ? "bg-gray-50 text-gray-900 font-semibold" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50/50"
-                              )}
-                              data-testid={`nav-mobile-${item.name.toLowerCase()}`}
-                              onClick={() => setMobileMenuOpen(false)}
-                            >
-                              {isActive && <span className="absolute left-0 top-2 bottom-2 w-0.5 bg-red-500 rounded-r" />}
-                              <Icon className={cn("mr-3 h-5 w-5 flex-shrink-0", isActive && "ml-2")} />
-                              <span className="truncate">{item.name}</span>
-                            </Button>
-                          </Link>
-                        </li>
-                      </div>
+                      <Link key={item.name} href={item.href}>
+                        <a
+                          className={cn(
+                            "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                            isActive
+                              ? "bg-gray-100 text-gray-900"
+                              : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+                            sidebarCollapsed && "justify-center"
+                          )}
+                          title={sidebarCollapsed ? item.name : undefined}
+                        >
+                          <item.icon className={cn(
+                            "flex-shrink-0 h-5 w-5",
+                            !sidebarCollapsed && "mr-3"
+                          )} />
+                          {!sidebarCollapsed && item.name}
+                        </a>
+                      </Link>
                     );
                   })}
-                </ul>
+                </div>
+              ))}
+            </nav>
+            
+            {/* User info in sidebar */}
+            {user && !sidebarCollapsed && (
+              <div className="p-4 border-t">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-[#E10600] rounded-full flex items-center justify-center">
+                      <User className="w-4 h-4 text-white" />
+                    </div>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-900">{user.profile.name}</p>
+                    <p className="text-xs text-gray-500">{user.profile.email}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </aside>
+        
+        {/* Mobile/Tablet Sidebar */}
+        <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+          <SheetContent side="left" className="w-64 p-0">
+            <div className="flex h-full flex-col">
+              <div className="flex items-center justify-between px-4 py-4 border-b">
+                <div className="flex items-center space-x-2">
+                  <img src={logoSvg} alt="Rugira" className="h-8 w-8" />
+                  <span className="text-lg font-semibold">Rugira</span>
+                </div>
+                <SheetClose asChild>
+                  <Button variant="ghost" size="sm" className="p-1 h-8 w-8">
+                    <X className="h-4 w-4" />
+                  </Button>
+                </SheetClose>
+              </div>
+              
+              <nav className="flex-1 overflow-y-auto px-2 py-4 space-y-1">
+                {Object.entries(groupedNavigation).map(([group, items]) => (
+                  <div key={group} className="mb-4">
+                    {group !== 'Main' && (
+                      <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                        {group}
+                      </h3>
+                    )}
+                    {items.map((item) => {
+                      const isActive = location === item.href;
+                      return (
+                        <Link key={item.name} href={item.href}>
+                          <a
+                            className={cn(
+                              "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                              isActive
+                                ? "bg-gray-100 text-gray-900"
+                                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                            )}
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            <item.icon className="mr-3 flex-shrink-0 h-5 w-5" />
+                            {item.name}
+                          </a>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                ))}
               </nav>
-
-              {/* Mobile Controls Section */}
-              <div className="p-4 sm:p-6 border-t border-gray-200 bg-gray-50">
-                <h3 className="text-sm font-medium text-gray-900 mb-4">Quick Controls</h3>
-                <div className="space-y-3">
-                  <TenantSwitcher />
-                  <EnvironmentChip />
-                  <div className="flex items-center justify-between">
-                    <AWSStatusIndicator />
-                    <div className="flex items-center space-x-2">
-                      <NotificationButton />
-                      <KillSwitchButton />
+              
+              {/* User info in mobile sidebar */}
+              {user && (
+                <div className="p-4 border-t">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-[#E10600] rounded-full flex items-center justify-center">
+                        <User className="w-5 h-5 text-white" />
+                      </div>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm font-medium text-gray-900">{user.profile.name}</p>
+                      <p className="text-xs text-gray-500">{user.profile.email}</p>
                     </div>
                   </div>
                 </div>
-
-                {/* Mobile User Profile */}
-                {user && (
-                  <div className="mt-6 pt-4 border-t border-gray-200">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <div className="w-12 h-12 bg-[#E10600] rounded-full flex items-center justify-center">
-                        <User className="w-6 h-6 text-white" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-base font-medium text-gray-900 truncate">
-                          {user.profile.name}
-                        </p>
-                        <p className="text-sm text-gray-500 truncate">
-                          {user.profile.email}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Link to="/profile">
-                        <Button 
-                          variant="ghost" 
-                          className="w-full justify-start h-12 text-base"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          <User className="mr-4 h-5 w-5" />
-                          Profile
-                        </Button>
-                      </Link>
-                      <Link to="/settings">
-                        <Button 
-                          variant="ghost" 
-                          className="w-full justify-start h-12 text-base"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          <Settings className="mr-4 h-5 w-5" />
-                          Settings
-                        </Button>
-                      </Link>
-                      <Button 
-                        variant="ghost" 
-                        onClick={() => {
-                          setMobileMenuOpen(false);
-                          logout();
-                        }}
-                        className="w-full justify-start h-12 text-base text-red-600 hover:text-red-700 hover:bg-red-50"
-                        data-testid="button-mobile-logout"
-                      >
-                        <LogOut className="mr-4 h-5 w-5" />
-                        Sign Out
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </div>
+              )}
             </div>
           </SheetContent>
         </Sheet>
-
-        {/* Desktop Sidebar */}
-        <nav className={cn(
-          "hidden lg:flex fixed left-0 top-16 lg:top-20 bg-white border-r border-gray-200 h-[calc(100vh-4rem)] lg:h-[calc(100vh-5rem)] overflow-y-auto z-40 flex-col transition-all duration-200",
-          sidebarCollapsed ? "w-16" : "w-64"
-        )}>
-          {!sidebarCollapsed && (
-            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-500">NAVIGATION</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSidebarCollapsed(true)}
-                className="h-6 w-6 p-0"
-                aria-label="Collapse sidebar"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
-          
-          {sidebarCollapsed && (
-            <div className="p-2 border-b border-gray-200 flex justify-center">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSidebarCollapsed(false)}
-                className="h-8 w-8 p-0"
-                aria-label="Expand sidebar"
-              >
-                <ChevronRight className="h-4 w-4 rotate-180" />
-              </Button>
-            </div>
-          )}
-
-          <div className="flex-1 p-3">
-            <ul className="space-y-1">
-              {navigation.map((item, index) => {
-                const Icon = item.icon;
-                const isActive = location === item.href || 
-                  (item.href !== '/' && location.startsWith(item.href));
-                
-                // Check if we need to show a group header
-                const showGroupHeader = item.group && 
-                  (index === 0 || navigation[index - 1].group !== item.group);
-                
-                return (
-                  <div key={item.name}>
-                    {showGroupHeader && !sidebarCollapsed && (
-                      <li className="pt-4 first:pt-0">
-                        <div className="px-3 py-1 text-[10px] font-medium text-gray-400 uppercase tracking-wider opacity-60">
-                          {item.group}
-                        </div>
-                      </li>
-                    )}
-                    <li>
-                      <Link href={item.href}>
-                        <Button
-                          variant={isActive ? "secondary" : "ghost"}
-                          className={cn(
-                            "w-full justify-start text-left relative transition-all duration-120 ease-out group",
-                            sidebarCollapsed ? "h-10 w-10 p-0 justify-center" : "h-9 px-3",
-                            isActive ? "bg-gray-50 text-gray-900 font-semibold" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50/50"
-                          )}
-                          data-testid={`nav-${item.name.toLowerCase()}`}
-                          title={sidebarCollapsed ? item.name : undefined}
-                        >
-                          {isActive && !sidebarCollapsed && <span className="absolute left-0 top-2 bottom-2 w-0.5 bg-red-500 rounded-r" />}
-                          <Icon className={cn("h-4 w-4", !sidebarCollapsed && "mr-2.5", isActive && !sidebarCollapsed && "ml-1")} />
-                          {!sidebarCollapsed && <span className="text-sm">{item.name}</span>}
-                        </Button>
-                      </Link>
-                    </li>
-                  </div>
-                );
-              })}
-            </ul>
-          </div>
-
-          {/* User Profile Section */}
-          {user && !sidebarCollapsed && (
-            <div className="p-4 border-t border-gray-200 bg-gray-50">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start text-left p-3 h-auto"
-                    data-testid="button-user-menu"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-[#E10600] rounded-full flex items-center justify-center">
-                        <User className="w-4 h-4 text-white" />
-                      </div>
-                      <div className="flex-1 min-w-0 text-left">
-                        <p className="text-sm font-medium text-gray-900 truncate">
-                          {user.profile.name}
-                        </p>
-                        <p className="text-xs text-gray-500 truncate">
-                          {user.profile.email}
-                        </p>
-                      </div>
-                      <ChevronDown className="w-4 h-4 text-gray-400" />
-                    </div>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuItem onClick={() => setLocation('/profile')} data-testid="menu-profile">
-                    <User className="w-4 h-4 mr-2" />
-                    Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setLocation('/settings')} data-testid="menu-settings">
-                    <Settings className="w-4 h-4 mr-2" />
-                    Settings
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={logout} data-testid="menu-logout">
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Sign Out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          )}
-
-          {user && sidebarCollapsed && (
-            <div className="p-2 border-t border-gray-200">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="w-10 h-10 p-0"
-                    data-testid="button-user-menu-collapsed"
-                    title={user.profile.name}
-                  >
-                    <div className="w-6 h-6 bg-[#E10600] rounded-full flex items-center justify-center">
-                      <User className="w-3 h-3 text-white" />
-                    </div>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuItem onClick={() => setLocation('/profile')} data-testid="menu-profile-collapsed">
-                    <User className="w-4 h-4 mr-2" />
-                    Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setLocation('/settings')} data-testid="menu-settings-collapsed">
-                    <Settings className="w-4 h-4 mr-2" />
-                    Settings
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={logout} data-testid="menu-logout">
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Sign Out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          )}
-        </nav>
-
-        {/* Main Content */}
+        
+        {/* Main content area */}
         <main className={cn(
-          "flex-1 p-4 lg:p-6 min-h-screen bg-gray-50 flex flex-col transition-all duration-200",
+          "flex-1 transition-all duration-300",
           sidebarCollapsed ? "lg:ml-16" : "lg:ml-64"
         )}>
-          <div className="max-w-full flex-1">
-            {/* Kill Switch Banner */}
-            <KillSwitchBanner />
-            
+          <div className="p-4 lg:p-6 xl:p-8">
             {children}
           </div>
           <Footer />
         </main>
       </div>
-
+      
       {/* AI Assistant Float */}
       <AIAssistantFloat />
     </div>

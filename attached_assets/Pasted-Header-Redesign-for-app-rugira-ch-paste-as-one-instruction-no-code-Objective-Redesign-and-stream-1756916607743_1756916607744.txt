@@ -1,0 +1,138 @@
+Header Redesign for app.rugira.ch (paste as one instruction, no code)
+
+Objective
+Redesign and streamline the top header across the dashboard to improve clarity, safety, and operator speed. Keep Rugira Red for primary CTAs only; use neutral/semantic colors in the header. Front‑end only.
+
+0) Scope & guardrails
+
+Do not change routes or backend contracts.
+
+Preserve existing infrastructure popover and notifications logic; just reposition and restyle as specified.
+
+Roles/permissions already exist—use them to show/hide the Kill‑Switch and Approvals badge.
+
+1) New header layout (left = context, right = actions)
+
+Left cluster (Context):
+
+Tenant switcher (current content): stays at the far left next to the logo.
+
+Popover: add search, “Recent tenants”, and Copy tenant ID button.
+
+Environment pill placed immediately to the right of Tenant: Demo / Paper / Live.
+
+Pill colors: Demo = neutral gray; Paper = blue; Live = amber caution (not red).
+
+Clicking opens a popover with a segmented selector (Demo/Paper/Live) and 1‑line disclaimer under Live (e.g., “Live trading — use with caution.”).
+
+Right cluster (Actions):
+3) Approvals icon with badge count (new; gavel/check icon).
+
+Opens the existing Approvals drawer you built. Tooltip: “Pending approvals”.
+
+Notifications (bell) with badge (unchanged functionality).
+
+Health pill (green dot + “OK”) with popover (re‑use your AWS status panel).
+
+Help ? menu:
+
+Items: “Docs”, “Keyboard Shortcuts”, “Support (contact@rugira.ch
+)”.
+
+Avatar menu (user):
+
+Items: Profile, API Keys, Organization & Billing, Your access: Admin · Trader (read‑only display of roles), MFA status, Logout.
+
+Danger lane (separate, far right):
+8) Kill‑Switch (Admin only): move the red “X” out of the neutral icons and replace with a labeled button or pill that reads “Kill‑Switch” (danger outline style).
+
+Guard with two‑step confirmation:
+
+Step 1: Hold‑to‑confirm (press & hold ~1.5s with progress ring).
+
+Step 2: type KILL to finalize.
+
+If maker–checker is enabled, pressing Kill‑Switch should open the Approvals drawer with a prefilled “Kill‑Switch request” instead of executing.
+
+Remove from header:
+
+The role chips admin / trader — these now live only in the Avatar menu (and may appear in the left‑nav user card), not in the top bar.
+
+2) Visual & interaction rules
+
+All header pills/chips have consistent height and icon stroke weight.
+
+Add tooltips to every control (Tenant, Environment, Approvals, Notifications, Health, Help, Avatar, Kill‑Switch).
+
+Make the header sticky with a subtle bottom border.
+
+Use Rugira Red only for primary CTAs elsewhere, not for neutral header status (avoid red except on the Kill‑Switch/danger confirmations).
+
+3) Keyboard shortcuts & command palette
+
+⌘K / Ctrl+K → open a Command Palette (basic): quick nav (Overview, Bots, Backtesting, Reports, Compliance), open Approvals, copy Tenant ID.
+
+A → open Approvals drawer.
+
+N → open Notifications.
+
+? → open Help menu.
+
+G then T (sequential) → focus Tenant switcher.
+
+4) Access logic
+
+Kill‑Switch shown only to users with Admin role.
+
+Approvals badge shows pending count for users who can approve; otherwise show zero or hide the badge (but keep the entry).
+
+Environment pill always visible; switching environment follows your existing guardrails (show the popover selector, do not auto‑switch silently).
+
+5) Microcopy (use verbatim)
+
+Environment popover:
+
+Demo: “Simulated data for testing.”
+
+Paper: “Real connections, virtual money.”
+
+Live (amber): “Live trading — use with caution.”
+
+Approvals tooltip: “Pending approvals”.
+
+Health tooltip: “Infrastructure status”.
+
+Help items: “Docs”, “Keyboard Shortcuts”, “Support (contact@rugira.ch
+)”.
+
+Avatar roles line: “Your access: Admin · Trader”.
+
+Kill‑Switch button tooltip (Admin): “Trigger global emergency stop”.
+
+6) A11y & tab order
+
+Tab order: Logo → Tenant → Environment → Approvals → Notifications → Health → Help → Avatar → Kill‑Switch.
+
+Provide visible focus rings; aria‑labels for each control; badge counts announced to screen readers.
+
+7) Acceptance checklist (verify before finishing)
+
+Tenant + Environment are grouped on the left; Environment pill colors: Demo (gray), Paper (blue), Live (amber).
+
+Approvals icon with badge is present and opens the existing Approvals drawer.
+
+Notifications unchanged and accessible.
+
+Health “OK” pill with green dot opens existing infra popover.
+
+Help menu includes Docs / Keyboard Shortcuts / Support.
+
+Avatar menu shows roles line “Your access: Admin · Trader”, plus Profile/API Keys/Org & Billing/MFA/Logout.
+
+Kill‑Switch is separated, clearly labeled, and guarded with hold‑to‑confirm + type KILL; if maker–checker is on, it routes to Approvals instead.
+
+Header is sticky, has consistent chip heights, tooltips, proper tab order, keyboard shortcuts, and AA contrast.
+
+No admin/trader role chips appear in the header anymore.
+
+Deliverable: Updated header component(s) implementing the structure and behaviors above, consistent with current Rugira design.
