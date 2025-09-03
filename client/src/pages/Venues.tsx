@@ -329,7 +329,7 @@ export default function Venues() {
     <div className="space-y-6">
       <PageHeader
         title="Venue Connections"
-        description="Venues lists all routable markets. Tokenized venues are accessed directly or via a participant (e.g., InCore). Rugira applies pre-trade limits, audit logging, and drop-copy/T+0 reconciliation where available."
+        description="Connect and monitor trading venues in one place, with pre-trade limits, audit logs, and T+0 reconciliation when supported."
         actions={
           <div className="flex gap-2">
             <div className="hidden sm:flex items-center bg-gray-100 rounded-lg p-1">
