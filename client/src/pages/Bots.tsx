@@ -401,12 +401,13 @@ export default function Bots() {
       accessorKey: 'name',
       sortable: true,
       priority: 'high',
+      width: 'w-64',
       cell: (bot) => (
-        <div className="flex items-center space-x-2 min-w-0">
+        <div className="flex items-center space-x-2 min-w-0 max-w-xs">
           <Bot className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 flex-shrink-0" />
-          <div className="min-w-0">
-            <div className="font-medium text-gray-900 text-sm sm:text-base truncate">{bot.name}</div>
-            <div className="text-xs sm:text-sm text-gray-500 truncate">{bot.strategy}</div>
+          <div className="min-w-0 overflow-hidden">
+            <div className="font-medium text-gray-900 text-sm truncate">{bot.name}</div>
+            <div className="text-xs text-gray-500 truncate">{bot.strategy}</div>
           </div>
         </div>
       )
@@ -427,8 +428,9 @@ export default function Bots() {
       sortable: true,
       filterable: true,
       priority: 'medium',
+      width: 'w-48',
       cell: (bot) => (
-        <div className="min-w-0">
+        <div className="min-w-0 max-w-[12rem]">
           <div className="font-medium text-sm truncate">{bot.venue}</div>
           <div className="text-xs text-gray-500 truncate">{bot.pair}</div>
         </div>
@@ -561,7 +563,7 @@ export default function Bots() {
   );
 
   return (
-    <div className="space-y-4 sm:space-y-6 max-w-full overflow-hidden">
+    <div className="space-y-4 sm:space-y-6 w-full">
       <PageHeader
         skipToId="bots-table"
         title="Trading Bots"
@@ -689,7 +691,7 @@ export default function Bots() {
             />
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="w-full">
             <EnhancedTable
               data={bots}
               columns={columns}
@@ -700,6 +702,7 @@ export default function Bots() {
               onSelectionChange={setSelectedBots}
               bulkActions={bulkActions}
               pageSize={10}
+              className="max-w-full"
             />
           </div>
         )}

@@ -258,9 +258,9 @@ export function EnhancedTable<T extends { id: string | number }>({
       </div>
 
       {/* Table */}
-      <div className="border rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <Table className="min-w-full">
+      <div className="border rounded-lg overflow-hidden w-full">
+        <div className="overflow-x-auto w-full">
+          <Table className="w-full">
             <TableHeader>
               <TableRow>
                 {onSelectionChange && (
