@@ -285,13 +285,11 @@ export default function Strategies() {
   };
 
   return (
-    <div className="space-y-6 p-6">
-      <PageHeader
-        title="Crypto Trading Strategies"
-        description="Comprehensive collection of proven crypto trading strategies for automated trading"
-      />
-
-      <main id="main-content">
+    <StandardPageLayout
+      title="Crypto Trading Strategies"
+      subtitle="Comprehensive collection of proven crypto trading strategies for automated trading"
+    >
+      <div className="space-y-6">
         {strategies.length === 0 ? (
           <EmptyState
             icon={<Settings className="h-12 w-12" />}
@@ -397,7 +395,7 @@ export default function Strategies() {
             ))}
           </div>
         )}
-      </main>
-    </div>
+      </div>
+    </StandardPageLayout>
   );
 }
