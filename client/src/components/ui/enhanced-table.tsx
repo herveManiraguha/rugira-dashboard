@@ -277,14 +277,13 @@ export function EnhancedTable<T extends { id: string | number }>({
                     key={column.id}
                     className={cn(
                       column.sortable && "cursor-pointer hover:bg-gray-50",
-                      column.width && `w-[${column.width}]`,
                       column.hideOnMobile && "hidden sm:table-cell",
                       column.priority === 'low' && "hidden lg:table-cell",
                       column.priority === 'medium' && "hidden md:table-cell",
                       // Make first column sticky on mobile
                       index === 0 && onSelectionChange && "sticky left-12 bg-white z-10",
                       index === 0 && !onSelectionChange && "sticky left-0 bg-white z-10",
-                      "whitespace-nowrap px-3 py-3 sm:px-6 sm:py-4"
+                      "px-3 py-3 sm:px-6 sm:py-4"
                     )}
                     onClick={() => column.sortable && handleSort(column.id)}
                     data-testid={`column-header-${column.id}`}

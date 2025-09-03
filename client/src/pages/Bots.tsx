@@ -63,12 +63,12 @@ interface BotData {
 const mockBots: BotData[] = [
   {
     id: 'dlt-bx-01',
-    name: 'DLT-BX-01 (Paper)',
-    strategy: 'DLT Conservative (windowed TWAP)',
+    name: 'DLT-BX-01',
+    strategy: 'Conservative TWAP',
     status: 'running',
-    venue: 'BX Digital (via InCore)',
-    routeVia: 'InCore (participant)',
-    pair: 'ISIN-TEST-001/CHF',
+    venue: 'BX Digital',
+    routeVia: 'InCore',
+    pair: 'TEST-001/CHF',
     pnl24h: 0,
     totalPnl: 0,
     uptime: '0h 5m',
@@ -401,11 +401,10 @@ export default function Bots() {
       accessorKey: 'name',
       sortable: true,
       priority: 'high',
-      width: 'w-64',
       cell: (bot) => (
-        <div className="flex items-center space-x-2 min-w-0 max-w-xs">
+        <div className="flex items-center space-x-2 min-w-0 max-w-[200px]">
           <Bot className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 flex-shrink-0" />
-          <div className="min-w-0 overflow-hidden">
+          <div className="min-w-0 flex-1 overflow-hidden">
             <div className="font-medium text-gray-900 text-sm truncate">{bot.name}</div>
             <div className="text-xs text-gray-500 truncate">{bot.strategy}</div>
           </div>
@@ -428,9 +427,8 @@ export default function Bots() {
       sortable: true,
       filterable: true,
       priority: 'medium',
-      width: 'w-48',
       cell: (bot) => (
-        <div className="min-w-0 max-w-[12rem]">
+        <div className="min-w-0 max-w-[120px]">
           <div className="font-medium text-sm truncate">{bot.venue}</div>
           <div className="text-xs text-gray-500 truncate">{bot.pair}</div>
         </div>
