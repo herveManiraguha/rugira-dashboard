@@ -59,13 +59,8 @@ export function TenantSwitcher() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-64">
-          <DropdownMenuLabel className="flex items-center justify-between">
-            <span>Switch Tenant</span>
-            {isDemoMode && (
-              <Badge variant="secondary" className="text-xs">
-                Demo
-              </Badge>
-            )}
+          <DropdownMenuLabel>
+            Switch Tenant
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           {tenants.map((tenantId) => {
