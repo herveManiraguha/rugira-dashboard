@@ -248,7 +248,15 @@ export default function Venues() {
   const [venueSheetOpen, setVenueSheetOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
   const { toast } = useToast();
+
+  React.useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 640);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleConnect = (exchangeId: string) => {
     console.log('Connecting to venue:', exchangeId);
@@ -324,7 +332,7 @@ export default function Venues() {
         description="Venues lists all routable markets. Tokenized venues are accessed directly or via a participant (e.g., InCore). Rugirinka applies pre-trade limits, audit logging, and drop-copy/T+0 reconciliation where available."
         actions={
           <div className="flex gap-2">
-            <div className="flex items-center bg-gray-100 rounded-lg p-1">
+            <div className="hidden sm:flex items-center bg-gray-100 rounded-lg p-1">
               <Button
                 variant={viewMode === 'cards' ? 'default' : 'ghost'}
                 size="sm"
@@ -342,9 +350,13 @@ export default function Venues() {
                 <List className="h-4 w-4" />
               </Button>
             </div>
-            <Button onClick={() => setIsAddModalOpen(true)} variant="default" className="bg-red-600 hover:bg-red-700">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Venue
+            <Button 
+              onClick={() => setIsAddModalOpen(true)} 
+              variant="default" 
+              className="bg-red-600 hover:bg-red-700 sm:px-4 px-0 w-10 h-10 sm:w-auto sm:h-auto"
+            >
+              <Plus className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Add Venue</span>
             </Button>
           </div>
         }
@@ -378,7 +390,7 @@ export default function Venues() {
       {/* Crypto Exchanges Section */}
       <div className="space-y-4">
         <h2 className="text-lg font-semibold">Crypto Exchanges</h2>
-        {viewMode === 'cards' ? (
+        {(viewMode === 'cards' || isMobile) ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {exchanges.map((exchange) => (
             <Card key={exchange.id} className="hover:shadow-lg transition-shadow">

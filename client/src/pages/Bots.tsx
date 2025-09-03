@@ -568,7 +568,7 @@ export default function Bots() {
         description="Manage and monitor your automated trading strategies"
         actions={
           <div className="flex gap-2">
-            <div className="flex items-center bg-gray-100 rounded-lg p-1">
+            <div className="hidden sm:flex items-center bg-gray-100 rounded-lg p-1">
               <Button
                 variant={viewMode === 'cards' ? 'default' : 'ghost'}
                 size="sm"
@@ -592,10 +592,10 @@ export default function Bots() {
               onClick={() => setIsCreateBotModalOpen(true)}
               data-testid="create-bot"
               variant="default"
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-red-600 hover:bg-red-700 sm:px-4 px-0 w-10 h-10 sm:w-auto sm:h-auto"
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Create Bot
+              <Plus className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Create Bot</span>
             </Button>
           </div>
         }
@@ -612,7 +612,7 @@ export default function Bots() {
               onClick: () => setIsCreateBotModalOpen(true)
             }}
           />
-        ) : viewMode === 'cards' ? (
+        ) : (viewMode === 'cards' || isMobile) ? (
           <BotCardsView 
             bots={filteredBots}
             onStartBot={handleStartBot}
@@ -620,74 +620,6 @@ export default function Bots() {
             onDeleteBot={handleDeleteBot}
             getStatusBadge={getStatusBadge}
           />
-        ) : isMobile ? (
-          <div className="space-y-4">
-            {/* Mobile Search and Filters */}
-            <div className="space-y-3">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Search bots by name, strategy, or exchange..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 h-11"
-                  data-testid="mobile-search"
-                />
-              </div>
-              
-              {/* Mobile Filters */}
-              {tableFilters.length > 0 && (
-                <div className="flex items-start space-x-2">
-                  <Filter className="h-4 w-4 text-gray-400 mt-2 flex-shrink-0" />
-                  <div className="flex flex-wrap gap-2 flex-1">
-                    {tableFilters.slice(0, 6).map(filter => (
-                      <Badge
-                        key={filter.id}
-                        variant={filters.includes(filter.id) ? "default" : "outline"}
-                        className="cursor-pointer min-h-[32px] px-3"
-                        onClick={() => {
-                          const newFilters = filters.includes(filter.id)
-                            ? filters.filter(id => id !== filter.id)
-                            : [...filters, filter.id];
-                          setFilters(newFilters);
-                        }}
-                        data-testid={`mobile-filter-${filter.id}`}
-                      >
-                        {filter.label}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {/* Bulk Actions for Mobile */}
-              {selectedBotIds.size > 0 && (
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <div className="flex flex-col space-y-2">
-                    <span className="text-sm font-medium text-gray-700">
-                      {selectedBotIds.size} bot{selectedBotIds.size > 1 ? 's' : ''} selected
-                    </span>
-                    {bulkActions}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Mobile Table View */}
-            <MobileBotsTable
-              bots={paginatedBots}
-              selectedBots={selectedBotIds}
-              onSelectBot={handleSelectBot}
-              onSelectAll={handleSelectAll}
-              onStartBot={handleStartBot}
-              onStopBot={handleStopBot}
-              onDeleteBot={handleDeleteBot}
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-              pageSize={pageSize}
-            />
-          </div>
         ) : (
           <div className="w-full">
             <EnhancedTable
