@@ -65,25 +65,10 @@ export function PortfolioSwitcher() {
                     portfolio?.id === p.id && "bg-gray-100 dark:bg-gray-800"
                   )}
                 >
-                  <div className="flex items-center gap-2">
-                    <Activity className="h-3 w-3 text-gray-400" />
-                    <span>{p.name}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    {p.hasLiveEnabled && (
-                      <Badge variant="outline" className="h-5 text-xs px-1.5">
-                        live enabled
-                      </Badge>
-                    )}
-                    {p.isDefault && (
-                      <Badge variant="secondary" className="h-5 text-xs px-1.5">
-                        default
-                      </Badge>
-                    )}
-                    {portfolio?.id === p.id && (
-                      <Check className="h-4 w-4 text-green-600" />
-                    )}
-                  </div>
+                  <span className="flex-1">{p.name}</span>
+                  {portfolio?.id === p.id && (
+                    <Check className="h-4 w-4 text-green-600 ml-2" />
+                  )}
                 </CommandItem>
               ))}
             </CommandGroup>
