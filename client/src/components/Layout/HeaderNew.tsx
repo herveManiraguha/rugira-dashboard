@@ -378,31 +378,6 @@ export default function HeaderNew({ onKillSwitch, onMobileMenuToggle }: HeaderNe
                 </Badge>
               )}
               
-              {/* Help Menu */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8" data-help-trigger>
-                    <HelpCircle className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem>
-                    <FileText className="mr-2 h-4 w-4" />
-                    Docs
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <ChevronsRight className="mr-2 h-4 w-4" />
-                    Keyboard Shortcuts
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <a href="mailto:contact@rugira.ch" className="flex items-center">
-                      <Shield className="mr-2 h-4 w-4" />
-                      Support (contact@rugira.ch)
-                    </a>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              
               {/* Avatar Menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
