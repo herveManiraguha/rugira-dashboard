@@ -81,7 +81,10 @@ export function OrganizationSwitcher() {
                       onSelect={() => handleSelect(org)}
                       onMouseEnter={() => setHoveredOrg(org.id)}
                       onMouseLeave={() => setHoveredOrg(null)}
-                      className="flex items-center justify-between py-2"
+                      className={cn(
+                        "flex items-center justify-between py-2",
+                        organization?.id === org.id && "bg-gray-100 dark:bg-gray-800"
+                      )}
                     >
                       <div className="flex items-center gap-2 flex-1">
                         <Pin className="h-3 w-3 text-gray-400" />
@@ -118,7 +121,10 @@ export function OrganizationSwitcher() {
                       onSelect={() => handleSelect(org)}
                       onMouseEnter={() => setHoveredOrg(org.id)}
                       onMouseLeave={() => setHoveredOrg(null)}
-                      className="flex items-center justify-between py-2"
+                      className={cn(
+                        "flex items-center justify-between py-2",
+                        organization?.id === org.id && "bg-gray-100 dark:bg-gray-800"
+                      )}
                     >
                       <div className="flex items-center gap-2 flex-1">
                         <Clock className="h-3 w-3 text-gray-400" />

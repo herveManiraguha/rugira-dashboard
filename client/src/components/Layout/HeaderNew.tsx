@@ -234,8 +234,8 @@ export default function HeaderNew({ onKillSwitch, onMobileMenuToggle }: HeaderNe
       <TooltipProvider>
         <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
           <div className="flex items-center justify-between h-14 px-4">
-            {/* Left cluster: Logo, Tenant, Environment */}
-            <div className="flex items-center gap-3">
+            {/* Left cluster: Logo, Organization, Portfolio */}
+            <div className="flex items-center gap-3 flex-1 lg:flex-initial">
               {/* Mobile Menu Button */}
               {onMobileMenuToggle && (
                 <Button
@@ -254,18 +254,17 @@ export default function HeaderNew({ onKillSwitch, onMobileMenuToggle }: HeaderNe
                 <img src={logoSvg} alt="Rugira" className="h-7 w-auto" />
               </Link>
               
-              {/* Scope Controls */}
+              {/* Scope Controls - Organization and Portfolio */}
               {scopeReady && (
                 <>
-                  {/* Organization Switcher */}
-                  <OrganizationSwitcher />
+                  {/* Organization Switcher - Hide on mobile */}
+                  <div className="hidden sm:block">
+                    <OrganizationSwitcher />
+                  </div>
                   
-                  {/* Portfolio Switcher */}
-                  <PortfolioSwitcher />
-                  
-                  {/* Mode Switcher */}
-                  <div className="ml-2">
-                    <ModeSwitcher />
+                  {/* Portfolio Switcher - Hide on mobile */}
+                  <div className="hidden sm:block">
+                    <PortfolioSwitcher />
                   </div>
                 </>
               )}
@@ -321,8 +320,22 @@ export default function HeaderNew({ onKillSwitch, onMobileMenuToggle }: HeaderNe
               )}
             </div>
             
+            {/* Center: Mode Switcher - Desktop only */}
+            {scopeReady && (
+              <div className="hidden lg:flex justify-center flex-1">
+                <ModeSwitcher />
+              </div>
+            )}
+            
+            {/* Mobile: Mode Switcher - Centered */}
+            {scopeReady && (
+              <div className="flex lg:hidden justify-center flex-1">
+                <ModeSwitcher />
+              </div>
+            )}
+            
             {/* Right cluster: Actions */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-1 lg:flex-initial justify-end">
               {/* Approvals */}
               {rbac.can && rbac.can('approve_changes') && (
                 <Tooltip>

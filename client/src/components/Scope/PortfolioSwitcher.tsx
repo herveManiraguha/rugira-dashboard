@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Briefcase, Check, ChevronDown, Activity } from 'lucide-react';
 import { useScope, Portfolio } from '@/contexts/ScopeContext';
+import { cn } from '@/lib/utils';
 
 export function PortfolioSwitcher() {
   const [open, setOpen] = useState(false);
@@ -59,7 +60,10 @@ export function PortfolioSwitcher() {
                   key={p.id}
                   value={p.name}
                   onSelect={() => handleSelect(p)}
-                  className="flex items-center justify-between py-2"
+                  className={cn(
+                    "flex items-center justify-between py-2",
+                    portfolio?.id === p.id && "bg-gray-100 dark:bg-gray-800"
+                  )}
                 >
                   <div className="flex items-center gap-2">
                     <Activity className="h-3 w-3 text-gray-400" />

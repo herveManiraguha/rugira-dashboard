@@ -56,7 +56,7 @@ export function ModeSwitcher() {
           size="sm"
           variant={mode === 'Live' ? 'default' : 'ghost'}
           className={cn(
-            "h-7 px-3 rounded-md text-xs font-medium transition-all",
+            "h-7 px-2 sm:px-3 rounded-md text-xs font-medium transition-all",
             mode === 'Live' 
               ? "bg-green-600 text-white hover:bg-green-700 shadow-sm" 
               : "text-gray-600 hover:text-gray-900 hover:bg-gray-200"
@@ -65,15 +65,15 @@ export function ModeSwitcher() {
           disabled={!canEnableLive}
           data-testid="mode-live"
         >
-          <PlayCircle className="h-3.5 w-3.5 mr-1" />
-          Live
+          <PlayCircle className="h-3.5 w-3.5 sm:mr-1" />
+          <span className="hidden sm:inline">Live</span>
         </Button>
         
         <Button
           size="sm"
           variant={mode === 'Paper' ? 'default' : 'ghost'}
           className={cn(
-            "h-7 px-3 rounded-md text-xs font-medium transition-all mx-0.5",
+            "h-7 px-2 sm:px-3 rounded-md text-xs font-medium transition-all mx-0.5",
             mode === 'Paper' 
               ? "bg-blue-600 text-white hover:bg-blue-700 shadow-sm" 
               : "text-gray-600 hover:text-gray-900 hover:bg-gray-200"
@@ -81,15 +81,15 @@ export function ModeSwitcher() {
           onClick={() => handleModeClick('Paper')}
           data-testid="mode-paper"
         >
-          <Activity className="h-3.5 w-3.5 mr-1" />
-          Paper
+          <Activity className="h-3.5 w-3.5 sm:mr-1" />
+          <span className="hidden sm:inline">Paper</span>
         </Button>
         
         <Button
           size="sm"
           variant={mode === 'Demo' ? 'default' : 'ghost'}
           className={cn(
-            "h-7 px-3 rounded-md text-xs font-medium transition-all",
+            "h-7 px-2 sm:px-3 rounded-md text-xs font-medium transition-all",
             mode === 'Demo' 
               ? "bg-gray-600 text-white hover:bg-gray-700 shadow-sm" 
               : "text-gray-600 hover:text-gray-900 hover:bg-gray-200"
@@ -97,8 +97,8 @@ export function ModeSwitcher() {
           onClick={() => handleModeClick('Demo')}
           data-testid="mode-demo"
         >
-          <TestTube className="h-3.5 w-3.5 mr-1" />
-          Demo
+          <TestTube className="h-3.5 w-3.5 sm:mr-1" />
+          <span className="hidden sm:inline">Demo</span>
         </Button>
       </div>
 
