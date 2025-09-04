@@ -1,0 +1,127 @@
+Goal: Implement a clear Scope Bar in the header with three distinct controls and safe behavior, replacing the current “Rugira Production” pill.
+
+Tasks:
+
+Terminology/UI copy
+
+Replace “Tenant” → Organization in all visible copy.
+
+Where “Rugira Production” appears, show “Rugira AG” as the Organization; place a tiny non-clickable Prod badge on the far right of the header for Rugira staff only.
+
+Header layout (left cluster)
+
+Add Organization switcher (icon: building). Label = current org name.
+
+Click → popover “Switch Organization” with:
+
+Search field
+
+Sections: Pinned, Recent, All organizations
+
+Each row shows the org name + role badges (e.g., admin, viewer).
+
+If the user is Rugira staff, allow hover to reveal a right pane listing that org’s Portfolios (click jumps directly).
+
+Add Portfolio / Desk switcher (icon: briefcase/chart). Label = current portfolio.
+
+Click → popover listing portfolios for the selected org. Include small badges (live enabled, paper default).
+
+Add Mode segmented control with three pills: Live | Paper | Demo (center-left).
+
+Live requires a two-step confirm popover:
+
+Text: “Switch to Live trading in {org} / {portfolio}?”
+
+Show summary: venues connected, pre-trade limit profile, risk shields on/off.
+
+Buttons: Proceed (primary) and Cancel (secondary).
+
+If policy requires MFA: open step-up modal before completion.
+
+Paper and Demo switch instantly.
+
+Header layout (right cluster)
+
+Keep Approvals (badge), Notifications (badge), System/Health (pill: ● OK / ▲ Degraded / ■ Incident), Help, Avatar.
+
+Show tiny Environment badge (e.g., Prod) only for Rugira staff (feature flag). Non-clickable.
+
+Scope banner
+
+When Live mode is active, display a small red pill under the header title: “LIVE — {Org} / {Portfolio}”.
+
+Routing & state
+
+Update URLs to include scope: /:orgSlug/:portfolioSlug?mode=live|paper|demo.
+
+On switch, push the new route, persist scope in session storage, and reload current page data with the new scope.
+
+On refresh, restore scope from URL; fall back to last-used scope in storage.
+
+Permissions
+
+Organization popover lists only orgs where the user has any role; show role chips per org (e.g., admin, compliance, viewer).
+
+Portfolio popover lists only portfolios the user can access within the selected org.
+
+Disable or hide Live segment if user lacks permission or required venue keys/limits are missing; tooltip explains why.
+
+Audit
+
+Emit audit events on every scope change:
+
+scope.organization.changed
+
+scope.portfolio.changed
+
+scope.mode.changed (+ detail: to=live|paper|demo, mfa_passed=true|false)
+
+Add reason field for Live switches (from the confirm popover text).
+
+Microcopy (use exactly)
+
+Org popover title: “Switch Organization”
+
+Org search placeholder: “Search organizations…”
+
+Portfolio popover title: “Switch Portfolio”
+
+Mode confirm title: “Switch to Live trading?”
+
+Mode confirm body: “You’re switching to Live in {Organization} / {Portfolio}. Ensure pre‑trade limits and venue keys are configured.”
+
+Buttons: Proceed, Cancel
+
+Live banner text: “LIVE — {Organization} / {Portfolio}”
+
+Keyboard & a11y
+
+G O opens Organization switcher; G P opens Portfolio switcher; G M focuses Mode control.
+
+Full keyboard nav in popovers (Up/Down/Enter/Esc).
+
+Ensure focus rings and ARIA labels on all three scope controls.
+
+Seed demo data (for Hanz)
+
+Organizations: Rugira AG (roles: admin, trader), Alpha Capital AG (admin), Zurich Family Office (viewer).
+
+Portfolios (per org):
+
+Rugira AG: Delta Arbitrage (last mode: Paper), Macro Desk (last mode: Live)
+
+Alpha Capital AG: Arb 01, Discretionary
+
+Zurich Family Office: FO‑Core
+
+Default on load for Hanz: Alpha Capital AG / Arb 01 / Paper.
+
+Acceptance:
+
+I can clearly see & change Organization, Portfolio, and Mode from the header.
+
+Live requires explicit confirmation (and MFA if policy).
+
+The environment badge is visible only to Rugira staff.
+
+Scope is reflected in the URL, persisted across reload, and every scope change is auditable.

@@ -6,6 +6,7 @@ import MainLayout from "@/components/Layout/MainLayout";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { DemoProvider } from "@/contexts/DemoContext";
 import { EnvironmentProvider } from "@/contexts/EnvironmentContext";
+import { ScopeProvider } from "@/contexts/ScopeContext";
 import { AppInitializer } from "@/components/AppInitializer";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import "./index.css";
@@ -48,9 +49,10 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <EnvironmentProvider>
-        <DemoProvider>
-          <AuthProvider>
-            <AppInitializer>
+        <ScopeProvider>
+          <DemoProvider>
+            <AuthProvider>
+              <AppInitializer>
               <Switch>
           {/* Public routes */}
           <Route path="/" component={Login} />
@@ -200,9 +202,10 @@ function App() {
           
           <Route component={NotFound} />
         </Switch>
-            </AppInitializer>
-          </AuthProvider>
-        </DemoProvider>
+              </AppInitializer>
+            </AuthProvider>
+          </DemoProvider>
+        </ScopeProvider>
       </EnvironmentProvider>
       <Toaster />
     </QueryClientProvider>

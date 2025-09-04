@@ -7,6 +7,7 @@ import { useEnvironment } from '@/contexts/EnvironmentContext';
 import DemoRibbon from '@/components/Demo/DemoRibbon';
 import Footer from '@/components/Layout/Footer';
 import HeaderNew from '@/components/Layout/HeaderNew';
+import { LiveModeBanner } from '@/components/Scope/LiveModeBanner';
 import { 
   Activity,
   Bot,
@@ -114,11 +115,12 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
       {/* New Header */}
       <HeaderNew onKillSwitch={handleKillSwitch} onMobileMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)} />
       
+      {/* Live Mode Banner */}
+      <LiveModeBanner />
+      
       {/* Kill Switch Banner */}
       {isKillSwitchEnabled && (
-        <KillSwitchBanner 
-          onDismiss={() => setIsKillSwitchEnabled(false)} 
-        />
+        <KillSwitchBanner />
       )}
       
       <div className="flex h-full pt-14">

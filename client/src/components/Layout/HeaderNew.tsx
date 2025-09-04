@@ -43,6 +43,10 @@ import { ApprovalsDrawer } from '@/components/Approvals/ApprovalsDrawer';
 import HealthStatus from '@/components/HealthStatus';
 import NotificationButton from './NotificationButton';
 import { TenantSwitcher } from '@/components/TenantSwitcher';
+import { OrganizationSwitcher } from '@/components/Scope/OrganizationSwitcher';
+import { PortfolioSwitcher } from '@/components/Scope/PortfolioSwitcher';
+import { ModeSwitcher } from '@/components/Scope/ModeSwitcher';
+import { useScope } from '@/contexts/ScopeContext';
 import {
   Bell,
   User,
@@ -79,8 +83,9 @@ export default function HeaderNew({ onKillSwitch, onMobileMenuToggle }: HeaderNe
   const { environment, setEnvironment } = useEnvironment();
   const { isDemoMode } = useDemoMode();
   const rbac = useRBAC();
-  const currentTenant = user?.currentTenant || 'rugira-main';
-  const isAdmin = rbac.hasRole ? rbac.hasRole('admin') : false;
+  const { isRugiraStaff, scopeReady } = useScope();
+  const currentTenant = user?.current_tenant || 'rugira-main';
+  const isAdmin = rbac.can && rbac.can('view_admin');
   
   // State
   const [approvalsOpen, setApprovalsOpen] = useState(false);
@@ -94,7 +99,7 @@ export default function HeaderNew({ onKillSwitch, onMobileMenuToggle }: HeaderNe
   const progressTimer = useRef<NodeJS.Timeout | null>(null);
   
   // Mock data for pending approvals
-  const pendingApprovals = rbac.can && rbac.can('approve') ? 3 : 0;
+  const pendingApprovals = rbac.can && rbac.can('approve_changes') ? 3 : 0;
   
   // Environment colors
   const getEnvironmentColor = (env: string) => {
@@ -249,12 +254,24 @@ export default function HeaderNew({ onKillSwitch, onMobileMenuToggle }: HeaderNe
                 <img src={logoSvg} alt="Rugira" className="h-7 w-auto" />
               </Link>
               
-              {/* Tenant Switcher */}
-              <div data-tenant-trigger>
-                <TenantSwitcher />
-              </div>
+              {/* Scope Controls */}
+              {scopeReady && (
+                <>
+                  {/* Organization Switcher */}
+                  <OrganizationSwitcher />
+                  
+                  {/* Portfolio Switcher */}
+                  <PortfolioSwitcher />
+                  
+                  {/* Mode Switcher */}
+                  <div className="ml-2">
+                    <ModeSwitcher />
+                  </div>
+                </>
+              )}
               
-              {/* Environment Pill */}
+              {/* Environment Pill - Hidden, replaced by Mode Switcher */}
+              {false && (
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -301,12 +318,13 @@ export default function HeaderNew({ onKillSwitch, onMobileMenuToggle }: HeaderNe
                   </div>
                 </PopoverContent>
               </Popover>
+              )}
             </div>
             
             {/* Right cluster: Actions */}
             <div className="flex items-center gap-2">
               {/* Approvals */}
-              {rbac.can && rbac.can('approve') && (
+              {rbac.can && rbac.can('approve_changes') && (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
@@ -339,6 +357,13 @@ export default function HeaderNew({ onKillSwitch, onMobileMenuToggle }: HeaderNe
               
               {/* Health Status */}
               <HealthStatus />
+              
+              {/* Environment Badge for Rugira Staff */}
+              {isRugiraStaff && (
+                <Badge variant="outline" className="h-6 text-xs px-2 border-gray-300 text-gray-600">
+                  Prod
+                </Badge>
+              )}
               
               {/* Help Menu */}
               <DropdownMenu>
@@ -400,7 +425,7 @@ export default function HeaderNew({ onKillSwitch, onMobileMenuToggle }: HeaderNe
                   
                   <div className="px-2 py-1.5">
                     <p className="text-xs text-gray-500">
-                      Your access: {user?.tenantRoles?.[currentTenant]?.join(' · ') || 'User'}
+                      Your access: {user?.tenant_roles?.[currentTenant]?.join(' · ') || 'User'}
                     </p>
                   </div>
                   
