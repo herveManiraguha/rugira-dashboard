@@ -16,7 +16,7 @@ export default function Footer() {
           <div className="flex items-center justify-center space-x-2 text-xs sm:text-sm text-gray-600">
             <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0" />
             <span className="text-center">
-              Simulated data. Not investment advice. Rugira has no custody of client funds.
+              Not investment advice. Rugira has no custody of client funds.
             </span>
           </div>
         </div>
@@ -56,8 +56,6 @@ export default function Footer() {
               <span>Pricing</span>
               <ExternalLink className="w-3 h-3" />
             </a>
-            
-            <AWSStatusIndicator />
           </div>
         </div>
       </div>
@@ -68,7 +66,7 @@ export default function Footer() {
           <div className="flex items-center space-x-2">
             <AlertTriangle className="w-4 h-4 text-amber-500" />
             <span>
-              Simulated data. Not investment advice. Rugira has no custody of client funds.
+              Not investment advice. Rugira has no custody of client funds.
             </span>
           </div>
           <div className="flex items-center space-x-2 text-xs">
@@ -117,8 +115,6 @@ export default function Footer() {
             <span>Samples</span>
             <ExternalLink className="w-3 h-3" />
           </a>
-          
-          <AWSStatusIndicator />
         </div>
       </div>
     </footer>
