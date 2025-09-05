@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { Route, Switch } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -11,28 +11,37 @@ import { AppInitializer } from "@/components/AppInitializer";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import "./index.css";
 
-// Import pages
+// Import critical pages immediately (login, auth, and initial dashboard view)
 import Login from "@/pages/Login";
 import AuthCallback from "@/pages/AuthCallback";
 import SilentCallback from "@/pages/SilentCallback";
 import Overview from "@/pages/Overview";
 import DemoOverview from "@/pages/DemoOverview";
-import Strategies from "@/pages/Strategies";
-import Venues from "@/pages/Venues";
-import Compliance from "@/pages/Compliance";
-import Reports from "@/pages/ReportsNew";
-import Backtesting from "@/pages/Backtesting";
-import Monitoring from "@/pages/Monitoring";
-import Settings from "@/pages/Settings";
-import Profile from "@/pages/Profile";
-import ApiKeys from "@/pages/ApiKeys";
-import Organization from "@/pages/Organization";
-import Admin from "@/pages/Admin";
-import UserDetail from "@/pages/UserDetail";
-import Help from "@/pages/Help";
 import NotFound from "@/pages/NotFound";
-import InternalChecks from "@/pages/InternalChecks";
-import Bots from "@/pages/Bots";
+
+// Lazy load heavy dashboard sections for code-splitting
+const Strategies = lazy(() => import("@/pages/Strategies"));
+const Venues = lazy(() => import("@/pages/Venues"));
+const Compliance = lazy(() => import("@/pages/Compliance"));
+const Reports = lazy(() => import("@/pages/ReportsNew"));
+const Backtesting = lazy(() => import("@/pages/Backtesting"));
+const Monitoring = lazy(() => import("@/pages/Monitoring"));
+const Settings = lazy(() => import("@/pages/Settings"));
+const Profile = lazy(() => import("@/pages/Profile"));
+const ApiKeys = lazy(() => import("@/pages/ApiKeys"));
+const Organization = lazy(() => import("@/pages/Organization"));
+const Admin = lazy(() => import("@/pages/Admin"));
+const UserDetail = lazy(() => import("@/pages/UserDetail"));
+const Help = lazy(() => import("@/pages/Help"));
+const InternalChecks = lazy(() => import("@/pages/InternalChecks"));
+const Bots = lazy(() => import("@/pages/Bots"));
+
+// Loading component for lazy-loaded routes
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+  </div>
+);
 
 
 
@@ -75,7 +84,9 @@ function App() {
           <Route path="/bots">
             <ProtectedRoute>
               <MainLayout>
-                <Bots />
+                <Suspense fallback={<PageLoader />}>
+                  <Bots />
+                </Suspense>
               </MainLayout>
             </ProtectedRoute>
           </Route>
@@ -83,7 +94,9 @@ function App() {
           <Route path="/strategies">
             <ProtectedRoute>
               <MainLayout>
-                <Strategies />
+                <Suspense fallback={<PageLoader />}>
+                  <Strategies />
+                </Suspense>
               </MainLayout>
             </ProtectedRoute>
           </Route>
@@ -91,7 +104,9 @@ function App() {
           <Route path="/venues">
             <ProtectedRoute>
               <MainLayout>
-                <Venues />
+                <Suspense fallback={<PageLoader />}>
+                  <Venues />
+                </Suspense>
               </MainLayout>
             </ProtectedRoute>
           </Route>
@@ -99,7 +114,9 @@ function App() {
           <Route path="/compliance">
             <ProtectedRoute>
               <MainLayout>
-                <Compliance />
+                <Suspense fallback={<PageLoader />}>
+                  <Compliance />
+                </Suspense>
               </MainLayout>
             </ProtectedRoute>
           </Route>
@@ -107,7 +124,9 @@ function App() {
           <Route path="/reports">
             <ProtectedRoute>
               <MainLayout>
-                <Reports />
+                <Suspense fallback={<PageLoader />}>
+                  <Reports />
+                </Suspense>
               </MainLayout>
             </ProtectedRoute>
           </Route>
@@ -115,7 +134,9 @@ function App() {
           <Route path="/backtesting">
             <ProtectedRoute>
               <MainLayout>
-                <Backtesting />
+                <Suspense fallback={<PageLoader />}>
+                  <Backtesting />
+                </Suspense>
               </MainLayout>
             </ProtectedRoute>
           </Route>
@@ -123,7 +144,9 @@ function App() {
           <Route path="/monitoring">
             <ProtectedRoute>
               <MainLayout>
-                <Monitoring />
+                <Suspense fallback={<PageLoader />}>
+                  <Monitoring />
+                </Suspense>
               </MainLayout>
             </ProtectedRoute>
           </Route>
@@ -131,7 +154,9 @@ function App() {
           <Route path="/settings">
             <ProtectedRoute>
               <MainLayout>
-                <Settings />
+                <Suspense fallback={<PageLoader />}>
+                  <Settings />
+                </Suspense>
               </MainLayout>
             </ProtectedRoute>
           </Route>
@@ -139,7 +164,9 @@ function App() {
           <Route path="/profile">
             <ProtectedRoute>
               <MainLayout>
-                <Profile />
+                <Suspense fallback={<PageLoader />}>
+                  <Profile />
+                </Suspense>
               </MainLayout>
             </ProtectedRoute>
           </Route>
@@ -147,7 +174,9 @@ function App() {
           <Route path="/admin">
             <ProtectedRoute>
               <MainLayout>
-                <Admin />
+                <Suspense fallback={<PageLoader />}>
+                  <Admin />
+                </Suspense>
               </MainLayout>
             </ProtectedRoute>
           </Route>
@@ -155,15 +184,9 @@ function App() {
           <Route path="/admin/user/:id">
             <ProtectedRoute>
               <MainLayout>
-                <UserDetail />
-              </MainLayout>
-            </ProtectedRoute>
-          </Route>
-          
-          <Route path="/profile">
-            <ProtectedRoute>
-              <MainLayout>
-                <Profile />
+                <Suspense fallback={<PageLoader />}>
+                  <UserDetail />
+                </Suspense>
               </MainLayout>
             </ProtectedRoute>
           </Route>
@@ -171,7 +194,9 @@ function App() {
           <Route path="/api-keys">
             <ProtectedRoute>
               <MainLayout>
-                <ApiKeys />
+                <Suspense fallback={<PageLoader />}>
+                  <ApiKeys />
+                </Suspense>
               </MainLayout>
             </ProtectedRoute>
           </Route>
@@ -179,7 +204,9 @@ function App() {
           <Route path="/organization">
             <ProtectedRoute>
               <MainLayout>
-                <Organization />
+                <Suspense fallback={<PageLoader />}>
+                  <Organization />
+                </Suspense>
               </MainLayout>
             </ProtectedRoute>
           </Route>
@@ -187,7 +214,9 @@ function App() {
           <Route path="/help">
             <ProtectedRoute>
               <MainLayout>
-                <Help />
+                <Suspense fallback={<PageLoader />}>
+                  <Help />
+                </Suspense>
               </MainLayout>
             </ProtectedRoute>
           </Route>
@@ -195,7 +224,9 @@ function App() {
           <Route path="/internal/checks">
             <ProtectedRoute>
               <MainLayout>
-                <InternalChecks />
+                <Suspense fallback={<PageLoader />}>
+                  <InternalChecks />
+                </Suspense>
               </MainLayout>
             </ProtectedRoute>
           </Route>

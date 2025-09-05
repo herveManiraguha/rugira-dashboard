@@ -2,6 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import cors from "cors";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
+import crypto from "crypto";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
@@ -21,35 +22,65 @@ const allowedOrigins = isProduction ? [
   // Allow Replit domains in development only
 ];
 
+// Generate nonce for each request
+app.use((req: Request & { nonce?: string }, res, next) => {
+  // Generate a unique nonce for this request
+  req.nonce = crypto.randomBytes(16).toString('base64');
+  res.locals.nonce = req.nonce;
+  next();
+});
+
 // Security headers middleware
-app.use((req, res, next) => {
+app.use((req: Request & { nonce?: string }, res, next) => {
+  const nonce = req.nonce || '';
+  
   // Set comprehensive security headers
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('X-XSS-Protection', '1; mode=block');
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+  res.setHeader('Referrer-Policy', 'no-referrer');
+  res.setHeader('Permissions-Policy', 'accelerometer=(), camera=(), microphone=(), geolocation=(), usb=(), payment=()');
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
   
   // Content Security Policy for dashboard
-  const cspDirectives = [
-    "default-src 'self'",
-    "script-src 'self' 'unsafe-inline'", // unsafe-inline needed for Vite in dev
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "img-src 'self' data: https: blob:",
-    "font-src 'self' data: https://fonts.gstatic.com",
-    "connect-src 'self' https://api.rugira.ch wss://api.rugira.ch ws://localhost:* wss://localhost:*",
-    "frame-ancestors 'none'",
-    "base-uri 'none'",
-    "object-src 'none'",
-    "form-action 'self'"
-  ];
+  const cspDirectives = [];
+  
+  if (isProduction) {
+    // Strict CSP for production
+    cspDirectives.push(
+      "default-src 'self'",
+      `script-src 'self' 'nonce-${nonce}'`,
+      `style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com`,
+      "img-src 'self' data:",
+      "font-src 'self' https://fonts.gstatic.com",
+      "connect-src 'self' https://api.rugira.ch wss://api.rugira.ch",
+      "frame-ancestors 'none'",
+      "base-uri 'self'",
+      "object-src 'none'",
+      "form-action 'self'",
+      "upgrade-insecure-requests"
+    );
+  } else {
+    // Development CSP (more permissive for HMR)
+    cspDirectives.push(
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Required for Vite HMR in dev
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "img-src 'self' data: https: blob:",
+      "font-src 'self' data: https://fonts.gstatic.com",
+      "connect-src 'self' https://api.rugira.ch wss://api.rugira.ch ws://localhost:* wss://localhost:* ws://*.replit.dev wss://*.replit.dev",
+      "frame-ancestors 'none'",
+      "base-uri 'none'",
+      "object-src 'none'",
+      "form-action 'self'"
+    );
+  }
   
   res.setHeader('Content-Security-Policy', cspDirectives.join('; '));
   
-  // HSTS header for production
-  if (isProduction) {
-    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
-  }
+  // HSTS header 
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   
   next();
 });
@@ -176,27 +207,7 @@ if (isProduction && process.env.DATABASE_URL) {
   }));
 }
 
-// Security headers
-app.use((req, res, next) => {
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'DENY');
-  res.setHeader('X-XSS-Protection', '1; mode=block');
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  
-  if (isProduction) {
-    res.setHeader('Content-Security-Policy', 
-      "default-src 'self'; " +
-      "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; " +
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-      "font-src 'self' https://fonts.gstatic.com; " +
-      "img-src 'self' data: https: http:; " +
-      "connect-src 'self' https://app.rugira.ch wss://app.rugira.ch;"
-    );
-    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-  }
-  
-  next();
-});
+// Removed duplicate security headers - already handled above
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
