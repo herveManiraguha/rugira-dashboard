@@ -1,0 +1,80 @@
+Here’s the current database model and how tables relate to each other. It reflects the new scope-aware design (Organization → Portfolio/Desk → Mode) alongside legacy/demo tables used by existing routes.
+
+Scope Core
+
+organizations: top-level tenant container
+Keys: org_id (UUID, PK), name (unique), status, created_at/updated_at, deleted_at (soft delete).
+Relations: 1→N portfolios, 1→N user_org_roles, 1→N policies, 1→N approvals, 1→N scope_sessions, 1→N audit_events.
+portfolios: desks under an organization
+Keys: portfolio_id (UUID, PK), org_id (FK-ish), name, risk_profile, default_mode, live_enabled, created_by, created_at/updated_at, deleted_at.
+Index/unique: (org_id, name).
+Relations: N→1 organizations; 1→N user_portfolio_roles; 1→N venue_keys; 1→1 pretrade_limits; 1→N approvals; 1→N scope_sessions; 1→N audit_events.
+Access Control
+
+user_org_roles: org-level role assignments
+Keys: id (PK), user_id, org_id, role; unique (user_id, org_id, role).
+Relations: N→1 organizations.
+user_portfolio_roles: optional per-portfolio overrides
+Keys: id (PK), user_id, portfolio_id, role; unique (user_id, portfolio_id, role).
+Relations: N→1 portfolios.
+Policies & Approvals
+
+policies: per-org live transition policy
+Keys: policy_id (UUID, PK), org_id, require_mfa_for_live, require_approval_for_live, pretrade_profile_id, notes, created_at/updated_at.
+Relations: N→1 organizations.
+approvals: maker/checker workflow entries, optionally scoped
+Keys: id (PK), tenant (demo), requester, approver, action, payload_json, status, policy_snapshot_json, hash_id, created_at/decided_at.
+Scope fields: approval_type (e.g., mode_switch), org_id, portfolio_id, expires_at.
+Relations: N→1 organizations (optional), N→1 portfolios (optional).
+Readiness (Live Guardrails)
+
+venue_keys: trade-only key presence per portfolio
+Keys: id (PK), portfolio_id, venue, key_id, trade_only (bool), status, last_validated_at, created_at.
+Relations: N→1 portfolios.
+pretrade_limits: strict risk limits per portfolio
+Keys: id (PK), portfolio_id (unique), limits_json, created_at/updated_at.
+Relations: 1→1 portfolios.
+Sessions & Audit
+
+scope_sessions: last used {org_id, portfolio_id, mode} per user
+Keys: id (PK), user_id, org_id, portfolio_id, mode, last_used_at.
+Index: (user_id, last_used_at) for quick “last scope”.
+Relations: N→1 organizations; N→1 portfolios.
+audit_events: structured, append-only audit feed
+Keys: audit_id (UUID, PK), ts, user_id, action, org_id, portfolio_id, mode_from, mode_to, ip, ua, details_json, mfa.
+Relations: N→1 organizations; N→1 portfolios.
+Legacy/Demo Entities (kept for existing routes and demo flows)
+
+tenants, users, role_bindings: simple demo tenancy and role links.
+venues, strategies, bots, bot_events: demo trading domain with paper/live modes.
+backtests: stores metrics/equity results for demo backtests.
+approvals (legacy): same table extended by scope fields; used by both paths.
+audit_logs: legacy day-hash chain (separate from audit_events).
+exports, risk_policies: demo/admin utilities.
+Cardinality Summary
+
+organizations 1→N portfolios
+organizations 1→N user_org_roles
+organizations 1→N policies
+organizations 1→N approvals (optional)
+organizations 1→N scope_sessions
+organizations 1→N audit_events
+portfolios 1→N user_portfolio_roles
+portfolios 1→N venue_keys
+portfolios 1→1 pretrade_limits
+portfolios 1→N approvals (optional)
+portfolios 1→N scope_sessions
+portfolios 1→N audit_events
+Constraints & Indices
+
+Unique: organizations.name; portfolios (org_id, name); user_org_roles (user_id, org_id, role); user_portfolio_roles (user_id, portfolio_id, role); pretrade_limits.portfolio_id.
+Indices: most FKs (org_id, portfolio_id), timestamps, and session lookups (user_id, last_used_at).
+Security/Isolation (production)
+
+With Postgres, enforce Row-Level Security on tenant-scoped tables; for scope-aware tables, guard by org_id from verified claims and computed permissions.
+Policies and mode transitions always pass through server-side checks (MFA, approvals, readiness), and every change emits audit_events.
+Seed & Soak Support
+
+seed_demo: creates a demo tenant/users/venue/strategy/bots for quick start.
+seed_soak: creates example organizations, portfolios (some live_enabled), readiness artifacts (venue_keys, pretrade_limits), and simple strategies/bots to support soak runs.
+If you want, I can export this as a rendered ER diagram (Mermaid already included in docs) or generate a quick SQL DDL for Postgres.

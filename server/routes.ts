@@ -605,7 +605,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         orgs = orgs.filter(org => org.status === status);
       }
       
-      res.json(orgs);
+      // Map to include both old and new field names for backward compatibility
+      const mappedOrgs = orgs.map(org => ({
+        ...org,
+        createdAt: org.created_at || org.createdAt, // Keep old field for UI compatibility
+        updatedAt: org.updated_at || org.updatedAt  // Keep old field for UI compatibility
+      }));
+      
+      res.json(mappedOrgs);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch organizations" });
     }
@@ -624,13 +631,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(409).json({ message: "Organization with this name already exists" });
       }
       
+      const generateUUID = () => {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+          const r = Math.random() * 16 | 0;
+          const v = c === 'x' ? r : (r & 0x3 | 0x8);
+          return v.toString(16);
+        });
+      };
+      
+      const timestamp = new Date().toISOString();
       const newOrg = {
         id: `org-${Date.now()}`,
+        org_id: generateUUID(),
         name,
         status: 'active' as const,
         memberCount: 0,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        created_at: timestamp,
+        updated_at: timestamp,
+        deleted_at: null,
+        createdAt: timestamp, // Keep for UI compatibility
+        updatedAt: timestamp  // Keep for UI compatibility
       };
       
       mockOrganizations.push(newOrg);
@@ -667,9 +687,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (status) {
         mockOrganizations[orgIndex].status = status;
+        // If archiving, set deleted_at
+        if (status === 'archived') {
+          mockOrganizations[orgIndex].deleted_at = new Date().toISOString();
+        }
       }
       
-      mockOrganizations[orgIndex].updatedAt = new Date().toISOString();
+      const timestamp = new Date().toISOString();
+      mockOrganizations[orgIndex].updated_at = timestamp;
+      mockOrganizations[orgIndex].updatedAt = timestamp; // Keep for UI compatibility
+      
       res.json(mockOrganizations[orgIndex]);
     } catch (error) {
       res.status(500).json({ message: "Failed to update organization" });
@@ -707,7 +734,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userEmail: `user${user_id}@example.com`, // In real app, would fetch from user service
         userName: `User ${user_id}`,
         role,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        created_at: new Date().toISOString() // New field name
       };
       
       mockOrgRoles.push(newRole);
