@@ -51,7 +51,6 @@ const navigation = [
   { name: 'Reports', href: '/reports', icon: BarChart3, group: 'Govern' },
   { name: 'Compliance', href: '/compliance', icon: Shield, group: 'Govern' },
   { name: 'Admin', href: '/admin', icon: Settings, group: 'System' },
-  { name: 'Help', href: '/help', icon: HelpCircle, group: 'System' },
 ];
 
 export default function MainLayoutNew({ children }: MainLayoutProps) {
@@ -184,6 +183,28 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
               ))}
             </nav>
             
+            {/* Help icon in lower right corner */}
+            {!sidebarCollapsed && (
+              <div className="border-t p-4">
+                <Link href="/help">
+                  <a className="flex items-center text-sm text-gray-600 hover:text-gray-900">
+                    <HelpCircle className="h-5 w-5 mr-2" />
+                    Help
+                  </a>
+                </Link>
+              </div>
+            )}
+            
+            {/* Help icon when collapsed */}
+            {sidebarCollapsed && (
+              <div className="border-t p-2">
+                <Link href="/help">
+                  <a className="flex justify-center items-center p-2 text-gray-600 hover:text-gray-900" title="Help">
+                    <HelpCircle className="h-5 w-5" />
+                  </a>
+                </Link>
+              </div>
+            )}
 
           </div>
         </aside>

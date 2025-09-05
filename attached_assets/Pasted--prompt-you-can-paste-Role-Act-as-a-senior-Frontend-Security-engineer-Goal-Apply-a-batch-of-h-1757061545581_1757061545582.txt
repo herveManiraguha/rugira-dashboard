@@ -1,0 +1,156 @@
+— prompt you can paste
+
+Role: Act as a senior Frontend + Security engineer.
+Goal: Apply a batch of hardening and performance fixes to app.rugira.ch (dashboard) so it passes the Lighthouse findings in the attached report, while keeping financial‑grade security.
+
+Constraints & style
+
+Plain English diff plan; then create/modify files; add brief comments in changed files.
+
+No breaking changes to auth or routing; keep brand red and UI.
+
+Prefer small, safe PR‑sized commits (you can stage them sequentially).
+
+Assume Vite/React (or similar) for the SPA and a small Node/Express static server (or add one if absent) to set headers.
+
+1) Security & privacy hardening (CSP, HSTS, COOP, clickjacking, permissions)
+
+Context from Lighthouse: CSP issues + 'unsafe-inline' usage; blocked cdnjs & replit banner; COOP missing; HSTS lacks preload.
+
+Tasks
+
+Introduce/upgrade a small Node/Express wrapper (if we don’t already have one) under apps/web-server (or server/) that serves the built SPA and sets headers via helmet with a strict custom CSP. Wire it in Replit’s run command.
+
+CSP (tighten, no 'unsafe-inline'):
+
+default-src 'self';
+script-src 'self' 'nonce-{{RUNTIME_NONCE}}';
+style-src 'self' 'nonce-{{RUNTIME_NONCE}}';
+img-src 'self' data:;
+font-src 'self';
+connect-src 'self' https://api.rugira.ch wss://api.rugira.ch;
+frame-ancestors 'none';
+base-uri 'self';
+upgrade-insecure-requests;
+
+
+Generate a nonce per response and inject it into the HTML for any inline <script> or critical inline <style>. Replace ad‑hoc inline handlers with proper JS modules or nonce them.
+
+Remove any references to https://cdnjs.cloudflare.com/.../font‑awesome... and https://replit.com/public/js/replit-dev-banner.js (use local icons; see section 3).
+
+Clickjacking: keep frame-ancestors 'none' (or set X‑Frame‑Options: DENY as belt‑and‑suspenders).
+
+COOP: add Cross-Origin-Opener-Policy: same-origin. (Do not enable COEP unless we need SAB; it breaks some third‑party embeds.)
+
+HSTS: Strict-Transport-Security: max-age=31536000; includeSubDomains; preload. (We don’t submit to preload list yet, but header should be correct.)
+
+Other safe headers:
+Referrer-Policy: no-referrer,
+Permissions-Policy: accelerometer=(), camera=(), microphone=(), geolocation=(), usb=(), payment=(),
+X-Content-Type-Options: nosniff.
+
+Acceptance
+
+DevTools Issues panel shows no CSP/COOP/HSTS warnings for our domain; Lighthouse “inspector‑issues” no longer lists CSP errors.
+
+2) Robots & indexing controls
+
+Context: robots.txt returns HTML; Lighthouse shows 28 errors. For an authenticated dashboard we should not be indexed.
+
+Tasks
+
+Add public/robots.txt:
+
+User-agent: *
+Disallow: /
+
+
+Also add X‑Robots‑Tag: noindex, nofollow in server headers for all responses.
+
+Acceptance
+
+Lighthouse robots audit passes (no errors) and is‑crawlable remains OK.
+
+3) Remove third‑party UI dependencies & icon set
+
+Context: Third‑party CSS/JS (Font Awesome, Replit banner) conflicted with CSP and adds bytes.
+
+Tasks
+
+Replace Font Awesome with a local, tree‑shakable set (e.g., Heroicons or Phosphor React), and import only used icons. Delete the cdnjs reference entirely.
+
+Remove any Replit dev banner scripts/styles from the app build.
+
+Acceptance
+
+No network requests to cdnjs or replit banner on /login and /overview. CSP clean.
+
+4) JS bundle diet & faster LCP
+
+Context: Initial JS ≈ 1.4 MB (largest file assets/index-*.js); render delay is 83% of LCP; main thread bootup ~0.6–0.8s. Code‑split and tree‑shake.
+
+Tasks
+
+Code‑splitting:
+
+Route‑level lazy loading with React.lazy() / Suspense for heavy dashboard sections (Backtesting, Reports, Bots).
+
+In vite.config.*, add Rollup manualChunks to split vendor/libs (e.g., react, charts, grid) into separate, cacheable chunks.
+
+Tree‑shaking: ensure only used chart components are imported; replace “barrel” imports with direct ones.
+
+Critical path: keep login card and overview summary above‑the‑fold as the smallest possible component; defer non‑critical UI (tour, heavy charts) until idle (requestIdleCallback) or after interaction.
+
+Compression & caching: ensure hashed assets get Cache-Control: public, max-age=31536000, immutable from the server; enable Brotli/gzip on static responses.
+
+Targets
+
+Initial JS ≤ 250–300 KB gzipped on /login, ≤ 350–450 KB on /overview.
+
+LCP stays ≤ 1.8 s or improves; main thread boot under 500–600 ms on cold load.
+
+Lighthouse “Total byte weight” remains ~1.5 MiB or less, but key is smaller initial JS.
+
+5) Repeatable Lighthouse run (no extensions)
+
+Context: Lighthouse warned that extensions impacted the run; set up a consistent CI check.
+
+Tasks
+
+Add an npm script npm run lh:login and npm run lh:overview using lighthouse-ci or lighthouse CLI in headless/Incognito against a local production build (vite build && node apps/web-server/server.js). Store HTML reports under reports/lh/.
+
+Budget thresholds: block PR if robots invalid, inspector‑issues >0, or perf <0.85 on /overview.
+
+6) Notes for financial‑app posture
+
+Keep frame‑ancestors 'none', HSTS, COOP, strict CSP, and restrictive Permissions‑Policy by default.
+
+Do not add third‑party scripts unless whitelisted in CSP and business‑approved.
+
+Avoid inline scripts/styles; prefer nonces for any unavoidable inline bootstrap.
+
+Paths & deliverables
+
+apps/web-server/* (Express + helmet config and headers)
+
+apps/web-client/vite.config.* (code‑split config), src/routes/* (lazy routes)
+
+public/robots.txt
+
+package.json (scripts for build + lighthouse)
+
+reports/lh/* (generated)
+
+Update README.md with security headers and the CSP nonce rationale.
+
+Definition of Done
+
+Rebuild & run locally; verify headers in DevTools > Network > Response. “Issues” panel shows no CSP/COOP/HSTS problems.
+
+robots.txt serves plain text and Lighthouse robots audit passes.
+
+No external Font Awesome / Replit banner requests.
+
+Initial JS bundle sizes meet targets; LCP remains ~1.8 s or better.
+
+Add CI Lighthouse scripts; runs are extension‑free and reproducible.
