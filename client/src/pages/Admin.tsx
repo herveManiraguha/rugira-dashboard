@@ -59,7 +59,7 @@ interface SystemConfig {
 export default function Admin() {
   const [selectedUserForOrgs, setSelectedUserForOrgs] = useState<User | null>(null);
   const [isMembersDrawerOpen, setIsMembersDrawerOpen] = useState(false);
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile(1024); // Use cards view for screens smaller than 1024px
   
   const generateMockUsers = (): User[] => {
     const userData = [
@@ -258,7 +258,7 @@ export default function Admin() {
         
         <TabsContent value="users" className="space-y-6">
           {/* User Statistics */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center">
@@ -316,13 +316,14 @@ export default function Admin() {
             </Card>
           </div>
 
-          <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
             <h2 className="text-xl font-semibold">Users</h2>
             <Dialog open={isAddUserModalOpen} onOpenChange={setIsAddUserModalOpen}>
               <DialogTrigger asChild>
-                <Button data-testid="button-add-user">
+                <Button data-testid="button-add-user" className="whitespace-nowrap">
                   <Plus className="h-4 w-4 mr-2" />
-                  Add User
+                  <span className="hidden sm:inline">Add User</span>
+                  <span className="sm:hidden">Add</span>
                 </Button>
               </DialogTrigger>
               <DialogContent>
@@ -334,34 +335,35 @@ export default function Admin() {
             </Dialog>
           </div>
 
-          {isMobile ? (
-            <UserCardsView
-              users={users}
-              onOrgClick={(user) => {
-                setSelectedUserForOrgs(user);
-                setIsMembersDrawerOpen(true);
-              }}
-              getRoleBadge={getRoleBadge}
-              getStatusBadge={getStatusBadge}
-              getSubscriptionBadge={getSubscriptionBadge}
-            />
-          ) : (
-            <Card>
+          <div className="w-full">
+            {isMobile ? (
+              <UserCardsView
+                users={users}
+                onOrgClick={(user) => {
+                  setSelectedUserForOrgs(user);
+                  setIsMembersDrawerOpen(true);
+                }}
+                getRoleBadge={getRoleBadge}
+                getStatusBadge={getStatusBadge}
+                getSubscriptionBadge={getSubscriptionBadge}
+              />
+            ) : (
+              <Card>
               <CardContent className="p-0">
                 <div className="overflow-x-auto">
-                  <Table>
+                  <Table className="min-w-full">
                   <TableHeader>
                     <TableRow>
-                      <TableHead>User</TableHead>
+                      <TableHead className="min-w-[200px]">User</TableHead>
                       <TableHead>Role</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead>Subscription</TableHead>
+                      <TableHead className="hidden xl:table-cell">Subscription</TableHead>
                       <TableHead>Orgs</TableHead>
-                      <TableHead>Country</TableHead>
-                      <TableHead>Total Trades</TableHead>
+                      <TableHead className="hidden lg:table-cell">Country</TableHead>
+                      <TableHead className="hidden 2xl:table-cell">Total Trades</TableHead>
                       <TableHead>Volume</TableHead>
-                      <TableHead>Last Login</TableHead>
-                      <TableHead>Actions</TableHead>
+                      <TableHead className="hidden xl:table-cell">Last Login</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -380,7 +382,7 @@ export default function Admin() {
                         </TableCell>
                         <TableCell>{getRoleBadge(user.role)}</TableCell>
                         <TableCell>{getStatusBadge(user.status)}</TableCell>
-                        <TableCell>{getSubscriptionBadge(user.subscription)}</TableCell>
+                        <TableCell className="hidden xl:table-cell">{getSubscriptionBadge(user.subscription)}</TableCell>
                         <TableCell>
                           {user.orgsCount !== undefined && user.orgsCount > 0 ? (
                             <Button
@@ -400,16 +402,16 @@ export default function Admin() {
                             <span className="text-sm text-gray-400">—</span>
                           )}
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="hidden lg:table-cell">
                           <span className="text-sm text-gray-900">{user.country}</span>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="hidden 2xl:table-cell">
                           <span className="font-medium">{user.totalTrades.toLocaleString()}</span>
                         </TableCell>
                         <TableCell>
                           <span className="font-medium text-green-600">{user.totalVolume}</span>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="hidden xl:table-cell">
                           <span className="text-sm text-gray-500">
                             {new Date(user.lastLogin).toLocaleDateString()}
                           </span>
@@ -436,7 +438,8 @@ export default function Admin() {
                 </div>
               </CardContent>
             </Card>
-          )}
+            )}
+          </div>
         </TabsContent>
         
         <TabsContent value="system" className="space-y-6">
