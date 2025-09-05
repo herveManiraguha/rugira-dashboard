@@ -30,6 +30,8 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 import { OrganizationsTab, MembersDrawer } from "@/components/Admin/Organizations";
+import { UserCardsView } from "@/components/Admin/Users/UserCardsView";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface User {
   id: string;
@@ -57,6 +59,7 @@ interface SystemConfig {
 export default function Admin() {
   const [selectedUserForOrgs, setSelectedUserForOrgs] = useState<User | null>(null);
   const [isMembersDrawerOpen, setIsMembersDrawerOpen] = useState(false);
+  const isMobile = useIsMobile();
   
   const generateMockUsers = (): User[] => {
     const userData = [
@@ -331,96 +334,109 @@ export default function Admin() {
             </Dialog>
           </div>
 
-          <Card>
-            <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>User</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Subscription</TableHead>
-                    <TableHead>Orgs</TableHead>
-                    <TableHead>Country</TableHead>
-                    <TableHead>Total Trades</TableHead>
-                    <TableHead>Volume</TableHead>
-                    <TableHead>Last Login</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {users.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell>
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-gradient-to-br from-brand-red to-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                            {user.name.split(' ').map(n => n[0]).join('')}
-                          </div>
-                          <div>
-                            <p className="font-medium text-gray-900">{user.name}</p>
-                            <p className="text-sm text-gray-500">{user.email}</p>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{getRoleBadge(user.role)}</TableCell>
-                      <TableCell>{getStatusBadge(user.status)}</TableCell>
-                      <TableCell>{getSubscriptionBadge(user.subscription)}</TableCell>
-                      <TableCell>
-                        {user.orgsCount !== undefined && user.orgsCount > 0 ? (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="h-7 px-2"
-                            onClick={() => {
-                              setSelectedUserForOrgs(user);
-                              setIsMembersDrawerOpen(true);
-                            }}
-                            data-testid={`button-user-orgs-${user.id}`}
-                          >
-                            <Building2 className="h-3 w-3 mr-1" />
-                            {user.orgsCount}
-                          </Button>
-                        ) : (
-                          <span className="text-sm text-gray-400">—</span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-sm text-gray-900">{user.country}</span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="font-medium">{user.totalTrades.toLocaleString()}</span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="font-medium text-green-600">{user.totalVolume}</span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-sm text-gray-500">
-                          {new Date(user.lastLogin).toLocaleDateString()}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex space-x-1">
-                          <Link href={`/admin/user/${user.id}`}>
-                            <Button size="sm" variant="outline" data-testid="button-view-user">
-                              <Edit2 className="h-3 w-3" />
-                            </Button>
-                          </Link>
-                          <Button size="sm" variant="outline" data-testid="button-suspend-user">
-                            <UserX className="h-3 w-3" />
-                          </Button>
-                          <Button size="sm" variant="outline" data-testid="button-delete-user">
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      </TableCell>
+          {isMobile ? (
+            <UserCardsView
+              users={users}
+              onOrgClick={(user) => {
+                setSelectedUserForOrgs(user);
+                setIsMembersDrawerOpen(true);
+              }}
+              getRoleBadge={getRoleBadge}
+              getStatusBadge={getStatusBadge}
+              getSubscriptionBadge={getSubscriptionBadge}
+            />
+          ) : (
+            <Card>
+              <CardContent className="p-0">
+                <div className="overflow-x-auto">
+                  <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User</TableHead>
+                      <TableHead>Role</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Subscription</TableHead>
+                      <TableHead>Orgs</TableHead>
+                      <TableHead>Country</TableHead>
+                      <TableHead>Total Trades</TableHead>
+                      <TableHead>Volume</TableHead>
+                      <TableHead>Last Login</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
+                  </TableHeader>
+                  <TableBody>
+                    {users.map((user) => (
+                      <TableRow key={user.id}>
+                        <TableCell>
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-gradient-to-br from-brand-red to-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                              {user.name.split(' ').map(n => n[0]).join('')}
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-900">{user.name}</p>
+                              <p className="text-sm text-gray-500">{user.email}</p>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>{getRoleBadge(user.role)}</TableCell>
+                        <TableCell>{getStatusBadge(user.status)}</TableCell>
+                        <TableCell>{getSubscriptionBadge(user.subscription)}</TableCell>
+                        <TableCell>
+                          {user.orgsCount !== undefined && user.orgsCount > 0 ? (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-7 px-2"
+                              onClick={() => {
+                                setSelectedUserForOrgs(user);
+                                setIsMembersDrawerOpen(true);
+                              }}
+                              data-testid={`button-user-orgs-${user.id}`}
+                            >
+                              <Building2 className="h-3 w-3 mr-1" />
+                              {user.orgsCount}
+                            </Button>
+                          ) : (
+                            <span className="text-sm text-gray-400">—</span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-sm text-gray-900">{user.country}</span>
+                        </TableCell>
+                        <TableCell>
+                          <span className="font-medium">{user.totalTrades.toLocaleString()}</span>
+                        </TableCell>
+                        <TableCell>
+                          <span className="font-medium text-green-600">{user.totalVolume}</span>
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-sm text-gray-500">
+                            {new Date(user.lastLogin).toLocaleDateString()}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex space-x-1">
+                            <Link href={`/admin/user/${user.id}`}>
+                              <Button size="sm" variant="outline" data-testid="button-view-user">
+                                <Edit2 className="h-3 w-3" />
+                              </Button>
+                            </Link>
+                            <Button size="sm" variant="outline" data-testid="button-suspend-user">
+                              <UserX className="h-3 w-3" />
+                            </Button>
+                            <Button size="sm" variant="outline" data-testid="button-delete-user">
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
         
         <TabsContent value="system" className="space-y-6">
