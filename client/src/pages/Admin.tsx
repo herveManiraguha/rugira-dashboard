@@ -240,14 +240,18 @@ export default function Admin() {
         <p className="text-gray-600">Manage users, system configuration, and security settings</p>
       </div>
 
-      <Tabs defaultValue="users" className="w-full">
-        <TabsList>
-          <TabsTrigger value="users">User Management</TabsTrigger>
+      <Tabs defaultValue="organizations" className="w-full">
+        <TabsList className="flex-wrap h-auto">
           <TabsTrigger value="organizations">Organizations</TabsTrigger>
+          <TabsTrigger value="users">Users</TabsTrigger>
           <TabsTrigger value="system">System Config</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
           <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
         </TabsList>
+        
+        <TabsContent value="organizations" className="space-y-6">
+          <OrganizationsTab />
+        </TabsContent>
         
         <TabsContent value="users" className="space-y-6">
           {/* User Statistics */}
@@ -309,8 +313,8 @@ export default function Admin() {
             </Card>
           </div>
 
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">User Management</h2>
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <h2 className="text-xl font-semibold">Users</h2>
             <Dialog open={isAddUserModalOpen} onOpenChange={setIsAddUserModalOpen}>
               <DialogTrigger asChild>
                 <Button data-testid="button-add-user">
@@ -419,10 +423,6 @@ export default function Admin() {
           </Card>
         </TabsContent>
         
-        <TabsContent value="organizations" className="space-y-6">
-          <OrganizationsTab />
-        </TabsContent>
-        
         <TabsContent value="system" className="space-y-6">
           <Card>
             <CardHeader>
@@ -432,7 +432,8 @@ export default function Admin() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              <Table>
+              <div className="overflow-x-auto">
+                <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Setting</TableHead>
@@ -457,7 +458,8 @@ export default function Admin() {
                     </TableRow>
                   ))}
                 </TableBody>
-              </Table>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
