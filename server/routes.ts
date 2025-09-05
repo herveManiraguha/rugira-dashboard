@@ -4,6 +4,7 @@ import { WebSocketServer } from "ws";
 import { storage } from "./storage";
 import { authRoutes, optionalAuth } from "./auth";
 import * as mockData from "./mockData";
+import { mockOrganizations, mockOrgRoles } from "./mockData/organizations";
 import healthRoutes from "./routes/health";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -585,6 +586,179 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(strategies);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch strategies" });
+    }
+  });
+
+  // Organizations admin endpoints
+  app.get("/api/admin/orgs", optionalAuth, async (req, res) => {
+    try {
+      const { query, status } = req.query;
+      let orgs = [...mockOrganizations];
+      
+      if (query && typeof query === 'string') {
+        orgs = orgs.filter(org => 
+          org.name.toLowerCase().includes(query.toLowerCase())
+        );
+      }
+      
+      if (status && typeof status === 'string') {
+        orgs = orgs.filter(org => org.status === status);
+      }
+      
+      res.json(orgs);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch organizations" });
+    }
+  });
+
+  app.post("/api/admin/orgs", optionalAuth, async (req, res) => {
+    try {
+      const { name } = req.body;
+      
+      // Check for duplicate
+      const existing = mockOrganizations.find(org => 
+        org.name.toLowerCase() === name.toLowerCase() && org.status === 'active'
+      );
+      
+      if (existing) {
+        return res.status(409).json({ message: "Organization with this name already exists" });
+      }
+      
+      const newOrg = {
+        id: `org-${Date.now()}`,
+        name,
+        status: 'active' as const,
+        memberCount: 0,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      mockOrganizations.push(newOrg);
+      res.status(201).json(newOrg);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to create organization" });
+    }
+  });
+
+  app.patch("/api/admin/orgs/:id", optionalAuth, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, status } = req.body;
+      
+      const orgIndex = mockOrganizations.findIndex(org => org.id === id);
+      if (orgIndex === -1) {
+        return res.status(404).json({ message: "Organization not found" });
+      }
+      
+      if (name) {
+        // Check for duplicate name
+        const existing = mockOrganizations.find(org => 
+          org.id !== id && 
+          org.name.toLowerCase() === name.toLowerCase() && 
+          org.status === 'active'
+        );
+        
+        if (existing) {
+          return res.status(409).json({ message: "Organization with this name already exists" });
+        }
+        
+        mockOrganizations[orgIndex].name = name;
+      }
+      
+      if (status) {
+        mockOrganizations[orgIndex].status = status;
+      }
+      
+      mockOrganizations[orgIndex].updatedAt = new Date().toISOString();
+      res.json(mockOrganizations[orgIndex]);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update organization" });
+    }
+  });
+
+  app.get("/api/admin/orgs/:id/roles", optionalAuth, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const roles = mockOrgRoles.filter(role => role.orgId === id);
+      res.json(roles);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch organization roles" });
+    }
+  });
+
+  app.post("/api/admin/orgs/:id/roles", optionalAuth, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { user_id, role } = req.body;
+      
+      // Check if user already has a role in this org
+      const existing = mockOrgRoles.find(r => 
+        r.orgId === id && r.userId === user_id
+      );
+      
+      if (existing) {
+        return res.status(409).json({ message: "User already has a role in this organization" });
+      }
+      
+      const newRole = {
+        id: `role-${Date.now()}`,
+        orgId: id,
+        userId: user_id,
+        userEmail: `user${user_id}@example.com`, // In real app, would fetch from user service
+        userName: `User ${user_id}`,
+        role,
+        createdAt: new Date().toISOString()
+      };
+      
+      mockOrgRoles.push(newRole);
+      
+      // Update member count
+      const org = mockOrganizations.find(o => o.id === id);
+      if (org) {
+        org.memberCount += 1;
+      }
+      
+      res.status(201).json(newRole);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to add organization role" });
+    }
+  });
+
+  app.delete("/api/admin/orgs/:orgId/roles/:bindingId", optionalAuth, async (req, res) => {
+    try {
+      const { orgId, bindingId } = req.params;
+      
+      const roleIndex = mockOrgRoles.findIndex(role => 
+        role.id === bindingId && role.orgId === orgId
+      );
+      
+      if (roleIndex === -1) {
+        return res.status(404).json({ message: "Role not found" });
+      }
+      
+      mockOrgRoles.splice(roleIndex, 1);
+      
+      // Update member count
+      const org = mockOrganizations.find(o => o.id === orgId);
+      if (org && org.memberCount > 0) {
+        org.memberCount -= 1;
+      }
+      
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to remove organization role" });
+    }
+  });
+
+  app.get("/api/admin/users/:userId/orgs", optionalAuth, async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const userRoles = mockOrgRoles.filter(role => role.userId === userId);
+      const orgIds = userRoles.map(r => r.orgId);
+      const userOrgs = mockOrganizations.filter(org => orgIds.includes(org.id));
+      res.json(userOrgs);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch user organizations" });
     }
   });
 

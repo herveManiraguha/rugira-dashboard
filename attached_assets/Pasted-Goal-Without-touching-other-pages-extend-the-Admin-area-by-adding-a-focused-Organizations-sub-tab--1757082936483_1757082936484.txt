@@ -1,0 +1,93 @@
+Goal: Without touching other pages, extend the Admin area by adding a focused Organizations sub‑tab and small user assignment drawer. Keep the visual language and your brand red accents.
+
+Constraints / UX
+
+No global routing changes, no layout edits outside Admin.
+
+Keep User Management, System Config, Security, Maintenance tabs exactly as they are, and insert one new tab: “Organizations” (to the right of “User Management”).
+
+Keep everything scoped to Admin; do not modify Overview, Venues, Strategies, etc.
+
+UI changes
+
+Admin → new “Organizations” tab
+
+Toolbar: search input (placeholder “Search organizations…”), status filter (All, Active, Archived), right‑aligned “Add Organization” (primary red button).
+
+Table columns: Name, Status (pill: Active/Archived), Members (count), Created, Updated, Actions.
+
+Actions per row: Edit, Archive/Unarchive, Members (opens drawer).
+
+Empty state: “No organizations yet. Create your first organization to start assigning users.”
+
+Add / Edit Organization modal
+
+Fields: Name (required).
+
+On Create: POST /admin/orgs.
+
+On Edit: PATCH /admin/orgs/{org_id} (rename or toggle status via Archive/Unarchive action in row).
+
+Show inline uniqueness error if duplicate name (from 409).
+
+Members drawer (right panel for a selected org)
+
+Header: “Members — {Org Name}” with count badge.
+
+List current bindings as chips or rows: user_id (email), role, “Remove” (trash).
+
+Add member inline form:
+
+User (typeahead over existing users endpoint you already have),
+
+Role (select: org_admin, trader, analyst, viewer, compliance),
+
+“Add” (POST /admin/orgs/{org_id}/roles).
+
+Removing calls DELETE /admin/orgs/{org_id}/roles/{binding_id}.
+
+Touch points in existing User Management list
+
+Add a “Orgs” pill in each user row showing number of org memberships; clicking opens the Members drawer pre‑filtered to that user (show a sub‑filter “Show orgs for: user@domain”).
+
+Do not alter other columns or actions.
+
+State & Data
+
+New client service module (or slice) for orgs:
+
+listOrgs({query, status, page}), createOrg({name}), updateOrg(id, {name|status}), archiveOrg(id), listOrgRoles(id), addOrgRole(id, {user_id, role}), removeOrgRole(id, binding_id).
+
+Show toasts on success/failure; optimistic update for add/remove role; refetch table on create/edit/archive.
+
+Permissions in UI
+
+Only show “Add Organization”, “Edit”, “Archive/Unarchive”, and “Members → Add/Remove” actions when the viewer is either Rugira admin or Org admin for that org (based on claims returned from the session/me endpoint).
+
+Everyone else can read the list but not act.
+
+Accessibility / polish
+
+Modal and drawer trap focus, Esc closes, buttons keyboard‑navigable, visible focus ring.
+
+Confirm dialog on Archive/Unarchive.
+
+Loading & empty states for list and drawer.
+
+API wiring
+
+Use the new backend endpoints from Prompt 1.
+
+Handle 403 with a readable toast: “You don’t have permission to manage this organization.”
+
+Handle 409 on duplicate names with an inline error next to the Name field.
+
+Acceptance checks
+
+Creating, renaming, archiving, and unarchiving organizations all work from the new tab.
+
+Members drawer correctly lists/updates role bindings; remove works and updates count in the table.
+
+User Management table shows the “Orgs” pill and opens the drawer focused on that user.
+
+No other pages are affected.
