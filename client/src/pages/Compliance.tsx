@@ -173,7 +173,8 @@ export default function Compliance() {
 
   const getSeverityBadge = (severity: ComplianceAlert['severity']) => {
     switch (severity) {
-      case 'high': return <Badge variant="destructive">High</Badge>;
+      case 'critical': return <Badge variant="destructive">Critical</Badge>;
+      case 'high': return <Badge className="bg-orange-100 text-orange-800">High</Badge>;
       case 'medium': return <Badge className="bg-yellow-100 text-yellow-800">Medium</Badge>;
       case 'low': return <Badge variant="secondary">Low</Badge>;
       default: return <Badge variant="secondary">Unknown</Badge>;
@@ -251,7 +252,15 @@ export default function Compliance() {
                         </div>
                       </div>
                       <div className="flex gap-2 pt-2">
-                        <Button size="sm" variant="outline" className="flex-1 text-xs">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="flex-1 text-xs"
+                          onClick={() => {
+                            setSelectedAlert(alert);
+                            setShowAlertDetails(true);
+                          }}
+                        >
                           View Details
                         </Button>
                         {alert.status === 'open' && (
@@ -290,7 +299,14 @@ export default function Compliance() {
                       </TableCell>
                       <TableCell>
                         <div className="flex space-x-1">
-                          <Button size="sm" variant="outline">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedAlert(alert);
+                              setShowAlertDetails(true);
+                            }}
+                          >
                             View Details
                           </Button>
                           {alert.status === 'open' && (
@@ -381,6 +397,28 @@ export default function Compliance() {
           </Card>
         </TabsContent>
       </Tabs>
+      
+      {/* Alert Details Modal */}
+      <AlertDetailsModal
+        alert={selectedAlert}
+        isOpen={showAlertDetails}
+        onClose={() => {
+          setShowAlertDetails(false);
+          setSelectedAlert(null);
+        }}
+        onAcknowledge={() => {
+          if (selectedAlert) {
+            console.log('Acknowledging alert:', selectedAlert.id);
+            setShowAlertDetails(false);
+          }
+        }}
+        onResolve={() => {
+          if (selectedAlert) {
+            console.log('Resolving alert:', selectedAlert.id);
+            setShowAlertDetails(false);
+          }
+        }}
+      />
     </div>
   );
 }
