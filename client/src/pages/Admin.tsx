@@ -460,13 +460,11 @@ export default function Admin() {
               />
             ) : (
               <Card>
-              <CardContent className="p-0">
-                <div className="overflow-x-auto">
-                  <Table className="min-w-full">
+                <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead 
-                        className="min-w-[200px] cursor-pointer hover:bg-gray-50"
+                        className="w-1/4 cursor-pointer hover:bg-gray-50"
                         onClick={() => handleUsersSort('name')}
                       >
                         <div className="flex items-center gap-1">
@@ -493,7 +491,7 @@ export default function Admin() {
                         </div>
                       </TableHead>
                       <TableHead 
-                        className="hidden xl:table-cell cursor-pointer hover:bg-gray-50"
+                        className="hidden lg:table-cell cursor-pointer hover:bg-gray-50"
                         onClick={() => handleUsersSort('subscription')}
                       >
                         <div className="flex items-center gap-1">
@@ -511,7 +509,7 @@ export default function Admin() {
                         </div>
                       </TableHead>
                       <TableHead 
-                        className="hidden lg:table-cell cursor-pointer hover:bg-gray-50"
+                        className="hidden xl:table-cell cursor-pointer hover:bg-gray-50"
                         onClick={() => handleUsersSort('country')}
                       >
                         <div className="flex items-center gap-1">
@@ -519,7 +517,6 @@ export default function Admin() {
                           {getUsersSortIcon('country')}
                         </div>
                       </TableHead>
-                      <TableHead className="hidden 2xl:table-cell">Total Trades</TableHead>
                       <TableHead 
                         className="cursor-pointer hover:bg-gray-50"
                         onClick={() => handleUsersSort('volume')}
@@ -530,7 +527,7 @@ export default function Admin() {
                         </div>
                       </TableHead>
                       <TableHead 
-                        className="hidden xl:table-cell cursor-pointer hover:bg-gray-50"
+                        className="hidden lg:table-cell cursor-pointer hover:bg-gray-50"
                         onClick={() => handleUsersSort('lastLogin')}
                       >
                         <div className="flex items-center gap-1">
@@ -538,7 +535,7 @@ export default function Admin() {
                           {getUsersSortIcon('lastLogin')}
                         </div>
                       </TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead className="w-20">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -546,62 +543,53 @@ export default function Admin() {
                       <TableRow key={user.id}>
                         <TableCell>
                           <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 bg-gradient-to-br from-brand-red to-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                            <div className="w-8 h-8 bg-gradient-to-br from-brand-red to-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
                               {user.name.split(' ').map(n => n[0]).join('')}
                             </div>
-                            <div>
-                              <p className="font-medium text-gray-900">{user.name}</p>
-                              <p className="text-sm text-gray-500">{user.email}</p>
+                            <div className="min-w-0">
+                              <p className="font-medium text-gray-900 truncate">{user.name}</p>
+                              <p className="text-sm text-gray-500 truncate">{user.email}</p>
                             </div>
                           </div>
                         </TableCell>
                         <TableCell>{getRoleBadge(user.role)}</TableCell>
                         <TableCell>{getStatusBadge(user.status)}</TableCell>
-                        <TableCell className="hidden xl:table-cell">{getSubscriptionBadge(user.subscription)}</TableCell>
+                        <TableCell className="hidden lg:table-cell">{getSubscriptionBadge(user.subscription)}</TableCell>
                         <TableCell>
-                          {user.orgsCount !== undefined && user.orgsCount > 0 ? (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="h-7 px-2"
-                              onClick={() => {
-                                setSelectedUserForOrgs(user);
-                                setIsMembersDrawerOpen(true);
-                              }}
-                              data-testid={`button-user-orgs-${user.id}`}
-                            >
-                              <Building2 className="h-3 w-3 mr-1" />
-                              {user.orgsCount}
-                            </Button>
-                          ) : (
-                            <span className="text-sm text-gray-400">—</span>
-                          )}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedUserForOrgs(user);
+                              setIsMembersDrawerOpen(true);
+                            }}
+                            className="text-blue-600 hover:text-blue-800 p-1"
+                            data-testid={`button-user-orgs-${user.id}`}
+                          >
+                            <Building2 className="h-4 w-4 mr-1" />
+                            {user.orgsCount || 0}
+                          </Button>
                         </TableCell>
-                        <TableCell className="hidden lg:table-cell">
+                        <TableCell className="hidden xl:table-cell">
                           <span className="text-sm text-gray-900">{user.country}</span>
-                        </TableCell>
-                        <TableCell className="hidden 2xl:table-cell">
-                          <span className="font-medium">{user.totalTrades.toLocaleString()}</span>
                         </TableCell>
                         <TableCell>
                           <span className="font-medium text-green-600">{user.totalVolume}</span>
                         </TableCell>
-                        <TableCell className="hidden xl:table-cell">
+                        <TableCell className="hidden lg:table-cell">
                           <span className="text-sm text-gray-500">
                             {new Date(user.lastLogin).toLocaleDateString()}
                           </span>
                         </TableCell>
                         <TableCell>
                           <div className="flex space-x-1">
-                            <Link href={`/admin/user/${user.id}`}>
-                              <Button size="sm" variant="outline" data-testid="button-view-user">
-                                <Edit2 className="h-3 w-3" />
-                              </Button>
-                            </Link>
-                            <Button size="sm" variant="outline" data-testid="button-suspend-user">
+                            <Button size="sm" variant="outline" className="p-1">
+                              <Edit2 className="h-3 w-3" />
+                            </Button>
+                            <Button size="sm" variant="outline" className="p-1">
                               <UserX className="h-3 w-3" />
                             </Button>
-                            <Button size="sm" variant="outline" data-testid="button-delete-user">
+                            <Button size="sm" variant="outline" className="p-1">
                               <Trash2 className="h-3 w-3" />
                             </Button>
                           </div>
@@ -609,10 +597,8 @@ export default function Admin() {
                       </TableRow>
                     ))}
                   </TableBody>
-                  </Table>
-                </div>
-              </CardContent>
-            </Card>
+                </Table>
+              </Card>
             )}
           </div>
         </TabsContent>
