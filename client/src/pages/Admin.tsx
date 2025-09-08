@@ -25,7 +25,10 @@ import {
   UserCheck,
   TrendingUp,
   Activity,
-  Building2
+  Building2,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
@@ -59,6 +62,9 @@ interface SystemConfig {
 export default function Admin() {
   const [selectedUserForOrgs, setSelectedUserForOrgs] = useState<User | null>(null);
   const [isMembersDrawerOpen, setIsMembersDrawerOpen] = useState(false);
+  const [usersSortColumn, setUsersSortColumn] = useState<string | null>(null);
+  const [usersSortDirection, setUsersSortDirection] = useState<'asc' | 'desc' | null>(null);
+  const [usersViewMode, setUsersViewMode] = useState<'cards' | 'table'>('cards');
   const isMobile = useIsMobile(1024); // Use cards view for screens smaller than 1024px
   
   const generateMockUsers = (): User[] => {
@@ -132,6 +138,84 @@ export default function Admin() {
 
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const { toast } = useToast();
+
+  // Handle users sorting
+  const handleUsersSort = (column: string) => {
+    if (usersSortColumn === column) {
+      if (usersSortDirection === 'asc') {
+        setUsersSortDirection('desc');
+      } else if (usersSortDirection === 'desc') {
+        setUsersSortDirection(null);
+        setUsersSortColumn(null);
+      } else {
+        setUsersSortDirection('asc');
+      }
+    } else {
+      setUsersSortColumn(column);
+      setUsersSortDirection('asc');
+    }
+  };
+
+  // Get sort icon for users table
+  const getUsersSortIcon = (column: string) => {
+    if (usersSortColumn !== column) {
+      return <ArrowUpDown className="h-4 w-4 opacity-50" />;
+    }
+    if (usersSortDirection === 'asc') {
+      return <ArrowUp className="h-4 w-4" />;
+    }
+    if (usersSortDirection === 'desc') {
+      return <ArrowDown className="h-4 w-4" />;
+    }
+    return <ArrowUpDown className="h-4 w-4 opacity-50" />;
+  };
+
+  // Sort users
+  const sortedUsers = [...users].sort((a, b) => {
+    if (!usersSortColumn || !usersSortDirection) return 0;
+    
+    let aValue: any = '';
+    let bValue: any = '';
+    
+    switch (usersSortColumn) {
+      case 'name':
+        aValue = a.name;
+        bValue = b.name;
+        break;
+      case 'role':
+        aValue = a.role;
+        bValue = b.role;
+        break;
+      case 'status':
+        aValue = a.status;
+        bValue = b.status;
+        break;
+      case 'subscription':
+        aValue = a.subscription;
+        bValue = b.subscription;
+        break;
+      case 'orgs':
+        aValue = a.orgsCount || 0;
+        bValue = b.orgsCount || 0;
+        break;
+      case 'country':
+        aValue = a.country;
+        bValue = b.country;
+        break;
+      case 'volume':
+        aValue = parseFloat(a.totalVolume.replace(/[\$,KM]/g, ''));
+        bValue = parseFloat(b.totalVolume.replace(/[\$,KM]/g, ''));
+        break;
+      case 'lastLogin':
+        aValue = new Date(a.lastLogin).getTime();
+        bValue = new Date(b.lastLogin).getTime();
+        break;
+    }
+    
+    if (aValue < bValue) return usersSortDirection === 'asc' ? -1 : 1;
+    if (aValue > bValue) return usersSortDirection === 'asc' ? 1 : -1;
+    return 0;
+  });
 
   const getRoleBadge = (role: User['role']) => {
     switch (role) {
@@ -318,30 +402,50 @@ export default function Admin() {
 
           <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
             <h2 className="text-xl font-semibold">Users</h2>
-            <Dialog open={isAddUserModalOpen} onOpenChange={setIsAddUserModalOpen}>
-              <DialogTrigger asChild>
-                <Button data-testid="button-add-user" className="whitespace-nowrap">
-                  <Plus className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">Add User</span>
-                  <span className="sm:hidden">Add</span>
+            <div className="flex items-center gap-2">
+              <div className="hidden sm:flex rounded-lg border p-1">
+                <Button
+                  variant={usersViewMode === 'cards' ? 'secondary' : 'ghost'}
+                  size="sm"
+                  onClick={() => setUsersViewMode('cards')}
+                  className="h-8"
+                >
+                  Cards
                 </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add New User</DialogTitle>
-                  <DialogDescription>
-                    Create a new user account with the specified details and permissions.
-                  </DialogDescription>
-                </DialogHeader>
-                <AddUserForm />
-              </DialogContent>
-            </Dialog>
+                <Button
+                  variant={usersViewMode === 'table' ? 'secondary' : 'ghost'}
+                  size="sm"
+                  onClick={() => setUsersViewMode('table')}
+                  className="h-8"
+                >
+                  Table
+                </Button>
+              </div>
+              <Dialog open={isAddUserModalOpen} onOpenChange={setIsAddUserModalOpen}>
+                <DialogTrigger asChild>
+                  <Button data-testid="button-add-user" className="whitespace-nowrap">
+                    <Plus className="h-4 w-4 mr-2" />
+                    <span className="hidden sm:inline">Add User</span>
+                    <span className="sm:hidden">Add</span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add New User</DialogTitle>
+                    <DialogDescription>
+                      Create a new user account with the specified details and permissions.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <AddUserForm />
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
 
           <div className="w-full">
-            {isMobile ? (
+            {isMobile || usersViewMode === 'cards' ? (
               <UserCardsView
-                users={users}
+                users={sortedUsers}
                 onOrgClick={(user) => {
                   setSelectedUserForOrgs(user);
                   setIsMembersDrawerOpen(true);
@@ -357,20 +461,84 @@ export default function Admin() {
                   <Table className="min-w-full">
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="min-w-[200px]">User</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="hidden xl:table-cell">Subscription</TableHead>
-                      <TableHead>Orgs</TableHead>
-                      <TableHead className="hidden lg:table-cell">Country</TableHead>
+                      <TableHead 
+                        className="min-w-[200px] cursor-pointer hover:bg-gray-50"
+                        onClick={() => handleUsersSort('name')}
+                      >
+                        <div className="flex items-center gap-1">
+                          User
+                          {getUsersSortIcon('name')}
+                        </div>
+                      </TableHead>
+                      <TableHead 
+                        className="cursor-pointer hover:bg-gray-50"
+                        onClick={() => handleUsersSort('role')}
+                      >
+                        <div className="flex items-center gap-1">
+                          Role
+                          {getUsersSortIcon('role')}
+                        </div>
+                      </TableHead>
+                      <TableHead 
+                        className="cursor-pointer hover:bg-gray-50"
+                        onClick={() => handleUsersSort('status')}
+                      >
+                        <div className="flex items-center gap-1">
+                          Status
+                          {getUsersSortIcon('status')}
+                        </div>
+                      </TableHead>
+                      <TableHead 
+                        className="hidden xl:table-cell cursor-pointer hover:bg-gray-50"
+                        onClick={() => handleUsersSort('subscription')}
+                      >
+                        <div className="flex items-center gap-1">
+                          Subscription
+                          {getUsersSortIcon('subscription')}
+                        </div>
+                      </TableHead>
+                      <TableHead 
+                        className="cursor-pointer hover:bg-gray-50"
+                        onClick={() => handleUsersSort('orgs')}
+                      >
+                        <div className="flex items-center gap-1">
+                          Orgs
+                          {getUsersSortIcon('orgs')}
+                        </div>
+                      </TableHead>
+                      <TableHead 
+                        className="hidden lg:table-cell cursor-pointer hover:bg-gray-50"
+                        onClick={() => handleUsersSort('country')}
+                      >
+                        <div className="flex items-center gap-1">
+                          Country
+                          {getUsersSortIcon('country')}
+                        </div>
+                      </TableHead>
                       <TableHead className="hidden 2xl:table-cell">Total Trades</TableHead>
-                      <TableHead>Volume</TableHead>
-                      <TableHead className="hidden xl:table-cell">Last Login</TableHead>
+                      <TableHead 
+                        className="cursor-pointer hover:bg-gray-50"
+                        onClick={() => handleUsersSort('volume')}
+                      >
+                        <div className="flex items-center gap-1">
+                          Volume
+                          {getUsersSortIcon('volume')}
+                        </div>
+                      </TableHead>
+                      <TableHead 
+                        className="hidden xl:table-cell cursor-pointer hover:bg-gray-50"
+                        onClick={() => handleUsersSort('lastLogin')}
+                      >
+                        <div className="flex items-center gap-1">
+                          Last Login
+                          {getUsersSortIcon('lastLogin')}
+                        </div>
+                      </TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {users.map((user) => (
+                    {sortedUsers.map((user) => (
                       <TableRow key={user.id}>
                         <TableCell>
                           <div className="flex items-center space-x-3">

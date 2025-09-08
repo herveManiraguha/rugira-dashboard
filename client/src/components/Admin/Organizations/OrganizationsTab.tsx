@@ -12,7 +12,10 @@ import {
   Archive, 
   Users as UsersIcon,
   Building2,
-  MoreHorizontal
+  MoreHorizontal,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { 
@@ -35,6 +38,8 @@ export function OrganizationsTab() {
   const [editingOrg, setEditingOrg] = useState<Organization | null>(null);
   const [selectedOrgForMembers, setSelectedOrgForMembers] = useState<Organization | null>(null);
   const [isMembersDrawerOpen, setIsMembersDrawerOpen] = useState(false);
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc' | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
   
@@ -104,10 +109,73 @@ export function OrganizationsTab() {
     setIsMembersDrawerOpen(true);
   };
 
+  // Handle sorting
+  const handleSort = (column: string) => {
+    if (sortColumn === column) {
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        setSortDirection(null);
+        setSortColumn(null);
+      } else {
+        setSortDirection('asc');
+      }
+    } else {
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
+
+  // Get sort icon
+  const getSortIcon = (column: string) => {
+    if (sortColumn !== column) {
+      return <ArrowUpDown className="h-4 w-4 opacity-50" />;
+    }
+    if (sortDirection === 'asc') {
+      return <ArrowUp className="h-4 w-4" />;
+    }
+    if (sortDirection === 'desc') {
+      return <ArrowDown className="h-4 w-4" />;
+    }
+    return <ArrowUpDown className="h-4 w-4 opacity-50" />;
+  };
+
   const filteredOrgs = organizations.filter(org => {
     const matchesSearch = org.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || org.status === statusFilter;
     return matchesSearch && matchesStatus;
+  }).sort((a, b) => {
+    if (!sortColumn || !sortDirection) return 0;
+    
+    let aValue: any = '';
+    let bValue: any = '';
+    
+    switch (sortColumn) {
+      case 'name':
+        aValue = a.name;
+        bValue = b.name;
+        break;
+      case 'status':
+        aValue = a.status;
+        bValue = b.status;
+        break;
+      case 'members':
+        aValue = a.memberCount || 0;
+        bValue = b.memberCount || 0;
+        break;
+      case 'created':
+        aValue = new Date(a.createdAt).getTime();
+        bValue = new Date(b.createdAt).getTime();
+        break;
+      case 'updated':
+        aValue = new Date(a.updatedAt).getTime();
+        bValue = new Date(b.updatedAt).getTime();
+        break;
+    }
+    
+    if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+    if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+    return 0;
   });
 
   if (loading && organizations.length === 0) {
@@ -235,11 +303,51 @@ export function OrganizationsTab() {
           <Table className="hidden sm:table">
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Members</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead>Updated</TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-gray-50"
+                  onClick={() => handleSort('name')}
+                >
+                  <div className="flex items-center gap-1">
+                    Name
+                    {getSortIcon('name')}
+                  </div>
+                </TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-gray-50"
+                  onClick={() => handleSort('status')}
+                >
+                  <div className="flex items-center gap-1">
+                    Status
+                    {getSortIcon('status')}
+                  </div>
+                </TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-gray-50"
+                  onClick={() => handleSort('members')}
+                >
+                  <div className="flex items-center gap-1">
+                    Members
+                    {getSortIcon('members')}
+                  </div>
+                </TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-gray-50"
+                  onClick={() => handleSort('created')}
+                >
+                  <div className="flex items-center gap-1">
+                    Created
+                    {getSortIcon('created')}
+                  </div>
+                </TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-gray-50"
+                  onClick={() => handleSort('updated')}
+                >
+                  <div className="flex items-center gap-1">
+                    Updated
+                    {getSortIcon('updated')}
+                  </div>
+                </TableHead>
                 <TableHead className="w-12"></TableHead>
               </TableRow>
             </TableHeader>
