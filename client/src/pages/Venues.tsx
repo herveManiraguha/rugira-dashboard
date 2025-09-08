@@ -34,6 +34,7 @@ import {
   Send,
   Activity
 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -248,6 +249,8 @@ export default function Venues() {
   const [venueSheetOpen, setVenueSheetOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<'name' | 'balance' | 'status'>('name');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [isMobile, setIsMobile] = useState(false);
   const { toast } = useToast();
 
@@ -325,6 +328,96 @@ export default function Venues() {
     return `${Math.floor(diffMins / 1440)} days ago`;
   };
 
+  // Filter and sort crypto exchanges
+  const filteredExchanges = React.useMemo(() => {
+    let filtered = [...exchanges];
+    
+    // Apply search filter
+    if (searchQuery) {
+      filtered = filtered.filter(exchange => 
+        exchange.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        exchange.status.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
+    // Apply category filter (CEX for crypto exchanges)
+    if (selectedFilters.length > 0 && !selectedFilters.includes('CEX')) {
+      filtered = [];
+    }
+    
+    // Apply sorting
+    filtered.sort((a, b) => {
+      let compareValue = 0;
+      
+      switch (sortBy) {
+        case 'name':
+          compareValue = a.name.localeCompare(b.name);
+          break;
+        case 'balance':
+          compareValue = a.balance.total - b.balance.total;
+          break;
+        case 'status':
+          compareValue = a.status.localeCompare(b.status);
+          break;
+      }
+      
+      return sortOrder === 'asc' ? compareValue : -compareValue;
+    });
+    
+    return filtered;
+  }, [exchanges, searchQuery, selectedFilters, sortBy, sortOrder]);
+
+  // Filter tokenized venues
+  const filteredTokenizedVenues = React.useMemo(() => {
+    let filtered = [...tokenizedVenues];
+    
+    // Apply search filter
+    if (searchQuery) {
+      filtered = filtered.filter(venue => 
+        venue.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        venue.venueType.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        venue.connectivity.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
+    // Apply category filters
+    if (selectedFilters.length > 0) {
+      filtered = filtered.filter(venue => {
+        if (selectedFilters.includes(venue.venueType)) return true;
+        if (selectedFilters.includes('Exchange+CSD') && venue.venueType === 'Exchange + CSD') return true;
+        return false;
+      });
+    }
+    
+    return filtered;
+  }, [searchQuery, selectedFilters]);
+
+  // Filter issuer platforms
+  const filteredIssuerPlatforms = React.useMemo(() => {
+    let filtered = [...issuerPlatforms];
+    
+    // Apply search filter
+    if (searchQuery) {
+      filtered = filtered.filter(platform => 
+        platform.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        platform.example?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
+    // Apply category filter
+    if (selectedFilters.length > 0 && !selectedFilters.includes('Issuer Platform')) {
+      filtered = [];
+    }
+    
+    return filtered;
+  }, [searchQuery, selectedFilters]);
+
+  // Check if any venues should be shown
+  const showCryptoExchanges = selectedFilters.length === 0 || selectedFilters.includes('CEX');
+  const showTokenizedVenues = selectedFilters.length === 0 || 
+    selectedFilters.some(f => ['DLT-TF', 'OTF', 'Exchange+CSD'].includes(f));
+  const showIssuerPlatforms = selectedFilters.length === 0 || selectedFilters.includes('Issuer Platform');
+
   return (
     <StandardPageLayout
       title="Venue Connections"
@@ -365,11 +458,34 @@ export default function Venues() {
       </div>
 
       {/* Crypto Exchanges Section */}
+      {showCryptoExchanges && filteredExchanges.length > 0 && (
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Crypto Exchanges</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold">Crypto Exchanges</h2>
+          <div className="flex items-center gap-2">
+            <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
+              <SelectTrigger className="w-32 h-8">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="name">Name</SelectItem>
+                <SelectItem value="balance">Balance</SelectItem>
+                <SelectItem value="status">Status</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+              className="h-8 w-8 p-0"
+            >
+              {sortOrder === 'asc' ? '↑' : '↓'}
+            </Button>
+          </div>
+        </div>
         {(viewMode === 'cards' || isMobile) ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {exchanges.map((exchange) => (
+            {filteredExchanges.map((exchange) => (
             <Card key={exchange.id} className="hover:shadow-lg transition-shadow">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
@@ -564,13 +680,15 @@ export default function Venues() {
           </Card>
         )}
       </div>
+      )}
 
       {/* Tokenized Venues Section */}
+      {showTokenizedVenues && filteredTokenizedVenues.length > 0 && (
       <div className="space-y-4">
         <h2 className="text-lg font-semibold">Tokenized Venues</h2>
         {(viewMode === 'cards' || isMobile) ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {tokenizedVenues.map((venue) => (
+            {filteredTokenizedVenues.map((venue) => (
               <Card key={venue.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
