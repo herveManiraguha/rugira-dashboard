@@ -156,63 +156,62 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
               </Button>
             </div>
             
-            <nav className="flex-1 px-2 py-4 space-y-1">
-              {Object.entries(groupedNavigation).map(([group, items]) => (
-                <div key={group} className="mb-4">
-                  {group !== 'Main' && !sidebarCollapsed && (
-                    <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                      {group}
-                    </h3>
-                  )}
-                  {items.map((item) => {
-                    const isActive = location === item.href;
-                    return (
-                      <Link key={item.name} href={item.href}>
-                        <a
-                          className={cn(
-                            "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
-                            isActive
-                              ? "bg-gray-100 text-gray-900"
-                              : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                            sidebarCollapsed && "justify-center"
-                          )}
-                          title={sidebarCollapsed ? item.name : undefined}
-                        >
-                          <item.icon className={cn(
-                            "flex-shrink-0 h-5 w-5",
-                            !sidebarCollapsed && "mr-3"
-                          )} />
-                          {!sidebarCollapsed && item.name}
-                        </a>
-                      </Link>
-                    );
-                  })}
-                </div>
-              ))}
-            </nav>
+            <TooltipProvider>
+              <nav className="flex-1 px-2 py-4 space-y-1">
+                {Object.entries(groupedNavigation).map(([group, items]) => (
+                  <div key={group} className="mb-4">
+                    {group !== 'Main' && !sidebarCollapsed && (
+                      <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                        {group}
+                      </h3>
+                    )}
+                    {items.map((item) => {
+                      const isActive = location === item.href;
+                      const ItemIcon = item.icon;
+                      const linkContent = (
+                        <Link key={item.name} href={item.href}>
+                          <a
+                            className={cn(
+                              "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                              isActive
+                                ? "bg-gray-100 text-gray-900"
+                                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+                              sidebarCollapsed && "justify-center"
+                            )}
+                          >
+                            <ItemIcon className={cn(
+                              "flex-shrink-0 h-5 w-5",
+                              !sidebarCollapsed && "mr-3"
+                            )} strokeWidth={1.5} />
+                            {!sidebarCollapsed && item.name}
+                          </a>
+                        </Link>
+                      );
+                      
+                      if (sidebarCollapsed) {
+                        return (
+                          <Tooltip key={item.name}>
+                            <TooltipTrigger asChild>
+                              {linkContent}
+                            </TooltipTrigger>
+                            <TooltipContent side="right">
+                              <div>
+                                <p className="font-medium">{item.name}</p>
+                                <p className="text-xs text-gray-500">{item.description}</p>
+                              </div>
+                            </TooltipContent>
+                          </Tooltip>
+                        );
+                      }
+                      
+                      return linkContent;
+                    })}
+                  </div>
+                ))}
+              </nav>
+            </TooltipProvider>
             
-            {/* Help icon in lower right corner */}
-            {!sidebarCollapsed && (
-              <div className="border-t p-4">
-                <Link href="/help">
-                  <a className="flex items-center text-sm text-gray-600 hover:text-gray-900">
-                    <HelpCircle className="h-5 w-5 mr-2" />
-                    Help
-                  </a>
-                </Link>
-              </div>
-            )}
-            
-            {/* Help icon when collapsed */}
-            {sidebarCollapsed && (
-              <div className="border-t p-2">
-                <Link href="/help">
-                  <a className="flex justify-center items-center p-2 text-gray-600 hover:text-gray-900" title="Help">
-                    <HelpCircle className="h-5 w-5" />
-                  </a>
-                </Link>
-              </div>
-            )}
+            {/* Help section moved to navigation - remove standalone help */}
 
           </div>
         </aside>
@@ -243,6 +242,7 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
                     )}
                     {items.map((item) => {
                       const isActive = location === item.href;
+                      const ItemIcon = item.icon;
                       return (
                         <Link key={item.name} href={item.href}>
                           <a
@@ -254,7 +254,7 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
                             )}
                             onClick={() => setMobileMenuOpen(false)}
                           >
-                            <item.icon className="mr-3 flex-shrink-0 h-5 w-5" />
+                            <ItemIcon className="mr-3 flex-shrink-0 h-5 w-5" strokeWidth={1.5} />
                             {item.name}
                           </a>
                         </Link>
