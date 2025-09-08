@@ -392,7 +392,7 @@ export default function Compliance() {
                       <Filter className="h-4 w-4 sm:mr-2" />
                       <span className="hidden sm:inline">Filter</span>
                     </Button>
-                  <DropdownMenu>
+                    <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button size="sm" variant="outline" data-testid="export-alerts">
                         <Download className="h-4 w-4 sm:mr-2" />
@@ -410,6 +410,7 @@ export default function Compliance() {
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
+                  </div>
                 </div>
               </div>
             </CardHeader>
