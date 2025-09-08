@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { AlertDetailsModal } from "@/components/Compliance/AlertDetailsModal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -37,6 +37,8 @@ interface AuditLogEntry {
 export default function Compliance() {
   const [selectedAlert, setSelectedAlert] = useState<ComplianceAlert | null>(null);
   const [showAlertDetails, setShowAlertDetails] = useState(false);
+  const [auditLogSearchTerm, setAuditLogSearchTerm] = useState('');
+  const [alertsSearchTerm, setAlertsSearchTerm] = useState('');
   
   // Generate comprehensive compliance alerts
   const generateComplianceAlerts = (): ComplianceAlert[] => {
@@ -171,6 +173,31 @@ export default function Compliance() {
 
   const [alerts] = useState<ComplianceAlert[]>(generateComplianceAlerts());
   const [auditLogs] = useState<AuditLogEntry[]>(generateAuditLogs());
+
+  // Filter alerts based on search term
+  const filteredAlerts = useMemo(() => {
+    if (!alertsSearchTerm) return alerts;
+    const searchLower = alertsSearchTerm.toLowerCase();
+    return alerts.filter(alert => 
+      alert.reason.toLowerCase().includes(searchLower) ||
+      alert.impactedBot.toLowerCase().includes(searchLower) ||
+      (alert.venue && alert.venue.toLowerCase().includes(searchLower)) ||
+      alert.severity.toLowerCase().includes(searchLower) ||
+      alert.status.toLowerCase().includes(searchLower)
+    );
+  }, [alerts, alertsSearchTerm]);
+
+  // Filter audit logs based on search term
+  const filteredAuditLogs = useMemo(() => {
+    if (!auditLogSearchTerm) return auditLogs;
+    const searchLower = auditLogSearchTerm.toLowerCase();
+    return auditLogs.filter(log => 
+      log.action.toLowerCase().includes(searchLower) ||
+      log.user.toLowerCase().includes(searchLower) ||
+      log.details.toLowerCase().includes(searchLower) ||
+      log.category.toLowerCase().includes(searchLower)
+    );
+  }, [auditLogs, auditLogSearchTerm]);
 
   // Export functions
   const exportAlertsToCSV = () => {
@@ -349,11 +376,22 @@ export default function Compliance() {
                   <AlertTriangle className="h-4 sm:h-5 w-4 sm:w-5 mr-2" />
                   Compliance Alerts
                 </CardTitle>
-                <div className="flex space-x-2">
-                  <Button size="sm" variant="outline">
-                    <Filter className="h-4 w-4 sm:mr-2" />
-                    <span className="hidden sm:inline">Filter</span>
-                  </Button>
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                  <div className="relative flex-1 sm:max-w-64">
+                    <Search className="absolute left-3 top-2.5 sm:top-3 h-4 w-4 text-gray-400" />
+                    <Input 
+                      placeholder="Search alerts..." 
+                      className="pl-9 h-9"
+                      value={alertsSearchTerm}
+                      onChange={(e) => setAlertsSearchTerm(e.target.value)}
+                      data-testid="search-alerts"
+                    />
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button size="sm" variant="outline">
+                      <Filter className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Filter</span>
+                    </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button size="sm" variant="outline" data-testid="export-alerts">
@@ -378,7 +416,7 @@ export default function Compliance() {
             <CardContent className="p-0">
               {/* Mobile Card View */}
               <div className="block sm:hidden space-y-3 p-4">
-                {alerts.map((alert) => (
+                {filteredAlerts.map((alert) => (
                   <Card key={alert.id} className="border">
                     <CardContent className="p-3 space-y-2">
                       <div className="flex items-start justify-between">
@@ -429,7 +467,7 @@ export default function Compliance() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {alerts.map((alert) => (
+                  {filteredAlerts.map((alert) => (
                     <TableRow key={alert.id}>
                       <TableCell>{getSeverityBadge(alert.severity)}</TableCell>
                       <TableCell className="font-medium">{alert.reason}</TableCell>
@@ -477,7 +515,13 @@ export default function Compliance() {
                 <div className="flex flex-col sm:flex-row gap-2">
                   <div className="relative">
                     <Search className="absolute left-3 top-2.5 sm:top-3 h-4 w-4 text-gray-400" />
-                    <Input placeholder="Search logs..." className="pl-9 w-full sm:w-64 h-9" />
+                    <Input 
+                      placeholder="Search logs..." 
+                      className="pl-9 w-full sm:w-64 h-9"
+                      value={auditLogSearchTerm}
+                      onChange={(e) => setAuditLogSearchTerm(e.target.value)}
+                      data-testid="search-audit-logs"
+                    />
                   </div>
                   <Button size="sm" variant="outline" onClick={exportAuditLogsToCSV} data-testid="export-audit-logs">
                     <Download className="h-4 w-4 sm:mr-2" />
@@ -490,7 +534,7 @@ export default function Compliance() {
             <CardContent className="p-0">
               {/* Mobile Card View */}
               <div className="block sm:hidden space-y-3 p-4">
-                {auditLogs.map((log) => (
+                {filteredAuditLogs.map((log) => (
                   <Card key={log.id} className="border">
                     <CardContent className="p-3 space-y-2">
                       <div className="flex items-start justify-between">
@@ -522,7 +566,7 @@ export default function Compliance() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {auditLogs.map((log) => (
+                  {filteredAuditLogs.map((log) => (
                     <TableRow key={log.id}>
                       <TableCell>{getCategoryBadge(log.category)}</TableCell>
                       <TableCell className="font-medium">{log.action}</TableCell>
