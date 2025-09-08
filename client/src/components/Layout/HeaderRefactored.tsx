@@ -89,7 +89,7 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
     { id: '2', name: 'TradePro Singapore' },
   ];
   
-  const ports = portfolios.length > 0 ? portfolios : [
+  const ports = [
     { id: '1', name: 'Equity Desk' },
     { id: '2', name: 'Crypto Desk' },
   ];
