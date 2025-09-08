@@ -8,7 +8,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { AlertTriangle, Shield, CheckCircle, Download, Search, Filter } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { AlertTriangle, Shield, CheckCircle, Download, Search, Filter, FileText } from "lucide-react";
 
 interface ComplianceAlert {
   id: string;
@@ -171,6 +172,133 @@ export default function Compliance() {
   const [alerts] = useState<ComplianceAlert[]>(generateComplianceAlerts());
   const [auditLogs] = useState<AuditLogEntry[]>(generateAuditLogs());
 
+  // Export functions
+  const exportAlertsToCSV = () => {
+    const headers = ['ID', 'Severity', 'Reason', 'Impacted Bot', 'Venue', 'Status', 'Timestamp'];
+    const csvContent = [
+      headers.join(','),
+      ...alerts.map(alert => [
+        alert.id,
+        alert.severity,
+        `"${alert.reason}"`,
+        `"${alert.impactedBot}"`,
+        alert.venue || '-',
+        alert.status,
+        alert.timestamp
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `compliance-alerts-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const exportAuditLogsToCSV = () => {
+    const headers = ['ID', 'Category', 'Action', 'User', 'Details', 'Timestamp'];
+    const csvContent = [
+      headers.join(','),
+      ...auditLogs.map(log => [
+        log.id,
+        log.category,
+        `"${log.action}"`,
+        log.user,
+        `"${log.details}"`,
+        log.timestamp
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `audit-logs-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const exportAlertsToPDF = () => {
+    // Create a simple HTML table for PDF generation
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Compliance Alerts Report</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 20px; }
+          .header { text-align: center; margin-bottom: 30px; }
+          .header h1 { color: #1f2937; margin: 0; }
+          .header .subtitle { color: #6b7280; margin: 5px 0; }
+          table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+          th, td { border: 1px solid #d1d5db; padding: 12px; text-align: left; }
+          th { background-color: #f9fafb; font-weight: bold; }
+          .severity-critical { color: #dc2626; font-weight: bold; }
+          .severity-high { color: #ea580c; font-weight: bold; }
+          .severity-medium { color: #d97706; font-weight: bold; }
+          .severity-low { color: #65a30d; font-weight: bold; }
+          .status-open { color: #dc2626; }
+          .status-acknowledged { color: #d97706; }
+          .status-resolved { color: #16a34a; }
+          .footer { margin-top: 30px; text-align: center; color: #6b7280; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>Compliance Alerts Report</h1>
+          <div class="subtitle">Generated on ${new Date().toLocaleDateString()}</div>
+          <div class="subtitle">Total Alerts: ${alerts.length}</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Severity</th>
+              <th>Reason</th>
+              <th>Impacted Bot</th>
+              <th>Venue</th>
+              <th>Status</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${alerts.map(alert => `
+              <tr>
+                <td>${alert.id}</td>
+                <td class="severity-${alert.severity}">${alert.severity.toUpperCase()}</td>
+                <td>${alert.reason}</td>
+                <td>${alert.impactedBot}</td>
+                <td>${alert.venue || '-'}</td>
+                <td class="status-${alert.status}">${alert.status.toUpperCase()}</td>
+                <td>${new Date(alert.timestamp).toLocaleString()}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        <div class="footer">
+          <p>Rugira Trading Dashboard - Compliance Report</p>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `compliance-alerts-report-${new Date().toISOString().split('T')[0]}.html`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const getSeverityBadge = (severity: ComplianceAlert['severity']) => {
     switch (severity) {
       case 'critical': return <Badge variant="destructive">Critical</Badge>;
@@ -226,10 +354,24 @@ export default function Compliance() {
                     <Filter className="h-4 w-4 sm:mr-2" />
                     <span className="hidden sm:inline">Filter</span>
                   </Button>
-                  <Button size="sm" variant="outline">
-                    <Download className="h-4 w-4 sm:mr-2" />
-                    <span className="hidden sm:inline">Export</span>
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button size="sm" variant="outline" data-testid="export-alerts">
+                        <Download className="h-4 w-4 sm:mr-2" />
+                        <span className="hidden sm:inline">Export</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={exportAlertsToCSV}>
+                        <Download className="h-4 w-4 mr-2" />
+                        Export CSV
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={exportAlertsToPDF}>
+                        <FileText className="h-4 w-4 mr-2" />
+                        Export Report (HTML)
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             </CardHeader>
@@ -337,7 +479,7 @@ export default function Compliance() {
                     <Search className="absolute left-3 top-2.5 sm:top-3 h-4 w-4 text-gray-400" />
                     <Input placeholder="Search logs..." className="pl-9 w-full sm:w-64 h-9" />
                   </div>
-                  <Button size="sm" variant="outline">
+                  <Button size="sm" variant="outline" onClick={exportAuditLogsToCSV} data-testid="export-audit-logs">
                     <Download className="h-4 w-4 sm:mr-2" />
                     <span className="hidden sm:inline">Export CSV</span>
                     <span className="sm:hidden">Export</span>
