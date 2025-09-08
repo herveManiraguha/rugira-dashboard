@@ -164,7 +164,7 @@ export default function Backtesting() {
 
     return (
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="strategy">Strategy</Label>
             <Select onValueChange={(value) => setConfig(prev => ({ ...prev, strategyId: value }))}>
@@ -190,14 +190,14 @@ export default function Backtesting() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <Label>Start Date</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-full justify-start text-left font-normal">
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {selectedDateFrom ? selectedDateFrom.toLocaleDateString() : "Pick start date"}
+                  <span className="truncate">{selectedDateFrom ? selectedDateFrom.toLocaleDateString() : "Pick start date"}</span>
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
@@ -216,7 +216,7 @@ export default function Backtesting() {
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-full justify-start text-left font-normal">
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {selectedDateTo ? selectedDateTo.toLocaleDateString() : "Pick end date"}
+                  <span className="truncate">{selectedDateTo ? selectedDateTo.toLocaleDateString() : "Pick end date"}</span>
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
@@ -284,7 +284,7 @@ export default function Backtesting() {
               New Backtest
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Configure Backtest</DialogTitle>
             </DialogHeader>
@@ -300,8 +300,63 @@ export default function Backtesting() {
         </TabsList>
         
         <TabsContent value="results" className="space-y-6">
-          <Card>
-            <CardContent className="p-0">
+          {/* Mobile Cards View */}
+          <div className="block md:hidden space-y-4">
+            {backtests.map((backtest) => (
+              <Card key={backtest.id}>
+                <CardContent className="p-4 space-y-3">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="font-medium">{backtest.strategyName}</div>
+                      <div className="text-sm text-gray-500 mt-1">{backtest.dateRange}</div>
+                    </div>
+                    {getStatusBadge(backtest.status)}
+                  </div>
+                  
+                  {backtest.status === 'running' && (
+                    <div className="flex items-center space-x-2">
+                      <Progress value={backtest.progress} className="flex-1" />
+                      <span className="text-xs text-gray-500">{backtest.progress}%</span>
+                    </div>
+                  )}
+                  
+                  {backtest.results && (
+                    <div className="grid grid-cols-3 gap-2 text-sm">
+                      <div>
+                        <div className="text-xs text-gray-500">Return</div>
+                        <div className={backtest.results.totalReturn >= 0 ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}>
+                          {backtest.results.totalReturn >= 0 ? '+' : ''}{backtest.results.totalReturn.toFixed(1)}%
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500">Sharpe</div>
+                        <div className="font-medium">{backtest.results.sharpeRatio.toFixed(2)}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500">Drawdown</div>
+                        <div className="text-red-600 font-medium">{backtest.results.maxDrawdown.toFixed(1)}%</div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="flex space-x-2 pt-2">
+                    <Button size="sm" variant="outline" className="flex-1">
+                      View Details
+                    </Button>
+                    {backtest.status === 'completed' && (
+                      <Button size="sm" variant="outline">
+                        <Download className="h-3 w-3" />
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Desktop Table View */}
+          <Card className="hidden md:block">
+            <CardContent className="p-0 overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -371,32 +426,32 @@ export default function Backtesting() {
                 <CardTitle>Results: {backtest.strategyName}</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-6">
+                <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-6">
                   <div className="text-center">
                     <div className="text-xs text-gray-500 mb-1">Total Return</div>
-                    <div className={`text-lg font-bold ${backtest.results!.totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    <div className={`text-sm sm:text-lg font-bold ${backtest.results!.totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                       {backtest.results!.totalReturn >= 0 ? '+' : ''}{backtest.results!.totalReturn.toFixed(1)}%
                     </div>
                   </div>
                   <div className="text-center">
                     <div className="text-xs text-gray-500 mb-1">Sharpe Ratio</div>
-                    <div className="text-lg font-bold">{backtest.results!.sharpeRatio.toFixed(2)}</div>
+                    <div className="text-sm sm:text-lg font-bold">{backtest.results!.sharpeRatio.toFixed(2)}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-xs text-gray-500 mb-1">Max Drawdown</div>
-                    <div className="text-lg font-bold text-red-600">{backtest.results!.maxDrawdown.toFixed(1)}%</div>
+                    <div className="text-sm sm:text-lg font-bold text-red-600">{backtest.results!.maxDrawdown.toFixed(1)}%</div>
                   </div>
                   <div className="text-center">
                     <div className="text-xs text-gray-500 mb-1">Win Rate</div>
-                    <div className="text-lg font-bold">{backtest.results!.winRate.toFixed(1)}%</div>
+                    <div className="text-sm sm:text-lg font-bold">{backtest.results!.winRate.toFixed(1)}%</div>
                   </div>
                   <div className="text-center">
                     <div className="text-xs text-gray-500 mb-1">Total Trades</div>
-                    <div className="text-lg font-bold">{backtest.results!.totalTrades}</div>
+                    <div className="text-sm sm:text-lg font-bold">{backtest.results!.totalTrades}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-xs text-gray-500 mb-1">Final Capital</div>
-                    <div className="text-lg font-bold">${backtest.results!.finalCapital.toLocaleString()}</div>
+                    <div className="text-sm sm:text-lg font-bold">${backtest.results!.finalCapital.toLocaleString()}</div>
                   </div>
                 </div>
                 
@@ -514,12 +569,80 @@ export default function Backtesting() {
             </CardContent>
           </Card>
 
-          {/* Performance Metrics Comparison Table */}
-          <Card>
+          {/* Performance Metrics Comparison - Mobile Cards View */}
+          <div className="block md:hidden space-y-4">
+            <h3 className="text-lg font-semibold px-1">Performance Metrics Comparison</h3>
+            
+            {/* Total Return Card */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm">Total Return</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">Moving Average</span>
+                  <span className="text-green-600 font-medium">+24.7%</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">Grid Trading</span>
+                  <span className="text-green-600 font-medium">+18.3%</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">Momentum</span>
+                  <span className="text-green-600 font-medium">+31.2%</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Other metrics cards */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm">Key Metrics</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="space-y-1">
+                  <div className="text-xs text-gray-500">Sharpe Ratio</div>
+                  <div className="grid grid-cols-3 gap-2 text-sm">
+                    <div className="text-center">
+                      <div className="text-xs text-gray-400">MA</div>
+                      <div className="font-medium">1.42</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xs text-gray-400">Grid</div>
+                      <div className="font-medium">1.18</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xs text-gray-400">Mom</div>
+                      <div className="font-medium">1.67</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <div className="text-xs text-gray-500">Max Drawdown</div>
+                  <div className="grid grid-cols-3 gap-2 text-sm">
+                    <div className="text-center text-red-600 font-medium">-8.3%</div>
+                    <div className="text-center text-red-600 font-medium">-12.1%</div>
+                    <div className="text-center text-red-600 font-medium">-15.8%</div>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <div className="text-xs text-gray-500">Win Rate</div>
+                  <div className="grid grid-cols-3 gap-2 text-sm">
+                    <div className="text-center font-medium">67.2%</div>
+                    <div className="text-center font-medium">84.5%</div>
+                    <div className="text-center font-medium">58.9%</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Performance Metrics Comparison Table - Desktop Only */}
+          <Card className="hidden md:block">
             <CardHeader>
               <CardTitle>Performance Metrics Comparison</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
