@@ -28,7 +28,9 @@ import {
   Building2,
   ArrowUpDown,
   ArrowUp,
-  ArrowDown
+  ArrowDown,
+  Grid3X3,
+  List
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
@@ -410,6 +412,7 @@ export default function Admin() {
                   onClick={() => setUsersViewMode('cards')}
                   className="h-8"
                 >
+                  <Grid3X3 className="h-4 w-4 mr-2" />
                   Cards
                 </Button>
                 <Button
@@ -418,7 +421,8 @@ export default function Admin() {
                   onClick={() => setUsersViewMode('table')}
                   className="h-8"
                 >
-                  Table
+                  <List className="h-4 w-4 mr-2" />
+                  List
                 </Button>
               </div>
               <Dialog open={isAddUserModalOpen} onOpenChange={setIsAddUserModalOpen}>
