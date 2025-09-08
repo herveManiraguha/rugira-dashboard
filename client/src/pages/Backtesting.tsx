@@ -840,13 +840,13 @@ export default function Backtesting() {
                       label={{ value: 'Total Return (%)', angle: -90, position: 'insideLeft' }}
                     />
                     <Tooltip 
-                      formatter={(value: any, name) => [
+                      formatter={(value: any, name: any) => [
                         name === 'return' ? `${Number(value).toFixed(1)}%` : 
                         name === 'risk' ? `${Number(value).toFixed(1)}%` : Number(value),
                         name === 'return' ? 'Total Return' : 
                         name === 'risk' ? 'Max Drawdown' : 'Total Trades'
                       ]}
-                      labelFormatter={(label, payload) => payload?.[0]?.payload?.strategy || ''}
+                      labelFormatter={(label: any, payload: any) => payload?.[0]?.payload?.strategy || ''}
                     />
                     {/* Custom scatter points */}
                     <Line 

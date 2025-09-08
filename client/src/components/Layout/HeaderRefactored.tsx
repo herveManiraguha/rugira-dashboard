@@ -73,7 +73,7 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
   const [, setLocation] = useLocation();
   const { user, logout } = useAuth();
   const { environment, setEnvironment } = useEnvironment();
-  const { currentOrg, currentPortfolio, setCurrentOrg, setCurrentPortfolio, organizations = [], portfolios = [] } = useScope();
+  const { organizations = [] } = useScope();
   
   // State
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
@@ -183,7 +183,7 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
                       size="sm"
                       className="h-7 px-3 text-xs font-medium rounded-full border border-gray-200 hover:bg-gray-50"
                     >
-                      {currentOrg?.name || orgs[0]?.name || 'Organization'}
+                      {orgs[0]?.name || 'Organization'}
                       <ChevronRight className="h-3 w-3 ml-1" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -193,7 +193,7 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
                     {orgs.map((org) => (
                       <DropdownMenuItem
                         key={org.id}
-                        onClick={() => setCurrentOrg?.(org)}
+                        onClick={() => console.log('Select org:', org)}
                         className="cursor-pointer"
                       >
                         {org.name}
@@ -212,17 +212,17 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
                       size="sm"
                       className="h-7 px-3 text-xs font-medium rounded-full border border-gray-200 hover:bg-gray-50"
                     >
-                      {currentPortfolio?.name || ports[0]?.name || 'Portfolio'}
+                      {ports[0]?.name || 'Portfolio'}
                       <ChevronRight className="h-3 w-3 ml-1" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start">
                     <DropdownMenuLabel>Select Portfolio</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    {ports.map((port) => (
+                    {ports.map((port: any) => (
                       <DropdownMenuItem
                         key={port.id}
-                        onClick={() => setCurrentPortfolio?.(port)}
+                        onClick={() => console.log('Select portfolio:', port)}
                         className="cursor-pointer"
                       >
                         {port.name}

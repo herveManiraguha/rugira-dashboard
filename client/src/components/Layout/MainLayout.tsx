@@ -170,9 +170,9 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
                       const ItemIcon = item.icon;
                       const linkContent = (
                         <Link key={item.name} href={item.href}>
-                          <a
+                          <div
                             className={cn(
-                              "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                              "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer",
                               isActive
                                 ? "bg-gray-100 text-gray-900"
                                 : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
@@ -184,7 +184,7 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
                               !sidebarCollapsed && "mr-3"
                             )} strokeWidth={1.5} />
                             {!sidebarCollapsed && item.name}
-                          </a>
+                          </div>
                         </Link>
                       );
                       
@@ -240,9 +240,9 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
                       const ItemIcon = item.icon;
                       return (
                         <Link key={item.name} href={item.href}>
-                          <a
+                          <div
                             className={cn(
-                              "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                              "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer",
                               isActive
                                 ? "bg-gray-100 text-gray-900"
                                 : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
@@ -251,7 +251,7 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
                           >
                             <ItemIcon className="mr-3 flex-shrink-0 h-5 w-5" strokeWidth={1.5} />
                             {item.name}
-                          </a>
+                          </div>
                         </Link>
                       );
                     })}
