@@ -54,9 +54,7 @@ import {
   Key,
   ChevronRight,
   Search,
-  Download,
   Calendar,
-  Filter,
   Circle,
   Menu,
   X,
@@ -295,26 +293,6 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
                 </SelectContent>
               </Select>
               
-              {/* Attribution Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-7 px-3 text-xs">
-                    <Filter className="h-3 w-3 mr-1" />
-                    Attribution
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>By Strategy</DropdownMenuItem>
-                  <DropdownMenuItem>By Venue</DropdownMenuItem>
-                  <DropdownMenuItem>By Bot</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              
-              {/* Export Button */}
-              <Button variant="outline" size="sm" className="h-7 px-3 text-xs">
-                <Download className="h-3 w-3 mr-1" />
-                Export
-              </Button>
             </div>
             
             {/* Cluster C: System Status */}
