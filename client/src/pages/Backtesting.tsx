@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -68,6 +68,8 @@ export default function Backtesting() {
   const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
   const [selectedDateFrom, setSelectedDateFrom] = useState<Date>();
   const [selectedDateTo, setSelectedDateTo] = useState<Date>();
+  const [selectedBacktestId, setSelectedBacktestId] = useState<string | null>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
   // Generate equity curve data for backtesting
   const generateEquityCurve = (strategyName: string, finalCapital: number): Array<{date: string, equity: number, drawdown: number}> => {
@@ -340,7 +342,15 @@ export default function Backtesting() {
                   )}
                   
                   <div className="flex space-x-2 pt-2">
-                    <Button size="sm" variant="outline" className="flex-1">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => {
+                        setSelectedBacktestId(backtest.id);
+                        setIsDetailsModalOpen(true);
+                      }}
+                    >
                       View Details
                     </Button>
                     {backtest.status === 'completed' && (
@@ -402,7 +412,14 @@ export default function Backtesting() {
                       </TableCell>
                       <TableCell>
                         <div className="flex space-x-1">
-                          <Button size="sm" variant="outline">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedBacktestId(backtest.id);
+                              setIsDetailsModalOpen(true);
+                            }}
+                          >
                             View Details
                           </Button>
                           {backtest.status === 'completed' && (
@@ -918,6 +935,227 @@ export default function Backtesting() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Backtest Details Modal */}
+      <Dialog open={isDetailsModalOpen} onOpenChange={setIsDetailsModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Backtest Details</DialogTitle>
+            <DialogDescription>
+              Comprehensive analysis and results for the selected backtest
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedBacktestId && (() => {
+            const backtest = backtests.find(b => b.id === selectedBacktestId);
+            if (!backtest || !backtest.results) return null;
+            
+            return (
+              <div className="space-y-6">
+                {/* Strategy Information */}
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h3 className="font-semibold mb-3">{backtest.strategyName}</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                      <div className="text-gray-500">Period</div>
+                      <div className="font-medium">{backtest.dateRange}</div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500">Initial Capital</div>
+                      <div className="font-medium">$100,000</div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500">Trading Pair</div>
+                      <div className="font-medium">BTC-USDT</div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500">Exchange</div>
+                      <div className="font-medium">Binance</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Key Performance Metrics */}
+                <div>
+                  <h3 className="font-semibold mb-3">Key Metrics</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <Card>
+                      <CardContent className="p-3">
+                        <div className="text-xs text-gray-500">Total Return</div>
+                        <div className={`text-lg font-bold ${backtest.results.totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          {backtest.results.totalReturn >= 0 ? '+' : ''}{backtest.results.totalReturn.toFixed(2)}%
+                        </div>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="p-3">
+                        <div className="text-xs text-gray-500">Sharpe Ratio</div>
+                        <div className="text-lg font-bold">{backtest.results.sharpeRatio.toFixed(2)}</div>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="p-3">
+                        <div className="text-xs text-gray-500">Max Drawdown</div>
+                        <div className="text-lg font-bold text-red-600">{backtest.results.maxDrawdown.toFixed(2)}%</div>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="p-3">
+                        <div className="text-xs text-gray-500">Win Rate</div>
+                        <div className="text-lg font-bold">{backtest.results.winRate.toFixed(1)}%</div>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="p-3">
+                        <div className="text-xs text-gray-500">Total Trades</div>
+                        <div className="text-lg font-bold">{backtest.results.totalTrades}</div>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="p-3">
+                        <div className="text-xs text-gray-500">Profit Factor</div>
+                        <div className="text-lg font-bold">1.84</div>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="p-3">
+                        <div className="text-xs text-gray-500">Avg Win/Loss</div>
+                        <div className="text-lg font-bold">1.52</div>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="p-3">
+                        <div className="text-xs text-gray-500">Final Capital</div>
+                        <div className="text-lg font-bold">${backtest.results.finalCapital.toLocaleString()}</div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+
+                {/* Trade Statistics */}
+                <div>
+                  <h3 className="font-semibold mb-3">Trade Statistics</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Card>
+                      <CardContent className="p-4 space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Winning Trades</span>
+                          <span className="font-medium">166</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Losing Trades</span>
+                          <span className="font-medium">81</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Average Win</span>
+                          <span className="font-medium text-green-600">+$487.23</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Average Loss</span>
+                          <span className="font-medium text-red-600">-$321.15</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Largest Win</span>
+                          <span className="font-medium text-green-600">+$2,347.89</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Largest Loss</span>
+                          <span className="font-medium text-red-600">-$1,123.45</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="p-4 space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Avg Trade Duration</span>
+                          <span className="font-medium">2.3 days</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Best Month</span>
+                          <span className="font-medium text-green-600">+8.7% (April)</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Worst Month</span>
+                          <span className="font-medium text-red-600">-3.2% (September)</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Consecutive Wins</span>
+                          <span className="font-medium">12 (max)</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Consecutive Losses</span>
+                          <span className="font-medium">5 (max)</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Recovery Factor</span>
+                          <span className="font-medium">2.98</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+
+                {/* Risk Analysis */}
+                <div>
+                  <h3 className="font-semibold mb-3">Risk Analysis</h3>
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div>
+                          <div className="text-gray-500">Value at Risk (95%)</div>
+                          <div className="font-medium">-$2,456</div>
+                        </div>
+                        <div>
+                          <div className="text-gray-500">Expected Shortfall</div>
+                          <div className="font-medium">-$3,123</div>
+                        </div>
+                        <div>
+                          <div className="text-gray-500">Calmar Ratio</div>
+                          <div className="font-medium">2.97</div>
+                        </div>
+                        <div>
+                          <div className="text-gray-500">Sortino Ratio</div>
+                          <div className="font-medium">1.89</div>
+                        </div>
+                        <div>
+                          <div className="text-gray-500">Volatility (Annual)</div>
+                          <div className="font-medium">17.4%</div>
+                        </div>
+                        <div>
+                          <div className="text-gray-500">Downside Deviation</div>
+                          <div className="font-medium">13.1%</div>
+                        </div>
+                        <div>
+                          <div className="text-gray-500">Max Drawdown Duration</div>
+                          <div className="font-medium">23 days</div>
+                        </div>
+                        <div>
+                          <div className="text-gray-500">Recovery Time</div>
+                          <div className="font-medium">8 days</div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex justify-end gap-2 pt-4 border-t">
+                  <Button variant="outline" onClick={() => setIsDetailsModalOpen(false)}>
+                    Close
+                  </Button>
+                  <Button variant="outline">
+                    <Download className="h-4 w-4 mr-2" />
+                    Export Report
+                  </Button>
+                  <Button>
+                    Deploy Strategy
+                  </Button>
+                </div>
+              </div>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
