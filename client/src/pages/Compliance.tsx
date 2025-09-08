@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { AlertDetailsModal } from "@/components/Compliance/AlertDetailsModal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,13 +12,16 @@ import { AlertTriangle, Shield, CheckCircle, Download, Search, Filter } from "lu
 
 interface ComplianceAlert {
   id: string;
-  severity: 'high' | 'medium' | 'low';
+  severity: 'critical' | 'high' | 'medium' | 'low';
   reason: string;
   impactedBot: string;
   venue?: string;
   timestamp: string;
   status: 'open' | 'acknowledged' | 'resolved';
-  details: string;
+  details?: string;
+  triggeredBy?: string;
+  riskScore?: number;
+  recommendations?: string[];
 }
 
 interface AuditLogEntry {
@@ -30,14 +34,53 @@ interface AuditLogEntry {
 }
 
 export default function Compliance() {
+  const [selectedAlert, setSelectedAlert] = useState<ComplianceAlert | null>(null);
+  const [showAlertDetails, setShowAlertDetails] = useState(false);
+  
   // Generate comprehensive compliance alerts
   const generateComplianceAlerts = (): ComplianceAlert[] => {
     const alertTypes = [
-      { reason: 'Daily loss limit exceeded (blocked pre-trade)', severity: 'high' as const, details: 'Bot exceeded maximum daily loss threshold of 5%', venue: 'BX Digital (via InCore)' },
-      { reason: 'Position size limit approached', severity: 'low' as const, details: 'Bot approaching 90% of maximum position size', venue: 'BX Digital (via InCore)' },
-      { reason: 'KYT risk detected', severity: 'medium' as const, details: 'Transaction flagged by compliance screening' },
-      { reason: 'Unusual trading pattern detected', severity: 'high' as const, details: 'Abnormal volume spike detected in trading behavior' },
-      { reason: 'AML screening triggered', severity: 'high' as const, details: 'Counterparty address flagged in sanctions database' },
+      { 
+        reason: 'Daily loss limit exceeded (blocked pre-trade)', 
+        severity: 'high' as const, 
+        details: 'Bot exceeded maximum daily loss threshold of 5%', 
+        venue: 'BX Digital (via InCore)',
+        triggeredBy: 'Risk Monitor',
+        riskScore: 85,
+        recommendations: ['Reduce position sizes', 'Review daily loss limits', 'Check market volatility']
+      },
+      { 
+        reason: 'Position size limit approached', 
+        severity: 'low' as const, 
+        details: 'Bot approaching 90% of maximum position size', 
+        venue: 'BX Digital (via InCore)',
+        triggeredBy: 'Position Monitor',
+        riskScore: 45
+      },
+      { 
+        reason: 'KYT risk detected', 
+        severity: 'medium' as const, 
+        details: 'Transaction flagged by compliance screening',
+        triggeredBy: 'KYT Engine',
+        riskScore: 72,
+        recommendations: ['Review counterparty details', 'Perform enhanced due diligence']
+      },
+      { 
+        reason: 'Unusual trading pattern detected', 
+        severity: 'high' as const, 
+        details: 'Abnormal volume spike detected in trading behavior',
+        triggeredBy: 'Pattern Detection',
+        riskScore: 78,
+        recommendations: ['Review bot configuration', 'Check for market anomalies', 'Verify bot logic']
+      },
+      { 
+        reason: 'AML screening triggered', 
+        severity: 'critical' as const, 
+        details: 'Counterparty address flagged in sanctions database',
+        triggeredBy: 'AML System',
+        riskScore: 95,
+        recommendations: ['Stop all trading with this counterparty', 'File SAR if required', 'Escalate to compliance team']
+      },
       { reason: 'Regulatory reporting required', severity: 'medium' as const, details: 'Large transaction requires regulatory filing' },
       { reason: 'Market manipulation risk', severity: 'high' as const, details: 'Trading pattern may appear as market manipulation' },
       { reason: 'Concentration risk alert', severity: 'medium' as const, details: 'Single asset exposure exceeds 25% portfolio limit' },
