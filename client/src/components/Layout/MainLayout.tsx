@@ -103,7 +103,7 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
   }, {} as Record<string, typeof navigation>);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <DemoRibbon />
       
       {/* Live Environment Top Border */}
@@ -130,7 +130,7 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
         <KillSwitchBanner />
       )}
       
-      <div className="flex h-full pt-14">
+      <div className="flex flex-1 pt-14">
         {/* Desktop Sidebar - lg screens and above */}
         <aside 
           className={cn(
