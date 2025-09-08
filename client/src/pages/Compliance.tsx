@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { AlertTriangle, Shield, CheckCircle, Download, Search, Filter, FileText } from "lucide-react";
+import { AlertTriangle, Shield, CheckCircle, Download, Search, Filter, FileText, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
 interface ComplianceAlert {
   id: string;
@@ -39,6 +39,10 @@ export default function Compliance() {
   const [showAlertDetails, setShowAlertDetails] = useState(false);
   const [auditLogSearchTerm, setAuditLogSearchTerm] = useState('');
   const [alertsSearchTerm, setAlertsSearchTerm] = useState('');
+  const [alertsSortColumn, setAlertsSortColumn] = useState<string | null>(null);
+  const [alertsSortDirection, setAlertsSortDirection] = useState<'asc' | 'desc' | null>(null);
+  const [auditSortColumn, setAuditSortColumn] = useState<string | null>(null);
+  const [auditSortDirection, setAuditSortDirection] = useState<'asc' | 'desc' | null>(null);
   
   // Generate comprehensive compliance alerts
   const generateComplianceAlerts = (): ComplianceAlert[] => {
@@ -174,30 +178,187 @@ export default function Compliance() {
   const [alerts] = useState<ComplianceAlert[]>(generateComplianceAlerts());
   const [auditLogs] = useState<AuditLogEntry[]>(generateAuditLogs());
 
-  // Filter alerts based on search term
-  const filteredAlerts = useMemo(() => {
-    if (!alertsSearchTerm) return alerts;
-    const searchLower = alertsSearchTerm.toLowerCase();
-    return alerts.filter(alert => 
-      alert.reason.toLowerCase().includes(searchLower) ||
-      alert.impactedBot.toLowerCase().includes(searchLower) ||
-      (alert.venue && alert.venue.toLowerCase().includes(searchLower)) ||
-      alert.severity.toLowerCase().includes(searchLower) ||
-      alert.status.toLowerCase().includes(searchLower)
-    );
-  }, [alerts, alertsSearchTerm]);
+  // Handle sorting for alerts table
+  const handleAlertsSort = (column: string) => {
+    if (alertsSortColumn === column) {
+      if (alertsSortDirection === 'asc') {
+        setAlertsSortDirection('desc');
+      } else if (alertsSortDirection === 'desc') {
+        setAlertsSortDirection(null);
+        setAlertsSortColumn(null);
+      } else {
+        setAlertsSortDirection('asc');
+      }
+    } else {
+      setAlertsSortColumn(column);
+      setAlertsSortDirection('asc');
+    }
+  };
 
-  // Filter audit logs based on search term
+  // Handle sorting for audit log table
+  const handleAuditSort = (column: string) => {
+    if (auditSortColumn === column) {
+      if (auditSortDirection === 'asc') {
+        setAuditSortDirection('desc');
+      } else if (auditSortDirection === 'desc') {
+        setAuditSortDirection(null);
+        setAuditSortColumn(null);
+      } else {
+        setAuditSortDirection('asc');
+      }
+    } else {
+      setAuditSortColumn(column);
+      setAuditSortDirection('asc');
+    }
+  };
+
+  // Get sort icon for alerts columns
+  const getAlertsSortIcon = (column: string) => {
+    if (alertsSortColumn !== column) {
+      return <ArrowUpDown className="h-4 w-4 opacity-50" />;
+    }
+    if (alertsSortDirection === 'asc') {
+      return <ArrowUp className="h-4 w-4" />;
+    }
+    if (alertsSortDirection === 'desc') {
+      return <ArrowDown className="h-4 w-4" />;
+    }
+    return <ArrowUpDown className="h-4 w-4 opacity-50" />;
+  };
+
+  // Get sort icon for audit columns
+  const getAuditSortIcon = (column: string) => {
+    if (auditSortColumn !== column) {
+      return <ArrowUpDown className="h-4 w-4 opacity-50" />;
+    }
+    if (auditSortDirection === 'asc') {
+      return <ArrowUp className="h-4 w-4" />;
+    }
+    if (auditSortDirection === 'desc') {
+      return <ArrowDown className="h-4 w-4" />;
+    }
+    return <ArrowUpDown className="h-4 w-4 opacity-50" />;
+  };
+
+  // Filter and sort alerts
+  const filteredAlerts = useMemo(() => {
+    let filtered = [...alerts];
+    
+    // Apply search filter
+    if (alertsSearchTerm) {
+      const searchLower = alertsSearchTerm.toLowerCase();
+      filtered = filtered.filter(alert => 
+        alert.reason.toLowerCase().includes(searchLower) ||
+        alert.impactedBot.toLowerCase().includes(searchLower) ||
+        (alert.venue && alert.venue.toLowerCase().includes(searchLower)) ||
+        alert.severity.toLowerCase().includes(searchLower) ||
+        alert.status.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    // Apply sorting
+    if (alertsSortColumn && alertsSortDirection) {
+      filtered.sort((a, b) => {
+        let aValue: any = '';
+        let bValue: any = '';
+        
+        switch (alertsSortColumn) {
+          case 'id':
+            aValue = parseInt(a.id);
+            bValue = parseInt(b.id);
+            break;
+          case 'severity':
+            const severityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
+            aValue = severityOrder[a.severity];
+            bValue = severityOrder[b.severity];
+            break;
+          case 'reason':
+            aValue = a.reason;
+            bValue = b.reason;
+            break;
+          case 'impactedBot':
+            aValue = a.impactedBot;
+            bValue = b.impactedBot;
+            break;
+          case 'venue':
+            aValue = a.venue || '';
+            bValue = b.venue || '';
+            break;
+          case 'status':
+            aValue = a.status;
+            bValue = b.status;
+            break;
+          case 'timestamp':
+            aValue = new Date(a.timestamp).getTime();
+            bValue = new Date(b.timestamp).getTime();
+            break;
+        }
+        
+        if (aValue < bValue) return alertsSortDirection === 'asc' ? -1 : 1;
+        if (aValue > bValue) return alertsSortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+    
+    return filtered;
+  }, [alerts, alertsSearchTerm, alertsSortColumn, alertsSortDirection]);
+
+  // Filter and sort audit logs
   const filteredAuditLogs = useMemo(() => {
-    if (!auditLogSearchTerm) return auditLogs;
-    const searchLower = auditLogSearchTerm.toLowerCase();
-    return auditLogs.filter(log => 
-      log.action.toLowerCase().includes(searchLower) ||
-      log.user.toLowerCase().includes(searchLower) ||
-      log.details.toLowerCase().includes(searchLower) ||
-      log.category.toLowerCase().includes(searchLower)
-    );
-  }, [auditLogs, auditLogSearchTerm]);
+    let filtered = [...auditLogs];
+    
+    // Apply search filter
+    if (auditLogSearchTerm) {
+      const searchLower = auditLogSearchTerm.toLowerCase();
+      filtered = filtered.filter(log => 
+        log.action.toLowerCase().includes(searchLower) ||
+        log.user.toLowerCase().includes(searchLower) ||
+        log.details.toLowerCase().includes(searchLower) ||
+        log.category.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    // Apply sorting
+    if (auditSortColumn && auditSortDirection) {
+      filtered.sort((a, b) => {
+        let aValue: any = '';
+        let bValue: any = '';
+        
+        switch (auditSortColumn) {
+          case 'id':
+            aValue = parseInt(a.id);
+            bValue = parseInt(b.id);
+            break;
+          case 'category':
+            aValue = a.category;
+            bValue = b.category;
+            break;
+          case 'action':
+            aValue = a.action;
+            bValue = b.action;
+            break;
+          case 'user':
+            aValue = a.user;
+            bValue = b.user;
+            break;
+          case 'details':
+            aValue = a.details;
+            bValue = b.details;
+            break;
+          case 'timestamp':
+            aValue = new Date(a.timestamp).getTime();
+            bValue = new Date(b.timestamp).getTime();
+            break;
+        }
+        
+        if (aValue < bValue) return auditSortDirection === 'asc' ? -1 : 1;
+        if (aValue > bValue) return auditSortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+    
+    return filtered;
+  }, [auditLogs, auditLogSearchTerm, auditSortColumn, auditSortDirection]);
 
   // Export functions
   const exportAlertsToCSV = () => {
@@ -458,12 +619,60 @@ export default function Compliance() {
               <Table className="hidden sm:table">
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Severity</TableHead>
-                    <TableHead>Reason</TableHead>
-                    <TableHead>Impacted Bot</TableHead>
-                    <TableHead>Venue</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Timestamp</TableHead>
+                    <TableHead 
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleAlertsSort('severity')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Severity
+                        {getAlertsSortIcon('severity')}
+                      </div>
+                    </TableHead>
+                    <TableHead 
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleAlertsSort('reason')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Reason
+                        {getAlertsSortIcon('reason')}
+                      </div>
+                    </TableHead>
+                    <TableHead 
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleAlertsSort('impactedBot')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Impacted Bot
+                        {getAlertsSortIcon('impactedBot')}
+                      </div>
+                    </TableHead>
+                    <TableHead 
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleAlertsSort('venue')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Venue
+                        {getAlertsSortIcon('venue')}
+                      </div>
+                    </TableHead>
+                    <TableHead 
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleAlertsSort('status')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Status
+                        {getAlertsSortIcon('status')}
+                      </div>
+                    </TableHead>
+                    <TableHead 
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleAlertsSort('timestamp')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Timestamp
+                        {getAlertsSortIcon('timestamp')}
+                      </div>
+                    </TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -559,11 +768,51 @@ export default function Compliance() {
               <Table className="hidden sm:table">
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Action</TableHead>
-                    <TableHead>User</TableHead>
-                    <TableHead>Details</TableHead>
-                    <TableHead>Timestamp</TableHead>
+                    <TableHead 
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleAuditSort('category')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Category
+                        {getAuditSortIcon('category')}
+                      </div>
+                    </TableHead>
+                    <TableHead 
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleAuditSort('action')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Action
+                        {getAuditSortIcon('action')}
+                      </div>
+                    </TableHead>
+                    <TableHead 
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleAuditSort('user')}
+                    >
+                      <div className="flex items-center gap-1">
+                        User
+                        {getAuditSortIcon('user')}
+                      </div>
+                    </TableHead>
+                    <TableHead 
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleAuditSort('details')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Details
+                        {getAuditSortIcon('details')}
+                      </div>
+                    </TableHead>
+                    <TableHead 
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleAuditSort('timestamp')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Timestamp
+                        {getAuditSortIcon('timestamp')}
+                      </div>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

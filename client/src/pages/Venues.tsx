@@ -620,18 +620,74 @@ export default function Venues() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Venue</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Balance</TableHead>
-                  <TableHead>Active Bots</TableHead>
-                  <TableHead>API Usage</TableHead>
-                  <TableHead>Fees</TableHead>
-                  <TableHead>Last Sync</TableHead>
+                  <TableHead 
+                    className="cursor-pointer hover:bg-gray-50"
+                    onClick={() => handleSort('name')}
+                  >
+                    <div className="flex items-center gap-1">
+                      Venue
+                      {getSortIcon('name')}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="cursor-pointer hover:bg-gray-50"
+                    onClick={() => handleSort('status')}
+                  >
+                    <div className="flex items-center gap-1">
+                      Status
+                      {getSortIcon('status')}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="cursor-pointer hover:bg-gray-50"
+                    onClick={() => handleSort('balance')}
+                  >
+                    <div className="flex items-center gap-1">
+                      Balance
+                      {getSortIcon('balance')}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="cursor-pointer hover:bg-gray-50"
+                    onClick={() => handleSort('activeBots')}
+                  >
+                    <div className="flex items-center gap-1">
+                      Active Bots
+                      {getSortIcon('activeBots')}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="cursor-pointer hover:bg-gray-50"
+                    onClick={() => handleSort('apiUsage')}
+                  >
+                    <div className="flex items-center gap-1">
+                      API Usage
+                      {getSortIcon('apiUsage')}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="cursor-pointer hover:bg-gray-50"
+                    onClick={() => handleSort('fees')}
+                  >
+                    <div className="flex items-center gap-1">
+                      Fees
+                      {getSortIcon('fees')}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="cursor-pointer hover:bg-gray-50"
+                    onClick={() => handleSort('lastSync')}
+                  >
+                    <div className="flex items-center gap-1">
+                      Last Sync
+                      {getSortIcon('lastSync')}
+                    </div>
+                  </TableHead>
                   <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {exchanges.map((exchange) => (
+                {filteredExchanges.map((exchange) => (
                   <TableRow key={exchange.id}>
                     <TableCell>
                       <div className="flex items-center space-x-2">
