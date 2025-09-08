@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
@@ -102,6 +103,9 @@ export function AddEditOrgModal({
           <DialogTitle>
             {isEditMode ? 'Edit Organization' : 'Add Organization'}
           </DialogTitle>
+          <DialogDescription>
+            {isEditMode ? 'Update the organization details below' : 'Enter the details for the new organization'}
+          </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
