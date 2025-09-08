@@ -64,7 +64,7 @@ interface ExchangeData {
   };
   supportedPairs: number;
   activeBots: number;
-  logo: string;
+  logo?: string;
   features: string[];
 }
 
@@ -103,7 +103,6 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 12450.32, available: 8921.45, currency: 'USDT' },
     supportedPairs: 1800,
     activeBots: 4,
-    logo: 'https://cdn.jsdelivr.net/gh/Cryptofonts/cryptofonts@1.0.0/SVG/binance.svg',
     features: ['Spot Trading', 'Futures', 'Margin', 'Options', 'P2P', 'Staking']
   },
   {
@@ -116,7 +115,6 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 5620.78, available: 4150.23, currency: 'USD' },
     supportedPairs: 180,
     activeBots: 2,
-    logo: 'https://cdn.jsdelivr.net/gh/Cryptofonts/cryptofonts@1.0.0/SVG/coinbase.svg',
     features: ['Spot Trading', 'Institutional', 'Advanced Trading', 'API Access']
   },
   {
@@ -129,7 +127,6 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 0, available: 0, currency: 'EUR' },
     supportedPairs: 220,
     activeBots: 0,
-    logo: 'https://cdn.jsdelivr.net/gh/Cryptofonts/cryptofonts@1.0.0/SVG/kraken.svg',
     features: ['Spot Trading', 'Futures', 'Margin', 'Staking', 'DeFi']
   },
   {
@@ -142,7 +139,6 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 3420.15, available: 2890.67, currency: 'USDT' },
     supportedPairs: 400,
     activeBots: 3,
-    logo: 'https://assets.coingecko.com/markets/images/698/small/bybit_spot.png',
     features: ['Spot Trading', 'Futures', 'Options', 'Copy Trading', 'NFT']
   },
   {
@@ -155,7 +151,6 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 7850.92, available: 6120.45, currency: 'USDT' },
     supportedPairs: 500,
     activeBots: 5,
-    logo: 'https://assets.coingecko.com/markets/images/96/small/WeChat_Image_20220117220452.png',
     features: ['Spot Trading', 'Futures', 'Options', 'DeFi', 'Web3 Wallet']
   },
   {
@@ -168,7 +163,6 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 2940.78, available: 2100.45, currency: 'USDT' },
     supportedPairs: 700,
     activeBots: 2,
-    logo: 'https://cdn.jsdelivr.net/gh/Cryptofonts/cryptofonts@1.0.0/SVG/kucoin.svg',
     features: ['Spot Trading', 'Futures', 'Margin', 'P2P', 'Lending']
   }
 ];

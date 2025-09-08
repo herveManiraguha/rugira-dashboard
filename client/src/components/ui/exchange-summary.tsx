@@ -9,7 +9,7 @@ interface ExchangeSummaryData {
   id: string;
   name: string;
   status: 'connected' | 'disconnected' | 'error';
-  logo: string;
+  logo?: string;
   activeBots: number;
   balance: number;
   currency: string;
