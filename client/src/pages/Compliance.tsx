@@ -157,40 +157,72 @@ export default function Compliance() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Compliance Monitoring</h1>
-        <p className="text-gray-600">Monitor compliance alerts and audit trail</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Compliance Monitoring</h1>
+        <p className="text-sm sm:text-base text-gray-600">Monitor compliance alerts and audit trail</p>
       </div>
 
       <Tabs defaultValue="alerts" className="w-full">
-        <TabsList>
-          <TabsTrigger value="alerts">Alerts Inbox</TabsTrigger>
-          <TabsTrigger value="audit">Audit Log</TabsTrigger>
+        <TabsList className="w-full sm:w-auto grid grid-cols-2">
+          <TabsTrigger value="alerts" className="text-xs sm:text-sm">Alerts Inbox</TabsTrigger>
+          <TabsTrigger value="audit" className="text-xs sm:text-sm">Audit Log</TabsTrigger>
         </TabsList>
         
         <TabsContent value="alerts" className="space-y-4">
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center">
-                  <AlertTriangle className="h-5 w-5 mr-2" />
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <CardTitle className="flex items-center text-base sm:text-lg">
+                  <AlertTriangle className="h-4 sm:h-5 w-4 sm:w-5 mr-2" />
                   Compliance Alerts
                 </CardTitle>
                 <div className="flex space-x-2">
                   <Button size="sm" variant="outline">
-                    <Filter className="h-4 w-4 mr-2" />
-                    Filter
+                    <Filter className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Filter</span>
                   </Button>
                   <Button size="sm" variant="outline">
-                    <Download className="h-4 w-4 mr-2" />
-                    Export
+                    <Download className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Export</span>
                   </Button>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="p-0">
-              <Table>
+              {/* Mobile Card View */}
+              <div className="block sm:hidden space-y-3 p-4">
+                {alerts.map((alert) => (
+                  <Card key={alert.id} className="border">
+                    <CardContent className="p-3 space-y-2">
+                      <div className="flex items-start justify-between">
+                        {getSeverityBadge(alert.severity)}
+                        {getStatusBadge(alert.status)}
+                      </div>
+                      <div className="space-y-1">
+                        <div className="font-medium text-sm">{alert.reason}</div>
+                        <div className="text-xs text-gray-500">
+                          <div>Bot: {alert.impactedBot}</div>
+                          {alert.venue && <div>Venue: {alert.venue}</div>}
+                          <div>{new Date(alert.timestamp).toLocaleString()}</div>
+                        </div>
+                      </div>
+                      <div className="flex gap-2 pt-2">
+                        <Button size="sm" variant="outline" className="flex-1 text-xs">
+                          View Details
+                        </Button>
+                        {alert.status === 'open' && (
+                          <Button size="sm" variant="outline" className="flex-1 text-xs">
+                            Acknowledge
+                          </Button>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              {/* Desktop Table View */}
+              <Table className="hidden sm:table">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Severity</TableHead>
@@ -236,25 +268,49 @@ export default function Compliance() {
         <TabsContent value="audit" className="space-y-4">
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center">
-                  <Shield className="h-5 w-5 mr-2" />
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <CardTitle className="flex items-center text-base sm:text-lg">
+                  <Shield className="h-4 sm:h-5 w-4 sm:w-5 mr-2" />
                   Audit Log
                 </CardTitle>
-                <div className="flex space-x-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <div className="relative">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input placeholder="Search logs..." className="pl-9 w-64" />
+                    <Search className="absolute left-3 top-2.5 sm:top-3 h-4 w-4 text-gray-400" />
+                    <Input placeholder="Search logs..." className="pl-9 w-full sm:w-64 h-9" />
                   </div>
                   <Button size="sm" variant="outline">
-                    <Download className="h-4 w-4 mr-2" />
-                    Export CSV
+                    <Download className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Export CSV</span>
+                    <span className="sm:hidden">Export</span>
                   </Button>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="p-0">
-              <Table>
+              {/* Mobile Card View */}
+              <div className="block sm:hidden space-y-3 p-4">
+                {auditLogs.map((log) => (
+                  <Card key={log.id} className="border">
+                    <CardContent className="p-3 space-y-2">
+                      <div className="flex items-start justify-between">
+                        {getCategoryBadge(log.category)}
+                        <div className="text-xs text-gray-500">
+                          {new Date(log.timestamp).toLocaleString([], {dateStyle: 'short', timeStyle: 'short'})}
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="font-medium text-sm">{log.action}</div>
+                        <div className="text-xs text-gray-600">
+                          <div>User: {log.user}</div>
+                          <div className="mt-1">{log.details}</div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              {/* Desktop Table View */}
+              <Table className="hidden sm:table">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Category</TableHead>
