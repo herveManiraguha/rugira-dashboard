@@ -168,47 +168,47 @@ export default function Monitoring() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">System Monitoring</h1>
-          <p className="text-gray-600">Real-time system health and performance metrics</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">System Monitoring</h1>
+          <p className="text-sm sm:text-base text-gray-600">Real-time system health and performance metrics</p>
         </div>
-        <div className="flex items-center space-x-4">
-          <div className="text-sm text-gray-500">
-            Last updated: {lastUpdated.toLocaleTimeString()}
+        <div className="flex items-center space-x-2 sm:space-x-4">
+          <div className="text-xs sm:text-sm text-gray-500">
+            Last updated: {lastUpdated.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', second: '2-digit'})}
           </div>
           <Button variant="outline" size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh
+            <RefreshCw className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">Refresh</span>
           </Button>
         </div>
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList>
-          <TabsTrigger value="overview">System Overview</TabsTrigger>
-          <TabsTrigger value="services">Service Status</TabsTrigger>
-          <TabsTrigger value="alerts">Active Alerts</TabsTrigger>
+        <TabsList className="w-full sm:w-auto grid grid-cols-3 sm:flex">
+          <TabsTrigger value="overview" className="text-xs sm:text-sm">System Overview</TabsTrigger>
+          <TabsTrigger value="services" className="text-xs sm:text-sm">Service Status</TabsTrigger>
+          <TabsTrigger value="alerts" className="text-xs sm:text-sm">Active Alerts</TabsTrigger>
         </TabsList>
         
         <TabsContent value="overview" className="space-y-6">
           {/* System Metrics Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
             {systemMetrics.map((metric) => (
               <Card key={metric.name}>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex items-center justify-between mb-3 sm:mb-4">
                     <div className="flex items-center space-x-2">
                       {getMetricIcon(metric.name)}
-                      <h3 className="text-sm font-medium text-gray-700">{metric.name}</h3>
+                      <h3 className="text-xs sm:text-sm font-medium text-gray-700">{metric.name}</h3>
                     </div>
                     {getStatusIcon(metric.status)}
                   </div>
                   
                   <div className="space-y-2">
                     <div className="flex items-end space-x-2">
-                      <span className="text-2xl font-bold">{metric.value}</span>
-                      <span className="text-sm text-gray-500 mb-1">{metric.unit}</span>
+                      <span className="text-xl sm:text-2xl font-bold">{metric.value}</span>
+                      <span className="text-xs sm:text-sm text-gray-500 mb-1">{metric.unit}</span>
                     </div>
                     
                     {metric.name.includes('Usage') && (
