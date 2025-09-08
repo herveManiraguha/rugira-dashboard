@@ -32,7 +32,10 @@ import {
   CheckCircle,
   XCircle,
   Send,
-  Activity
+  Activity,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
@@ -243,8 +246,8 @@ export default function Venues() {
   const [venueSheetOpen, setVenueSheetOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState<'name' | 'balance' | 'status'>('name');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc' | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const { toast } = useToast();
 
@@ -322,6 +325,37 @@ export default function Venues() {
     return `${Math.floor(diffMins / 1440)} days ago`;
   };
 
+  // Handle column sorting
+  const handleSort = (column: string) => {
+    if (sortColumn === column) {
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        setSortDirection(null);
+        setSortColumn(null);
+      } else {
+        setSortDirection('asc');
+      }
+    } else {
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
+
+  // Get sort icon for column
+  const getSortIcon = (column: string) => {
+    if (sortColumn !== column) {
+      return <ArrowUpDown className="h-4 w-4 opacity-50" />;
+    }
+    if (sortDirection === 'asc') {
+      return <ArrowUp className="h-4 w-4" />;
+    }
+    if (sortDirection === 'desc') {
+      return <ArrowDown className="h-4 w-4" />;
+    }
+    return <ArrowUpDown className="h-4 w-4 opacity-50" />;
+  };
+
   // Filter and sort crypto exchanges
   const filteredExchanges = React.useMemo(() => {
     let filtered = [...exchanges];
@@ -340,26 +374,50 @@ export default function Venues() {
     }
     
     // Apply sorting
-    filtered.sort((a, b) => {
-      let compareValue = 0;
-      
-      switch (sortBy) {
-        case 'name':
-          compareValue = a.name.localeCompare(b.name);
-          break;
-        case 'balance':
-          compareValue = a.balance.total - b.balance.total;
-          break;
-        case 'status':
-          compareValue = a.status.localeCompare(b.status);
-          break;
-      }
-      
-      return sortOrder === 'asc' ? compareValue : -compareValue;
-    });
+    if (sortColumn && sortDirection) {
+      filtered.sort((a, b) => {
+        let aValue: any = '';
+        let bValue: any = '';
+        
+        switch (sortColumn) {
+          case 'name':
+            aValue = a.name;
+            bValue = b.name;
+            break;
+          case 'status':
+            aValue = a.status;
+            bValue = b.status;
+            break;
+          case 'balance':
+            aValue = a.balance.total;
+            bValue = b.balance.total;
+            break;
+          case 'activeBots':
+            aValue = a.activeBots;
+            bValue = b.activeBots;
+            break;
+          case 'apiUsage':
+            aValue = a.apiLimits.used / a.apiLimits.total;
+            bValue = b.apiLimits.used / b.apiLimits.total;
+            break;
+          case 'fees':
+            aValue = a.tradingFees.maker;
+            bValue = b.tradingFees.maker;
+            break;
+          case 'lastSync':
+            aValue = new Date(a.lastSync).getTime();
+            bValue = new Date(b.lastSync).getTime();
+            break;
+        }
+        
+        if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+        if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
     
     return filtered;
-  }, [exchanges, searchQuery, selectedFilters, sortBy, sortOrder]);
+  }, [exchanges, searchQuery, selectedFilters, sortColumn, sortDirection]);
 
   // Filter tokenized venues
   const filteredTokenizedVenues = React.useMemo(() => {
@@ -456,26 +514,6 @@ export default function Venues() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">Crypto Exchanges</h2>
-          <div className="flex items-center gap-2">
-            <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
-              <SelectTrigger className="w-32 h-8">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="name">Name</SelectItem>
-                <SelectItem value="balance">Balance</SelectItem>
-                <SelectItem value="status">Status</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-              className="h-8 w-8 p-0"
-            >
-              {sortOrder === 'asc' ? '↑' : '↓'}
-            </Button>
-          </div>
         </div>
         {(viewMode === 'cards' || isMobile) ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
