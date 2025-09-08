@@ -330,13 +330,44 @@ export default function Monitoring() {
         <TabsContent value="services" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <Server className="h-5 w-5 mr-2" />
+              <CardTitle className="flex items-center text-base sm:text-lg">
+                <Server className="h-4 sm:h-5 w-4 sm:w-5 mr-2" />
                 Service Health Status
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              <Table>
+              {/* Mobile Card View */}
+              <div className="block sm:hidden space-y-3 p-4">
+                {services.map((service) => (
+                  <Card key={service.name} className="border">
+                    <CardContent className="p-3 space-y-2">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center space-x-2">
+                          {getStatusIcon(service.status)}
+                          <span className="font-medium text-sm">{service.name}</span>
+                        </div>
+                        {getStatusBadge(service.status)}
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
+                        <div>
+                          <span className="text-gray-500">Uptime:</span> {service.uptime}
+                        </div>
+                        <div>
+                          <span className="text-gray-500">Response:</span>
+                          <span className={service.responseTime > 200 ? ' text-yellow-600' : ' text-green-600'}>
+                            {' '}{service.responseTime}ms
+                          </span>
+                        </div>
+                        <div className="col-span-2">
+                          <span className="text-gray-500">Last Check:</span> {service.lastCheck}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              {/* Desktop Table View */}
+              <Table className="hidden sm:table">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Service</TableHead>
@@ -374,29 +405,29 @@ export default function Monitoring() {
         <TabsContent value="alerts" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <AlertCircle className="h-5 w-5 mr-2" />
+              <CardTitle className="flex items-center text-base sm:text-lg">
+                <AlertCircle className="h-4 sm:h-5 w-4 sm:w-5 mr-2" />
                 Active System Alerts
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-center p-4 border-l-4 border-yellow-400 bg-yellow-50 rounded">
-                  <AlertCircle className="h-5 w-5 text-yellow-600 mr-3" />
-                  <div>
-                    <h4 className="font-medium text-yellow-800">Memory Usage Warning</h4>
-                    <p className="text-sm text-yellow-700">
+                <div className="flex items-start p-3 sm:p-4 border-l-4 border-yellow-400 bg-yellow-50 rounded">
+                  <AlertCircle className="h-4 sm:h-5 w-4 sm:w-5 text-yellow-600 mr-2 sm:mr-3 flex-shrink-0 mt-0.5" />
+                  <div className="min-w-0">
+                    <h4 className="font-medium text-sm sm:text-base text-yellow-800">Memory Usage Warning</h4>
+                    <p className="text-xs sm:text-sm text-yellow-700">
                       System memory usage is at 67% and trending upward. Consider scaling resources.
                     </p>
                     <p className="text-xs text-yellow-600 mt-1">Triggered 5 minutes ago</p>
                   </div>
                 </div>
                 
-                <div className="flex items-center p-4 border-l-4 border-yellow-400 bg-yellow-50 rounded">
-                  <AlertCircle className="h-5 w-5 text-yellow-600 mr-3" />
-                  <div>
-                    <h4 className="font-medium text-yellow-800">Service Degradation</h4>
-                    <p className="text-sm text-yellow-700">
+                <div className="flex items-start p-3 sm:p-4 border-l-4 border-yellow-400 bg-yellow-50 rounded">
+                  <AlertCircle className="h-4 sm:h-5 w-4 sm:w-5 text-yellow-600 mr-2 sm:mr-3 flex-shrink-0 mt-0.5" />
+                  <div className="min-w-0">
+                    <h4 className="font-medium text-sm sm:text-base text-yellow-800">Service Degradation</h4>
+                    <p className="text-xs sm:text-sm text-yellow-700">
                       Risk Monitor service is experiencing degraded performance (234ms response time).
                     </p>
                     <p className="text-xs text-yellow-600 mt-1">Triggered 12 minutes ago</p>

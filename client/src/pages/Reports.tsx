@@ -154,10 +154,10 @@ export default function Reports() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Analytics</h1>
-          <p className="text-gray-600">Performance analysis and operational metrics</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Analytics</h1>
+          <p className="text-sm sm:text-base text-gray-600">Performance analysis and operational metrics</p>
         </div>
         <div className="flex space-x-2">
           <Select value={dateRange} onValueChange={setDateRange}>
@@ -196,10 +196,10 @@ export default function Reports() {
       </div>
 
       <Tabs defaultValue="performance" className="w-full">
-        <TabsList>
-          <TabsTrigger value="performance">Performance</TabsTrigger>
-          <TabsTrigger value="operational">Operational</TabsTrigger>
-          <TabsTrigger value="risk">Risk Analysis</TabsTrigger>
+        <TabsList className="w-full sm:w-auto grid grid-cols-3 sm:flex">
+          <TabsTrigger value="performance" className="text-xs sm:text-sm">Performance</TabsTrigger>
+          <TabsTrigger value="operational" className="text-xs sm:text-sm">Operational</TabsTrigger>
+          <TabsTrigger value="risk" className="text-xs sm:text-sm">Risk Analysis</TabsTrigger>
         </TabsList>
         
         <TabsContent value="performance" className="space-y-6">
@@ -384,10 +384,10 @@ export default function Reports() {
           {/* T+0 Reconciliation Card */}
           <Card>
             <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle>T+0 Reconciliation</CardTitle>
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                <CardTitle className="text-base sm:text-lg">T+0 Reconciliation</CardTitle>
                 <Select defaultValue="bx-digital">
-                  <SelectTrigger className="w-48">
+                  <SelectTrigger className="w-full sm:w-48">
                     <SelectValue placeholder="Select Venue" />
                   </SelectTrigger>
                   <SelectContent>
@@ -399,22 +399,22 @@ export default function Reports() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center p-4 bg-green-50 rounded-lg">
-                  <CheckCircle className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-green-600">1</div>
-                  <p className="text-sm text-gray-600">Matched</p>
+              <div className="grid grid-cols-3 gap-2 sm:gap-4">
+                <div className="text-center p-2 sm:p-4 bg-green-50 rounded-lg">
+                  <CheckCircle className="h-6 sm:h-8 w-6 sm:w-8 text-green-600 mx-auto mb-1 sm:mb-2" />
+                  <div className="text-lg sm:text-2xl font-bold text-green-600">1</div>
+                  <p className="text-xs sm:text-sm text-gray-600">Matched</p>
                   <Badge variant="outline" className="mt-2">Paper</Badge>
                 </div>
-                <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <XCircle className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-gray-600">0</div>
-                  <p className="text-sm text-gray-600">Unmatched</p>
+                <div className="text-center p-2 sm:p-4 bg-gray-50 rounded-lg">
+                  <XCircle className="h-6 sm:h-8 w-6 sm:w-8 text-gray-400 mx-auto mb-1 sm:mb-2" />
+                  <div className="text-lg sm:text-2xl font-bold text-gray-600">0</div>
+                  <p className="text-xs sm:text-sm text-gray-600">Unmatched</p>
                 </div>
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
-                  <Clock className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-blue-600">100%</div>
-                  <p className="text-sm text-gray-600">Match Rate</p>
+                <div className="text-center p-2 sm:p-4 bg-blue-50 rounded-lg">
+                  <Clock className="h-6 sm:h-8 w-6 sm:w-8 text-blue-600 mx-auto mb-1 sm:mb-2" />
+                  <div className="text-lg sm:text-2xl font-bold text-blue-600">100%</div>
+                  <p className="text-xs sm:text-sm text-gray-600">Match Rate</p>
                 </div>
               </div>
               <div className="mt-4 flex justify-end">
