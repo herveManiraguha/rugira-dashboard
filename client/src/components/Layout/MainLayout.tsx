@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useEnvironment } from '@/contexts/EnvironmentContext';
 import DemoRibbon from '@/components/Demo/DemoRibbon';
 import Footer from '@/components/Layout/Footer';
-import HeaderNew from '@/components/Layout/HeaderNew';
+import HeaderRefactored from '@/components/Layout/HeaderRefactored';
 import { LiveModeBanner } from '@/components/Scope/LiveModeBanner';
 import { 
   Activity,
@@ -119,8 +119,8 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
         />
       )}
       
-      {/* New Header */}
-      <HeaderNew onKillSwitch={handleKillSwitch} onMobileMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)} />
+      {/* Refactored Header */}
+      <HeaderRefactored onKillSwitch={handleKillSwitch} onMobileMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)} />
       
       {/* Live Mode Banner */}
       <LiveModeBanner />
