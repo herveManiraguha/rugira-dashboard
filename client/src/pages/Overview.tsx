@@ -29,6 +29,8 @@ import { SkipLink } from "@/components/ui/skip-link";
 import { TimeRangeSelector } from "@/components/ui/time-range-selector";
 import { ExchangeSummary } from "@/components/ui/exchange-summary";
 import { useAuth } from "@/contexts/AuthContext";
+import AddExchangeModal from "@/components/Exchange/AddExchangeModal";
+import { useToast } from "@/hooks/use-toast";
 
 
 interface KPI {
@@ -54,9 +56,11 @@ export default function Overview() {
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [timeRange, setTimeRange] = useState('24h' as const);
   const [showExportModal, setShowExportModal] = useState(false);
+  const [isAddVenueModalOpen, setIsAddVenueModalOpen] = useState(false);
   const { isDemoMode, isReadOnly } = useDemoMode();
   const { tenantRoles } = useAuth();
   const canApprove = tenantRoles?.includes('admin') || tenantRoles?.includes('compliance');
+  const { toast } = useToast();
   
   // Fetch overview data from API
   const { data: overviewData, isLoading: overviewLoading } = useQuery({
@@ -192,6 +196,16 @@ export default function Overview() {
   const activities = generateActivityData();
   const kpisLoading = false;
   const activitiesLoading = false;
+
+  // Handle add venue submission
+  const handleAddVenue = async (data: any) => {
+    console.log('Adding venue:', data);
+    setIsAddVenueModalOpen(false);
+    toast({
+      title: "Venue Added",
+      description: "Successfully connected to new venue."
+    });
+  };
 
   // Generate mock performance data for charts
   const generateEquityData = () => {
@@ -478,7 +492,7 @@ export default function Overview() {
           {/* Exchange Summary */}
           <ExchangeSummary 
             exchanges={exchangeSummaryData}
-            onAddExchange={() => console.log('Add exchange')}
+            onAddExchange={() => setIsAddVenueModalOpen(true)}
             onExchangeClick={(id) => console.log('Exchange clicked:', id)}
           />
         </div>
@@ -683,6 +697,13 @@ export default function Overview() {
       <SampleExportModal 
         isOpen={showExportModal} 
         onClose={() => setShowExportModal(false)} 
+      />
+
+      {/* Add Venue Modal */}
+      <AddExchangeModal
+        isOpen={isAddVenueModalOpen}
+        onClose={() => setIsAddVenueModalOpen(false)}
+        onSubmit={handleAddVenue}
       />
       </div>
     </StandardPageLayout>
