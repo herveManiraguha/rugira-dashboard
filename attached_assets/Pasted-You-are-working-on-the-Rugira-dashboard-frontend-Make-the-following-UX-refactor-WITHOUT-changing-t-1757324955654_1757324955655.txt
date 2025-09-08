@@ -1,0 +1,67 @@
+You are working on the Rugira dashboard frontend.
+
+Make the following UX refactor WITHOUT changing the existing API contracts or business logic:
+
+1) HEADER REWORK
+- Replace the current header controls with four logical clusters:
+  (A) Brand + Context chips:
+      - Three chips in one row: Organization ▸ Portfolio ▸ Mode
+      - Each chip opens a single dropdown. Mode chip offers Live/Paper/Demo.
+      - Switching to Live requires a confirm dialog with a red warning.
+      - Show the current selection in the chip label.
+  (B) Filters cluster:
+      - Time range selector (24h / 7d / MTD / YTD) and the existing attribution dropdown.
+      - Keep Export near the time range selector with a consistent button style.
+  (C) System status cluster:
+      - Single compact status chip (green/amber/red). Clicking opens the existing infra/health popover.
+  (D) User cluster:
+      - Omni-search button (Cmd/Ctrl+K), Notifications (with count), Help, Profile avatar.
+
+- The header must be keyboard navigable and responsive. Provide clear focus rings.
+
+2) SIDEBAR IMPROVEMENTS
+- Keep existing groups but ensure headings are visible in expanded mode:
+  Build: Venues, Strategies, Backtesting
+  Run: Bots, Monitoring
+  Govern: Reports (rename to “Analytics” everywhere in UI), Compliance
+  System: Admin, Help
+- In collapsed mode, show icons only but add rich tooltips (title + one-line description).
+- Add an optional Favorites section at the top (render if user has pinned items).
+
+3) ICON SYSTEM
+- Replace current mixed icons with Lucide (https://lucide.dev).
+- Use outline style only, 24px grid, ~1.5px stroke, consistent sizing.
+- Map screens to icons:
+  Overview: activity
+  Venues: building-2
+  Strategies: beaker
+  Backtesting: history
+  Bots: bot
+  Monitoring: monitor-dot
+  Analytics (was Reports): chart-bar
+  Compliance: shield-check
+  Admin: settings
+  Help: life-buoy
+
+4) COMMAND PALETTE
+- Add a Cmd/Ctrl+K command palette:
+  - Search by screen (Overview, Venues, Strategies, …), by bot/strategy name (use existing local lists), and by Org/Portfolio.
+  - Keyboard: arrows to navigate, Enter to go, Esc to close.
+
+5) VISUAL + ACCESSIBILITY POLISH
+- Adopt an 8pt spacing scale across header and sidebar.
+- Standardize pill/chip styles (28–32px height, 999px radius).
+- Ensure all interactive elements (chips, buttons, icons) have hover + focus states and meet WCAG AA contrast.
+- Provide “prefers-reduced-motion” friendly transitions (120–160ms fade/slide, no bounce).
+- Keep brand red reserved for primary actions, Live mode accents, and critical errors.
+
+6) DON’TS
+- Do not change routing paths or API calls.
+- Do not alter business logic behind approvals, exports, or health checks.
+
+7) TESTING / DONE CRITERIA
+- Keyboard-only navigation works for header chips, filters, and command palette.
+- Collapsed sidebar displays correct tooltips and active state.
+- All icons render with consistent stroke/size; no mixed filled/outline variants.
+- Renamed “Reports” → “Analytics” across sidebar, page title, breadcrumbs.
+- Lighthouse a11y score ≥ 95 on the dashboard route.
