@@ -219,6 +219,12 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
         {/* Mobile/Tablet Sidebar */}
         <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
           <SheetContent side="left" className="w-64 p-0">
+            <SheetHeader className="sr-only">
+              <SheetTitle>Navigation Menu</SheetTitle>
+              <SheetDescription>
+                Navigate through the Rugira trading dashboard
+              </SheetDescription>
+            </SheetHeader>
             <div className="flex h-full flex-col">
               <div className="flex items-center px-4 py-4 border-b">
                 <div className="flex items-center space-x-2">
