@@ -272,10 +272,10 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
         
         {/* Main content area */}
         <main className={cn(
-          "flex-1 transition-all duration-300",
+          "flex-1 flex flex-col transition-all duration-300",
           sidebarCollapsed ? "lg:ml-16" : "lg:ml-64"
         )}>
-          <div className="p-4 lg:p-6 xl:p-8">
+          <div className="flex-1 p-4 lg:p-6 xl:p-8">
             {children}
           </div>
           <Footer />
