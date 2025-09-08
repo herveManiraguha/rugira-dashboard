@@ -3,6 +3,9 @@ import { useLocation } from 'wouter';
 import {
   Dialog,
   DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -190,6 +193,12 @@ export function CommandPalette({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="p-0 max-w-2xl">
+        <DialogHeader className="sr-only">
+          <DialogTitle>Command Palette</DialogTitle>
+          <DialogDescription>
+            Search for screens, bots, strategies, and more
+          </DialogDescription>
+        </DialogHeader>
         <div className="flex items-center px-4 border-b">
           <Search className="w-5 h-5 text-gray-400 mr-3" />
           <Input

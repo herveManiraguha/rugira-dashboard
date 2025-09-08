@@ -938,7 +938,7 @@ export default function Backtesting() {
 
       {/* Backtest Details Modal */}
       <Dialog open={isDetailsModalOpen} onOpenChange={setIsDetailsModalOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle>Backtest Details</DialogTitle>
             <DialogDescription>
@@ -951,11 +951,11 @@ export default function Backtesting() {
             if (!backtest || !backtest.results) return null;
             
             return (
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {/* Strategy Information */}
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="font-semibold mb-3">{backtest.strategyName}</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                  <h3 className="font-semibold mb-2 sm:mb-3 text-sm sm:text-base">{backtest.strategyName}</h3>
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
                     <div>
                       <div className="text-gray-500">Period</div>
                       <div className="font-medium">{backtest.dateRange}</div>
@@ -977,56 +977,56 @@ export default function Backtesting() {
 
                 {/* Key Performance Metrics */}
                 <div>
-                  <h3 className="font-semibold mb-3">Key Metrics</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  <h3 className="font-semibold mb-2 sm:mb-3 text-sm sm:text-base">Key Metrics</h3>
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:gap-4">
                     <Card>
-                      <CardContent className="p-3">
-                        <div className="text-xs text-gray-500">Total Return</div>
-                        <div className={`text-lg font-bold ${backtest.results.totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      <CardContent className="p-2 sm:p-3">
+                        <div className="text-[10px] sm:text-xs text-gray-500">Total Return</div>
+                        <div className={`text-sm sm:text-lg font-bold ${backtest.results.totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                           {backtest.results.totalReturn >= 0 ? '+' : ''}{backtest.results.totalReturn.toFixed(2)}%
                         </div>
                       </CardContent>
                     </Card>
                     <Card>
-                      <CardContent className="p-3">
-                        <div className="text-xs text-gray-500">Sharpe Ratio</div>
-                        <div className="text-lg font-bold">{backtest.results.sharpeRatio.toFixed(2)}</div>
+                      <CardContent className="p-2 sm:p-3">
+                        <div className="text-[10px] sm:text-xs text-gray-500">Sharpe Ratio</div>
+                        <div className="text-sm sm:text-lg font-bold">{backtest.results.sharpeRatio.toFixed(2)}</div>
                       </CardContent>
                     </Card>
                     <Card>
-                      <CardContent className="p-3">
-                        <div className="text-xs text-gray-500">Max Drawdown</div>
-                        <div className="text-lg font-bold text-red-600">{backtest.results.maxDrawdown.toFixed(2)}%</div>
+                      <CardContent className="p-2 sm:p-3">
+                        <div className="text-[10px] sm:text-xs text-gray-500">Max Drawdown</div>
+                        <div className="text-sm sm:text-lg font-bold text-red-600">{backtest.results.maxDrawdown.toFixed(2)}%</div>
                       </CardContent>
                     </Card>
                     <Card>
-                      <CardContent className="p-3">
-                        <div className="text-xs text-gray-500">Win Rate</div>
-                        <div className="text-lg font-bold">{backtest.results.winRate.toFixed(1)}%</div>
+                      <CardContent className="p-2 sm:p-3">
+                        <div className="text-[10px] sm:text-xs text-gray-500">Win Rate</div>
+                        <div className="text-sm sm:text-lg font-bold">{backtest.results.winRate.toFixed(1)}%</div>
                       </CardContent>
                     </Card>
                     <Card>
-                      <CardContent className="p-3">
-                        <div className="text-xs text-gray-500">Total Trades</div>
-                        <div className="text-lg font-bold">{backtest.results.totalTrades}</div>
+                      <CardContent className="p-2 sm:p-3">
+                        <div className="text-[10px] sm:text-xs text-gray-500">Total Trades</div>
+                        <div className="text-sm sm:text-lg font-bold">{backtest.results.totalTrades}</div>
                       </CardContent>
                     </Card>
                     <Card>
-                      <CardContent className="p-3">
-                        <div className="text-xs text-gray-500">Profit Factor</div>
-                        <div className="text-lg font-bold">1.84</div>
+                      <CardContent className="p-2 sm:p-3">
+                        <div className="text-[10px] sm:text-xs text-gray-500">Profit Factor</div>
+                        <div className="text-sm sm:text-lg font-bold">1.84</div>
                       </CardContent>
                     </Card>
                     <Card>
-                      <CardContent className="p-3">
-                        <div className="text-xs text-gray-500">Avg Win/Loss</div>
-                        <div className="text-lg font-bold">1.52</div>
+                      <CardContent className="p-2 sm:p-3">
+                        <div className="text-[10px] sm:text-xs text-gray-500">Avg Win/Loss</div>
+                        <div className="text-sm sm:text-lg font-bold">1.52</div>
                       </CardContent>
                     </Card>
                     <Card>
-                      <CardContent className="p-3">
-                        <div className="text-xs text-gray-500">Final Capital</div>
-                        <div className="text-lg font-bold">${backtest.results.finalCapital.toLocaleString()}</div>
+                      <CardContent className="p-2 sm:p-3">
+                        <div className="text-[10px] sm:text-xs text-gray-500">Final Capital</div>
+                        <div className="text-sm sm:text-lg font-bold">${backtest.results.finalCapital.toLocaleString()}</div>
                       </CardContent>
                     </Card>
                   </div>
@@ -1034,59 +1034,59 @@ export default function Backtesting() {
 
                 {/* Trade Statistics */}
                 <div>
-                  <h3 className="font-semibold mb-3">Trade Statistics</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <h3 className="font-semibold mb-2 sm:mb-3 text-sm sm:text-base">Trade Statistics</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                     <Card>
-                      <CardContent className="p-4 space-y-2">
-                        <div className="flex justify-between text-sm">
+                      <CardContent className="p-3 sm:p-4 space-y-1.5 sm:space-y-2">
+                        <div className="flex justify-between text-xs sm:text-sm">
                           <span className="text-gray-500">Winning Trades</span>
                           <span className="font-medium">166</span>
                         </div>
-                        <div className="flex justify-between text-sm">
+                        <div className="flex justify-between text-xs sm:text-sm">
                           <span className="text-gray-500">Losing Trades</span>
                           <span className="font-medium">81</span>
                         </div>
-                        <div className="flex justify-between text-sm">
+                        <div className="flex justify-between text-xs sm:text-sm">
                           <span className="text-gray-500">Average Win</span>
                           <span className="font-medium text-green-600">+$487.23</span>
                         </div>
-                        <div className="flex justify-between text-sm">
+                        <div className="flex justify-between text-xs sm:text-sm">
                           <span className="text-gray-500">Average Loss</span>
                           <span className="font-medium text-red-600">-$321.15</span>
                         </div>
-                        <div className="flex justify-between text-sm">
+                        <div className="flex justify-between text-xs sm:text-sm">
                           <span className="text-gray-500">Largest Win</span>
                           <span className="font-medium text-green-600">+$2,347.89</span>
                         </div>
-                        <div className="flex justify-between text-sm">
+                        <div className="flex justify-between text-xs sm:text-sm">
                           <span className="text-gray-500">Largest Loss</span>
                           <span className="font-medium text-red-600">-$1,123.45</span>
                         </div>
                       </CardContent>
                     </Card>
                     <Card>
-                      <CardContent className="p-4 space-y-2">
-                        <div className="flex justify-between text-sm">
+                      <CardContent className="p-3 sm:p-4 space-y-1.5 sm:space-y-2">
+                        <div className="flex justify-between text-xs sm:text-sm">
                           <span className="text-gray-500">Avg Trade Duration</span>
                           <span className="font-medium">2.3 days</span>
                         </div>
-                        <div className="flex justify-between text-sm">
+                        <div className="flex justify-between text-xs sm:text-sm">
                           <span className="text-gray-500">Best Month</span>
                           <span className="font-medium text-green-600">+8.7% (April)</span>
                         </div>
-                        <div className="flex justify-between text-sm">
+                        <div className="flex justify-between text-xs sm:text-sm">
                           <span className="text-gray-500">Worst Month</span>
                           <span className="font-medium text-red-600">-3.2% (September)</span>
                         </div>
-                        <div className="flex justify-between text-sm">
+                        <div className="flex justify-between text-xs sm:text-sm">
                           <span className="text-gray-500">Consecutive Wins</span>
                           <span className="font-medium">12 (max)</span>
                         </div>
-                        <div className="flex justify-between text-sm">
+                        <div className="flex justify-between text-xs sm:text-sm">
                           <span className="text-gray-500">Consecutive Losses</span>
                           <span className="font-medium">5 (max)</span>
                         </div>
-                        <div className="flex justify-between text-sm">
+                        <div className="flex justify-between text-xs sm:text-sm">
                           <span className="text-gray-500">Recovery Factor</span>
                           <span className="font-medium">2.98</span>
                         </div>
@@ -1097,10 +1097,10 @@ export default function Backtesting() {
 
                 {/* Risk Analysis */}
                 <div>
-                  <h3 className="font-semibold mb-3">Risk Analysis</h3>
+                  <h3 className="font-semibold mb-2 sm:mb-3 text-sm sm:text-base">Risk Analysis</h3>
                   <Card>
-                    <CardContent className="p-4">
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <CardContent className="p-3 sm:p-4">
+                      <div className="grid grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
                         <div>
                           <div className="text-gray-500">Value at Risk (95%)</div>
                           <div className="font-medium">-$2,456</div>
@@ -1139,15 +1139,22 @@ export default function Backtesting() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex justify-end gap-2 pt-4 border-t">
-                  <Button variant="outline" onClick={() => setIsDetailsModalOpen(false)}>
+                <div className="flex flex-col sm:flex-row justify-end gap-2 pt-3 sm:pt-4 border-t">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsDetailsModalOpen(false)}
+                    className="w-full sm:w-auto"
+                  >
                     Close
                   </Button>
-                  <Button variant="outline">
+                  <Button 
+                    variant="outline"
+                    className="w-full sm:w-auto"
+                  >
                     <Download className="h-4 w-4 mr-2" />
                     Export Report
                   </Button>
-                  <Button>
+                  <Button className="w-full sm:w-auto">
                     Deploy Strategy
                   </Button>
                 </div>
