@@ -121,8 +121,8 @@ export function OrganizationsTab() {
   return (
     <div className="space-y-6">
       {/* Toolbar */}
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2 flex-1 max-w-md">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+        <div className="flex items-center gap-2 flex-1 sm:max-w-md">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
@@ -147,11 +147,12 @@ export function OrganizationsTab() {
         {canManageOrgs && (
           <Button 
             onClick={handleCreateOrg}
-            className="bg-brand-red hover:bg-red-700"
+            className="bg-brand-red hover:bg-red-700 w-full sm:w-auto"
             data-testid="button-add-organization"
           >
             <Plus className="h-4 w-4 mr-2" />
-            Add Organization
+            <span className="hidden sm:inline">Add Organization</span>
+            <span className="sm:hidden">Add</span>
           </Button>
         )}
       </div>
@@ -178,7 +179,60 @@ export function OrganizationsTab() {
         </Card>
       ) : (
         <Card>
-          <Table>
+          {/* Mobile Card View */}
+          <div className="block sm:hidden space-y-3 p-4">
+            {filteredOrgs.map((org) => (
+              <Card key={org.id} className="border">
+                <CardContent className="p-3 space-y-2">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="font-medium text-sm">{org.name}</div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        {org.memberCount || 0} members • Created {new Date(org.createdAt).toLocaleDateString()}
+                      </div>
+                    </div>
+                    <Badge 
+                      className={org.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}
+                    >
+                      {org.status}
+                    </Badge>
+                  </div>
+                  <div className="flex gap-2 pt-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="flex-1 text-xs"
+                      onClick={() => handleShowMembers(org)}
+                    >
+                      <UsersIcon className="h-3 w-3 mr-1" />
+                      Members
+                    </Button>
+                    {canManageOrgs && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button size="sm" variant="outline">
+                            <MoreHorizontal className="h-3 w-3" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleEditOrg(org)}>
+                            <Edit2 className="h-3 w-3 mr-2" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleArchiveToggle(org)}>
+                            <Archive className="h-3 w-3 mr-2" />
+                            {org.status === 'active' ? 'Archive' : 'Unarchive'}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          {/* Desktop Table View */}
+          <Table className="hidden sm:table">
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
