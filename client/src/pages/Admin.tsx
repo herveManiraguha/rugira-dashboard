@@ -448,13 +448,37 @@ export default function Admin() {
         <TabsContent value="system" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <Settings className="h-5 w-5 mr-2" />
+              <CardTitle className="flex items-center text-base sm:text-lg">
+                <Settings className="h-4 sm:h-5 w-4 sm:w-5 mr-2" />
                 System Configuration
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              <div className="overflow-x-auto">
+              {/* Mobile Card View */}
+              <div className="block sm:hidden space-y-3 p-4">
+                {systemConfigs.map((config) => (
+                  <Card key={config.key} className="border">
+                    <CardContent className="p-3 space-y-2">
+                      <div className="flex items-start justify-between">
+                        <div className="font-mono text-sm font-medium">{config.key}</div>
+                        {getCategoryBadge(config.category)}
+                      </div>
+                      <div className="space-y-1">
+                        <div className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
+                          {config.value}
+                        </div>
+                        <div className="text-xs text-gray-600">{config.description}</div>
+                      </div>
+                      <Button size="sm" variant="outline" className="w-full">
+                        <Edit className="h-3 w-3 mr-2" />
+                        Edit
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              {/* Desktop Table View */}
+              <div className="hidden sm:block overflow-x-auto">
                 <Table>
                 <TableHeader>
                   <TableRow>
