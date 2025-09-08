@@ -140,6 +140,46 @@ export default function Backtesting() {
   ]);
   const { toast } = useToast();
 
+  // Handle download backtest results
+  const handleDownloadBacktest = (backtest: BacktestResult) => {
+    if (!backtest.results || backtest.status !== 'completed') return;
+
+    // Create CSV content
+    const csvContent = [
+      // Header row
+      ['Metric', 'Value', 'Unit'].join(','),
+      // Data rows
+      ['Strategy Name', `"${backtest.strategyName}"`, ''],
+      ['Date Range', `"${backtest.dateRange}"`, ''],
+      ['Status', backtest.status, ''],
+      ['Total Return', backtest.results.totalReturn.toFixed(2), '%'],
+      ['Sharpe Ratio', backtest.results.sharpeRatio.toFixed(2), ''],
+      ['Max Drawdown', backtest.results.maxDrawdown.toFixed(2), '%'],
+      ['Win Rate', backtest.results.winRate.toFixed(2), '%'],
+      ['Total Trades', backtest.results.totalTrades.toString(), ''],
+      ['Final Capital', backtest.results.finalCapital.toString(), '$'],
+      ['Created At', backtest.createdAt, '']
+    ].join('\n');
+
+    // Create and download file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `backtest-${backtest.strategyName.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast({
+      title: "Download Complete",
+      description: "Backtest results exported to CSV successfully."
+    });
+  };
+
   const getStatusBadge = (status: BacktestResult['status']) => {
     switch (status) {
       case 'completed': return <Badge className="bg-green-100 text-green-800">Completed</Badge>;
@@ -423,7 +463,12 @@ export default function Backtesting() {
                             View Details
                           </Button>
                           {backtest.status === 'completed' && (
-                            <Button size="sm" variant="outline">
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => handleDownloadBacktest(backtest)}
+                              data-testid={`button-download-backtest-${backtest.id}`}
+                            >
                               <Download className="h-3 w-3" />
                             </Button>
                           )}
