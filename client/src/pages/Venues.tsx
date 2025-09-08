@@ -255,7 +255,7 @@ export default function Venues() {
   const { toast } = useToast();
 
   React.useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 640);
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -773,13 +773,14 @@ export default function Venues() {
             ))}
 
           {/* Issuer Platforms Card */}
+          {showIssuerPlatforms && filteredIssuerPlatforms.length > 0 && (
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader className="pb-4">
               <CardTitle className="text-base">Issuer Platforms (RWA Funds)</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {issuerPlatforms.map((platform) => (
+                {filteredIssuerPlatforms.map((platform) => (
                   <div key={platform.id} className="p-3 border rounded-lg space-y-2">
                     <div className="font-medium text-sm">
                       {platform.name} <span className="text-gray-500 font-normal">({platform.example})</span>
@@ -806,6 +807,7 @@ export default function Venues() {
               </div>
             </CardContent>
           </Card>
+          )}
         </div>
         ) : (
           <Card>
@@ -822,7 +824,7 @@ export default function Venues() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {tokenizedVenues.map((venue) => (
+                {filteredTokenizedVenues.map((venue) => (
                   <TableRow key={venue.id}>
                     <TableCell>
                       <div className="flex items-center space-x-2">
@@ -866,7 +868,7 @@ export default function Venues() {
                   </TableRow>
                 ))}
                 {/* Issuer Platforms in table */}
-                {issuerPlatforms.map((platform) => (
+                {showIssuerPlatforms && filteredIssuerPlatforms.map((platform) => (
                   <TableRow key={platform.id}>
                     <TableCell>
                       <div className="flex items-center space-x-2">
@@ -898,6 +900,7 @@ export default function Venues() {
           </Card>
         )}
       </div>
+      )}
 
       {/* Venue Details Sheet */}
       <Sheet open={venueSheetOpen} onOpenChange={setVenueSheetOpen}>
