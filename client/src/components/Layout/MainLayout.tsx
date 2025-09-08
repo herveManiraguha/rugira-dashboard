@@ -11,18 +11,19 @@ import { LiveModeBanner } from '@/components/Scope/LiveModeBanner';
 import { 
   Activity,
   Bot,
-  Target,
+  Beaker,
   Building2,
-  Shield,
-  BarChart3,
-  TrendingUp,
-  Monitor,
+  ShieldCheck,
+  BarChart,
+  History,
+  MonitorDot,
   Settings,
-  HelpCircle,
+  LifeBuoy,
   Menu,
   X,
   User,
-  ChevronRight
+  ChevronRight,
+  Star
 } from 'lucide-react';
 import {
   Sheet,
@@ -33,6 +34,12 @@ import {
   SheetTrigger,
   SheetClose
 } from '@/components/ui/sheet';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import KillSwitchBanner from '@/components/KillSwitch/KillSwitchBanner';
 import AIAssistantFloat from '@/components/AI/AIAssistantFloat';
@@ -42,15 +49,16 @@ interface MainLayoutProps {
 }
 
 const navigation = [
-  { name: 'Overview', href: '/overview', icon: Activity, group: null },
-  { name: 'Venues', href: '/venues', icon: Building2, group: 'Build' },
-  { name: 'Strategies', href: '/strategies', icon: Target, group: 'Build' },
-  { name: 'Backtesting', href: '/backtesting', icon: TrendingUp, group: 'Build' },
-  { name: 'Bots', href: '/bots', icon: Bot, group: 'Run' },
-  { name: 'Monitoring', href: '/monitoring', icon: Monitor, group: 'Run' },
-  { name: 'Reports', href: '/reports', icon: BarChart3, group: 'Govern' },
-  { name: 'Compliance', href: '/compliance', icon: Shield, group: 'Govern' },
-  { name: 'Admin', href: '/admin', icon: Settings, group: 'System' },
+  { name: 'Overview', href: '/overview', icon: Activity, group: null, description: 'Dashboard overview' },
+  { name: 'Venues', href: '/venues', icon: Building2, group: 'Build', description: 'Exchange connections' },
+  { name: 'Strategies', href: '/strategies', icon: Beaker, group: 'Build', description: 'Trading strategies' },
+  { name: 'Backtesting', href: '/backtesting', icon: History, group: 'Build', description: 'Test strategies' },
+  { name: 'Bots', href: '/bots', icon: Bot, group: 'Run', description: 'Trading bots' },
+  { name: 'Monitoring', href: '/monitoring', icon: MonitorDot, group: 'Run', description: 'System monitoring' },
+  { name: 'Analytics', href: '/reports', icon: BarChart, group: 'Govern', description: 'Reports & analytics' },
+  { name: 'Compliance', href: '/compliance', icon: ShieldCheck, group: 'Govern', description: 'Compliance tracking' },
+  { name: 'Admin', href: '/admin', icon: Settings, group: 'System', description: 'Administration' },
+  { name: 'Help', href: '/help', icon: LifeBuoy, group: 'System', description: 'Help & support' },
 ];
 
 export default function MainLayoutNew({ children }: MainLayoutProps) {
