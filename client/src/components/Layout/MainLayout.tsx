@@ -220,16 +220,11 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
         <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
           <SheetContent side="left" className="w-64 p-0">
             <div className="flex h-full flex-col">
-              <div className="flex items-center justify-between px-4 py-4 border-b">
+              <div className="flex items-center px-4 py-4 border-b">
                 <div className="flex items-center space-x-2">
                   <img src={logoSvg} alt="Rugira" className="h-8 w-8" />
                   <span className="text-lg font-semibold">Rugira</span>
                 </div>
-                <SheetClose asChild>
-                  <Button variant="ghost" size="sm" className="p-1 h-8 w-8">
-                    <X className="h-4 w-4" />
-                  </Button>
-                </SheetClose>
               </div>
               
               <nav className="flex-1 overflow-y-auto px-2 py-4 space-y-1">
