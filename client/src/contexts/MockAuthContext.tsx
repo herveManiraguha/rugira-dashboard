@@ -35,12 +35,12 @@ interface AuthProviderProps {
 // Mock user data
 const MOCK_USER: User = {
   id: 'mock-user-123',
-  email: 'hanz.mueller@rugira.ch',
-  name: 'Hanz Mueller',
+  email: 'hans.mueller@rugira.ch',
+  name: 'Hans Mueller',
   profile: {
-    name: 'Hanz Mueller',
-    email: 'hanz.mueller@rugira.ch',
-    given_name: 'Hanz',
+    name: 'Hans Mueller',
+    email: 'hans.mueller@rugira.ch',
+    given_name: 'Hans',
     family_name: 'Mueller',
     picture: 'https://www.gravatar.com/avatar/placeholder?d=mp&s=200'
   },
@@ -50,8 +50,8 @@ const MOCK_USER: User = {
 
 // Mock credentials
 const MOCK_CREDENTIALS = {
-  username: 'hanz.mueller',
-  password: 'Hanz1234!'
+  username: 'hans.mueller',
+  password: 'Hans1234!'
 };
 
 export function AuthProvider({ children }: AuthProviderProps) {

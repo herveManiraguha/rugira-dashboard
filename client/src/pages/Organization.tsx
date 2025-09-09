@@ -48,7 +48,7 @@ export default function Organization() {
   
   // Mock team members
   const teamMembers = [
-    { id: 1, name: 'Hanz Müller', email: 'hanz.mueller@rugira.ch', role: 'Admin', status: 'active', lastActive: '5 min ago' },
+    { id: 1, name: 'Hans Müller', email: 'hans.mueller@rugira.ch', role: 'Admin', status: 'active', lastActive: '5 min ago' },
     { id: 2, name: 'Emma Schmidt', email: 'emma.schmidt@rugira.ch', role: 'Trader', status: 'active', lastActive: '1 hour ago' },
     { id: 3, name: 'Lars Jensen', email: 'lars.jensen@rugira.ch', role: 'Analyst', status: 'active', lastActive: '2 hours ago' },
     { id: 4, name: 'Sofia Andersson', email: 'sofia.andersson@rugira.ch', role: 'Compliance', status: 'active', lastActive: '1 day ago' },

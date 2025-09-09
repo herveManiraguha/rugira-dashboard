@@ -10,10 +10,10 @@ export interface DemoUser {
 
 export const demoUsers: DemoUser[] = [
   {
-    username: 'hanz.mueller',
-    password: 'Hanz1234!',
-    name: 'Hanz Müller',
-    email: 'hanz.mueller@rugira.ch',
+    username: 'hans.mueller',
+    password: 'Hans1234!',
+    name: 'Hans Müller',
+    email: 'hans.mueller@rugira.ch',
     role: 'Admin',
     tenantRoles: {
       'rugira-prod': ['admin', 'trader'],

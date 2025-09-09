@@ -28,9 +28,9 @@ export default function Profile() {
   
   // Profile form state
   const [profileData, setProfileData] = useState({
-    firstName: user?.profile?.name?.split(' ')[0] || 'Hanz',
+    firstName: user?.profile?.name?.split(' ')[0] || 'Hans',
     lastName: user?.profile?.name?.split(' ')[1] || 'Müller',
-    email: user?.profile?.email || 'hanz.mueller@rugira.ch',
+    email: user?.profile?.email || 'hans.mueller@rugira.ch',
     phone: '+41 79 123 45 67',
     company: 'Rugira Trading AG',
     role: 'Senior Trader',

@@ -309,7 +309,7 @@ export default function ReportsNew() {
     {
       policy: 'Position Size',
       requestedBy: 'martin.keller',
-      approvedBy: 'hanz.mueller',
+      approvedBy: 'hans.mueller',
       action: 'Override for BTC position',
       time: '2025-01-14 14:23',
       notes: 'Opportunity trade approved'
