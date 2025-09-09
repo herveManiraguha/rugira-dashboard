@@ -1,0 +1,33 @@
+Goal: Make “Tenants” a first-class admin section and visible scope in the app while keeping current data working.
+
+Sidebar: Under the SYSTEM group, add a Tenants menu item above Admin. Show it only to Organization Admins.
+
+Header/Breadcrumb: Display Organization → Tenant → Portfolio → Environment and a small Tenant chip (name + color dot) in the top bar. Clicking the tenant opens a switcher.
+
+Tenants List: Create a list page with columns: Tenant, Status, Portfolios, Active Bots, Connected Venues, Last Activity, Pending Approvals, Region. Provide actions per row: Switch to Tenant, Open, Disable/Kill Switch, Export Audit, Delete (with confirmation). Include a Create Tenant button.
+
+Tenant Detail: Create tabs: Overview · Users & Roles · Venues & API Keys · Policies & Risk · Approvals & Workflows · Audit & Exports · Billing.
+
+Overview: show KPI cards (Portfolios, Active Bots, Venues, Policy Coverage, Alerts) and quick actions (Kill Switch, Export Audit, Branding preview).
+
+Users & Roles: manage membership within this tenant; roles are Admin, Trader, Approver, Viewer.
+
+Venues & API Keys: list connections with status and last heartbeat.
+
+Policies & Risk: show baseline policy, per-tenant overrides, and compliance status.
+
+Approvals & Workflows: show pending and history filtered to this tenant.
+
+Audit & Exports: enable downloading evidence bundles scoped to this tenant.
+
+Billing: display plan and usage counters (bots, portfolios, exports).
+
+Create Tenant flow: multi-step form with: Name; Optional Legal Entity label; Region (CH/EU); Branding (logo + colors); Initial Venues/API Keys; Risk Baseline (select a template); Add initial users.
+
+Scope inheritance: Bots, Venues, Analytics, and Compliance screens must filter by the active tenant; include a tenant selector at the top of each page.
+
+Permissions: Only Organization Admins can see Tenants and perform create/disable/delete. Non-admins remain within their assigned tenant and cannot switch tenants.
+
+Backward compatibility: If existing data has no tenant, create a Default Tenant and attach current entities to it. Seed the demo with two example tenants so the navigation and filters can be demonstrated immediately.
+
+Acceptance: The active tenant is always visible in the header; switching tenants updates tables and KPIs across sections; the kill switch pauses all bots under that tenant; audit exports are clearly tenant-scoped.

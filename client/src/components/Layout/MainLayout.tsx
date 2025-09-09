@@ -57,13 +57,14 @@ const navigation = [
   { name: 'Monitoring', href: '/monitoring', icon: MonitorDot, group: 'Run', description: 'System monitoring' },
   { name: 'Analytics', href: '/reports', icon: BarChart, group: 'Govern', description: 'Reports & analytics' },
   { name: 'Compliance', href: '/compliance', icon: ShieldCheck, group: 'Govern', description: 'Compliance tracking' },
+  { name: 'Tenants', href: '/tenants', icon: Building2, group: 'System', description: 'Tenant management', requiresAdmin: true },
   { name: 'Admin', href: '/admin', icon: Settings, group: 'System', description: 'Administration' },
   { name: 'Help', href: '/help', icon: LifeBuoy, group: 'System', description: 'Help & support' },
 ];
 
 export default function MainLayoutNew({ children }: MainLayoutProps) {
   const [location, setLocation] = useLocation();
-  const { user } = useAuth();
+  const { user, currentTenant } = useAuth();
   const [isKillSwitchEnabled, setIsKillSwitchEnabled] = useState(false);
   const { isLive } = useEnvironment();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -94,13 +95,24 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
     // TODO: Implement actual kill switch functionality when backend supports it
   };
 
+  // Check if user is Organization Admin
+  const isOrgAdmin = user?.tenant_roles?.[currentTenant || 'rugira-prod']?.includes('admin');
+
+  // Filter navigation items based on permissions
+  const filteredNavigation = navigation.filter(item => {
+    if (item.requiresAdmin && !isOrgAdmin) {
+      return false;
+    }
+    return true;
+  });
+
   // Group navigation items
-  const groupedNavigation = navigation.reduce((acc, item) => {
+  const groupedNavigation = filteredNavigation.reduce((acc, item) => {
     const group = item.group || 'Main';
     if (!acc[group]) acc[group] = [];
     acc[group].push(item);
     return acc;
-  }, {} as Record<string, typeof navigation>);
+  }, {} as Record<string, typeof filteredNavigation>);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">

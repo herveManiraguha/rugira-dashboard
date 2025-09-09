@@ -35,6 +35,9 @@ const UserDetail = lazy(() => import("@/pages/UserDetail"));
 const Help = lazy(() => import("@/pages/Help"));
 const InternalChecks = lazy(() => import("@/pages/InternalChecks"));
 const Bots = lazy(() => import("@/pages/Bots"));
+const Tenants = lazy(() => import("@/pages/Tenants"));
+const TenantDetail = lazy(() => import("@/pages/TenantDetail"));
+const CreateTenant = lazy(() => import("@/pages/CreateTenant"));
 
 // Loading component for lazy-loaded routes
 const PageLoader = () => (
@@ -186,6 +189,36 @@ function App() {
               <MainLayout>
                 <Suspense fallback={<PageLoader />}>
                   <UserDetail />
+                </Suspense>
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+          
+          <Route path="/tenants">
+            <ProtectedRoute>
+              <MainLayout>
+                <Suspense fallback={<PageLoader />}>
+                  <Tenants />
+                </Suspense>
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+          
+          <Route path="/tenants/new">
+            <ProtectedRoute>
+              <MainLayout>
+                <Suspense fallback={<PageLoader />}>
+                  <CreateTenant />
+                </Suspense>
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+          
+          <Route path="/tenants/:id">
+            <ProtectedRoute>
+              <MainLayout>
+                <Suspense fallback={<PageLoader />}>
+                  <TenantDetail />
                 </Suspense>
               </MainLayout>
             </ProtectedRoute>
