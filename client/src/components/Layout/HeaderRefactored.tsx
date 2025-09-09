@@ -72,7 +72,7 @@ type Mode = 'Live' | 'Paper' | 'Demo';
 
 export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: HeaderRefactoredProps) {
   const [, setLocation] = useLocation();
-  const { user, logout } = useAuth();
+  const { user, logout, currentTenant, switchTenant } = useAuth();
   const { environment, setEnvironment } = useEnvironment();
   const { organizations = [] } = useScope();
   
@@ -225,6 +225,56 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
                         {org.name}
                       </DropdownMenuItem>
                     ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                
+                <ChevronRight className="h-3 w-3 mx-1 text-gray-400" />
+                
+                {/* Tenant Chip */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 px-3 text-xs font-medium rounded-full border border-gray-200 hover:bg-gray-50"
+                      data-tenant-trigger
+                    >
+                      <div className="flex items-center gap-1">
+                        <Circle className="h-2 w-2 bg-green-500" fill="currentColor" />
+                        {currentTenant === 'rugira-prod' ? 'Production' : 
+                         currentTenant === 'rugira-test' ? 'Test' : 
+                         currentTenant === 'client-alpha' ? 'Client Alpha' : 'Default'}
+                      </div>
+                      <ChevronRight className="h-3 w-3 ml-1" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    <DropdownMenuLabel>Switch Tenant</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {user?.tenant_roles && Object.keys(user.tenant_roles).map((tenantId) => (
+                      <DropdownMenuItem
+                        key={tenantId}
+                        onClick={() => switchTenant(tenantId)}
+                        className="cursor-pointer"
+                      >
+                        <div className="flex items-center justify-between w-full">
+                          <span className="flex items-center gap-2">
+                            <Circle className="h-2 w-2 bg-green-500" fill="currentColor" />
+                            {tenantId === 'rugira-prod' ? 'Production' : 
+                             tenantId === 'rugira-test' ? 'Test' : 
+                             tenantId === 'client-alpha' ? 'Client Alpha' : tenantId}
+                          </span>
+                          {currentTenant === tenantId && (
+                            <Badge variant="outline" className="text-xs">Active</Badge>
+                          )}
+                        </div>
+                      </DropdownMenuItem>
+                    ))}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => setLocation('/tenants')}>
+                      <Building2 className="h-3 w-3 mr-2" />
+                      Manage Tenants
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
                 
