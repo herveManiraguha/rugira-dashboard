@@ -134,14 +134,18 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
         {/* Desktop Sidebar - lg screens and above */}
         <aside 
           className={cn(
-            "hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 bg-white border-r border-gray-200 transition-all duration-300 z-30",
+            "hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 transition-all duration-300 z-30",
             sidebarCollapsed ? "lg:w-16" : "lg:w-64",
             "lg:pt-14"
           )}
+          style={{
+            backgroundColor: 'var(--sidebar-surface)',
+            borderRight: '1px solid var(--sidebar-divider)'
+          }}
         >
           <div className="flex-1 flex flex-col overflow-y-auto">
             {/* Collapse toggle for desktop */}
-            <div className="flex items-center justify-end p-2 border-b">
+            <div className="flex items-center justify-end p-2" style={{ borderBottom: '1px solid var(--sidebar-divider)' }}>
               <Button
                 variant="ghost"
                 size="sm"
@@ -172,17 +176,31 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
                         <Link key={item.name} href={item.href}>
                           <div
                             className={cn(
-                              "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer",
-                              isActive
-                                ? "bg-gray-100 text-gray-900"
-                                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                              sidebarCollapsed && "justify-center"
+                              "relative flex items-center px-3 py-3 text-sm transition-all cursor-pointer",
+                              sidebarCollapsed && "justify-center px-2"
                             )}
+                            style={{
+                              backgroundColor: isActive ? '#FFFFFF' : 'transparent',
+                              color: isActive ? 'var(--text-heading)' : 'var(--text-body)',
+                              fontWeight: isActive ? '600' : '400',
+                              borderLeft: isActive ? '4px solid var(--brand-red-600)' : '4px solid transparent',
+                            }}
+                            onMouseEnter={(e) => {
+                              if (!isActive) {
+                                e.currentTarget.style.backgroundColor = 'var(--sidebar-hover-bg)';
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (!isActive) {
+                                e.currentTarget.style.backgroundColor = 'transparent';
+                              }
+                            }}
                           >
                             <ItemIcon className={cn(
                               "flex-shrink-0 h-5 w-5",
-                              !sidebarCollapsed && "mr-3"
-                            )} strokeWidth={1.5} />
+                              !sidebarCollapsed && "mr-3",
+                              isActive && "text-gray-900"
+                            )} strokeWidth={isActive ? 2 : 1.5} />
                             {!sidebarCollapsed && item.name}
                           </div>
                         </Link>
@@ -218,7 +236,7 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
         
         {/* Mobile/Tablet Sidebar */}
         <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-          <SheetContent side="left" className="w-64 p-0">
+          <SheetContent side="left" className="w-64 p-0" style={{ backgroundColor: 'var(--sidebar-surface)' }}>
             <SheetHeader className="sr-only">
               <SheetTitle>Navigation Menu</SheetTitle>
               <SheetDescription>
@@ -247,15 +265,29 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
                       return (
                         <Link key={item.name} href={item.href}>
                           <div
-                            className={cn(
-                              "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer",
-                              isActive
-                                ? "bg-gray-100 text-gray-900"
-                                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                            )}
+                            className="relative flex items-center px-3 py-3 text-sm transition-all cursor-pointer"
+                            style={{
+                              backgroundColor: isActive ? '#FFFFFF' : 'transparent',
+                              color: isActive ? 'var(--text-heading)' : 'var(--text-body)',
+                              fontWeight: isActive ? '600' : '400',
+                              borderLeft: isActive ? '4px solid var(--brand-red-600)' : '4px solid transparent',
+                            }}
                             onClick={() => setMobileMenuOpen(false)}
+                            onMouseEnter={(e) => {
+                              if (!isActive) {
+                                e.currentTarget.style.backgroundColor = 'var(--sidebar-hover-bg)';
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (!isActive) {
+                                e.currentTarget.style.backgroundColor = 'transparent';
+                              }
+                            }}
                           >
-                            <ItemIcon className="mr-3 flex-shrink-0 h-5 w-5" strokeWidth={1.5} />
+                            <ItemIcon className={cn(
+                              "mr-3 flex-shrink-0 h-5 w-5",
+                              isActive && "text-gray-900"
+                            )} strokeWidth={isActive ? 2 : 1.5} />
                             {item.name}
                           </div>
                         </Link>

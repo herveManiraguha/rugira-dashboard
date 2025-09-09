@@ -59,6 +59,7 @@ import {
   Menu,
   X,
   Command,
+  Eye,
 } from 'lucide-react';
 
 interface HeaderRefactoredProps {
@@ -82,6 +83,7 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
   const [showLiveConfirm, setShowLiveConfirm] = useState(false);
   const [liveConfirmInput, setLiveConfirmInput] = useState('');
   const [systemStatus, setSystemStatus] = useState<'healthy' | 'warning' | 'error'>('healthy');
+  const [highContrast, setHighContrast] = useState(false);
   
   // Mock organizations and portfolios if not available
   const orgs = organizations.length > 0 ? organizations : [
@@ -112,6 +114,30 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
       setLiveConfirmInput('');
     }
   };
+  
+  // Toggle high contrast mode
+  const toggleHighContrast = () => {
+    const newState = !highContrast;
+    setHighContrast(newState);
+    
+    if (newState) {
+      document.body.classList.add('high-contrast');
+    } else {
+      document.body.classList.remove('high-contrast');
+    }
+    
+    // Save preference
+    localStorage.setItem('highContrast', newState.toString());
+  };
+  
+  // Load high contrast preference on mount
+  useEffect(() => {
+    const savedHighContrast = localStorage.getItem('highContrast') === 'true';
+    if (savedHighContrast) {
+      setHighContrast(true);
+      document.body.classList.add('high-contrast');
+    }
+  }, []);
   
   // Keyboard shortcuts
   useEffect(() => {
@@ -355,6 +381,23 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
               
               {/* Notifications */}
               <NotificationButton />
+              
+              {/* High Contrast Toggle */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={toggleHighContrast}
+                  >
+                    <Eye className={cn("h-4 w-4", highContrast && "text-blue-600")} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{highContrast ? 'Disable' : 'Enable'} High Contrast</p>
+                </TooltipContent>
+              </Tooltip>
               
               {/* Help */}
               <Tooltip>

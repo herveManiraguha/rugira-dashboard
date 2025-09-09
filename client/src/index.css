@@ -5,14 +5,23 @@
 
 :root {
   /* Primary Swiss Brand Colors - Keep red as primary */
-  --brand-red: hsl(1, 100%, 44%);          /* #E10600 - Primary brand/CTA only */
-  --brand-red-600: hsl(0, 100%, 35%);      /* #B30000 - Primary hover */
+  --brand-red: #E10500;                    /* Primary brand/CTA only */
+  --brand-red-600: #E10500;                /* Primary accent and CTA */
   
-  /* Semantic Colors - For operational status */
+  /* New Theme Colors */
+  --sidebar-surface: #FFF7F7;              /* Very light red tint for sidebar */
+  --sidebar-hover-bg: #FFF1F1;             /* Slightly stronger tint for hover */
+  --sidebar-divider: #F3E1E1;              /* Hairline divider */
+  
+  /* Semantic Colors - For operational status (separate from brand) */
   --success: hsl(155, 62%, 29%);           /* Green for healthy/connected */
   --warning: hsl(42, 93%, 56%);            /* Amber for warnings/rate-limit */
-  --error: hsl(1, 100%, 44%);              /* Red for errors only */
+  --error: hsl(348, 83%, 47%);             /* Different red for errors - not brand red */
   --info: hsl(210, 100%, 45%);             /* Blue for informational */
+  
+  /* P&L Colors - Separate from brand */
+  --pnl-negative: #DC2626;                 /* Red for negative P&L - different from brand */
+  --pnl-positive: #16A34A;                 /* Green for positive P&L */
   
   /* Modern Spacing Scale - Base 16px/20px rhythm */
   --spacing-xs: 4px;
@@ -34,11 +43,11 @@
   --font-size-3xl: 32px;  /* Hero titles */
   
   /* Core Neutrals - Soft, calm palette */
-  --canvas: #FAFBFC;                       /* App background - softer */
-  --sidebar-bg: #F7F8FA;                   /* Sidebar background */
+  --canvas: #FFFFFF;                       /* Main content canvas - pure white */
+  --sidebar-bg: #FFF7F7;                   /* Sidebar background - very light red tint */
   --navbar-bg: #FFFFFF;                    /* Navbar background */
-  --footer-bg: #F6F7F9;                    /* Footer background */
-  --surface: #FFFFFF;                      /* Card/Surface default */
+  --footer-bg: #FFFFFF;                    /* Footer background */
+  --surface: #FFFFFF;                      /* Card/Surface default - keep white */
   --sub-surface: #F9FAFB;                  /* Table header/Sub-surface */
   --input-bg: #F9FAFB;                     /* Input field background */
   --hover-surface: #F3F4F6;                /* Hover surface tint */
@@ -65,7 +74,7 @@
   --warning-text: #A16207;
   --warning-border: #FDE68A;
   --error-bg: #FEF2F2;
-  --error-text: #B91C1C;
+  --error-text: #DC2626;                   /* Use different red for errors */
   --error-border: #FCA5A5;
   --info-bg: #EFF6FF;
   --info-text: #1E40AF;
@@ -100,19 +109,43 @@
   --chart-5: hsl(280, 60%, 50%);
   
   /* Sidebar colors */
-  --sidebar: var(--sidebar-bg);
+  --sidebar: var(--sidebar-surface);
   --sidebar-foreground: var(--text-body);
-  --sidebar-primary: var(--brand-red);
+  --sidebar-primary: var(--brand-red-600);
   --sidebar-primary-foreground: hsl(0, 0%, 100%);
-  --sidebar-accent: var(--hover-surface);
-  --sidebar-accent-foreground: var(--brand-red);
-  --sidebar-border: var(--border-default);
-  --sidebar-ring: var(--brand-red);
+  --sidebar-accent: var(--sidebar-hover-bg);
+  --sidebar-accent-foreground: var(--text-heading);
+  --sidebar-border: var(--sidebar-divider);
+  --sidebar-ring: var(--brand-red-600);
+  
+  /* High contrast mode flag */
+  --high-contrast: 0;
+}
+
+/* High contrast mode - pure white sidebar */
+.high-contrast {
+  --sidebar-surface: #FFFFFF !important;
+  --sidebar-hover-bg: #F3F4F6 !important;
+  --sidebar-divider: #E5E7EB !important;
+}
+
+/* Utility classes for P&L styling */
+.text-pnl-negative {
+  color: var(--pnl-negative) !important;
+}
+
+.text-pnl-positive {
+  color: var(--pnl-positive) !important;
 }
 
 @layer base {
   * {
     @apply border-border;
+  }
+  
+  html {
+    /* Deep red background for overscroll effect */
+    background-color: #E10500;
   }
   
   body {
@@ -123,6 +156,7 @@
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
     font-feature-settings: "tnum", "ss01"; /* Tabular numbers + stylistic alternates */
   }
   

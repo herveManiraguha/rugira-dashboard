@@ -640,7 +640,7 @@ export default function Overview() {
                   </div>
                   <div className="text-left sm:text-right flex-shrink-0">
                     <p className={`text-sm font-medium ${
-                      activity.pnl > 0 ? 'text-green-600' : activity.pnl < 0 ? 'text-red-600' : 'text-gray-500'
+                      activity.pnl > 0 ? 'text-pnl-positive' : activity.pnl < 0 ? 'text-pnl-negative' : 'text-gray-500'
                     }`}>
                       {activity.pnl > 0 ? '+' : ''}${activity.pnl.toFixed(2)}
                     </p>
