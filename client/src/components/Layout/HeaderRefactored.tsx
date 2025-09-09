@@ -239,12 +239,9 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
                       className="h-7 px-3 text-xs font-medium rounded-full border border-gray-200 hover:bg-gray-50"
                       data-tenant-trigger
                     >
-                      <div className="flex items-center gap-1">
-                        <Circle className="h-2 w-2 bg-green-500" fill="currentColor" />
-                        {currentTenant === 'rugira-prod' ? 'Production' : 
-                         currentTenant === 'rugira-test' ? 'Test' : 
-                         currentTenant === 'client-alpha' ? 'Client Alpha' : 'Default'}
-                      </div>
+                      {currentTenant === 'rugira-prod' ? 'Production' : 
+                       currentTenant === 'rugira-test' ? 'Test' : 
+                       currentTenant === 'client-alpha' ? 'Client Alpha' : 'Default'}
                       <ChevronRight className="h-3 w-3 ml-1" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -258,8 +255,7 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
                         className="cursor-pointer"
                       >
                         <div className="flex items-center justify-between w-full">
-                          <span className="flex items-center gap-2">
-                            <Circle className="h-2 w-2 bg-green-500" fill="currentColor" />
+                          <span>
                             {tenantId === 'rugira-prod' ? 'Production' : 
                              tenantId === 'rugira-test' ? 'Test' : 
                              tenantId === 'client-alpha' ? 'Client Alpha' : tenantId}
@@ -353,23 +349,8 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
               </div>
             </div>
             
-            {/* Cluster B: Filters */}
-            <div className="hidden lg:flex items-center gap-2 flex-1">
-              {/* Time Range Selector */}
-              <Select value={timeRange} onValueChange={(v) => setTimeRange(v as TimeRange)}>
-                <SelectTrigger className="h-7 w-24 text-xs">
-                  <Calendar className="h-3 w-3 mr-1" />
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="24h">24h</SelectItem>
-                  <SelectItem value="7d">7d</SelectItem>
-                  <SelectItem value="MTD">MTD</SelectItem>
-                  <SelectItem value="YTD">YTD</SelectItem>
-                </SelectContent>
-              </Select>
-              
-            </div>
+            {/* Spacer */}
+            <div className="flex-1"></div>
             
             {/* Cluster C: System Status */}
             <div className="hidden lg:flex items-center">
