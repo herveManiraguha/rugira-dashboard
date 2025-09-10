@@ -23,7 +23,8 @@ import {
   X,
   User,
   ChevronRight,
-  Star
+  Star,
+  Network
 } from 'lucide-react';
 import {
   Sheet,
@@ -57,7 +58,7 @@ const navigation = [
   { name: 'Monitoring', href: '/monitoring', icon: MonitorDot, group: 'Run', description: 'System monitoring' },
   { name: 'Analytics', href: '/reports', icon: BarChart, group: 'Govern', description: 'Reports & analytics' },
   { name: 'Compliance', href: '/compliance', icon: ShieldCheck, group: 'Govern', description: 'Compliance tracking' },
-  { name: 'Tenants', href: '/tenants', icon: Building2, group: 'System', description: 'Tenant management', requiresAdmin: true },
+  { name: 'Tenants', href: '/tenants', icon: Network, group: 'System', description: 'Tenant management', requiresAdmin: true },
   { name: 'Admin', href: '/admin', icon: Settings, group: 'System', description: 'Administration' },
   { name: 'Help', href: '/help', icon: LifeBuoy, group: 'System', description: 'Help & support' },
 ];
