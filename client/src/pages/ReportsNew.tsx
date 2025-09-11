@@ -427,7 +427,7 @@ export default function ReportsNew() {
       </div>
 
       {/* Toolbar */}
-      <div className="bg-white border rounded-lg p-4 space-y-4">
+      <div className="bg-card border rounded-lg p-4 space-y-4">
         <div className="flex flex-wrap items-center gap-4">
           {/* Time Range */}
           <Select value={dateRange} onValueChange={setDateRange}>
@@ -851,7 +851,7 @@ export default function ReportsNew() {
                             if (active && payload && payload.length) {
                               const data = payload[0].payload;
                               return (
-                                <div className="bg-white p-2 border rounded shadow-lg text-xs">
+                                <div className="bg-card p-2 border rounded shadow-lg text-xs">
                                   <p className="font-semibold">{data.name}</p>
                                   <p>P&L: {formatCurrency(data.pnl)}</p>
                                   <p>ROI: {formatPercent(data.roi)}</p>

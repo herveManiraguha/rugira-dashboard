@@ -48,7 +48,7 @@ export function Skeleton({
 
 export function KPISkeletonCard() {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6">
+    <div className="rounded-xl border border-gray-200 bg-card p-6">
       <Skeleton variant="text" className="mb-2 h-3 w-24" />
       <Skeleton variant="text" className="mb-1 h-8 w-32" />
       <Skeleton variant="text" className="h-3 w-20" />
@@ -58,7 +58,7 @@ export function KPISkeletonCard() {
 
 export function ChartSkeleton() {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6">
+    <div className="rounded-xl border border-gray-200 bg-card p-6">
       <div className="mb-4 flex items-center justify-between">
         <Skeleton variant="text" className="h-5 w-32" />
         <Skeleton variant="rectangular" className="h-8 w-24" />
@@ -70,7 +70,7 @@ export function ChartSkeleton() {
 
 export function TableSkeleton({ rows = 5 }: { rows?: number }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white">
+    <div className="rounded-xl border border-gray-200 bg-card">
       <div className="border-b border-gray-200 bg-gray-50 p-4">
         <div className="flex gap-4">
           {[...Array(4)].map((_, i) => (
