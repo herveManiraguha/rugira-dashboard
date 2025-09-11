@@ -229,9 +229,9 @@ export default function Strategies() {
 
   const getRiskBadge = (risk: StrategyData['riskLevel']) => {
     const variants = {
-      low: 'bg-green-100 text-green-800 border-green-200',
-      medium: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      high: 'bg-red-100 text-red-800 border-red-200'
+      low: 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20',
+      medium: 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20',
+      high: 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20'
     };
     
     return (
@@ -243,9 +243,9 @@ export default function Strategies() {
 
   const getComplexityBadge = (complexity: StrategyData['complexity']) => {
     const variants = {
-      beginner: 'bg-blue-100 text-blue-800 border-blue-200',
-      intermediate: 'bg-purple-100 text-purple-800 border-purple-200',
-      advanced: 'bg-orange-100 text-orange-800 border-orange-200'
+      beginner: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20',
+      intermediate: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20',
+      advanced: 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20'
     };
     
     return (
@@ -257,9 +257,9 @@ export default function Strategies() {
 
   const getStatusBadge = (status: StrategyData['status']) => {
     const variants = {
-      available: 'bg-gray-100 text-gray-800 border-gray-200',
-      popular: 'bg-green-100 text-green-800 border-green-200',
-      advanced: 'bg-purple-100 text-purple-800 border-purple-200'
+      available: 'bg-gray-500/10 text-gray-600 dark:text-gray-400 border-gray-500/20',
+      popular: 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20',
+      advanced: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20'
     };
     
     return (
@@ -271,10 +271,10 @@ export default function Strategies() {
 
   const getMarketConditionBadge = (condition: StrategyData['marketCondition']) => {
     const variants = {
-      trending: 'bg-blue-100 text-blue-800 border-blue-200',
-      ranging: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-      volatile: 'bg-red-100 text-red-800 border-red-200',
-      any: 'bg-green-100 text-green-800 border-green-200'
+      trending: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20',
+      ranging: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20',
+      volatile: 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20',
+      any: 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20'
     };
     
     return (
@@ -307,7 +307,7 @@ export default function Strategies() {
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <div className="p-2 rounded-lg bg-gray-50 text-gray-600">
+                      <div className="p-2 rounded-lg bg-muted text-muted-foreground">
                         {getTypeIcon(strategy.type)}
                       </div>
                       <CardTitle className="text-lg">{strategy.name}</CardTitle>
@@ -352,12 +352,12 @@ export default function Strategies() {
                 </CardHeader>
 
                 <CardContent className="space-y-4">
-                  <p className="text-sm text-gray-600 leading-relaxed">{strategy.description}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{strategy.description}</p>
                   
                   <div className="space-y-3">
                     <div>
-                      <h4 className="text-sm font-medium text-green-700 mb-1">✓ Advantages</h4>
-                      <ul className="text-sm text-gray-600 space-y-1">
+                      <h4 className="text-sm font-medium text-green-600 dark:text-green-400 mb-1">✓ Advantages</h4>
+                      <ul className="text-sm text-muted-foreground space-y-1">
                         {strategy.pros.map((pro, index) => (
                           <li key={index} className="flex items-start">
                             <span className="text-green-500 mr-2">•</span>
@@ -368,8 +368,8 @@ export default function Strategies() {
                     </div>
                     
                     <div>
-                      <h4 className="text-sm font-medium text-red-700 mb-1">⚠ Considerations</h4>
-                      <ul className="text-sm text-gray-600 space-y-1">
+                      <h4 className="text-sm font-medium text-red-600 dark:text-red-400 mb-1">⚠ Considerations</h4>
+                      <ul className="text-sm text-muted-foreground space-y-1">
                         {strategy.cons.map((con, index) => (
                           <li key={index} className="flex items-start">
                             <span className="text-red-500 mr-2">•</span>
@@ -380,14 +380,14 @@ export default function Strategies() {
                     </div>
                   </div>
 
-                  <div className="pt-3 border-t border-gray-100">
+                  <div className="pt-3 border-t border-border">
                     <div className="text-sm">
-                      <span className="text-gray-500 font-medium">Best for: </span>
-                      <span className="text-gray-900">{strategy.bestFor}</span>
+                      <span className="text-muted-foreground font-medium">Best for: </span>
+                      <span className="text-foreground">{strategy.bestFor}</span>
                     </div>
                     <div className="text-sm mt-1">
-                      <span className="text-gray-500 font-medium">Timeframe: </span>
-                      <span className="text-gray-900">{strategy.timeframe}</span>
+                      <span className="text-muted-foreground font-medium">Timeframe: </span>
+                      <span className="text-foreground">{strategy.timeframe}</span>
                     </div>
                   </div>
                 </CardContent>
