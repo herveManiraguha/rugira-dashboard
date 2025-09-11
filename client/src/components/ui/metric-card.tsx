@@ -94,7 +94,7 @@ export function MetricCard({
               <p className={cn("text-gray-600 font-medium", textSizes[size].label)}>
                 {label}
               </p>
-              <p className={cn("font-bold text-gray-900 tabular-nums", textSizes[size].value)}>
+              <p className={cn("font-bold text-foreground tabular-nums", textSizes[size].value)}>
                 {value}
               </p>
             </div>
@@ -121,7 +121,7 @@ export function MetricCard({
               </p>
               {icon && <div className="text-gray-400">{icon}</div>}
             </div>
-            <p className={cn("font-bold text-gray-900 tabular-nums", textSizes[size].value)}>
+            <p className={cn("font-bold text-foreground tabular-nums", textSizes[size].value)}>
               {value}
             </p>
             {(delta || trend) && (

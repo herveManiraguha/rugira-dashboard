@@ -71,7 +71,7 @@ export function ChartSkeleton() {
 export function TableSkeleton({ rows = 5 }: { rows?: number }) {
   return (
     <div className="rounded-xl border border-gray-200 bg-card">
-      <div className="border-b border-gray-200 bg-gray-50 p-4">
+      <div className="border-b border-gray-200 bg-muted p-4">
         <div className="flex gap-4">
           {[...Array(4)].map((_, i) => (
             <Skeleton key={i} variant="text" className="h-4 w-24" />

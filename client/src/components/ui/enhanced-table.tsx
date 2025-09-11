@@ -278,7 +278,7 @@ export function EnhancedTable<T extends { id: string | number }>({
                   <TableHead 
                     key={column.id}
                     className={cn(
-                      column.sortable && "cursor-pointer hover:bg-gray-50",
+                      column.sortable && "cursor-pointer hover:bg-accent",
                       column.hideOnMobile && "hidden sm:table-cell",
                       column.priority === 'low' && "hidden lg:table-cell",
                       column.priority === 'medium' && "hidden md:table-cell",
@@ -304,7 +304,7 @@ export function EnhancedTable<T extends { id: string | number }>({
             </TableHeader>
             <TableBody>
               {paginatedData.map((row) => (
-                <TableRow key={row.id} data-testid={`table-row-${row.id}`} className="hover:bg-gray-50">
+                <TableRow key={row.id} data-testid={`table-row-${row.id}`} className="hover:bg-accent">
                   {onSelectionChange && (
                     <TableCell className="w-12 sticky left-0 bg-background z-10 !p-0">
                       <div className="h-full min-h-[3rem] flex items-center justify-center">
