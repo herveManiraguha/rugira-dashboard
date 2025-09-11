@@ -189,30 +189,14 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
                         <Link key={item.name} href={item.href}>
                           <div
                             className={cn(
-                              "relative flex items-center px-3 py-3 text-sm transition-all cursor-pointer",
-                              sidebarCollapsed && "justify-center px-2"
+                              "nav-item flex items-center px-3 py-2 text-sm transition-all cursor-pointer rounded-lg",
+                              sidebarCollapsed && "justify-center px-2",
+                              isActive && "active"
                             )}
-                            style={{
-                              backgroundColor: isActive ? '#FFFFFF' : 'transparent',
-                              color: isActive ? 'var(--text-heading)' : 'var(--text-body)',
-                              fontWeight: isActive ? '600' : '400',
-                              borderLeft: isActive ? '4px solid var(--brand-red-600)' : '4px solid transparent',
-                            }}
-                            onMouseEnter={(e) => {
-                              if (!isActive) {
-                                e.currentTarget.style.backgroundColor = 'var(--sidebar-hover-bg)';
-                              }
-                            }}
-                            onMouseLeave={(e) => {
-                              if (!isActive) {
-                                e.currentTarget.style.backgroundColor = 'transparent';
-                              }
-                            }}
                           >
                             <ItemIcon className={cn(
                               "flex-shrink-0 h-5 w-5",
-                              !sidebarCollapsed && "mr-3",
-                              isActive && "text-gray-900"
+                              !sidebarCollapsed && "mr-3"
                             )} strokeWidth={isActive ? 2 : 1.5} />
                             {!sidebarCollapsed && item.name}
                           </div>
@@ -278,29 +262,13 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
                       return (
                         <Link key={item.name} href={item.href}>
                           <div
-                            className="relative flex items-center px-3 py-3 text-sm transition-all cursor-pointer"
-                            style={{
-                              backgroundColor: isActive ? '#FFFFFF' : 'transparent',
-                              color: isActive ? 'var(--text-heading)' : 'var(--text-body)',
-                              fontWeight: isActive ? '600' : '400',
-                              borderLeft: isActive ? '4px solid var(--brand-red-600)' : '4px solid transparent',
-                            }}
+                            className={cn(
+                              "nav-item flex items-center px-3 py-2 text-sm transition-all cursor-pointer rounded-lg",
+                              isActive && "active"
+                            )}
                             onClick={() => setMobileMenuOpen(false)}
-                            onMouseEnter={(e) => {
-                              if (!isActive) {
-                                e.currentTarget.style.backgroundColor = 'var(--sidebar-hover-bg)';
-                              }
-                            }}
-                            onMouseLeave={(e) => {
-                              if (!isActive) {
-                                e.currentTarget.style.backgroundColor = 'transparent';
-                              }
-                            }}
                           >
-                            <ItemIcon className={cn(
-                              "mr-3 flex-shrink-0 h-5 w-5",
-                              isActive && "text-gray-900"
-                            )} strokeWidth={isActive ? 2 : 1.5} />
+                            <ItemIcon className="mr-3 flex-shrink-0 h-5 w-5" strokeWidth={isActive ? 2 : 1.5} />
                             {item.name}
                           </div>
                         </Link>
