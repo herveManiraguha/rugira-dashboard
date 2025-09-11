@@ -122,7 +122,169 @@
   --high-contrast: 0;
 }
 
-/* High contrast mode - pure white sidebar */
+/* DARK THEME - Zurich-modern, finance-grade */
+.theme-dark {
+  /* Primary Brand Colors - Keep brand red for primary CTAs */
+  --brand-red: #E10500;
+  --brand-red-600: #E10500;
+  
+  /* Core Surfaces - Blue-charcoal palette */
+  --canvas: #0B1117;                       /* Main page background */
+  --surface: #0F172A;                      /* Cards/panels - Surface-1 */
+  --sub-surface: #111827;                  /* Table headers/sidebar - Surface-2 */
+  --input-bg: #1F2937;                     /* Input fields */
+  --hover-surface: #1E293B;                /* Hover states */
+  
+  /* Sidebar colors - darker tones */
+  --sidebar-surface: #111827;
+  --sidebar-hover-bg: #1E293B;
+  --sidebar-divider: #374151;
+  
+  /* Borders & Dividers */
+  --border-hairline: #374151;              
+  --border-default: #374151;               
+  --border-strong: #4B5563;                
+  --navbar-border: #374151;
+  
+  /* Text Hierarchy - Light tones on dark */
+  --text-heading: #F1F5F9;                 /* Headings/Strong */
+  --text-body: #E5E7EB;                    /* Body/Default */
+  --text-secondary: #94A3B8;               /* Secondary */
+  --text-muted: #64748B;                   /* Muted/Meta */
+  --text-disabled: #475569;                /* Disabled */
+  
+  /* Focus and interaction states */
+  --focus-ring-neutral: #60A5FA;           /* Blue focus ring */
+  --ring: var(--brand-red);
+  
+  /* Chart colors - restrained palette for dark */
+  --chart-1: var(--brand-red);
+  --chart-2: #38BDF8;                      /* Light blue */
+  --chart-3: #34D399;                      /* Light green */
+  --chart-4: #F59E0B;                      /* Amber */
+  --chart-5: #C084FC;                      /* Purple */
+  
+  /* Semantic colors - maintain visibility on dark surfaces */
+  --success-bg: rgba(20, 83, 45, 0.2);
+  --success-text: #4ADE80;
+  --success-border: #16A34A;
+  --warning-bg: rgba(180, 83, 9, 0.2);
+  --warning-text: #FCD34D;
+  --warning-border: #F59E0B;
+  --error-bg: rgba(185, 28, 28, 0.2);
+  --error-text: #F87171;
+  --error-border: #DC2626;
+  --info-bg: rgba(29, 78, 216, 0.2);
+  --info-text: #60A5FA;
+  --info-border: #3B82F6;
+  
+  /* Shadcn mappings for dark */
+  --background: var(--canvas);
+  --foreground: var(--text-body);
+  --primary: var(--brand-red);
+  --primary-foreground: #FFFFFF;
+  --secondary: var(--sub-surface);
+  --secondary-foreground: var(--text-body);
+  --muted: var(--sub-surface);
+  --muted-foreground: var(--text-secondary);
+  --input: var(--input-bg);
+  --border: var(--border-default);
+  --card: var(--surface);
+  --card-foreground: var(--text-body);
+  
+  /* Sidebar shadcn mappings */
+  --sidebar: var(--sidebar-surface);
+  --sidebar-foreground: var(--text-body);
+  --sidebar-primary: var(--brand-red-600);
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: var(--sidebar-hover-bg);
+  --sidebar-accent-foreground: var(--text-heading);
+  --sidebar-border: var(--sidebar-divider);
+  --sidebar-ring: var(--brand-red-600);
+}
+
+/* HIGH-CONTRAST THEME - Audit mode for accessibility */
+.theme-high-contrast {
+  /* Primary Brand Colors - deeper red for better contrast on black */
+  --brand-red: #D60000;                    /* Deeper red for AA compliance */
+  --brand-red-600: #D60000;
+  
+  /* Core Surfaces - Pure black/dark grays */
+  --canvas: #000000;                       /* Pure black background */
+  --surface: #0A0A0A;                      /* Cards/panels - Surface-1 */
+  --sub-surface: #111111;                  /* Table headers/sidebar - Surface-2 */
+  --input-bg: #1A1A1A;                     /* Input fields */
+  --hover-surface: #222222;                /* Hover states */
+  
+  /* Sidebar colors */
+  --sidebar-surface: #111111;
+  --sidebar-hover-bg: #222222;
+  --sidebar-divider: #FFFFFF;              /* White dividers for maximum contrast */
+  
+  /* Borders & Dividers - White/light for crisp lines */
+  --border-hairline: rgba(255, 255, 255, 0.3);
+  --border-default: rgba(255, 255, 255, 0.4);
+  --border-strong: rgba(255, 255, 255, 0.6);
+  --navbar-border: rgba(255, 255, 255, 0.3);
+  
+  /* Text Hierarchy - White/near-white for maximum contrast */
+  --text-heading: #FFFFFF;                 /* Pure white for headings */
+  --text-body: #FFFFFF;                    /* White for body text */
+  --text-secondary: #E5E5E5;               /* Light gray for secondary */
+  --text-muted: #CCCCCC;                   /* Medium gray for muted */
+  --text-disabled: #888888;                /* Darker gray for disabled */
+  
+  /* Focus and interaction states */
+  --focus-ring-neutral: #00E5FF;           /* Vivid cyan for unmistakable focus */
+  --ring: #00E5FF;
+  
+  /* Chart colors - vivid but legible on black */
+  --chart-1: var(--brand-red);
+  --chart-2: #00E5FF;                      /* Vivid cyan */
+  --chart-3: #39FF14;                      /* Vivid green */
+  --chart-4: #FFD400;                      /* Vivid yellow */
+  --chart-5: #FF66FF;                      /* Vivid magenta */
+  
+  /* Semantic colors - vivid versions that meet AA contrast on black */
+  --success-bg: rgba(57, 255, 20, 0.1);
+  --success-text: #39FF14;
+  --success-border: #39FF14;
+  --warning-bg: rgba(255, 212, 0, 0.1);
+  --warning-text: #FFD400;
+  --warning-border: #FFD400;
+  --error-bg: rgba(255, 77, 77, 0.1);
+  --error-text: #FF4D4D;
+  --error-border: #FF4D4D;
+  --info-bg: rgba(0, 229, 255, 0.1);
+  --info-text: #00E5FF;
+  --info-border: #00E5FF;
+  
+  /* Shadcn mappings for high contrast */
+  --background: var(--canvas);
+  --foreground: var(--text-body);
+  --primary: var(--brand-red);
+  --primary-foreground: #FFFFFF;
+  --secondary: var(--sub-surface);
+  --secondary-foreground: var(--text-body);
+  --muted: var(--sub-surface);
+  --muted-foreground: var(--text-secondary);
+  --input: var(--input-bg);
+  --border: var(--border-default);
+  --card: var(--surface);
+  --card-foreground: var(--text-body);
+  
+  /* Sidebar shadcn mappings */
+  --sidebar: var(--sidebar-surface);
+  --sidebar-foreground: var(--text-body);
+  --sidebar-primary: var(--brand-red-600);
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: var(--sidebar-hover-bg);
+  --sidebar-accent-foreground: var(--text-heading);
+  --sidebar-border: var(--sidebar-divider);
+  --sidebar-ring: var(--brand-red-600);
+}
+
+/* Legacy high contrast class - remove after migration */
 .high-contrast {
   --sidebar-surface: #FFFFFF !important;
   --sidebar-hover-bg: #F3F4F6 !important;
