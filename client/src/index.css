@@ -68,6 +68,8 @@
   --text-secondary: #6B7280;               /* Secondary */
   --text-muted: #9CA3AF;                   /* Muted/Meta */
   --text-disabled: #D1D5DB;                /* Disabled */
+  --text-link: #2563EB;                    /* Blue for links */
+  --selection-bg: #FEE2E2;                 /* Light red for selection */
   
   /* Semantic State Colors - Clear operational meaning */
   --success-bg: #F0FDF4;
