@@ -11,6 +11,9 @@
   /* New Theme Colors */
   --sidebar-surface: #FFF7F7;              /* Very light red tint for sidebar */
   --sidebar-hover-bg: #FFF1F1;             /* Slightly stronger tint for hover */
+  --sidebar-active-bg: #FFF1F1;            /* Active state background */
+  --sidebar-active-text: var(--brand-red); /* Active state text */
+  --sidebar-hover-text: var(--text-heading); /* Hover state text */
   --sidebar-divider: #F3E1E1;              /* Hairline divider */
   
   /* Semantic Colors - For operational status (separate from brand) */
@@ -140,7 +143,10 @@
   
   /* Sidebar specific */
   --sidebar-surface: #111827;
-  --sidebar-hover-bg: #1E293B;
+  --sidebar-hover-bg: #0F1E2E;
+  --sidebar-active-bg: #132235;
+  --sidebar-active-text: #F1F5F9;
+  --sidebar-hover-text: #E5E7EB;
   --sidebar-divider: #1F2937;
   
   /* Borders */
@@ -153,9 +159,10 @@
   /* Text Hierarchy */
   --text-heading: #F1F5F9;
   --text-body: #E5E7EB;
-  --text-secondary: #94A3B8;
-  --text-muted: #64748B;
+  --text-secondary: #B6C2CF;
+  --text-muted: #8FA0B2;
   --text-disabled: #475569;
+  --text-link: #5BA5FF;
   
   /* Chart colors for dark mode */
   --chart-1: #38BDF8;
@@ -163,8 +170,11 @@
   --chart-3: #F59E0B;
   --chart-4: #C084FC;
   --chart-5: #FB7185;
-  --chart-grid: #334155;
+  --chart-grid: #51647F;
   --chart-axis: #CBD5E1;
+  
+  /* Selection color */
+  --selection-bg: #1E293B;
   
   /* Shadcn mappings */
   --background: var(--canvas);
@@ -186,8 +196,8 @@
   --sidebar-foreground: var(--text-body);
   --sidebar-primary: var(--brand-red);
   --sidebar-primary-foreground: hsl(0, 0%, 100%);
-  --sidebar-accent: var(--sidebar-hover-bg);
-  --sidebar-accent-foreground: var(--text-heading);
+  --sidebar-accent: var(--sidebar-active-bg);
+  --sidebar-accent-foreground: var(--sidebar-active-text);
   --sidebar-border: var(--sidebar-divider);
   --sidebar-ring: #60A5FA;
 }
@@ -211,14 +221,17 @@
   /* Sidebar specific */
   --sidebar-surface: #111111;
   --sidebar-hover-bg: #1A1A1A;
-  --sidebar-divider: rgba(255, 255, 255, 0.2);
+  --sidebar-active-bg: #1A1A1A;
+  --sidebar-active-text: #FFFFFF;
+  --sidebar-hover-text: #FFFFFF;
+  --sidebar-divider: #FFFFFF;
   
   /* Borders - white for maximum contrast */
-  --border-hairline: rgba(255, 255, 255, 0.2);
-  --border-default: rgba(255, 255, 255, 0.3);
-  --border-strong: rgba(255, 255, 255, 0.5);
+  --border-hairline: #FFFFFF;
+  --border-default: #FFFFFF;
+  --border-strong: #FFFFFF;
   --focus-ring-neutral: #00E5FF;
-  --navbar-border: rgba(255, 255, 255, 0.3);
+  --navbar-border: #FFFFFF;
   
   /* Text Hierarchy - maximum contrast */
   --text-heading: #FFFFFF;
@@ -233,7 +246,7 @@
   --chart-3: #FFD400;
   --chart-4: #FF66FF;
   --chart-5: #FF4D4D;
-  --chart-grid: rgba(255, 255, 255, 0.2);
+  --chart-grid: rgba(255, 255, 255, 0.4);
   --chart-axis: #FFFFFF;
   
   /* Shadcn mappings */
@@ -256,13 +269,46 @@
   --sidebar-foreground: var(--text-body);
   --sidebar-primary: var(--brand-red);
   --sidebar-primary-foreground: hsl(0, 0%, 100%);
-  --sidebar-accent: var(--sidebar-hover-bg);
-  --sidebar-accent-foreground: var(--text-heading);
+  --sidebar-accent: var(--sidebar-active-bg);
+  --sidebar-accent-foreground: var(--sidebar-active-text);
   --sidebar-border: var(--sidebar-divider);
   --sidebar-ring: #00E5FF;
   
   /* High contrast flag */
   --high-contrast: 1;
+}
+
+/* Dark theme-specific table and sidebar styles */
+[data-theme="dark"] {
+  /* Table styles for dark theme */
+  --table-header-bg: #0F172A;
+  --table-header-text: #E5E7EB;
+  --table-row-bg: #0F172A;
+  --table-row-hover: #132235;
+  --table-zebra-bg: #0E1523;
+  --table-border: #1F2937;
+}
+
+/* High-contrast theme-specific table and sidebar styles */
+[data-theme="high-contrast"] {
+  /* Table styles for high-contrast theme */
+  --table-header-bg: #0A0A0A;
+  --table-header-text: #FFFFFF;
+  --table-row-bg: #0A0A0A;
+  --table-row-hover: #1A1A1A;
+  --table-zebra-bg: #111111;
+  --table-border: #FFFFFF;
+}
+
+/* Light theme table styles (for consistency) */
+[data-theme="light"] {
+  /* Table styles for light theme */
+  --table-header-bg: #F8FAFC;
+  --table-header-text: #1E293B;
+  --table-row-bg: #FFFFFF;
+  --table-row-hover: #F8FAFC;
+  --table-zebra-bg: #F8FAFC;
+  --table-border: #E2E8F0;
 }
 
 /* Utility classes for P&L styling */
@@ -375,6 +421,78 @@
 }
 
 @layer components {
+  /* Sidebar active and hover states for Dark theme */
+  [data-theme="dark"] .sidebar-nav-item:hover {
+    background-color: var(--sidebar-hover-bg);
+    color: var(--sidebar-hover-text);
+  }
+  
+  [data-theme="dark"] .sidebar-nav-item[data-active="true"],
+  [data-theme="dark"] .sidebar-nav-item.active {
+    background-color: var(--sidebar-active-bg);
+    color: var(--sidebar-active-text);
+    border-left: 3px solid var(--brand-red);
+  }
+  
+  /* Sidebar active and hover states for High-Contrast theme */
+  [data-theme="high-contrast"] .sidebar-nav-item:hover {
+    background-color: var(--sidebar-hover-bg);
+    color: var(--sidebar-hover-text);
+    border: 1px solid #FFFFFF;
+  }
+  
+  [data-theme="high-contrast"] .sidebar-nav-item[data-active="true"],
+  [data-theme="high-contrast"] .sidebar-nav-item.active {
+    background-color: var(--sidebar-active-bg);
+    color: var(--sidebar-active-text);
+    border-left: 3px solid var(--brand-red);
+    border-right: 1px solid #FFFFFF;
+    border-top: 1px solid #FFFFFF;
+    border-bottom: 1px solid #FFFFFF;
+  }
+  
+  /* Table styles for all themes */
+  table thead {
+    background-color: var(--table-header-bg);
+    color: var(--table-header-text);
+    border-bottom: 1px solid var(--table-border);
+  }
+  
+  table tbody tr {
+    background-color: var(--table-row-bg);
+    border-bottom: 1px solid var(--table-border);
+  }
+  
+  table tbody tr:hover {
+    background-color: var(--table-row-hover);
+  }
+  
+  table tbody tr:nth-child(even) {
+    background-color: var(--table-zebra-bg);
+  }
+  
+  /* Link styles for Dark theme */
+  [data-theme="dark"] a:not(.btn):not(.button) {
+    color: var(--text-link);
+  }
+  
+  [data-theme="dark"] a:not(.btn):not(.button):hover {
+    color: #7FB7FF;
+    text-decoration: underline;
+  }
+  
+  /* Button hover states for Dark theme */
+  [data-theme="dark"] .btn-primary:hover,
+  [data-theme="dark"] button[data-variant="default"]:hover {
+    background-color: var(--brand-red-600);
+  }
+  
+  /* Button hover states for High-Contrast theme */
+  [data-theme="high-contrast"] .btn-primary:hover,
+  [data-theme="high-contrast"] button[data-variant="default"]:hover {
+    background-color: var(--brand-red-600);
+  }
+
   /* Professional Header Styling */
   .header-fixed {
     backdrop-filter: blur(10px);
@@ -412,8 +530,19 @@
   
   /* Focus states for accessibility */
   .focus-visible:focus-visible {
-    outline: 2px solid var(--brand-red);
+    outline: 2px solid var(--focus-ring-neutral, var(--brand-red));
     outline-offset: 2px;
+  }
+  
+  /* Selection colors */
+  ::selection {
+    background-color: var(--selection-bg, var(--brand-red));
+    color: #FFFFFF;
+  }
+  
+  ::-moz-selection {
+    background-color: var(--selection-bg, var(--brand-red));
+    color: #FFFFFF;
   }
   
   /* Status indicators with semantic colors and icons */
