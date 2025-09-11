@@ -122,11 +122,147 @@
   --high-contrast: 0;
 }
 
-/* High contrast mode - pure white sidebar */
-.high-contrast {
-  --sidebar-surface: #FFFFFF !important;
-  --sidebar-hover-bg: #F3F4F6 !important;
-  --sidebar-divider: #E5E7EB !important;
+/* DARK THEME - Zurich-modern, finance-grade */
+[data-theme="dark"] {
+  /* Core colors */
+  --brand-red: #E10500;
+  --brand-red-600: #B90C00;
+  
+  /* Core Neutrals - Dark palette */
+  --canvas: #0B1117;
+  --sidebar-bg: #111827;
+  --navbar-bg: #0F172A;
+  --footer-bg: #0F172A;
+  --surface: #0F172A;
+  --sub-surface: #111827;
+  --input-bg: #111827;
+  --hover-surface: #1E293B;
+  
+  /* Sidebar specific */
+  --sidebar-surface: #111827;
+  --sidebar-hover-bg: #1E293B;
+  --sidebar-divider: #1F2937;
+  
+  /* Borders */
+  --border-hairline: #1F2937;
+  --border-default: #1F2937;
+  --border-strong: #374151;
+  --focus-ring-neutral: #60A5FA;
+  --navbar-border: #1F2937;
+  
+  /* Text Hierarchy */
+  --text-heading: #F1F5F9;
+  --text-body: #E5E7EB;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --text-disabled: #475569;
+  
+  /* Chart colors for dark mode */
+  --chart-1: #38BDF8;
+  --chart-2: #34D399;
+  --chart-3: #F59E0B;
+  --chart-4: #C084FC;
+  --chart-5: #FB7185;
+  --chart-grid: #334155;
+  --chart-axis: #CBD5E1;
+  
+  /* Shadcn mappings */
+  --background: var(--canvas);
+  --foreground: var(--text-body);
+  --primary: var(--brand-red);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: var(--sub-surface);
+  --secondary-foreground: var(--text-body);
+  --muted: var(--sub-surface);
+  --muted-foreground: var(--text-secondary);
+  --input: var(--input-bg);
+  --ring: #60A5FA;
+  --border: var(--border-default);
+  --card: var(--surface);
+  --card-foreground: var(--text-body);
+  
+  /* Sidebar colors */
+  --sidebar: var(--sidebar-surface);
+  --sidebar-foreground: var(--text-body);
+  --sidebar-primary: var(--brand-red);
+  --sidebar-primary-foreground: hsl(0, 0%, 100%);
+  --sidebar-accent: var(--sidebar-hover-bg);
+  --sidebar-accent-foreground: var(--text-heading);
+  --sidebar-border: var(--sidebar-divider);
+  --sidebar-ring: #60A5FA;
+}
+
+/* HIGH-CONTRAST THEME - Audit mode */
+[data-theme="high-contrast"] {
+  /* Core colors */
+  --brand-red: #D60000;
+  --brand-red-600: #A00000;
+  
+  /* Core Neutrals - High contrast palette */
+  --canvas: #000000;
+  --sidebar-bg: #111111;
+  --navbar-bg: #0A0A0A;
+  --footer-bg: #0A0A0A;
+  --surface: #0A0A0A;
+  --sub-surface: #111111;
+  --input-bg: #111111;
+  --hover-surface: #1A1A1A;
+  
+  /* Sidebar specific */
+  --sidebar-surface: #111111;
+  --sidebar-hover-bg: #1A1A1A;
+  --sidebar-divider: rgba(255, 255, 255, 0.2);
+  
+  /* Borders - white for maximum contrast */
+  --border-hairline: rgba(255, 255, 255, 0.2);
+  --border-default: rgba(255, 255, 255, 0.3);
+  --border-strong: rgba(255, 255, 255, 0.5);
+  --focus-ring-neutral: #00E5FF;
+  --navbar-border: rgba(255, 255, 255, 0.3);
+  
+  /* Text Hierarchy - maximum contrast */
+  --text-heading: #FFFFFF;
+  --text-body: #FFFFFF;
+  --text-secondary: #E5E5E5;
+  --text-muted: #CCCCCC;
+  --text-disabled: #999999;
+  
+  /* Chart colors for high contrast */
+  --chart-1: #00E5FF;
+  --chart-2: #39FF14;
+  --chart-3: #FFD400;
+  --chart-4: #FF66FF;
+  --chart-5: #FF4D4D;
+  --chart-grid: rgba(255, 255, 255, 0.2);
+  --chart-axis: #FFFFFF;
+  
+  /* Shadcn mappings */
+  --background: var(--canvas);
+  --foreground: var(--text-body);
+  --primary: var(--brand-red);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: var(--sub-surface);
+  --secondary-foreground: var(--text-body);
+  --muted: var(--sub-surface);
+  --muted-foreground: var(--text-secondary);
+  --input: var(--input-bg);
+  --ring: #00E5FF;
+  --border: var(--border-default);
+  --card: var(--surface);
+  --card-foreground: var(--text-body);
+  
+  /* Sidebar colors */
+  --sidebar: var(--sidebar-surface);
+  --sidebar-foreground: var(--text-body);
+  --sidebar-primary: var(--brand-red);
+  --sidebar-primary-foreground: hsl(0, 0%, 100%);
+  --sidebar-accent: var(--sidebar-hover-bg);
+  --sidebar-accent-foreground: var(--text-heading);
+  --sidebar-border: var(--sidebar-divider);
+  --sidebar-ring: #00E5FF;
+  
+  /* High contrast flag */
+  --high-contrast: 1;
 }
 
 /* Utility classes for P&L styling */
