@@ -37,11 +37,11 @@ export function StandardPageLayout({
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           {/* Title and Subtitle Section */}
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white" data-testid="page-title">
+            <h1 className="text-2xl font-bold text-foreground" data-testid="page-title">
               {title}
             </h1>
             {subtitle && (
-              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 max-w-3xl" data-testid="page-subtitle">
+              <p className="mt-1 text-sm text-muted-foreground max-w-3xl" data-testid="page-subtitle">
                 {subtitle}
               </p>
             )}
@@ -54,7 +54,7 @@ export function StandardPageLayout({
             
             {/* View Mode Toggle - Consistent position */}
             {showViewModes && onViewModeChange && (
-              <div className="hidden sm:flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1 gap-1">
+              <div className="hidden sm:flex items-center bg-muted rounded-lg p-1 gap-1">
                 <Button
                   variant={viewMode === 'cards' ? 'default' : 'ghost'}
                   size="sm"
@@ -62,8 +62,8 @@ export function StandardPageLayout({
                   className={cn(
                     "h-8 px-3 transition-all",
                     viewMode === 'cards' 
-                      ? "bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white" 
-                      : "hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400"
+                      ? "bg-card text-foreground shadow-sm" 
+                      : "hover:bg-accent text-muted-foreground"
                   )}
                   data-testid="view-mode-cards"
                 >
@@ -77,8 +77,8 @@ export function StandardPageLayout({
                   className={cn(
                     "h-8 px-3 transition-all",
                     (viewMode === 'list' || viewMode === 'grid')
-                      ? "bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white" 
-                      : "hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400"
+                      ? "bg-card text-foreground shadow-sm" 
+                      : "hover:bg-accent text-muted-foreground"
                   )}
                   data-testid="view-mode-list"
                 >

@@ -91,20 +91,24 @@
   --transition-slow: 240ms;
   --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
   
-  /* Shadcn mappings */
-  --background: var(--canvas);
-  --foreground: var(--text-body);
-  --primary: var(--brand-red);
-  --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: var(--sub-surface);
-  --secondary-foreground: var(--text-body);
-  --muted: var(--sub-surface);
-  --muted-foreground: var(--text-secondary);
-  --input: var(--input-bg);
-  --ring: var(--brand-red);
-  --border: var(--border-default);
-  --card: var(--surface);
-  --card-foreground: var(--text-body);
+  /* Shadcn mappings - HSL triplets for proper theme support */
+  --background: 0 0% 100%;
+  --foreground: 215 25% 27%;
+  --primary: 0 100% 44%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 14% 96%;
+  --secondary-foreground: 215 25% 27%;
+  --muted: 220 14% 96%;
+  --muted-foreground: 215 15% 43%;
+  --accent: 220 14% 96%;
+  --accent-foreground: 215 25% 27%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 0 100% 44%;
+  --card: 0 0% 100%;
+  --card-foreground: 215 25% 27%;
   
   /* Chart colors - Neutral palette with brand red for primary */
   --chart-1: var(--brand-red);
@@ -178,20 +182,24 @@
   /* Selection color */
   --selection-bg: #1E293B;
   
-  /* Shadcn mappings */
-  --background: var(--canvas);
-  --foreground: var(--text-body);
-  --primary: var(--brand-red);
-  --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: var(--sub-surface);
-  --secondary-foreground: var(--text-body);
-  --muted: var(--sub-surface);
-  --muted-foreground: var(--text-secondary);
-  --input: var(--input-bg);
-  --ring: #60A5FA;
-  --border: var(--border-default);
-  --card: var(--surface);
-  --card-foreground: var(--text-body);
+  /* Shadcn mappings - HSL triplets for dark mode */
+  --background: 210 32% 7%;
+  --foreground: 220 9% 89%;
+  --primary: 0 100% 44%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 215 28% 17%;
+  --secondary-foreground: 220 9% 89%;
+  --muted: 215 28% 17%;
+  --muted-foreground: 215 20% 70%;
+  --accent: 215 28% 17%;
+  --accent-foreground: 220 9% 89%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 215 28% 17%;
+  --input: 215 28% 17%;
+  --ring: 204 100% 70%;
+  --card: 215 31% 11%;
+  --card-foreground: 220 9% 89%;
   
   /* Sidebar colors */
   --sidebar: var(--sidebar-surface);
@@ -243,6 +251,35 @@
   --text-disabled: #999999;
   
   /* Chart colors for high contrast */
+  --chart-1: #00E5FF;
+  --chart-2: #00FF00;
+  --chart-3: #FFFF00;
+  --chart-4: #FF00FF;
+  --chart-5: #FFA500;
+  --chart-grid: #FFFFFF;
+  --chart-axis: #FFFFFF;
+  
+  /* Selection color */
+  --selection-bg: #333333;
+  
+  /* Shadcn mappings - HSL triplets for high contrast */
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --primary: 0 100% 42%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 0 0% 7%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 0 0% 7%;
+  --muted-foreground: 0 0% 80%;
+  --accent: 0 0% 10%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 0 0% 100%;
+  --input: 0 0% 7%;
+  --ring: 196 100% 50%;
+  --card: 0 0% 4%;
+  --card-foreground: 0 0% 100%;
   --chart-1: #00E5FF;
   --chart-2: #39FF14;
   --chart-3: #FFD400;
@@ -334,9 +371,8 @@
   }
   
   body {
+    @apply bg-background text-foreground;
     font-family: 'Inter', sans-serif;
-    background-color: transparent;
-    color: var(--text-body);
     font-size: var(--font-size-base);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
@@ -347,7 +383,7 @@
   }
   
   #root {
-    background-color: var(--canvas);
+    @apply bg-background;
     min-height: 100vh;
   }
   
