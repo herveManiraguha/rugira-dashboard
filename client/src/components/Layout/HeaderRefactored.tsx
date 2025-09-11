@@ -42,7 +42,6 @@ import logoSvg from '@/assets/logo.svg';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEnvironment } from '@/contexts/EnvironmentContext';
 import { useScope } from '@/contexts/ScopeContext';
-import { useTheme } from '@/contexts/ThemeContext';
 import { CommandPalette } from '@/components/CommandPalette/CommandPalette';
 import NotificationButton from './NotificationButton';
 import {
@@ -74,7 +73,6 @@ type Mode = 'Live' | 'Paper' | 'Demo';
 export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: HeaderRefactoredProps) {
   const [, setLocation] = useLocation();
   const { user, logout, currentTenant, switchTenant } = useAuth();
-  const theme = useTheme();
   const { environment, setEnvironment } = useEnvironment();
   const { organizations = [] } = useScope();
   
@@ -85,6 +83,7 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
   const [showLiveConfirm, setShowLiveConfirm] = useState(false);
   const [liveConfirmInput, setLiveConfirmInput] = useState('');
   const [systemStatus, setSystemStatus] = useState<'healthy' | 'warning' | 'error'>('healthy');
+  const [highContrast, setHighContrast] = useState(false);
   
   // Mock organizations and portfolios if not available
   const orgs = organizations.length > 0 ? organizations : [
@@ -116,6 +115,29 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
     }
   };
   
+  // Toggle high contrast mode
+  const toggleHighContrast = () => {
+    const newState = !highContrast;
+    setHighContrast(newState);
+    
+    if (newState) {
+      document.body.classList.add('high-contrast');
+    } else {
+      document.body.classList.remove('high-contrast');
+    }
+    
+    // Save preference
+    localStorage.setItem('highContrast', newState.toString());
+  };
+  
+  // Load high contrast preference on mount
+  useEffect(() => {
+    const savedHighContrast = localStorage.getItem('highContrast') === 'true';
+    if (savedHighContrast) {
+      setHighContrast(true);
+      document.body.classList.add('high-contrast');
+    }
+  }, []);
   
   // Keyboard shortcuts
   useEffect(() => {
@@ -155,7 +177,7 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
   return (
     <>
       <TooltipProvider>
-        <header className="sticky top-0 z-50 bg-[var(--navbar-bg)] border-b border-[var(--navbar-border)]">
+        <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
           <div className="flex items-center h-14 px-4 gap-6">
             {/* Cluster A: Brand + Context chips */}
             <div className="flex items-center gap-2">
@@ -391,27 +413,20 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
               {/* Notifications */}
               <NotificationButton />
               
-              
-              {/* Theme Toggle */}
+              {/* High Contrast Toggle */}
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8"
-                    onClick={() => theme.cycleTheme()}
-                    aria-label={`Switch to ${theme.theme === 'light' ? 'High Contrast' : theme.theme === 'high-contrast' ? 'Dark' : 'Light'} mode`}
-                    data-testid="button-theme-toggle"
+                    onClick={toggleHighContrast}
                   >
-                    <Eye className="h-4 w-4" />
+                    <Eye className={cn("h-4 w-4", highContrast && "text-blue-600")} />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>
-                    {theme.theme === 'light' && 'Switch to High Contrast'}
-                    {theme.theme === 'high-contrast' && 'Switch to Dark'}
-                    {theme.theme === 'dark' && 'Switch to Light'}
-                  </p>
+                  <p>{highContrast ? 'Disable' : 'Enable'} High Contrast</p>
                 </TooltipContent>
               </Tooltip>
               

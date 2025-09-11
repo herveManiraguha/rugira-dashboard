@@ -264,7 +264,7 @@ export function EnhancedTable<T extends { id: string | number }>({
             <TableHeader>
               <TableRow>
                 {onSelectionChange && (
-                  <TableHead className="w-12 sticky left-0 bg-background z-10 !p-0">
+                  <TableHead className="w-12 sticky left-0 bg-white z-10 !p-0">
                     <div className="h-12 flex items-center justify-center">
                       <Checkbox
                         checked={allSelected || someSelected}
@@ -278,13 +278,13 @@ export function EnhancedTable<T extends { id: string | number }>({
                   <TableHead 
                     key={column.id}
                     className={cn(
-                      column.sortable && "cursor-pointer hover:bg-accent",
+                      column.sortable && "cursor-pointer hover:bg-gray-50",
                       column.hideOnMobile && "hidden sm:table-cell",
                       column.priority === 'low' && "hidden lg:table-cell",
                       column.priority === 'medium' && "hidden md:table-cell",
                       // Make first column sticky on mobile
-                      index === 0 && onSelectionChange && "sticky left-12 bg-background z-10",
-                      index === 0 && !onSelectionChange && "sticky left-0 bg-background z-10",
+                      index === 0 && onSelectionChange && "sticky left-12 bg-white z-10",
+                      index === 0 && !onSelectionChange && "sticky left-0 bg-white z-10",
                       "px-3 py-3 sm:px-6 sm:py-4"
                     )}
                     onClick={() => column.sortable && handleSort(column.id)}
@@ -304,9 +304,9 @@ export function EnhancedTable<T extends { id: string | number }>({
             </TableHeader>
             <TableBody>
               {paginatedData.map((row) => (
-                <TableRow key={row.id} data-testid={`table-row-${row.id}`} className="hover:bg-accent">
+                <TableRow key={row.id} data-testid={`table-row-${row.id}`} className="hover:bg-gray-50">
                   {onSelectionChange && (
-                    <TableCell className="w-12 sticky left-0 bg-background z-10 !p-0">
+                    <TableCell className="w-12 sticky left-0 bg-white z-10 !p-0">
                       <div className="h-full min-h-[3rem] flex items-center justify-center">
                         <Checkbox
                           checked={selectedRows.has(row.id)}
@@ -325,8 +325,8 @@ export function EnhancedTable<T extends { id: string | number }>({
                         column.priority === 'low' && "hidden lg:table-cell",
                         column.priority === 'medium' && "hidden md:table-cell",
                         // Make first column sticky on mobile
-                        index === 0 && onSelectionChange && "sticky left-12 bg-background z-10",
-                        index === 0 && !onSelectionChange && "sticky left-0 bg-background z-10",
+                        index === 0 && onSelectionChange && "sticky left-12 bg-white z-10",
+                        index === 0 && !onSelectionChange && "sticky left-0 bg-white z-10",
                         "whitespace-nowrap px-3 py-3 sm:px-6 sm:py-4 text-sm"
                       )}
                     >

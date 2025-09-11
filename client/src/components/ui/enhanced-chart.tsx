@@ -95,8 +95,8 @@ export function EnhancedChart({
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-card p-3 border rounded-lg shadow-lg">
-          <p className="text-sm font-medium text-foreground mb-2">
+        <div className="bg-white p-3 border rounded-lg shadow-lg">
+          <p className="text-sm font-medium text-gray-900 mb-2">
             {new Date(label).toLocaleString()}
           </p>
           {payload.map((entry: any, index: number) => (

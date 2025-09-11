@@ -7,7 +7,6 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { DemoProvider } from "@/contexts/DemoContext";
 import { EnvironmentProvider } from "@/contexts/EnvironmentContext";
 import { ScopeProvider } from "@/contexts/ScopeContext";
-import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AppInitializer } from "@/components/AppInitializer";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import "./index.css";
@@ -61,13 +60,12 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <EnvironmentProvider>
-          <ScopeProvider>
-            <DemoProvider>
-              <AuthProvider>
-                <AppInitializer>
-                <Switch>
+      <EnvironmentProvider>
+        <ScopeProvider>
+          <DemoProvider>
+            <AuthProvider>
+              <AppInitializer>
+              <Switch>
           {/* Public routes */}
           <Route path="/" component={Login} />
           <Route path="/login" component={Login} />
@@ -273,7 +271,6 @@ function App() {
           </DemoProvider>
         </ScopeProvider>
       </EnvironmentProvider>
-      </ThemeProvider>
       <Toaster />
     </QueryClientProvider>
   );

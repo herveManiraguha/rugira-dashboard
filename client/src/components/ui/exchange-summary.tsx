@@ -77,8 +77,8 @@ export function ExchangeSummary({
               className={`
                 group p-3 rounded-lg border transition-all cursor-pointer
                 ${exchange.status === 'connected' 
-                  ? 'hover:shadow-md hover:border-blue-200 bg-card' 
-                  : 'bg-muted border-gray-200'
+                  ? 'hover:shadow-md hover:border-blue-200 bg-white' 
+                  : 'bg-gray-50 border-gray-200'
                 }
               `}
               onClick={() => onExchangeClick?.(exchange.id)}
@@ -93,7 +93,7 @@ export function ExchangeSummary({
                 />
                 
                 <div className="text-center">
-                  <p className="text-xs font-medium text-foreground truncate w-full">
+                  <p className="text-xs font-medium text-gray-900 truncate w-full">
                     {exchange.name}
                   </p>
                   
