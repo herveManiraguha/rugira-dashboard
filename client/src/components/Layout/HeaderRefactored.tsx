@@ -42,6 +42,7 @@ import logoSvg from '@/assets/logo.svg';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEnvironment } from '@/contexts/EnvironmentContext';
 import { useScope } from '@/contexts/ScopeContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { CommandPalette } from '@/components/CommandPalette/CommandPalette';
 import NotificationButton from './NotificationButton';
 import {
@@ -83,7 +84,6 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
   const [showLiveConfirm, setShowLiveConfirm] = useState(false);
   const [liveConfirmInput, setLiveConfirmInput] = useState('');
   const [systemStatus, setSystemStatus] = useState<'healthy' | 'warning' | 'error'>('healthy');
-  const [highContrast, setHighContrast] = useState(false);
   
   // Mock organizations and portfolios if not available
   const orgs = organizations.length > 0 ? organizations : [
@@ -115,29 +115,23 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
     }
   };
   
-  // Toggle high contrast mode
-  const toggleHighContrast = () => {
-    const newState = !highContrast;
-    setHighContrast(newState);
-    
-    if (newState) {
-      document.body.classList.add('high-contrast');
-    } else {
-      document.body.classList.remove('high-contrast');
-    }
-    
-    // Save preference
-    localStorage.setItem('highContrast', newState.toString());
-  };
+  // Theme context
+  const { theme, cycleTheme, getNextTheme } = useTheme();
   
-  // Load high contrast preference on mount
-  useEffect(() => {
-    const savedHighContrast = localStorage.getItem('highContrast') === 'true';
-    if (savedHighContrast) {
-      setHighContrast(true);
-      document.body.classList.add('high-contrast');
+  // Get theme button tooltip text
+  const getThemeTooltip = () => {
+    const nextTheme = getNextTheme();
+    switch (nextTheme) {
+      case 'light':
+        return 'Switch to Light theme';
+      case 'dark':
+        return 'Switch to Dark theme';
+      case 'high-contrast':
+        return 'Switch to High-Contrast theme';
+      default:
+        return 'Switch theme';
     }
-  }, []);
+  };
   
   // Keyboard shortcuts
   useEffect(() => {
@@ -413,20 +407,25 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
               {/* Notifications */}
               <NotificationButton />
               
-              {/* High Contrast Toggle */}
+              {/* Theme Toggle */}
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8"
-                    onClick={toggleHighContrast}
+                    onClick={cycleTheme}
+                    data-testid="button-theme-toggle"
                   >
-                    <Eye className={cn("h-4 w-4", highContrast && "text-blue-600")} />
+                    <Eye className={cn(
+                      "h-4 w-4",
+                      theme === 'dark' && "text-blue-400",
+                      theme === 'high-contrast' && "text-cyan-400"
+                    )} />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>{highContrast ? 'Disable' : 'Enable'} High Contrast</p>
+                  <p>{getThemeTooltip()}</p>
                 </TooltipContent>
               </Tooltip>
               
