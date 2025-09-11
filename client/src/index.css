@@ -145,12 +145,13 @@
   
   html {
     /* Deep red background for overscroll effect */
-    background-color: #E10500;
+    background-color: var(--brand-red);
+    overscroll-behavior: auto;
   }
   
   body {
     font-family: 'Inter', sans-serif;
-    background-color: var(--canvas);
+    background-color: transparent;
     color: var(--text-body);
     font-size: var(--font-size-base);
     line-height: 1.5;
@@ -158,6 +159,12 @@
     -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
     font-feature-settings: "tnum", "ss01"; /* Tabular numbers + stylistic alternates */
+    overscroll-behavior: auto;
+  }
+  
+  #root {
+    background-color: var(--canvas);
+    min-height: 100vh;
   }
   
   /* Tabular numbers for all data */
@@ -871,22 +878,36 @@
     outline: none;
   }
   
-  /* Custom scrollbar */
+  /* Custom scrollbar with brand red accent */
   ::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
+    height: 6px;
   }
   
   ::-webkit-scrollbar-track {
     background: var(--sub-surface);
+    border-radius: 3px;
   }
   
   ::-webkit-scrollbar-thumb {
     background: var(--border-strong);
-    border-radius: 4px;
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
   }
   
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--text-muted);
+  ::-webkit-scrollbar-thumb:hover,
+  ::-webkit-scrollbar-thumb:active {
+    background: var(--brand-red);
+  }
+  
+  /* Firefox scrollbar support */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) var(--sub-surface);
+  }
+  
+  *:hover {
+    scrollbar-color: var(--brand-red) var(--sub-surface);
   }
 }
 
