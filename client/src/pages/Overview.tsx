@@ -389,7 +389,7 @@ export default function Overview() {
       case 'error':
         return <div className="w-2 h-2 bg-red-500 rounded-full" />;
       default:
-        return <div className="w-2 h-2 bg-gray-500 rounded-full" />;
+        return <div className="w-2 h-2 bg-muted-foreground rounded-full" />;
     }
   };
 
@@ -398,7 +398,7 @@ export default function Overview() {
       title="Overview"
       subtitle="Trading performance and system status"
       additionalControls={
-        <div className="text-xs text-gray-500">
+        <div className="text-xs text-muted-foreground">
           Last updated: {lastUpdated.toLocaleTimeString()} UTC
         </div>
       }
@@ -515,27 +515,27 @@ export default function Overview() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 hover:bg-gray-100 cursor-pointer transition-colors">
+              <div className="rounded-lg border border-border bg-muted p-3 hover:bg-accent cursor-pointer transition-colors">
                 <div className="mb-1 flex items-center justify-between">
-                  <span className="text-xs font-medium text-gray-900">Mode Change</span>
-                  <Clock className="h-3 w-3 text-gray-400" />
+                  <span className="text-xs font-medium text-foreground">Mode Change</span>
+                  <Clock className="h-3 w-3 text-muted-foreground" />
                 </div>
-                <p className="mb-1 text-xs text-gray-600">
+                <p className="mb-1 text-xs text-muted-foreground">
                   BTCUSD-MM-01 from Paper to Live
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   Martin Keller • 02/09/2025, 15:44:54
                 </p>
               </div>
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 hover:bg-gray-100 cursor-pointer transition-colors">
+              <div className="rounded-lg border border-border bg-muted p-3 hover:bg-accent cursor-pointer transition-colors">
                 <div className="mb-1 flex items-center justify-between">
-                  <span className="text-xs font-medium text-gray-900">Risk Increase</span>
-                  <Clock className="h-3 w-3 text-gray-400" />
+                  <span className="text-xs font-medium text-foreground">Risk Increase</span>
+                  <Clock className="h-3 w-3 text-muted-foreground" />
                 </div>
-                <p className="mb-1 text-xs text-gray-600">
+                <p className="mb-1 text-xs text-muted-foreground">
                   ETHUSD-ARB-02 Daily loss limit: $5,000 → $10,000
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   Lin Zhang • 02/09/2025, 14:44:54
                 </p>
               </div>
@@ -554,31 +554,31 @@ export default function Overview() {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
+            <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 p-3">
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-2">
                   <AlertTriangle className="mt-0.5 h-3.5 w-3.5 text-amber-600" />
                   <div>
-                    <p className="text-xs font-medium text-amber-700">API rate limit exceeded on Kraken</p>
-                    <p className="mt-1 text-xs text-amber-600">18m ago</p>
+                    <p className="text-xs font-medium text-amber-600 dark:text-amber-400">API rate limit exceeded on Kraken</p>
+                    <p className="mt-1 text-xs text-amber-600/70 dark:text-amber-400/70">18m ago</p>
                   </div>
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-6 px-2 text-xs text-amber-700 hover:bg-amber-100"
+                  className="h-6 px-2 text-xs text-amber-600 dark:text-amber-400 hover:bg-amber-500/10"
                 >
                   Dismiss
                 </Button>
               </div>
             </div>
-            <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
+            <div className="rounded-lg border border-blue-500/20 bg-blue-500/10 p-3">
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-2">
                   <Bell className="mt-0.5 h-3.5 w-3.5 text-blue-600" />
                   <div>
-                    <p className="text-xs font-medium text-blue-700">Scheduled maintenance tonight 2-3 AM</p>
-                    <p className="mt-1 text-xs text-blue-600">2h ago</p>
+                    <p className="text-xs font-medium text-blue-600 dark:text-blue-400">Scheduled maintenance tonight 2-3 AM</p>
+                    <p className="mt-1 text-xs text-blue-600/70 dark:text-blue-400/70">2h ago</p>
                   </div>
                 </div>
                 <Button
@@ -644,7 +644,7 @@ export default function Overview() {
                     }`}>
                       {activity.pnl > 0 ? '+' : ''}${activity.pnl.toFixed(2)}
                     </p>
-                    <p className="text-xs text-gray-500">{activity.timestamp}</p>
+                    <p className="text-xs text-muted-foreground">{activity.timestamp}</p>
                   </div>
                 </div>
               ))}

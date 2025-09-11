@@ -28,12 +28,12 @@ export default function AuthCallback() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <div className="text-red-600 mb-4 text-lg font-medium">
             {error}
           </div>
-          <div className="text-gray-600">
+          <div className="text-muted-foreground">
             Redirecting to login...
           </div>
         </div>
@@ -42,10 +42,10 @@ export default function AuthCallback() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="text-center">
         <Loader2 className="mx-auto h-8 w-8 animate-spin text-blue-600 mb-4" />
-        <div className="text-gray-600">
+        <div className="text-muted-foreground">
           Completing authentication...
         </div>
       </div>
