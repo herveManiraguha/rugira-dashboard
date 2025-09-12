@@ -158,7 +158,12 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
       />
       
       {/* Incident Banner */}
-      <IncidentBanner />
+      <IncidentBanner 
+        className={cn(
+          "transition-all duration-150",
+          sidebarCollapsed ? "lg:ml-16" : "lg:ml-64"
+        )}
+      />
       
       {/* Live Mode Banner */}
       <LiveModeBanner />
