@@ -61,7 +61,13 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
   const [, setLocation] = useLocation();
   const { user, logout, currentTenant, switchTenant } = useAuth();
   const { environment, setEnvironment } = useEnvironment();
-  const { organizations = [] } = useScope();
+  const { 
+    organizations = [], 
+    organization, 
+    portfolio, 
+    setOrganization, 
+    setPortfolio 
+  } = useScope();
   
   // State
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
@@ -69,13 +75,30 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
   const [showLiveConfirm, setShowLiveConfirm] = useState(false);
   const [liveConfirmInput, setLiveConfirmInput] = useState('');
   
-  // Mock organizations and portfolios if not available
+  // Use organizations from scope context
   const orgs = organizations.length > 0 ? organizations : [
-    { id: '1', name: 'Alpha Capital AG' },
-    { id: '2', name: 'TradePro Singapore' },
+    { 
+      id: '1', 
+      name: 'Bahnhofstrasse Family Office',
+      slug: 'bahnhofstrasse-family-office',
+      roles: ['admin', 'trader']
+    },
+    { 
+      id: '2', 
+      name: 'Alpha Capital AG',
+      slug: 'alpha-capital',
+      roles: ['admin']
+    },
+    { 
+      id: '3', 
+      name: 'Zurich Family Office',
+      slug: 'zurich-family-office',
+      roles: ['viewer']
+    },
   ];
   
-  const ports = [
+  // Get portfolios from current organization
+  const ports = organization?.portfolios || [
     { id: '1', name: 'Equity Desk' },
     { id: '2', name: 'Crypto Desk' },
   ];
@@ -203,13 +226,13 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
                             aria-expanded="false"
                           >
                             <span className="max-w-[140px] truncate">
-                              {orgs[0]?.name || 'Organization'}
+                              {organization?.name || orgs[0]?.name || 'Organization'}
                             </span>
                             <ChevronDown className="h-3 w-3 ml-1.5 opacity-60" />
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                          {orgs[0]?.name || 'Organization'}
+                          {organization?.name || orgs[0]?.name || 'Organization'}
                         </TooltipContent>
                       </Tooltip>
                     </DropdownMenuTrigger>
@@ -219,10 +242,15 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
                       {orgs.map((org) => (
                         <DropdownMenuItem
                           key={org.id}
-                          onClick={() => console.log('Select org:', org)}
+                          onClick={() => setOrganization(org)}
                           className="cursor-pointer"
                         >
-                          {org.name}
+                          <div className="flex items-center justify-between w-full">
+                            <span>{org.name}</span>
+                            {organization?.id === org.id && (
+                              <Badge variant="outline" className="text-xs">Active</Badge>
+                            )}
+                          </div>
                         </DropdownMenuItem>
                       ))}
                     </DropdownMenuContent>
@@ -302,13 +330,13 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
                             aria-expanded="false"
                           >
                             <span className="max-w-[140px] truncate">
-                              {ports[0]?.name || 'Portfolio'}
+                              {portfolio?.name || ports[0]?.name || 'Portfolio'}
                             </span>
                             <ChevronDown className="h-3 w-3 ml-1.5 opacity-60" />
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                          {ports[0]?.name || 'Portfolio'}
+                          {portfolio?.name || ports[0]?.name || 'Portfolio'}
                         </TooltipContent>
                       </Tooltip>
                     </DropdownMenuTrigger>
@@ -318,10 +346,15 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
                       {ports.map((port: any) => (
                         <DropdownMenuItem
                           key={port.id}
-                          onClick={() => console.log('Select portfolio:', port)}
+                          onClick={() => setPortfolio(port)}
                           className="cursor-pointer"
                         >
-                          {port.name}
+                          <div className="flex items-center justify-between w-full">
+                            <span>{port.name}</span>
+                            {portfolio?.id === port.id && (
+                              <Badge variant="outline" className="text-xs">Active</Badge>
+                            )}
+                          </div>
                         </DropdownMenuItem>
                       ))}
                     </DropdownMenuContent>
