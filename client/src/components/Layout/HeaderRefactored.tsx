@@ -83,18 +83,6 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
   const currentPortfolios = tenant?.portfolios || [];
   const currentModes = portfolio?.modes || [];
   
-  // Debug logging
-  useEffect(() => {
-    console.log('Current state:', {
-      organization: organization?.name,
-      tenant: tenant?.name,
-      portfolio: portfolio?.name,
-      mode: scopeMode?.name,
-      currentTenants: currentTenants.length,
-      currentPortfolios: currentPortfolios.length,
-      currentModes: currentModes.length
-    });
-  }, [organization, tenant, portfolio, scopeMode]);
   
   // Handle mode change
   const handleModeChange = (newMode: any) => {
@@ -315,10 +303,6 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
                         className="h-8 px-3 text-xs font-medium bg-gray-50/50 border border-gray-200/50 hover:bg-gray-100/50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-brand-red rounded-md cursor-pointer"
                         aria-haspopup="true"
                         aria-expanded="false"
-                        onClick={(e) => {
-                          console.log('Desk dropdown clicked');
-                          console.log('Current portfolios:', currentPortfolios);
-                        }}
                       >
                         <span className="max-w-[140px] truncate">
                           {portfolio?.name || 'Desk'}
@@ -333,7 +317,6 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
                         <DropdownMenuItem
                           key={p.id}
                           onClick={() => {
-                            console.log('Selecting desk:', p.name);
                             setPortfolio(p);
                           }}
                           className="cursor-pointer"

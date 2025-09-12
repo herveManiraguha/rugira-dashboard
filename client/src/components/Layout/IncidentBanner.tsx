@@ -106,7 +106,7 @@ export default function IncidentBanner({ className }: IncidentBannerProps) {
   return (
     <div 
       className={cn(
-        "border-b transition-all duration-300 ease-in-out",
+        "border-b transition-all duration-300 ease-in-out relative z-50",
         getSeverityColor(activeIncident.severity),
         className
       )}
