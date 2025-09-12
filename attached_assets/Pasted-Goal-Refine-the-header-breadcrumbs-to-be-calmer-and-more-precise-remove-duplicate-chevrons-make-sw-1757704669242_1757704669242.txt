@@ -1,0 +1,58 @@
+Goal
+Refine the header breadcrumbs to be calmer and more precise: remove duplicate chevrons, make switchers obvious, show exactly one environment indicator, and reduce visual bulk—without changing labels, routes, or information architecture.
+
+1) Chevron logic
+
+Between breadcrumb chips, show a single slim separator (›).
+
+Inside any chip that opens a menu, show a down caret (▾) on the right edge. Remove right‑pointing chevrons inside chips.
+
+2) Environment indicator
+
+Do not show environment as a path node if it already appears elsewhere.
+
+Place a small badge to the right of the breadcrumb row that shows the current environment (e.g., “Demo”, “Paper”, “Live”). The badge is subtle, with the existing color tokens. Only one environment indicator is visible.
+
+3) Chip sizing & spacing
+
+Reduce breadcrumb chip height to a compact control size (about 28–32 px tall) with balanced horizontal padding.
+
+Keep the background ultra‑light and the border hairline (use the existing subtle divider tone). No shadows.
+
+Maintain 8–12 px spacing between chips; ensure the row height of the header does not increase.
+
+4) Long-name handling
+
+Apply middle‑ellipsis for overly long labels (e.g., “Bahnhofstrasse… Office”).
+
+On hover/focus, show a tooltip with the full name.
+
+If the row overflows, collapse earlier crumbs into a single “…” crumb; clicking it opens a popover to select any hidden level.
+
+5) Interaction & accessibility
+
+Chips that open menus use the down caret and a pointer cursor; non-interactive chips are plain labels.
+
+Hover and focus states are clear but subtle; keyboard navigation (Left/Right to move; Enter/Space to open).
+
+Use the existing brand‑red focus ring for accessibility.
+
+6) Layout stability
+
+Ensure the breadcrumb baseline stays aligned with the main content column in both expanded and collapsed sidebar states.
+
+No shifts when toggling the sidebar; animate gutter changes smoothly (~150–180 ms).
+
+Acceptance criteria
+
+Only one chevron appears between chips; menu chips show a down caret.
+
+Environment appears once as a small badge to the right of the breadcrumb row.
+
+Chips are compact and do not increase header height.
+
+Long names truncate gracefully with tooltips; overflow is handled via a “…” crumb.
+
+Keyboard and focus states work; screen readers announce each chip as a switcher where appropriate.
+
+No changes to labels, routes, or sidebar content.

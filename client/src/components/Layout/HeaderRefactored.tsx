@@ -41,9 +41,11 @@ import {
   Key,
   ChevronRight,
   ChevronLeft,
+  ChevronDown,
   Search,
   Circle,
   Menu,
+  MoreHorizontal,
 } from 'lucide-react';
 
 interface HeaderRefactoredProps {
@@ -172,7 +174,7 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
             {/* Main header content */}
             <div className="flex items-center flex-1 px-4 gap-6">
               {/* Context chips */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 {/* Mobile Menu */}
                 {onMobileMenuToggle && (
                   <Button
@@ -186,155 +188,206 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
                   </Button>
                 )}
                 
-                {/* Context Chips */}
-                <div className="hidden sm:flex items-center">
-                {/* Organization Chip */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-7 px-3 text-xs font-medium rounded-full border border-gray-200 hover:bg-gray-50"
-                    >
-                      {orgs[0]?.name || 'Organization'}
-                      <ChevronRight className="h-3 w-3 ml-1" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start">
-                    <DropdownMenuLabel>Select Organization</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {orgs.map((org) => (
-                      <DropdownMenuItem
-                        key={org.id}
-                        onClick={() => console.log('Select org:', org)}
-                        className="cursor-pointer"
-                      >
-                        {org.name}
+                {/* Breadcrumb Navigation */}
+                <nav className="hidden sm:flex items-center" aria-label="Breadcrumb">
+                  {/* Organization Chip */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 px-3 text-xs font-medium bg-gray-50/50 border border-gray-200/50 hover:bg-gray-100/50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-brand-red rounded-md cursor-pointer"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                          >
+                            <span className="max-w-[140px] truncate">
+                              {orgs[0]?.name || 'Organization'}
+                            </span>
+                            <ChevronDown className="h-3 w-3 ml-1.5 opacity-60" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {orgs[0]?.name || 'Organization'}
+                        </TooltipContent>
+                      </Tooltip>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                      <DropdownMenuLabel>Select Organization</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {orgs.map((org) => (
+                        <DropdownMenuItem
+                          key={org.id}
+                          onClick={() => console.log('Select org:', org)}
+                          className="cursor-pointer"
+                        >
+                          {org.name}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  
+                  <span className="mx-2 text-gray-400 text-xs select-none" aria-hidden="true">›</span>
+                  
+                  {/* Tenant Chip */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 px-3 text-xs font-medium bg-gray-50/50 border border-gray-200/50 hover:bg-gray-100/50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-brand-red rounded-md cursor-pointer"
+                            data-tenant-trigger
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                          >
+                            <span className="max-w-[140px] truncate">
+                              {currentTenant === 'rugira-prod' ? 'Bahnhofstrasse Production' : 
+                               currentTenant === 'rugira-test' ? 'Bahnhofstrasse Test' : 
+                               currentTenant === 'client-alpha' ? 'Client Alpha' : 'Default'}
+                            </span>
+                            <ChevronDown className="h-3 w-3 ml-1.5 opacity-60" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {currentTenant === 'rugira-prod' ? 'Bahnhofstrasse Production' : 
+                           currentTenant === 'rugira-test' ? 'Bahnhofstrasse Test' : 
+                           currentTenant === 'client-alpha' ? 'Client Alpha' : 'Default'}
+                        </TooltipContent>
+                      </Tooltip>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                      <DropdownMenuLabel>Switch Tenant</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {user?.tenant_roles && Object.keys(user.tenant_roles).map((tenantId) => (
+                        <DropdownMenuItem
+                          key={tenantId}
+                          onClick={() => switchTenant(tenantId)}
+                          className="cursor-pointer"
+                        >
+                          <div className="flex items-center justify-between w-full">
+                            <span>
+                              {tenantId === 'rugira-prod' ? 'Bahnhofstrasse Production' : 
+                               tenantId === 'rugira-test' ? 'Bahnhofstrasse Test' : 
+                               tenantId === 'client-alpha' ? 'Client Alpha' : tenantId}
+                            </span>
+                            {currentTenant === tenantId && (
+                              <Badge variant="outline" className="text-xs">Active</Badge>
+                            )}
+                          </div>
+                        </DropdownMenuItem>
+                      ))}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => setLocation('/tenants')}>
+                        <Building2 className="h-3 w-3 mr-2" />
+                        Manage Tenants
                       </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  
+                  <span className="mx-2 text-gray-400 text-xs select-none" aria-hidden="true">›</span>
+                  
+                  {/* Portfolio Chip */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 px-3 text-xs font-medium bg-gray-50/50 border border-gray-200/50 hover:bg-gray-100/50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-brand-red rounded-md cursor-pointer"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                          >
+                            <span className="max-w-[140px] truncate">
+                              {ports[0]?.name || 'Portfolio'}
+                            </span>
+                            <ChevronDown className="h-3 w-3 ml-1.5 opacity-60" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {ports[0]?.name || 'Portfolio'}
+                        </TooltipContent>
+                      </Tooltip>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                      <DropdownMenuLabel>Select Portfolio</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {ports.map((port: any) => (
+                        <DropdownMenuItem
+                          key={port.id}
+                          onClick={() => console.log('Select portfolio:', port)}
+                          className="cursor-pointer"
+                        >
+                          {port.name}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </nav>
                 
-                <ChevronRight className="h-3 w-3 mx-1 text-gray-400" />
-                
-                {/* Tenant Chip */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-7 px-3 text-xs font-medium rounded-full border border-gray-200 hover:bg-gray-50"
-                      data-tenant-trigger
-                    >
-                      {currentTenant === 'rugira-prod' ? 'Production' : 
-                       currentTenant === 'rugira-test' ? 'Test' : 
-                       currentTenant === 'client-alpha' ? 'Client Alpha' : 'Default'}
-                      <ChevronRight className="h-3 w-3 ml-1" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start">
-                    <DropdownMenuLabel>Switch Tenant</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {user?.tenant_roles && Object.keys(user.tenant_roles).map((tenantId) => (
+                {/* Environment Badge - positioned to the right of breadcrumbs */}
+                <div className="hidden sm:block ml-3">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className={cn(
+                          "h-7 px-2.5 text-xs font-medium rounded border transition-colors",
+                          mode === 'Live' 
+                            ? "bg-red-50/50 text-red-700 border-red-200/50 hover:bg-red-100/50" 
+                            : mode === 'Paper' 
+                            ? "bg-blue-50/50 text-blue-700 border-blue-200/50 hover:bg-blue-100/50"
+                            : "bg-gray-50/50 text-gray-700 border-gray-200/50 hover:bg-gray-100/50"
+                        )}
+                        aria-label={`Current environment: ${mode}`}
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                      >
+                        {mode}
+                        <ChevronDown className="h-2.5 w-2.5 ml-1 opacity-60" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-64">
+                      <DropdownMenuLabel>Select Environment</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
                       <DropdownMenuItem
-                        key={tenantId}
-                        onClick={() => switchTenant(tenantId)}
+                        onClick={() => handleModeChange('Demo')}
                         className="cursor-pointer"
                       >
-                        <div className="flex items-center justify-between w-full">
-                          <span>
-                            {tenantId === 'rugira-prod' ? 'Production' : 
-                             tenantId === 'rugira-test' ? 'Test' : 
-                             tenantId === 'client-alpha' ? 'Client Alpha' : tenantId}
-                          </span>
-                          {currentTenant === tenantId && (
-                            <Badge variant="outline" className="text-xs">Active</Badge>
-                          )}
+                        <Circle className="h-3 w-3 mr-2 text-gray-500" />
+                        <div>
+                          <div className="font-medium">Demo</div>
+                          <div className="text-xs text-gray-500">Simulated data</div>
                         </div>
                       </DropdownMenuItem>
-                    ))}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => setLocation('/tenants')}>
-                      <Building2 className="h-3 w-3 mr-2" />
-                      Manage Tenants
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                
-                <ChevronRight className="h-3 w-3 mx-1 text-gray-400" />
-                
-                {/* Portfolio Chip */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-7 px-3 text-xs font-medium rounded-full border border-gray-200 hover:bg-gray-50"
-                    >
-                      {ports[0]?.name || 'Portfolio'}
-                      <ChevronRight className="h-3 w-3 ml-1" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start">
-                    <DropdownMenuLabel>Select Portfolio</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {ports.map((port: any) => (
                       <DropdownMenuItem
-                        key={port.id}
-                        onClick={() => console.log('Select portfolio:', port)}
+                        onClick={() => handleModeChange('Paper')}
                         className="cursor-pointer"
                       >
-                        {port.name}
+                        <Circle className="h-3 w-3 mr-2 text-blue-500" />
+                        <div>
+                          <div className="font-medium">Paper</div>
+                          <div className="text-xs text-gray-500">Real connections, virtual money</div>
+                        </div>
                       </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                
-                <ChevronRight className="h-3 w-3 mx-1 text-gray-400" />
-                
-                {/* Mode Chip */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={cn(
-                        "h-7 px-3 text-xs font-medium rounded-full border",
-                        getModeColor(mode)
-                      )}
-                    >
-                      {mode}
-                      <ChevronRight className="h-3 w-3 ml-1" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start">
-                    <DropdownMenuLabel>Select Mode</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() => handleModeChange('Demo')}
-                      className="cursor-pointer"
-                    >
-                      <Circle className="h-3 w-3 mr-2 text-gray-500" />
-                      Demo - Simulated data
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleModeChange('Paper')}
-                      className="cursor-pointer"
-                    >
-                      <Circle className="h-3 w-3 mr-2 text-blue-500" />
-                      Paper - Real connections, virtual money
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleModeChange('Live')}
-                      className="cursor-pointer text-red-600"
-                    >
-                      <Circle className="h-3 w-3 mr-2 text-red-500" />
-                      Live - Real trading
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                      <DropdownMenuItem
+                        onClick={() => handleModeChange('Live')}
+                        className="cursor-pointer text-red-600"
+                      >
+                        <Circle className="h-3 w-3 mr-2 text-red-500" />
+                        <div>
+                          <div className="font-medium">Live</div>
+                          <div className="text-xs text-gray-500">Real trading</div>
+                        </div>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
-            </div>
             
             {/* Spacer */}
             <div className="flex-1"></div>
