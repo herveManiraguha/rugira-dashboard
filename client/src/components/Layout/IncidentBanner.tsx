@@ -129,7 +129,7 @@ export default function IncidentBanner({ className }: IncidentBannerProps) {
               </Badge>
             </div>
             
-            <p className="text-xs opacity-90 line-clamp-1">
+            <p className="text-xs opacity-90">
               {activeIncident.message}
             </p>
             
