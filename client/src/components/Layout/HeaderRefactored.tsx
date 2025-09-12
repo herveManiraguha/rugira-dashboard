@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,18 +10,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
 import {
   Dialog,
   DialogContent,
@@ -45,7 +33,6 @@ import { useScope } from '@/contexts/ScopeContext';
 import { CommandPalette } from '@/components/CommandPalette/CommandPalette';
 import NotificationButton from './NotificationButton';
 import {
-  Bell,
   User,
   AlertTriangle,
   HelpCircle,
@@ -55,12 +42,8 @@ import {
   ChevronRight,
   ChevronLeft,
   Search,
-  Calendar,
   Circle,
   Menu,
-  X,
-  Command,
-  Eye,
 } from 'lucide-react';
 
 interface HeaderRefactoredProps {
@@ -70,7 +53,6 @@ interface HeaderRefactoredProps {
   onSidebarToggle?: () => void;
 }
 
-type TimeRange = '24h' | '7d' | 'MTD' | 'YTD';
 type Mode = 'Live' | 'Paper' | 'Demo';
 
 export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sidebarCollapsed = false, onSidebarToggle }: HeaderRefactoredProps) {
@@ -81,12 +63,9 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
   
   // State
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
-  const [timeRange, setTimeRange] = useState<TimeRange>('24h');
   const [mode, setMode] = useState<Mode>(environment as Mode || 'Demo');
   const [showLiveConfirm, setShowLiveConfirm] = useState(false);
   const [liveConfirmInput, setLiveConfirmInput] = useState('');
-  const [systemStatus, setSystemStatus] = useState<'healthy' | 'warning' | 'error'>('healthy');
-  const [highContrast, setHighContrast] = useState(false);
   
   // Mock organizations and portfolios if not available
   const orgs = organizations.length > 0 ? organizations : [
@@ -118,30 +97,6 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
     }
   };
   
-  // Toggle high contrast mode
-  const toggleHighContrast = () => {
-    const newState = !highContrast;
-    setHighContrast(newState);
-    
-    if (newState) {
-      document.body.classList.add('high-contrast');
-    } else {
-      document.body.classList.remove('high-contrast');
-    }
-    
-    // Save preference
-    localStorage.setItem('highContrast', newState.toString());
-  };
-  
-  // Load high contrast preference on mount
-  useEffect(() => {
-    const savedHighContrast = localStorage.getItem('highContrast') === 'true';
-    if (savedHighContrast) {
-      setHighContrast(true);
-      document.body.classList.add('high-contrast');
-    }
-  }, []);
-  
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -166,16 +121,6 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
     }
   };
   
-  const getStatusColor = (status: typeof systemStatus) => {
-    switch (status) {
-      case 'healthy':
-        return 'bg-green-500';
-      case 'warning':
-        return 'bg-amber-500';
-      case 'error':
-        return 'bg-red-500';
-    }
-  };
   
   return (
     <>
@@ -442,10 +387,6 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
                   <DropdownMenuItem onClick={() => setLocation('/help')} className="cursor-pointer">
                     <HelpCircle className="mr-2 h-4 w-4" />
                     Help
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={toggleHighContrast} className="cursor-pointer">
-                    <Eye className="mr-2 h-4 w-4" />
-                    {highContrast ? 'Disable' : 'Enable'} High Contrast
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout} className="text-red-600 cursor-pointer">

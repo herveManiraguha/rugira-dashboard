@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,7 +19,8 @@ import {
   Moon,
   Save,
   Camera,
-  CheckCircle
+  CheckCircle,
+  Eye
 } from 'lucide-react';
 
 export default function Profile() {
@@ -53,6 +54,13 @@ export default function Profile() {
     soundAlerts: true,
   });
   
+  // Accessibility state
+  const [accessibility, setAccessibility] = useState({
+    highContrast: false,
+    reducedMotion: false,
+    screenReader: false,
+  });
+  
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   
@@ -77,6 +85,52 @@ export default function Profile() {
       description: `${key.replace(/([A-Z])/g, ' $1').trim()} has been ${value ? 'enabled' : 'disabled'}.`,
     });
   };
+  
+  const handleAccessibilityChange = (key: string, value: boolean) => {
+    setAccessibility(prev => ({ ...prev, [key]: value }));
+    
+    // Handle high contrast mode
+    if (key === 'highContrast') {
+      if (value) {
+        document.body.classList.add('high-contrast');
+      } else {
+        document.body.classList.remove('high-contrast');
+      }
+      // Save preference
+      localStorage.setItem('highContrast', value.toString());
+    }
+    
+    // Handle reduced motion
+    if (key === 'reducedMotion') {
+      if (value) {
+        document.body.classList.add('reduce-motion');
+      } else {
+        document.body.classList.remove('reduce-motion');
+      }
+      localStorage.setItem('reducedMotion', value.toString());
+    }
+    
+    toast({
+      title: "Accessibility Updated",
+      description: `${key.replace(/([A-Z])/g, ' $1').trim()} has been ${value ? 'enabled' : 'disabled'}.`,
+    });
+  };
+  
+  // Load accessibility preferences on mount
+  useEffect(() => {
+    const savedHighContrast = localStorage.getItem('highContrast') === 'true';
+    const savedReducedMotion = localStorage.getItem('reducedMotion') === 'true';
+    
+    if (savedHighContrast) {
+      setAccessibility(prev => ({ ...prev, highContrast: true }));
+      document.body.classList.add('high-contrast');
+    }
+    
+    if (savedReducedMotion) {
+      setAccessibility(prev => ({ ...prev, reducedMotion: true }));
+      document.body.classList.add('reduce-motion');
+    }
+  }, []);
   
   return (
     <div className="space-y-6">
@@ -346,6 +400,59 @@ export default function Profile() {
               <Switch
                 checked={preferences.soundAlerts}
                 onCheckedChange={(checked) => handlePreferenceChange('soundAlerts', checked)}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      {/* Accessibility */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Accessibility</CardTitle>
+          <CardDescription>Customize accessibility features for better usability</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Eye className="h-5 w-5 text-gray-400" />
+                <div>
+                  <p className="font-medium">High Contrast Mode</p>
+                  <p className="text-sm text-gray-500">Increase contrast for better visibility</p>
+                </div>
+              </div>
+              <Switch
+                checked={accessibility.highContrast}
+                onCheckedChange={(checked) => handleAccessibilityChange('highContrast', checked)}
+              />
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Moon className="h-5 w-5 text-gray-400" />
+                <div>
+                  <p className="font-medium">Reduced Motion</p>
+                  <p className="text-sm text-gray-500">Minimize animations and transitions</p>
+                </div>
+              </div>
+              <Switch
+                checked={accessibility.reducedMotion}
+                onCheckedChange={(checked) => handleAccessibilityChange('reducedMotion', checked)}
+              />
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <User className="h-5 w-5 text-gray-400" />
+                <div>
+                  <p className="font-medium">Screen Reader Support</p>
+                  <p className="text-sm text-gray-500">Enhanced support for screen readers</p>
+                </div>
+              </div>
+              <Switch
+                checked={accessibility.screenReader}
+                onCheckedChange={(checked) => handleAccessibilityChange('screenReader', checked)}
               />
             </div>
           </div>
