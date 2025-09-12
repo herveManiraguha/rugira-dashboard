@@ -127,31 +127,33 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
       <TooltipProvider>
         <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
           <div className="flex items-center h-14">
-            {/* Logo in top left corner */}
-            <Link href="/overview" className="flex items-center px-4 gap-2">
-              <img src={logoSvg} alt="Rugira" className="h-7 w-auto" />
-              {!sidebarCollapsed && (
-                <span className="hidden lg:block text-lg font-semibold text-gray-900">Rugira</span>
-              )}
-            </Link>
-            
-            {/* Sidebar gutter with collapse button - hidden on mobile/tablet */}
+            {/* Logo section aligned with sidebar width */}
             <div 
               className={cn(
-                "hidden lg:flex items-center justify-end transition-all duration-150",
-                sidebarCollapsed ? "w-16" : "w-64"
+                "flex items-center justify-between transition-all duration-150",
+                sidebarCollapsed ? "lg:w-16" : "lg:w-64"
               )}
               style={{
                 borderRight: '1px solid var(--sidebar-divider)'
               }}
             >
+              <Link href="/overview" className="flex items-center px-4 gap-2">
+                <img src={logoSvg} alt="Rugira" className="h-7 w-auto" />
+                {!sidebarCollapsed && (
+                  <span className="hidden lg:block text-lg font-semibold" style={{ color: 'var(--brand-red)' }}>Rugira</span>
+                )}
+              </Link>
+            </div>
+            
+            {/* Sidebar collapse button - right of separator */}
+            <div className="hidden lg:flex items-center">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={onSidebarToggle}
-                    className="mr-2 p-2 h-8 w-8 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-brand-red"
+                    className="ml-2 p-2 h-8 w-8 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-brand-red"
                     aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
                   >
                     {sidebarCollapsed ? (
@@ -161,7 +163,7 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
                     )}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="right">
+                <TooltipContent side="bottom">
                   {sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
                 </TooltipContent>
               </Tooltip>
