@@ -1,37 +1,34 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useLocation } from 'wouter';
 import { TradingEnvironment } from './EnvironmentContext';
+import { 
+  hierarchicalOrganizations,
+  defaultOrganization,
+  defaultTenant,
+  defaultPortfolio,
+  defaultMode,
+  type Organization as HierarchicalOrg,
+  type Tenant,
+  type Portfolio as HierarchicalPortfolio,
+  type Mode
+} from '@shared/hierarchicalData';
 
-export interface Organization {
-  id: string;
-  name: string;
-  slug: string;
-  roles: string[];
-  isPinned?: boolean;
-  isRecent?: boolean;
-  portfolios?: Portfolio[];
-}
-
-export interface Portfolio {
-  id: string;
-  name: string;
-  slug: string;
-  hasLiveEnabled?: boolean;
-  isDefault?: boolean;
-  organization?: string;
-}
+export interface Organization extends HierarchicalOrg {}
+export interface Portfolio extends HierarchicalPortfolio {}
 
 interface ScopeState {
   organization: Organization | null;
+  tenant: Tenant | null;
   portfolio: Portfolio | null;
-  mode: TradingEnvironment;
+  mode: Mode | null;
 }
 
 interface ScopeContextType extends ScopeState {
   organizations: Organization[];
   setOrganization: (org: Organization) => void;
+  setTenant: (tenant: Tenant) => void;
   setPortfolio: (portfolio: Portfolio) => void;
-  setMode: (mode: TradingEnvironment, requireConfirmation?: boolean) => Promise<boolean>;
+  setMode: (mode: Mode) => Promise<boolean>;
   isRugiraStaff: boolean;
   scopeReady: boolean;
   getLiveSwitchSummary: () => { venues: string[]; limits: string; riskShields: boolean };
@@ -41,42 +38,6 @@ const ScopeContext = createContext<ScopeContextType | null>(null);
 
 const STORAGE_KEY = 'rugira_scope';
 
-// Demo organizations data
-const DEMO_ORGANIZATIONS: Organization[] = [
-  {
-    id: 'rugira-ag',
-    name: 'Bahnhofstrasse Family Office',
-    slug: 'rugira-ag',
-    roles: ['admin', 'trader'],
-    isPinned: true,
-    portfolios: [
-      { id: 'delta-arb', name: 'Delta Arbitrage', slug: 'delta-arbitrage', hasLiveEnabled: true },
-      { id: 'macro-desk', name: 'Macro Desk', slug: 'macro-desk', hasLiveEnabled: true, isDefault: true }
-    ]
-  },
-  {
-    id: 'alpha-capital',
-    name: 'Alpha Capital AG',
-    slug: 'alpha-capital',
-    roles: ['admin'],
-    isPinned: true,
-    portfolios: [
-      { id: 'arb-01', name: 'Arb 01', slug: 'arb-01', hasLiveEnabled: true, isDefault: true },
-      { id: 'discretionary', name: 'Discretionary', slug: 'discretionary', hasLiveEnabled: false }
-    ]
-  },
-  {
-    id: 'zurich-fo',
-    name: 'Zurich Family Office',
-    slug: 'zurich-family-office',
-    roles: ['viewer'],
-    isRecent: true,
-    portfolios: [
-      { id: 'fo-core', name: 'FO-Core', slug: 'fo-core', hasLiveEnabled: false, isDefault: true }
-    ]
-  }
-];
-
 interface ScopeProviderProps {
   children: ReactNode;
 }
@@ -85,10 +46,11 @@ export function ScopeProvider({ children }: ScopeProviderProps) {
   const [location, setLocation] = useLocation();
   const [scopeReady, setScopeReady] = useState(false);
   
-  // Initialize with defaults
+  // Initialize with defaults from hierarchical data
   const [organization, setOrganizationState] = useState<Organization | null>(null);
+  const [tenant, setTenantState] = useState<Tenant | null>(null);
   const [portfolio, setPortfolioState] = useState<Portfolio | null>(null);
-  const [mode, setModeState] = useState<TradingEnvironment>('Paper');
+  const [mode, setModeState] = useState<Mode | null>(null);
   
   // Check if user is Rugira staff (feature flag)
   const isRugiraStaff = sessionStorage.getItem('rugira_staff') === 'true';
@@ -98,18 +60,24 @@ export function ScopeProvider({ children }: ScopeProviderProps) {
     const loadScope = () => {
       // Try to load from storage first
       let loadedOrg: Organization | null = null;
+      let loadedTenant: Tenant | null = null;
       let loadedPortfolio: Portfolio | null = null;
-      let loadedMode: TradingEnvironment = 'Paper';
+      let loadedMode: Mode | null = null;
       
       const stored = sessionStorage.getItem(STORAGE_KEY);
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
-          loadedOrg = DEMO_ORGANIZATIONS.find(o => o.id === parsed.organizationId) || null;
+          loadedOrg = hierarchicalOrganizations.find(o => o.id === parsed.organizationId) || null;
           if (loadedOrg) {
-            loadedPortfolio = loadedOrg.portfolios?.find(p => p.id === parsed.portfolioId) || null;
+            loadedTenant = loadedOrg.tenants.find(t => t.id === parsed.tenantId) || null;
+            if (loadedTenant) {
+              loadedPortfolio = loadedTenant.portfolios.find(p => p.id === parsed.portfolioId) || null;
+              if (loadedPortfolio) {
+                loadedMode = loadedPortfolio.modes.find(m => m.id === parsed.modeId) || null;
+              }
+            }
           }
-          loadedMode = parsed.mode || 'Paper';
         } catch (e) {
           console.error('Failed to parse stored scope');
         }
@@ -117,13 +85,20 @@ export function ScopeProvider({ children }: ScopeProviderProps) {
       
       // Final fallback to defaults
       if (!loadedOrg) {
-        loadedOrg = DEMO_ORGANIZATIONS.find(o => o.slug === 'alpha-capital') || DEMO_ORGANIZATIONS[0];
+        loadedOrg = defaultOrganization;
       }
-      if (!loadedPortfolio && loadedOrg) {
-        loadedPortfolio = loadedOrg.portfolios?.find(p => p.isDefault) || loadedOrg.portfolios?.[0] || null;
+      if (!loadedTenant && loadedOrg) {
+        loadedTenant = loadedOrg.tenants[0];
+      }
+      if (!loadedPortfolio && loadedTenant) {
+        loadedPortfolio = loadedTenant.portfolios[0];
+      }
+      if (!loadedMode && loadedPortfolio) {
+        loadedMode = loadedPortfolio.modes[0];
       }
       
       setOrganizationState(loadedOrg);
+      setTenantState(loadedTenant);
       setPortfolioState(loadedPortfolio);
       setModeState(loadedMode);
       setScopeReady(true);
@@ -134,62 +109,76 @@ export function ScopeProvider({ children }: ScopeProviderProps) {
 
   // Persist scope changes
   const persistScope = () => {
-    if (organization && portfolio) {
+    if (organization && tenant && portfolio && mode) {
       const scopeData = {
         organizationId: organization.id,
+        tenantId: tenant.id,
         portfolioId: portfolio.id,
-        mode
+        modeId: mode.id
       };
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify(scopeData));
-      
-      // For now, don't update URL to avoid breaking existing routes
-      // TODO: Implement proper URL routing with scope
-      // const basePath = location.split('/').slice(2).join('/') || 'overview';
-      // const newPath = `/${organization.slug}/${portfolio.slug}/${basePath}?mode=${mode.toLowerCase()}`;
-      // if (location !== newPath) {
-      //   setLocation(newPath);
-      // }
     }
   };
 
   useEffect(() => {
-    if (scopeReady && organization && portfolio) {
+    if (scopeReady && organization && tenant && portfolio && mode) {
       persistScope();
     }
-  }, [organization, portfolio, mode, scopeReady]);
+  }, [organization, tenant, portfolio, mode, scopeReady]);
 
   const setOrganization = (org: Organization) => {
     setOrganizationState(org);
-    // Reset portfolio to default for new org
-    const defaultPortfolio = org.portfolios?.find(p => p.isDefault) || org.portfolios?.[0];
-    if (defaultPortfolio) {
-      setPortfolioState(defaultPortfolio);
+    // Reset to first tenant and its first portfolio
+    const firstTenant = org.tenants[0];
+    setTenantState(firstTenant);
+    if (firstTenant) {
+      const firstPortfolio = firstTenant.portfolios[0];
+      setPortfolioState(firstPortfolio);
+      if (firstPortfolio) {
+        setModeState(firstPortfolio.modes[0]);
+      }
     }
     
     // Emit audit event
     console.log('Audit event: scope.organization.changed', { from: organization?.id, to: org.id });
   };
 
+  const setTenant = (newTenant: Tenant) => {
+    setTenantState(newTenant);
+    // Reset to first portfolio in the tenant
+    const firstPortfolio = newTenant.portfolios[0];
+    setPortfolioState(firstPortfolio);
+    if (firstPortfolio) {
+      setModeState(firstPortfolio.modes[0]);
+    }
+    
+    // Emit audit event
+    console.log('Audit event: scope.tenant.changed', { from: tenant?.id, to: newTenant.id });
+  };
+
   const setPortfolio = (newPortfolio: Portfolio) => {
     setPortfolioState(newPortfolio);
+    // Reset to first mode in the portfolio
+    setModeState(newPortfolio.modes[0]);
     
     // Emit audit event
     console.log('Audit event: scope.portfolio.changed', { from: portfolio?.id, to: newPortfolio.id });
   };
 
-  const setMode = async (newMode: TradingEnvironment, requireConfirmation = true): Promise<boolean> => {
-    // If switching to Live and confirmation required, this will be handled by the component
-    if (newMode === 'Live' && requireConfirmation) {
-      return false; // Component should handle confirmation
+  const setMode = async (newMode: Mode): Promise<boolean> => {
+    // If switching to Live and it's not enabled, return false
+    if (newMode.name === 'Live' && !newMode.enabled) {
+      return false;
     }
     
     setModeState(newMode);
     
     // Emit audit event
     console.log('Audit event: scope.mode.changed', { 
-      from: mode, 
-      to: newMode,
+      from: mode?.name, 
+      to: newMode.name,
       organization: organization?.name,
+      tenant: tenant?.name,
       portfolio: portfolio?.name
     });
     
@@ -207,10 +196,12 @@ export function ScopeProvider({ children }: ScopeProviderProps) {
 
   const contextValue: ScopeContextType = {
     organization,
+    tenant,
     portfolio,
     mode,
-    organizations: DEMO_ORGANIZATIONS,
+    organizations: hierarchicalOrganizations,
     setOrganization,
+    setTenant,
     setPortfolio,
     setMode,
     isRugiraStaff,

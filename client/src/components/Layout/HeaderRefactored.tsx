@@ -63,71 +63,43 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
   const { environment, setEnvironment } = useEnvironment();
   const { 
     organizations = [], 
-    organization, 
-    portfolio, 
-    setOrganization, 
-    setPortfolio 
+    organization,
+    tenant,
+    portfolio,
+    mode: scopeMode,
+    setOrganization,
+    setTenant,
+    setPortfolio,
+    setMode: setScopeMode
   } = useScope();
   
   // State
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
-  const [mode, setMode] = useState<Mode>(environment as Mode || 'Demo');
   const [showLiveConfirm, setShowLiveConfirm] = useState(false);
   const [liveConfirmInput, setLiveConfirmInput] = useState('');
   
-  // Use organizations from scope context
-  const orgs = organizations.length > 0 ? organizations : [
-    { 
-      id: '1', 
-      name: 'Bahnhofstrasse Family Office',
-      slug: 'bahnhofstrasse-family-office',
-      roles: ['admin', 'trader'],
-      portfolios: [
-        { id: 'delta-arb', name: 'Delta Arbitrage', slug: 'delta-arbitrage', hasLiveEnabled: true },
-        { id: 'macro-desk', name: 'Macro Desk', slug: 'macro-desk', hasLiveEnabled: true, isDefault: true }
-      ]
-    },
-    { 
-      id: '2', 
-      name: 'Alpha Capital AG',
-      slug: 'alpha-capital',
-      roles: ['admin'],
-      portfolios: [
-        { id: 'arb-01', name: 'Arb 01', slug: 'arb-01', hasLiveEnabled: true, isDefault: true },
-        { id: 'discretionary', name: 'Discretionary', slug: 'discretionary', hasLiveEnabled: false }
-      ]
-    },
-    { 
-      id: '3', 
-      name: 'Zurich Family Office',
-      slug: 'zurich-family-office',
-      roles: ['viewer'],
-      portfolios: [
-        { id: 'fo-core', name: 'FO-Core', slug: 'fo-core', hasLiveEnabled: false, isDefault: true }
-      ]
-    },
-  ];
-  
-  // Get portfolios from current organization
-  const ports = organization?.portfolios || [
-    { id: '1', name: 'Equity Desk' },
-    { id: '2', name: 'Crypto Desk' },
-  ];
+  // Get current data from hierarchy
+  const currentTenants = organization?.tenants || [];
+  const currentPortfolios = tenant?.portfolios || [];
+  const currentModes = portfolio?.modes || [];
   
   // Handle mode change
-  const handleModeChange = (newMode: Mode) => {
-    if (newMode === 'Live' && mode !== 'Live') {
+  const handleModeChange = (newMode: any) => {
+    if (newMode.name === 'Live' && scopeMode?.name !== 'Live') {
       setShowLiveConfirm(true);
     } else {
-      setMode(newMode);
-      setEnvironment(newMode);
+      setScopeMode(newMode);
+      setEnvironment(newMode.name as TradingEnvironment);
     }
   };
   
   const confirmLiveMode = () => {
     if (liveConfirmInput === 'LIVE') {
-      setMode('Live');
-      setEnvironment('Live');
+      const liveMode = portfolio?.modes?.find((m: any) => m.name === 'Live');
+      if (liveMode) {
+        setScopeMode(liveMode);
+        setEnvironment('Live');
+      }
       setShowLiveConfirm(false);
       setLiveConfirmInput('');
     }
@@ -235,7 +207,7 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
                         aria-expanded="false"
                       >
                         <span className="max-w-[140px] truncate">
-                          {organization?.name || orgs[0]?.name || 'Organization'}
+                          {organization?.name || 'Organization'}
                         </span>
                         <ChevronDown className="h-3 w-3 ml-1.5 opacity-60" />
                       </Button>
@@ -243,12 +215,11 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
                     <DropdownMenuContent align="start">
                       <DropdownMenuLabel>Select Organization</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      {orgs.map((org) => (
+                      {organizations.map((org) => (
                         <DropdownMenuItem
                           key={org.id}
                           onClick={() => {
-                            console.log('Organization clicked:', org.name);
-                            setOrganization && setOrganization(org);
+                            setOrganization(org);
                           }}
                           className="cursor-pointer"
                         >
@@ -268,47 +239,45 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
                   {/* Tenant Chip */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 px-3 text-xs font-medium bg-gray-50/50 border border-gray-200/50 hover:bg-gray-100/50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-brand-red rounded-md cursor-pointer"
-                            data-tenant-trigger
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
-                            <span className="max-w-[140px] truncate">
-                              {currentTenant === 'rugira-prod' ? 'Bahnhofstrasse Production' : 
-                               currentTenant === 'rugira-test' ? 'Bahnhofstrasse Test' : 
-                               currentTenant === 'client-alpha' ? 'Client Alpha' : 'Default'}
-                            </span>
-                            <ChevronDown className="h-3 w-3 ml-1.5 opacity-60" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          {currentTenant === 'rugira-prod' ? 'Bahnhofstrasse Production' : 
-                           currentTenant === 'rugira-test' ? 'Bahnhofstrasse Test' : 
-                           currentTenant === 'client-alpha' ? 'Client Alpha' : 'Default'}
-                        </TooltipContent>
-                      </Tooltip>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-3 text-xs font-medium bg-gray-50/50 border border-gray-200/50 hover:bg-gray-100/50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-brand-red rounded-md cursor-pointer"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                      >
+                        <span className="max-w-[140px] truncate">
+                          {tenant?.name || 'Tenant'}
+                        </span>
+                        <ChevronDown className="h-3 w-3 ml-1.5 opacity-60" />
+                      </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
                       <DropdownMenuLabel>Switch Tenant</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      {user?.tenant_roles && Object.keys(user.tenant_roles).map((tenantId) => (
+                      {currentTenants.map((t: any) => (
                         <DropdownMenuItem
-                          key={tenantId}
-                          onClick={() => switchTenant(tenantId)}
+                          key={t.id}
+                          onClick={() => {
+                            setTenant(t);
+                          }}
                           className="cursor-pointer"
                         >
                           <div className="flex items-center justify-between w-full">
-                            <span>
-                              {tenantId === 'rugira-prod' ? 'Bahnhofstrasse Production' : 
-                               tenantId === 'rugira-test' ? 'Bahnhofstrasse Test' : 
-                               tenantId === 'client-alpha' ? 'Client Alpha' : tenantId}
-                            </span>
-                            {currentTenant === tenantId && (
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm">{t.name}</span>
+                              {t.type === 'Test' && (
+                                <span className="text-[10px] px-1.5 py-0.5 bg-yellow-100 text-yellow-700 rounded-full font-medium">
+                                  Test
+                                </span>
+                              )}
+                              {t.type === 'Active' && (
+                                <span className="text-[10px] px-1.5 py-0.5 bg-green-100 text-green-700 rounded-full font-medium">
+                                  Active
+                                </span>
+                              )}
+                            </div>
+                            {tenant?.id === t.id && (
                               <Badge variant="outline" className="text-xs">Active</Badge>
                             )}
                           </div>
@@ -337,31 +306,30 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
                             aria-expanded="false"
                           >
                             <span className="max-w-[140px] truncate">
-                              {portfolio?.name || ports[0]?.name || 'Portfolio'}
+                              {portfolio?.name || 'Portfolio'}
                             </span>
                             <ChevronDown className="h-3 w-3 ml-1.5 opacity-60" />
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                          {portfolio?.name || ports[0]?.name || 'Portfolio'}
+                          {portfolio?.name || 'Portfolio'}
                         </TooltipContent>
                       </Tooltip>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
                       <DropdownMenuLabel>Select Portfolio</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      {ports.map((port: any) => (
+                      {currentPortfolios.map((p: any) => (
                         <DropdownMenuItem
-                          key={port.id}
+                          key={p.id}
                           onClick={() => {
-                            console.log('Portfolio clicked:', port.name);
-                            setPortfolio && setPortfolio(port);
+                            setPortfolio(p);
                           }}
                           className="cursor-pointer"
                         >
                           <div className="flex items-center justify-between w-full">
-                            <span>{port.name}</span>
-                            {portfolio?.id === port.id && (
+                            <span>{p.name}</span>
+                            {portfolio?.id === p.id && (
                               <Badge variant="outline" className="text-xs">Active</Badge>
                             )}
                           </div>
@@ -380,53 +348,46 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
                         size="sm"
                         className={cn(
                           "h-7 px-2.5 text-xs font-medium rounded border transition-colors",
-                          mode === 'Live' 
+                          scopeMode?.name === 'Live' 
                             ? "bg-red-50/50 text-red-700 border-red-200/50 hover:bg-red-100/50" 
-                            : mode === 'Paper' 
+                            : scopeMode?.name === 'Paper' 
                             ? "bg-blue-50/50 text-blue-700 border-blue-200/50 hover:bg-blue-100/50"
                             : "bg-gray-50/50 text-gray-700 border-gray-200/50 hover:bg-gray-100/50"
                         )}
-                        aria-label={`Current environment: ${mode}`}
+                        aria-label={`Current environment: ${scopeMode?.name}`}
                         aria-haspopup="true"
                         aria-expanded="false"
                       >
-                        {mode}
+                        {scopeMode?.name || 'Mode'}
                         <ChevronDown className="h-2.5 w-2.5 ml-1 opacity-60" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start" className="w-64">
                       <DropdownMenuLabel>Select Environment</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() => handleModeChange('Demo')}
-                        className="cursor-pointer"
-                      >
-                        <Circle className="h-3 w-3 mr-2 text-gray-500" />
-                        <div>
-                          <div className="font-medium">Demo</div>
-                          <div className="text-xs text-gray-500">Simulated data</div>
-                        </div>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleModeChange('Paper')}
-                        className="cursor-pointer"
-                      >
-                        <Circle className="h-3 w-3 mr-2 text-blue-500" />
-                        <div>
-                          <div className="font-medium">Paper</div>
-                          <div className="text-xs text-gray-500">Real connections, virtual money</div>
-                        </div>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleModeChange('Live')}
-                        className="cursor-pointer text-red-600"
-                      >
-                        <Circle className="h-3 w-3 mr-2 text-red-500" />
-                        <div>
-                          <div className="font-medium">Live</div>
-                          <div className="text-xs text-gray-500">Real trading</div>
-                        </div>
-                      </DropdownMenuItem>
+                      {currentModes.map((m: any) => (
+                        <DropdownMenuItem
+                          key={m.id}
+                          onClick={() => m.enabled && handleModeChange(m)}
+                          className={cn(
+                            "cursor-pointer",
+                            !m.enabled && "opacity-50 cursor-not-allowed",
+                            m.name === 'Live' && "text-red-600"
+                          )}
+                          disabled={!m.enabled}
+                        >
+                          <Circle className={cn(
+                            "h-3 w-3 mr-2",
+                            m.name === 'Demo' && "text-gray-500",
+                            m.name === 'Paper' && "text-blue-500",
+                            m.name === 'Live' && "text-red-500"
+                          )} />
+                          <div>
+                            <div className="font-medium">{m.name}</div>
+                            <div className="text-xs text-gray-500">{m.description}</div>
+                          </div>
+                        </DropdownMenuItem>
+                      ))}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
