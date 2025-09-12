@@ -117,6 +117,22 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Sidebar background band that extends through entire viewport */}
+      <div 
+        className={cn(
+          "hidden lg:block lg:fixed transition-all duration-150 z-20",
+          sidebarCollapsed ? "lg:w-16" : "lg:w-64"
+        )}
+        style={{
+          backgroundColor: 'var(--sidebar-surface)',
+          borderRight: '1px solid var(--sidebar-divider)',
+          top: '0',
+          bottom: '0',
+          left: '0',
+          height: '100vh'
+        }}
+      />
+      
       <DemoRibbon />
       
       {/* Live Environment Top Border */}
@@ -149,18 +165,6 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
       )}
       
       <div className="flex flex-1">
-        {/* Sidebar background band that extends through header and to top */}
-        <div 
-          className={cn(
-            "hidden lg:block lg:fixed lg:inset-y-0 transition-all duration-150 z-20 lg:top-0",
-            sidebarCollapsed ? "lg:w-16" : "lg:w-64"
-          )}
-          style={{
-            backgroundColor: 'var(--sidebar-surface)',
-            borderRight: '1px solid var(--sidebar-divider)',
-            top: '0'
-          }}
-        />
         
         {/* Desktop Sidebar - lg screens and above */}
         <aside 
