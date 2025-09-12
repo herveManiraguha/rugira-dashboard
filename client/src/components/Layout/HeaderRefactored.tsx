@@ -389,46 +389,7 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
             {/* Spacer */}
             <div className="flex-1"></div>
             
-            {/* Cluster C: System Status */}
-            <div className="hidden lg:flex items-center">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 px-3 text-xs font-medium rounded-full border border-gray-200"
-                  >
-                    <Circle className={cn("h-2 w-2 mr-2", getStatusColor(systemStatus))} fill="currentColor" />
-                    System {systemStatus === 'healthy' ? 'OK' : systemStatus}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80">
-                  <div className="space-y-3">
-                    <h4 className="font-medium text-sm">System Health</h4>
-                    <div className="space-y-2 text-xs">
-                      <div className="flex items-center justify-between">
-                        <span>API Gateway</span>
-                        <Badge variant="outline" className="text-green-600">Healthy</Badge>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>Database</span>
-                        <Badge variant="outline" className="text-green-600">Healthy</Badge>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>Trading Engine</span>
-                        <Badge variant="outline" className="text-green-600">Running</Badge>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>WebSocket</span>
-                        <Badge variant="outline" className="text-green-600">Connected</Badge>
-                      </div>
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            </div>
-            
-            {/* Cluster D: User */}
+            {/* User Actions */}
             <div className="flex items-center gap-2 ml-auto">
               {/* Omni-search */}
               <Tooltip>
@@ -449,40 +410,6 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
               
               {/* Notifications */}
               <NotificationButton />
-              
-              {/* High Contrast Toggle */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={toggleHighContrast}
-                  >
-                    <Eye className={cn("h-4 w-4", highContrast && "text-blue-600")} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{highContrast ? 'Disable' : 'Enable'} High Contrast</p>
-                </TooltipContent>
-              </Tooltip>
-              
-              {/* Help */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => setLocation('/help')}
-                  >
-                    <HelpCircle className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Help</p>
-                </TooltipContent>
-              </Tooltip>
               
               {/* Profile */}
               <DropdownMenu>
@@ -510,6 +437,15 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
                   <DropdownMenuItem onClick={() => setLocation('/organization')} className="cursor-pointer">
                     <Building2 className="mr-2 h-4 w-4" />
                     Organization
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setLocation('/help')} className="cursor-pointer">
+                    <HelpCircle className="mr-2 h-4 w-4" />
+                    Help
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={toggleHighContrast} className="cursor-pointer">
+                    <Eye className="mr-2 h-4 w-4" />
+                    {highContrast ? 'Disable' : 'Enable'} High Contrast
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout} className="text-red-600 cursor-pointer">
