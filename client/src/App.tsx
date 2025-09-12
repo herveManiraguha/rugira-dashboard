@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from "react";
 import { Route, Switch } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
-import MainLayout from "@/components/Layout/MainLayout";
+import MainLayoutIntegrated from "@/components/Layout/MainLayoutIntegrated";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { DemoProvider } from "@/contexts/DemoContext";
 import { EnvironmentProvider } from "@/contexts/EnvironmentContext";
@@ -78,189 +78,189 @@ function App() {
           {/* Protected routes */}
           <Route path="/overview">
             <ProtectedRoute>
-              <MainLayout>
+              <MainLayoutIntegrated>
                 <Overview />
-              </MainLayout>
+              </MainLayoutIntegrated>
             </ProtectedRoute>
           </Route>
           
           <Route path="/bots">
             <ProtectedRoute>
-              <MainLayout>
+              <MainLayoutIntegrated>
                 <Suspense fallback={<PageLoader />}>
                   <Bots />
                 </Suspense>
-              </MainLayout>
+              </MainLayoutIntegrated>
             </ProtectedRoute>
           </Route>
           
           <Route path="/strategies">
             <ProtectedRoute>
-              <MainLayout>
+              <MainLayoutIntegrated>
                 <Suspense fallback={<PageLoader />}>
                   <Strategies />
                 </Suspense>
-              </MainLayout>
+              </MainLayoutIntegrated>
             </ProtectedRoute>
           </Route>
           
           <Route path="/venues">
             <ProtectedRoute>
-              <MainLayout>
+              <MainLayoutIntegrated>
                 <Suspense fallback={<PageLoader />}>
                   <Venues />
                 </Suspense>
-              </MainLayout>
+              </MainLayoutIntegrated>
             </ProtectedRoute>
           </Route>
           
           <Route path="/compliance">
             <ProtectedRoute>
-              <MainLayout>
+              <MainLayoutIntegrated>
                 <Suspense fallback={<PageLoader />}>
                   <Compliance />
                 </Suspense>
-              </MainLayout>
+              </MainLayoutIntegrated>
             </ProtectedRoute>
           </Route>
           
           <Route path="/reports">
             <ProtectedRoute>
-              <MainLayout>
+              <MainLayoutIntegrated>
                 <Suspense fallback={<PageLoader />}>
                   <Reports />
                 </Suspense>
-              </MainLayout>
+              </MainLayoutIntegrated>
             </ProtectedRoute>
           </Route>
           
           <Route path="/backtesting">
             <ProtectedRoute>
-              <MainLayout>
+              <MainLayoutIntegrated>
                 <Suspense fallback={<PageLoader />}>
                   <Backtesting />
                 </Suspense>
-              </MainLayout>
+              </MainLayoutIntegrated>
             </ProtectedRoute>
           </Route>
           
           <Route path="/monitoring">
             <ProtectedRoute>
-              <MainLayout>
+              <MainLayoutIntegrated>
                 <Suspense fallback={<PageLoader />}>
                   <Monitoring />
                 </Suspense>
-              </MainLayout>
+              </MainLayoutIntegrated>
             </ProtectedRoute>
           </Route>
           
           <Route path="/settings">
             <ProtectedRoute>
-              <MainLayout>
+              <MainLayoutIntegrated>
                 <Suspense fallback={<PageLoader />}>
                   <Settings />
                 </Suspense>
-              </MainLayout>
+              </MainLayoutIntegrated>
             </ProtectedRoute>
           </Route>
           
           <Route path="/profile">
             <ProtectedRoute>
-              <MainLayout>
+              <MainLayoutIntegrated>
                 <Suspense fallback={<PageLoader />}>
                   <Profile />
                 </Suspense>
-              </MainLayout>
+              </MainLayoutIntegrated>
             </ProtectedRoute>
           </Route>
           
           <Route path="/admin">
             <ProtectedRoute>
-              <MainLayout>
+              <MainLayoutIntegrated>
                 <Suspense fallback={<PageLoader />}>
                   <Admin />
                 </Suspense>
-              </MainLayout>
+              </MainLayoutIntegrated>
             </ProtectedRoute>
           </Route>
           
           <Route path="/admin/user/:id">
             <ProtectedRoute>
-              <MainLayout>
+              <MainLayoutIntegrated>
                 <Suspense fallback={<PageLoader />}>
                   <UserDetail />
                 </Suspense>
-              </MainLayout>
+              </MainLayoutIntegrated>
             </ProtectedRoute>
           </Route>
           
           <Route path="/tenants">
             <ProtectedRoute>
-              <MainLayout>
+              <MainLayoutIntegrated>
                 <Suspense fallback={<PageLoader />}>
                   <Tenants />
                 </Suspense>
-              </MainLayout>
+              </MainLayoutIntegrated>
             </ProtectedRoute>
           </Route>
           
           <Route path="/tenants/new">
             <ProtectedRoute>
-              <MainLayout>
+              <MainLayoutIntegrated>
                 <Suspense fallback={<PageLoader />}>
                   <CreateTenant />
                 </Suspense>
-              </MainLayout>
+              </MainLayoutIntegrated>
             </ProtectedRoute>
           </Route>
           
           <Route path="/tenants/:id">
             <ProtectedRoute>
-              <MainLayout>
+              <MainLayoutIntegrated>
                 <Suspense fallback={<PageLoader />}>
                   <TenantDetail />
                 </Suspense>
-              </MainLayout>
+              </MainLayoutIntegrated>
             </ProtectedRoute>
           </Route>
           
           <Route path="/api-keys">
             <ProtectedRoute>
-              <MainLayout>
+              <MainLayoutIntegrated>
                 <Suspense fallback={<PageLoader />}>
                   <ApiKeys />
                 </Suspense>
-              </MainLayout>
+              </MainLayoutIntegrated>
             </ProtectedRoute>
           </Route>
           
           <Route path="/organization">
             <ProtectedRoute>
-              <MainLayout>
+              <MainLayoutIntegrated>
                 <Suspense fallback={<PageLoader />}>
                   <Organization />
                 </Suspense>
-              </MainLayout>
+              </MainLayoutIntegrated>
             </ProtectedRoute>
           </Route>
           
           <Route path="/help">
             <ProtectedRoute>
-              <MainLayout>
+              <MainLayoutIntegrated>
                 <Suspense fallback={<PageLoader />}>
                   <Help />
                 </Suspense>
-              </MainLayout>
+              </MainLayoutIntegrated>
             </ProtectedRoute>
           </Route>
           
           <Route path="/internal/checks">
             <ProtectedRoute>
-              <MainLayout>
+              <MainLayoutIntegrated>
                 <Suspense fallback={<PageLoader />}>
                   <InternalChecks />
                 </Suspense>
-              </MainLayout>
+              </MainLayoutIntegrated>
             </ProtectedRoute>
           </Route>
           
