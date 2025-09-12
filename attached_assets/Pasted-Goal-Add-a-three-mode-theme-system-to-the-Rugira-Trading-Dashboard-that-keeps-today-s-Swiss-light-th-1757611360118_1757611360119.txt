@@ -1,0 +1,163 @@
+Goal
+Add a three‑mode theme system to the Rugira Trading Dashboard that keeps today’s Swiss light theme exactly as described, and adds Dark and High‑Contrast modes. The “eye” button in the header must cycle Light → High‑Contrast → Dark → Light, update its tooltip/label accordingly, respect the user’s OS preference on first visit, and remember the user’s last choice for subsequent visits.
+
+Important brand rules (do not change):
+
+Primary brand red: #E10500. Reserve exclusively for primary CTAs, key accents, and the overscroll effect.
+
+P&L colors: Positive #16A34A; Negative #DC2626 (distinct from brand red).
+
+Status colors (separate from brand):
+
+Success hsl(155, 62%, 29%)
+
+Warning hsl(42, 93%, 56%)
+
+Error hsl(348, 83%, 47%)
+
+Info hsl(210, 100%, 45%)
+
+1) Theme names and where they apply
+
+Apply the theme colors to canvas, surfaces, sidebars, cards, tables, modals, popovers, inputs, borders, text hierarchy, charts (lines/bars/axes/grid), badges, alerts, and buttons.
+Every visible screen must pick up the active theme: Overview, Venues, Strategies, Backtesting, Bots, Monitoring, Analytics, Compliance, Admin, Tenants, Help.
+
+2) LIGHT (keep current look & feel)
+
+Keep the existing “Swiss design” theme exactly as it is today:
+
+Brand red (primary): #E10500
+
+Subtle red tints (sidebar): #FFF7F7 background, #FFF1F1 hover
+
+Canvas: #FFFFFF
+
+Surfaces: #FFFFFF cards/panels, #F9FAFB sub‑surfaces
+
+Borders: #E5E7EB
+
+Text hierarchy:
+
+Headings #111827
+
+Body #374151
+
+Secondary #6B7280
+
+Muted #9CA3AF
+
+Status / P&L: use the values listed in the brand rules above.
+
+Design ethos: clean minimalism, generous whitespace, functional color separation.
+
+3) DARK (Zurich‑modern, finance‑grade)
+
+Introduce a calm, low‑glare dark mode suited for family offices and brokers. Keep brand red as the primary action color.
+
+Canvas (page): #0B1117 (blue‑charcoal)
+
+Surface‑1 (cards/panels): #0F172A
+
+Surface‑2 (sidebar/secondary): #111827
+
+Borders/dividers: #1F2937
+
+Text hierarchy:
+
+Headings/strong: #F1F5F9
+
+Body: #E5E7EB
+
+Secondary: #94A3B8
+
+Muted: #64748B
+
+Brand red (primary buttons/accents): #E10500; hover/active may deepen slightly (e.g., toward #B90C00) while keeping white text readable.
+
+Status / P&L: same hues as Light; ensure they read clearly on dark surfaces.
+
+Charts (dark): use a restrained palette that reads on charcoal:
+
+Series: #38BDF8, #34D399, #F59E0B, #C084FC, #FB7185
+
+Grid lines: #334155
+
+Axes/labels: #CBD5E1
+
+Focus ring (dark): a visible blue such as #60A5FA.
+
+Selections: subtle slate tint (around #1E293B).
+
+4) HIGH‑CONTRAST (Audit mode)
+
+Add an accessibility‑oriented theme for users who need extra clarity during reviews and audits.
+
+Canvas: #000000
+
+Surface‑1: #0A0A0A
+
+Surface‑2: #111111
+
+Borders: #FFFFFF (use translucency where you already support it; keep lines crisp)
+
+Text hierarchy:
+
+Headings/strong: #FFFFFF
+
+Body: #FFFFFF (or very close to it)
+
+Secondary: #E5E5E5
+
+Brand red (primary): switch to a deeper red that keeps white text ≥ AA on black: #D60000.
+
+Status / P&L: retain the same hues; ensure all small text and iconography meet AA contrast on black.
+
+Charts (HC): vivid but legible on black: #00E5FF, #39FF14, #FFD400, #FF66FF, #FF4D4D with white axis labels and semi‑opaque white grid lines.
+
+Focus ring (HC): #00E5FF for unmistakable visibility.
+
+5) Eye button behavior (no code details—just behavior)
+
+The header eye icon cycles Light → High‑Contrast → Dark → Light.
+
+Update the tooltip/aria‑label to reflect the next mode.
+
+Remember the user’s last choice so the theme persists on reloads.
+
+On first visit, respect OS preference: if the OS asks for “more contrast,” start in High‑Contrast; else if the OS is in dark mode, start in Dark; otherwise start in Light.
+
+6) Usage & mapping expectations
+
+Do not hard‑code colors inside components. Every component should consume the active theme’s tokens for canvas, surfaces, borders, and text.
+
+Keep brand red dedicated to primary actions, key accents, and the existing overscroll effect—not for generic errors (use the Error red for that).
+
+Keep P&L and status colors stable across themes for user familiarity; only the surrounding neutrals change.
+
+For charts, pull series, gridline, and axis colors from the active theme palette provided above.
+
+Ensure table stripes, badges, and tags are subtle on dark and crisp on high‑contrast.
+
+Maintain the “Swiss design” feel: minimal tinting, clear hierarchy, generous whitespace, thin borders, and quiet shadows.
+
+7) Accessibility acceptance criteria
+
+Body text and iconography must meet WCAG AA (≥ 4.5:1 for normal text, ≥ 3:1 for large text/icons).
+
+Interactive states (hover, active, focus) must be visible in all three themes.
+
+Focus rings must be obvious on any surface.
+
+Validate on the following screens: Overview, Venues, Strategies, Backtesting, Bots, Monitoring, Analytics, Compliance, Admin, Tenants, Help.
+
+8) Visual QA checklist (what to verify)
+
+Primary buttons, destructive actions, and alerts still read as brand red in all themes.
+
+P&L positive/negative colors are unchanged and readable on cards and charts.
+
+Charts remain legible with the new axes/grid palettes in dark and high‑contrast.
+
+Sidebars, cards, and tables adopt the correct surface and border tones per theme.
+
+The eye button cycles themes, updates its tooltip, and the choice persists across page loads and routes.
