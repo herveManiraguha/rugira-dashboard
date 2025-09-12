@@ -71,6 +71,20 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
   const { isLive } = useEnvironment();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  
+  // Auto-collapse sidebar below 1280px (xl breakpoint)
+  useEffect(() => {
+    const handleResize = () => {
+      setSidebarCollapsed(window.innerWidth < 1280);
+    };
+    
+    // Set initial state
+    handleResize();
+    
+    // Add resize listener
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -121,8 +135,8 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
       {/* Sidebar background band that extends through entire viewport */}
       <div 
         className={cn(
-          "hidden lg:block lg:fixed transition-all duration-150 z-20",
-          sidebarCollapsed ? "lg:w-16" : "lg:w-64"
+          "hidden lg:block lg:fixed transition-all duration-[160ms] ease-out z-20",
+          sidebarCollapsed ? "lg:w-[76px]" : "lg:w-[240px]"
         )}
         style={{
           backgroundColor: 'var(--sidebar-surface)',
@@ -160,8 +174,8 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
       {/* Incident Banner */}
       <IncidentBanner 
         className={cn(
-          "transition-all duration-150",
-          sidebarCollapsed ? "lg:ml-16" : "lg:ml-64"
+          "transition-all duration-[160ms] ease-out",
+          sidebarCollapsed ? "lg:ml-[76px]" : "lg:ml-[240px]"
         )}
       />
       
@@ -178,19 +192,19 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
         {/* Desktop Sidebar - lg screens and above */}
         <aside 
           className={cn(
-            "hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 transition-all duration-150 z-30",
-            sidebarCollapsed ? "lg:w-16" : "lg:w-64",
+            "hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 transition-all duration-[160ms] ease-out z-30",
+            sidebarCollapsed ? "lg:w-[76px]" : "lg:w-[240px]",
             "lg:pt-14"
           )}
         >
           <div className="flex-1 flex flex-col overflow-y-auto">
             
             <TooltipProvider>
-              <nav className="flex-1 px-2 py-4 space-y-1">
+              <nav className="flex-1 px-2 py-3 space-y-0.5">
                 {Object.entries(groupedNavigation).map(([group, items]) => (
-                  <div key={group} className="mb-4">
+                  <div key={group} className="mb-3">
                     {group !== 'Main' && !sidebarCollapsed && (
-                      <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                      <h3 className="px-4 h-8 flex items-center text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
                         {group}
                       </h3>
                     )}
@@ -201,16 +215,18 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
                         <Link key={item.name} href={item.href}>
                           <div
                             className={cn(
-                              "nav-item flex items-center px-3 py-2 text-sm transition-all cursor-pointer rounded-lg",
-                              sidebarCollapsed && "justify-center px-2",
+                              "nav-item flex items-center h-[44px] text-sm transition-all cursor-pointer rounded-lg",
+                              sidebarCollapsed ? "justify-center px-2" : "px-4",
                               isActive && "active"
                             )}
                           >
                             <ItemIcon className={cn(
-                              "flex-shrink-0 h-5 w-5",
+                              "flex-shrink-0 h-[22px] w-[22px]",
                               !sidebarCollapsed && "mr-3"
                             )} strokeWidth={isActive ? 2 : 1.5} />
-                            {!sidebarCollapsed && item.name}
+                            {!sidebarCollapsed && (
+                              <span className="truncate">{item.name}</span>
+                            )}
                           </div>
                         </Link>
                       );
@@ -221,7 +237,7 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
                             <TooltipTrigger asChild>
                               {linkContent}
                             </TooltipTrigger>
-                            <TooltipContent side="right">
+                            <TooltipContent side="right" className="ml-2">
                               <div>
                                 <p className="font-medium">{item.name}</p>
                                 <p className="text-xs text-gray-500">{item.description}</p>
@@ -245,7 +261,7 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
         
         {/* Mobile/Tablet Sidebar */}
         <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-          <SheetContent side="left" className="w-64 p-0" style={{ backgroundColor: 'var(--sidebar-surface)' }}>
+          <SheetContent side="left" className="w-[240px] p-0" style={{ backgroundColor: 'var(--sidebar-surface)' }}>
             <SheetHeader className="sr-only">
               <SheetTitle>Navigation Menu</SheetTitle>
               <SheetDescription>
@@ -260,11 +276,11 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
                 </div>
               </div>
               
-              <nav className="flex-1 overflow-y-auto px-2 py-4 space-y-1">
+              <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-0.5">
                 {Object.entries(groupedNavigation).map(([group, items]) => (
-                  <div key={group} className="mb-4">
+                  <div key={group} className="mb-3">
                     {group !== 'Main' && (
-                      <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                      <h3 className="px-4 h-8 flex items-center text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
                         {group}
                       </h3>
                     )}
@@ -275,13 +291,13 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
                         <Link key={item.name} href={item.href}>
                           <div
                             className={cn(
-                              "nav-item flex items-center px-3 py-2 text-sm transition-all cursor-pointer rounded-lg",
+                              "nav-item flex items-center h-[44px] px-4 text-sm transition-all cursor-pointer rounded-lg",
                               isActive && "active"
                             )}
                             onClick={() => setMobileMenuOpen(false)}
                           >
-                            <ItemIcon className="mr-3 flex-shrink-0 h-5 w-5" strokeWidth={isActive ? 2 : 1.5} />
-                            {item.name}
+                            <ItemIcon className="mr-3 flex-shrink-0 h-[22px] w-[22px]" strokeWidth={isActive ? 2 : 1.5} />
+                            <span className="truncate">{item.name}</span>
                           </div>
                         </Link>
                       );
@@ -297,8 +313,8 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
         
         {/* Main content area */}
         <main className={cn(
-          "flex-1 flex flex-col transition-all duration-150 pt-14",
-          sidebarCollapsed ? "lg:ml-16" : "lg:ml-64"
+          "flex-1 flex flex-col transition-all duration-[160ms] ease-out pt-14",
+          sidebarCollapsed ? "lg:ml-[76px]" : "lg:ml-[240px]"
         )}>
           <div className="flex-1 p-4 lg:p-6 xl:p-8">
             {children}

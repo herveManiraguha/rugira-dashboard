@@ -139,8 +139,8 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
             {/* Logo section aligned with sidebar width */}
             <div 
               className={cn(
-                "flex items-center justify-between transition-all duration-150",
-                sidebarCollapsed ? "lg:w-16" : "lg:w-64"
+                "flex items-center justify-between transition-all duration-[160ms] ease-out",
+                sidebarCollapsed ? "lg:w-[76px]" : "lg:w-[240px]"
               )}
               style={{
                 borderRight: '1px solid var(--sidebar-divider)'
