@@ -149,15 +149,16 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
       )}
       
       <div className="flex flex-1">
-        {/* Sidebar background band that extends through header */}
+        {/* Sidebar background band that extends through header and to top */}
         <div 
           className={cn(
-            "hidden lg:block lg:fixed lg:inset-y-0 transition-all duration-150 z-20",
+            "hidden lg:block lg:fixed lg:inset-y-0 transition-all duration-150 z-20 lg:top-0",
             sidebarCollapsed ? "lg:w-16" : "lg:w-64"
           )}
           style={{
             backgroundColor: 'var(--sidebar-surface)',
-            borderRight: '1px solid var(--sidebar-divider)'
+            borderRight: '1px solid var(--sidebar-divider)',
+            top: '0'
           }}
         />
         
