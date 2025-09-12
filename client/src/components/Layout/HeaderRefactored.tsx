@@ -293,7 +293,7 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
                   
                   <span className="mx-2 text-gray-400 text-xs select-none" aria-hidden="true">›</span>
                   
-                  {/* Portfolio Chip */}
+                  {/* Desk Chip */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Tooltip>
@@ -306,18 +306,18 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
                             aria-expanded="false"
                           >
                             <span className="max-w-[140px] truncate">
-                              {portfolio?.name || 'Portfolio'}
+                              {portfolio?.name || 'Desk'}
                             </span>
                             <ChevronDown className="h-3 w-3 ml-1.5 opacity-60" />
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                          {portfolio?.name || 'Portfolio'}
+                          {portfolio?.name || 'Desk'}
                         </TooltipContent>
                       </Tooltip>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
-                      <DropdownMenuLabel>Select Portfolio</DropdownMenuLabel>
+                      <DropdownMenuLabel>Select Desk</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       {currentPortfolios.map((p: any) => (
                         <DropdownMenuItem
