@@ -28,7 +28,7 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import logoSvg from '@/assets/logo.svg';
 import { useAuth } from '@/contexts/AuthContext';
-import { useEnvironment } from '@/contexts/EnvironmentContext';
+import { useEnvironment, TradingEnvironment } from '@/contexts/EnvironmentContext';
 import { useScope } from '@/contexts/ScopeContext';
 import { CommandPalette } from '@/components/CommandPalette/CommandPalette';
 import NotificationButton from './NotificationButton';
