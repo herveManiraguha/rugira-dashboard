@@ -127,6 +127,14 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
       <TooltipProvider>
         <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
           <div className="flex items-center h-14">
+            {/* Logo in top left corner */}
+            <Link href="/overview" className="flex items-center px-4 gap-2">
+              <img src={logoSvg} alt="Rugira" className="h-7 w-auto" />
+              {!sidebarCollapsed && (
+                <span className="hidden lg:block text-lg font-semibold text-gray-900">Rugira</span>
+              )}
+            </Link>
+            
             {/* Sidebar gutter with collapse button - hidden on mobile/tablet */}
             <div 
               className={cn(
@@ -161,28 +169,23 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
             
             {/* Main header content */}
             <div className="flex items-center flex-1 px-4 gap-6">
-              {/* Cluster A: Brand + Context chips */}
+              {/* Context chips */}
               <div className="flex items-center gap-2">
-              {/* Mobile Menu */}
-              {onMobileMenuToggle && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={onMobileMenuToggle}
-                  className="lg:hidden p-2 h-8 w-8"
-                  aria-label="Toggle navigation menu"
-                >
-                  <Menu className="h-4 w-4" />
-                </Button>
-              )}
-              
-              {/* Logo */}
-              <Link href="/overview" className="flex items-center">
-                <img src={logoSvg} alt="Rugira" className="h-7 w-auto" />
-              </Link>
-              
-              {/* Context Chips */}
-              <div className="hidden sm:flex items-center">
+                {/* Mobile Menu */}
+                {onMobileMenuToggle && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={onMobileMenuToggle}
+                    className="lg:hidden p-2 h-8 w-8"
+                    aria-label="Toggle navigation menu"
+                  >
+                    <Menu className="h-4 w-4" />
+                  </Button>
+                )}
+                
+                {/* Context Chips */}
+                <div className="hidden sm:flex items-center">
                 {/* Organization Chip */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
