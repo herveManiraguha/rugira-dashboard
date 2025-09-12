@@ -81,19 +81,30 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
       id: '1', 
       name: 'Bahnhofstrasse Family Office',
       slug: 'bahnhofstrasse-family-office',
-      roles: ['admin', 'trader']
+      roles: ['admin', 'trader'],
+      portfolios: [
+        { id: 'delta-arb', name: 'Delta Arbitrage', slug: 'delta-arbitrage', hasLiveEnabled: true },
+        { id: 'macro-desk', name: 'Macro Desk', slug: 'macro-desk', hasLiveEnabled: true, isDefault: true }
+      ]
     },
     { 
       id: '2', 
       name: 'Alpha Capital AG',
       slug: 'alpha-capital',
-      roles: ['admin']
+      roles: ['admin'],
+      portfolios: [
+        { id: 'arb-01', name: 'Arb 01', slug: 'arb-01', hasLiveEnabled: true, isDefault: true },
+        { id: 'discretionary', name: 'Discretionary', slug: 'discretionary', hasLiveEnabled: false }
+      ]
     },
     { 
       id: '3', 
       name: 'Zurich Family Office',
       slug: 'zurich-family-office',
-      roles: ['viewer']
+      roles: ['viewer'],
+      portfolios: [
+        { id: 'fo-core', name: 'FO-Core', slug: 'fo-core', hasLiveEnabled: false, isDefault: true }
+      ]
     },
   ];
   
@@ -216,25 +227,18 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
                   {/* Organization Chip */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 px-3 text-xs font-medium bg-gray-50/50 border border-gray-200/50 hover:bg-gray-100/50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-brand-red rounded-md cursor-pointer"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
-                            <span className="max-w-[140px] truncate">
-                              {organization?.name || orgs[0]?.name || 'Organization'}
-                            </span>
-                            <ChevronDown className="h-3 w-3 ml-1.5 opacity-60" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-3 text-xs font-medium bg-gray-50/50 border border-gray-200/50 hover:bg-gray-100/50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-brand-red rounded-md cursor-pointer"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                      >
+                        <span className="max-w-[140px] truncate">
                           {organization?.name || orgs[0]?.name || 'Organization'}
-                        </TooltipContent>
-                      </Tooltip>
+                        </span>
+                        <ChevronDown className="h-3 w-3 ml-1.5 opacity-60" />
+                      </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
                       <DropdownMenuLabel>Select Organization</DropdownMenuLabel>
@@ -242,7 +246,10 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
                       {orgs.map((org) => (
                         <DropdownMenuItem
                           key={org.id}
-                          onClick={() => setOrganization(org)}
+                          onClick={() => {
+                            console.log('Organization clicked:', org.name);
+                            setOrganization && setOrganization(org);
+                          }}
                           className="cursor-pointer"
                         >
                           <div className="flex items-center justify-between w-full">
@@ -346,7 +353,10 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
                       {ports.map((port: any) => (
                         <DropdownMenuItem
                           key={port.id}
-                          onClick={() => setPortfolio(port)}
+                          onClick={() => {
+                            console.log('Portfolio clicked:', port.name);
+                            setPortfolio && setPortfolio(port);
+                          }}
                           className="cursor-pointer"
                         >
                           <div className="flex items-center justify-between w-full">
