@@ -909,6 +909,12 @@
   *:hover {
     scrollbar-color: var(--brand-red) var(--sub-surface);
   }
+  
+  /* Sidebar collapse button focus state */
+  .focus\:ring-brand-red:focus {
+    outline: 2px solid var(--brand-red);
+    outline-offset: 0;
+  }
 }
 
 /* Utility classes for Rugira theme */

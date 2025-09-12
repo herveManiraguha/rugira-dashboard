@@ -133,7 +133,12 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
       )}
       
       {/* Refactored Header */}
-      <HeaderRefactored onKillSwitch={handleKillSwitch} onMobileMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)} />
+      <HeaderRefactored 
+        onKillSwitch={handleKillSwitch} 
+        onMobileMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)}
+        sidebarCollapsed={sidebarCollapsed}
+        onSidebarToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+      />
       
       {/* Live Mode Banner */}
       <LiveModeBanner />
@@ -143,35 +148,28 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
         <KillSwitchBanner />
       )}
       
-      <div className="flex flex-1 pt-14">
-        {/* Desktop Sidebar - lg screens and above */}
-        <aside 
+      <div className="flex flex-1">
+        {/* Sidebar background band that extends through header */}
+        <div 
           className={cn(
-            "hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 transition-all duration-300 z-30",
-            sidebarCollapsed ? "lg:w-16" : "lg:w-64",
-            "lg:pt-14"
+            "hidden lg:block lg:fixed lg:inset-y-0 transition-all duration-150 z-20",
+            sidebarCollapsed ? "lg:w-16" : "lg:w-64"
           )}
           style={{
             backgroundColor: 'var(--sidebar-surface)',
             borderRight: '1px solid var(--sidebar-divider)'
           }}
+        />
+        
+        {/* Desktop Sidebar - lg screens and above */}
+        <aside 
+          className={cn(
+            "hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 transition-all duration-150 z-30",
+            sidebarCollapsed ? "lg:w-16" : "lg:w-64",
+            "lg:pt-14"
+          )}
         >
           <div className="flex-1 flex flex-col overflow-y-auto">
-            {/* Collapse toggle for desktop */}
-            <div className="flex items-center justify-end p-2" style={{ borderBottom: '1px solid var(--sidebar-divider)' }}>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                className="p-2 h-8 w-8"
-                aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-              >
-                <ChevronRight className={cn(
-                  "h-4 w-4 transition-transform",
-                  !sidebarCollapsed && "rotate-180"
-                )} />
-              </Button>
-            </div>
             
             <TooltipProvider>
               <nav className="flex-1 px-2 py-4 space-y-1">
@@ -285,7 +283,7 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
         
         {/* Main content area */}
         <main className={cn(
-          "flex-1 flex flex-col transition-all duration-300",
+          "flex-1 flex flex-col transition-all duration-150 pt-14",
           sidebarCollapsed ? "lg:ml-16" : "lg:ml-64"
         )}>
           <div className="flex-1 p-4 lg:p-6 xl:p-8">

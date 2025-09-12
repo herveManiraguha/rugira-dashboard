@@ -53,6 +53,7 @@ import {
   Building2,
   Key,
   ChevronRight,
+  ChevronLeft,
   Search,
   Calendar,
   Circle,
@@ -65,12 +66,14 @@ import {
 interface HeaderRefactoredProps {
   onKillSwitch?: () => void;
   onMobileMenuToggle?: () => void;
+  sidebarCollapsed?: boolean;
+  onSidebarToggle?: () => void;
 }
 
 type TimeRange = '24h' | '7d' | 'MTD' | 'YTD';
 type Mode = 'Live' | 'Paper' | 'Demo';
 
-export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: HeaderRefactoredProps) {
+export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sidebarCollapsed = false, onSidebarToggle }: HeaderRefactoredProps) {
   const [, setLocation] = useLocation();
   const { user, logout, currentTenant, switchTenant } = useAuth();
   const { environment, setEnvironment } = useEnvironment();
@@ -178,9 +181,43 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
     <>
       <TooltipProvider>
         <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
-          <div className="flex items-center h-14 px-4 gap-6">
-            {/* Cluster A: Brand + Context chips */}
-            <div className="flex items-center gap-2">
+          <div className="flex items-center h-14">
+            {/* Sidebar gutter with collapse button */}
+            <div 
+              className={cn(
+                "hidden lg:flex items-center justify-end transition-all duration-150",
+                sidebarCollapsed ? "w-16" : "w-64"
+              )}
+              style={{
+                borderRight: '1px solid var(--sidebar-divider)'
+              }}
+            >
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={onSidebarToggle}
+                    className="mr-2 p-2 h-8 w-8 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-brand-red"
+                    aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+                  >
+                    {sidebarCollapsed ? (
+                      <ChevronRight className="h-4 w-4" />
+                    ) : (
+                      <ChevronLeft className="h-4 w-4" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  {sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+                </TooltipContent>
+              </Tooltip>
+            </div>
+            
+            {/* Main header content */}
+            <div className="flex items-center flex-1 px-4 gap-6">
+              {/* Cluster A: Brand + Context chips */}
+              <div className="flex items-center gap-2">
               {/* Mobile Menu */}
               {onMobileMenuToggle && (
                 <Button
@@ -482,6 +519,7 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle }: H
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+          </div>
           </div>
         </header>
       </TooltipProvider>

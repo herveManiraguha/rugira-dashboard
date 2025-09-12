@@ -1,0 +1,67 @@
+Goal
+Make the Rugira sidebar integrate with the header like the inspiration dashboard: the sidebar visually continues up into the header (a seamless “band”), with a clean seam and a discoverable collapse control.
+Do not change labels, order, wording, icons, routes, or colors. This task is only about the intersection between the header and the sidebar.
+
+1) Seamless band into the header
+
+Extend the sidebar background (the existing very light blush) all the way to the top of the page, so it is visible behind the header on the left.
+
+Reserve a left gutter inside the header equal to the current sidebar width (expanded and collapsed) so the header’s content never overlaps this band.
+
+Draw a continuous 1‑pixel vertical divider at the sidebar’s right edge that runs through both the header and the page body. Use the same subtle divider tone already used in the app.
+
+2) Alignment & spacing
+
+Keep the header height exactly as it is.
+
+Align the breadcrumb/title row so that its left edge lines up with the content area, not the sidebar; when the sidebar collapses, this alignment stays perfect.
+
+Ensure the top-left brand shield and any existing header icons remain in their current positions relative to the content area.
+
+3) Collapse / expand control at the seam
+
+Place the sidebar collapse/expand chevron at the top seam inside the header, vertically centered with the header.
+
+The button sits on the blush band and uses the current neutral icon color; on hover it uses the existing hover state and on focus it shows the thin brand‑red outline used elsewhere.
+
+Animate the gutter/rail width change smoothly (about 150–180 ms) so the breadcrumb doesn’t “jump.”
+
+4) Active-state continuity
+
+Keep the existing active vertical red rail on the sidebar. Make sure it visually lines up with the divider at the header seam so the left edge feels instrument‑grade precise.
+
+No other visual changes to items, badges, or labels.
+
+5) Scroll & sticky behavior
+
+The header stays sticky. The sidebar scrolls independently as it does now.
+
+The blush band and divider remain visible across the header while scrolling.
+
+Preserve the deep‑red overscroll background outside the app shell; do not modify.
+
+6) Responsive behavior
+
+Expanded: header reserves a gutter equal to the expanded sidebar width; blush band fills that area.
+
+Collapsed: header gutter shrinks to the collapsed width; blush band and divider adjust accordingly.
+
+Tablet/mobile: when the sidebar becomes a drawer, remove the header gutter and hide the blush band; the drawer still shows the blush background when opened.
+
+7) Accessibility & focus
+
+The seam toggle is keyboard‑focusable and announced (“Collapse sidebar” / “Expand sidebar”).
+
+Maintain existing contrast ratios; no new colors introduced.
+
+Acceptance criteria
+
+The sidebar visually continues into the header as a left blush band with a continuous divider.
+
+The breadcrumb and header actions remain exactly where they are relative to the content area.
+
+Collapse/expand is triggered from the header seam and animates without layout jitter.
+
+No changes to nav labels, iconography, routes, counts, or copy.
+
+Works in expanded, collapsed, and mobile drawer states with correct sticky behavior.
