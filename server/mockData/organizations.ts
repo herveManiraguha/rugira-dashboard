@@ -24,7 +24,7 @@ export const mockOrganizations: Organization[] = [
   {
     id: 'org-1', // keeping old id for backward compatibility
     org_id: '123e4567-e89b-12d3-a456-426614174000',
-    name: 'Bahnhofstrasse Family Office',
+    name: 'Alpha Capital AG',
     status: 'active' as const,
     memberCount: 5,
     created_at: '2024-01-15T10:00:00Z',

@@ -45,7 +45,7 @@ const STORAGE_KEY = 'rugira_scope';
 const DEMO_ORGANIZATIONS: Organization[] = [
   {
     id: 'rugira-ag',
-    name: 'Rugira AG',
+    name: 'Bahnhofstrasse Family Office',
     slug: 'rugira-ag',
     roles: ['admin', 'trader'],
     isPinned: true,

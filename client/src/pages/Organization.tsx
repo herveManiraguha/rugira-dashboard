@@ -32,7 +32,7 @@ export default function Organization() {
   
   // Mock organization data
   const organization = {
-    name: 'Rugira Trading AG',
+    name: 'Bahnhofstrasse Family Office',
     id: 'ORG-2024-001',
     plan: 'Professional',
     seats: { used: 7, total: 10 },

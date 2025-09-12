@@ -91,7 +91,7 @@ export default function Tenants() {
   const tenants: Tenant[] = [
     {
       id: 'rugira-prod',
-      name: 'Rugira Production',
+      name: 'Bahnhofstrasse Production',
       status: 'active',
       portfolios: 5,
       activeBots: 12,
@@ -99,7 +99,7 @@ export default function Tenants() {
       lastActivity: '2 min ago',
       pendingApprovals: 3,
       region: 'CH',
-      legalEntity: 'Rugira Trading AG',
+      legalEntity: 'Bahnhofstrasse Family Office AG',
       created: '2024-01-15',
       planType: 'Professional',
       usage: {
@@ -113,7 +113,7 @@ export default function Tenants() {
     },
     {
       id: 'rugira-test',
-      name: 'Rugira Test',
+      name: 'Bahnhofstrasse Test',
       status: 'active',
       portfolios: 2,
       activeBots: 4,

@@ -63,9 +63,9 @@ export default function TenantDetail() {
   // Mock tenant data
   const tenant = {
     id: id,
-    name: id === 'rugira-prod' ? 'Rugira Production' : id === 'rugira-test' ? 'Rugira Test' : 'Client Alpha',
+    name: id === 'rugira-prod' ? 'Bahnhofstrasse Production' : id === 'rugira-test' ? 'Bahnhofstrasse Test' : 'Client Alpha',
     status: 'active',
-    legalEntity: id === 'client-alpha' ? 'Alpha Capital Partners' : 'Rugira Trading AG',
+    legalEntity: id === 'client-alpha' ? 'Alpha Capital Partners' : 'Bahnhofstrasse Family Office AG',
     region: id === 'client-alpha' ? 'EU' : 'CH',
     created: '2024-01-15',
     planType: id === 'client-alpha' ? 'Enterprise' : 'Professional',
