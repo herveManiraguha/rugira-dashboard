@@ -182,7 +182,7 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
       <TooltipProvider>
         <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
           <div className="flex items-center h-14">
-            {/* Sidebar gutter with collapse button */}
+            {/* Sidebar gutter with collapse button - hidden on mobile/tablet */}
             <div 
               className={cn(
                 "hidden lg:flex items-center justify-end transition-all duration-150",
