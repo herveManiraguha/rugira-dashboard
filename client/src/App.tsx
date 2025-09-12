@@ -33,6 +33,7 @@ const Organization = lazy(() => import("@/pages/Organization"));
 const Admin = lazy(() => import("@/pages/Admin"));
 const UserDetail = lazy(() => import("@/pages/UserDetail"));
 const Help = lazy(() => import("@/pages/Help"));
+const Status = lazy(() => import("@/pages/Status"));
 const InternalChecks = lazy(() => import("@/pages/InternalChecks"));
 const Bots = lazy(() => import("@/pages/Bots"));
 const Tenants = lazy(() => import("@/pages/Tenants"));
@@ -249,6 +250,16 @@ function App() {
               <MainLayout>
                 <Suspense fallback={<PageLoader />}>
                   <Help />
+                </Suspense>
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+          
+          <Route path="/status">
+            <ProtectedRoute>
+              <MainLayout>
+                <Suspense fallback={<PageLoader />}>
+                  <Status />
                 </Suspense>
               </MainLayout>
             </ProtectedRoute>

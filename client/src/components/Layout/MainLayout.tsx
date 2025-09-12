@@ -43,6 +43,7 @@ import {
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import KillSwitchBanner from '@/components/KillSwitch/KillSwitchBanner';
+import IncidentBanner from '@/components/Layout/IncidentBanner';
 import AIAssistantFloat from '@/components/AI/AIAssistantFloat';
 
 interface MainLayoutProps {
@@ -155,6 +156,9 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
         sidebarCollapsed={sidebarCollapsed}
         onSidebarToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
       />
+      
+      {/* Incident Banner */}
+      <IncidentBanner />
       
       {/* Live Mode Banner */}
       <LiveModeBanner />
