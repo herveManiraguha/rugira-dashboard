@@ -122,7 +122,7 @@ export default function Settings() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900">Settings</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
           <p className="text-sm md:text-base text-gray-600">Manage your account and trading preferences</p>
         </div>
         <div className="flex items-center gap-2">

@@ -422,7 +422,7 @@ export default function ReportsNew() {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Reports & Analytics</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Reports & Analytics</h1>
         <p className="text-gray-600">Performance analysis and operational metrics</p>
       </div>
 
