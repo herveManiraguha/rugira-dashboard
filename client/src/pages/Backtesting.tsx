@@ -313,7 +313,7 @@ export default function Backtesting() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Strategy Backtesting</h1>

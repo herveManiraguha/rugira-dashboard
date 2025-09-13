@@ -138,7 +138,7 @@ export default function Help() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Help & Support</h1>
         <p className="text-gray-600">Find answers, guides, and get support for your trading journey</p>

@@ -31,9 +31,9 @@ export function StandardPageLayout({
   className
 }: StandardPageLayoutProps) {
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn("space-y-3", className)}>
       {/* Header Section */}
-      <div>
+      <div className="mb-1">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           {/* Title and Subtitle Section */}
           <div className="flex-1">
