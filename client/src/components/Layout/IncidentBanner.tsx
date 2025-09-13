@@ -30,21 +30,8 @@ export default function IncidentBanner({ className }: IncidentBannerProps) {
 
   // Mock function to fetch current incidents - in real app this would call an API
   const fetchActiveIncident = (): Incident | null => {
-    // Simulate checking for incidents based on system health
-    const hasIncident = Math.random() < 0.3; // 30% chance for demo purposes
-    
-    if (!hasIncident) return null;
-
-    return {
-      id: 'inc-2025-001',
-      title: 'Intermittent API Response Delays',
-      severity: 'degraded',
-      status: 'monitoring',
-      message: 'We are experiencing intermittent delays in API responses across some trading venues. Order processing may be slower than usual.',
-      affectedServices: ['Trading API', 'Market Data', 'Venue Connections'],
-      updatedAt: new Date().toISOString(),
-      statusPageUrl: '/status'
-    };
+    // Disabled - no incidents shown per user request
+    return null;
   };
 
   // Check for incidents on mount and periodically
