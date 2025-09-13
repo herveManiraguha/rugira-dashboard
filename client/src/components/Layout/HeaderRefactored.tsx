@@ -139,14 +139,20 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
             {/* Logo section aligned with sidebar width */}
             <div 
               className={cn(
-                "flex items-center justify-between transition-all duration-[160ms] ease-out",
-                sidebarCollapsed ? "lg:w-[76px]" : "lg:w-[240px]"
+                "flex items-center transition-all duration-[160ms] ease-out",
+                sidebarCollapsed ? "lg:w-[76px] justify-center" : "lg:w-[240px] justify-start"
               )}
               style={{
                 borderRight: '1px solid var(--sidebar-divider)'
               }}
             >
-              <Link href="/overview" className="flex items-center px-4 gap-2">
+              <Link 
+                href="/overview" 
+                className={cn(
+                  "flex items-center gap-2",
+                  sidebarCollapsed ? "px-0" : "px-4"
+                )}
+              >
                 <img src={logoSvg} alt="Rugira" className="h-7 w-auto" />
                 {!sidebarCollapsed && (
                   <span className="hidden lg:block text-lg font-semibold" style={{ color: 'var(--brand-red)' }}>Rugira</span>
