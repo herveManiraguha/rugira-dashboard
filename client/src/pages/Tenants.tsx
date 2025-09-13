@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { StandardPageLayout } from '@/components/ui/standard-page-layout';
 import {
   Table,
   TableBody,
@@ -258,22 +259,18 @@ export default function Tenants() {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
-      {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Tenants</h1>
-            <p className="text-gray-600 mt-1">Manage organization tenants and their configurations</p>
-          </div>
-          <Button onClick={handleCreateTenant} className="bg-[#E10600] hover:bg-[#C00500]">
-            <Plus className="h-4 w-4 mr-2" />
-            Create Tenant
-          </Button>
-        </div>
+    <StandardPageLayout
+      title="Tenants"
+      subtitle="Manage organization tenants and their configurations"
+      actionButton={{
+        label: "Create Tenant",
+        onClick: handleCreateTenant,
+        icon: <Plus className="h-4 w-4" />
+      }}
+    >
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -326,17 +323,16 @@ export default function Tenants() {
           </Card>
         </div>
 
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-          <Input
-            type="search"
-            placeholder="Search tenants..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+        <Input
+          type="search"
+          placeholder="Search tenants..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-10"
+        />
       </div>
 
       {/* Tenants Table */}
@@ -477,6 +473,6 @@ export default function Tenants() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </StandardPageLayout>
   );
 }
