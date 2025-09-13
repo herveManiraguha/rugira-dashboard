@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertTriangle, Shield, CheckCircle, Download, Search, Filter, FileText, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { StandardPageLayout } from "@/components/ui/standard-page-layout";
 
 interface ComplianceAlert {
   id: string;
@@ -517,11 +518,10 @@ export default function Compliance() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Compliance Monitoring</h1>
-        <p className="text-sm sm:text-base text-gray-600">Monitor compliance alerts and audit trail</p>
-      </div>
+    <StandardPageLayout
+      title="Compliance Monitoring"
+      subtitle="Monitor compliance alerts and audit trail"
+    >
 
       <Tabs defaultValue="alerts" className="w-full">
         <TabsList className="w-full sm:w-auto grid grid-cols-2">
@@ -855,6 +855,6 @@ export default function Compliance() {
           }
         }}
       />
-    </div>
+    </StandardPageLayout>
   );
 }
