@@ -444,7 +444,7 @@ export default function Tenants() {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction 
               onClick={confirmDelete}
-              className="bg-red-600 hover:bg-red-700"
+              className="border border-red-600 text-red-600 hover:bg-red-600 hover:text-white transition-colors"
             >
               Delete Tenant
             </AlertDialogAction>
@@ -466,7 +466,7 @@ export default function Tenants() {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction 
               onClick={confirmKillSwitch}
-              className="bg-orange-600 hover:bg-orange-700"
+              className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white transition-colors"
             >
               Activate Kill Switch
             </AlertDialogAction>
