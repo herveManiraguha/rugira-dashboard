@@ -316,7 +316,7 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
           "flex-1 flex flex-col transition-all duration-[160ms] ease-out pt-14",
           sidebarCollapsed ? "lg:ml-[76px]" : "lg:ml-[240px]"
         )}>
-          <div className="flex-1 p-4 lg:p-6 xl:p-8">
+          <div className="flex-1 px-4 py-2 lg:px-6 lg:py-3 xl:px-8">
             {children}
           </div>
           <Footer />
