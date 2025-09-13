@@ -67,7 +67,7 @@ export default function Reports() {
   // Generate cumulative returns over time
   const generateCumulativeReturns = () => {
     const data = [];
-    let cumulativeReturn = 10000; // Starting with $10,000
+    let cumulativeReturn = 10000; // Starting with CHF 10,000
     const days = dateRange === '24h' ? 1 : dateRange === '7d' ? 7 : dateRange === '30d' ? 30 : 90;
     
     for (let i = 0; i <= days; i++) {
@@ -454,7 +454,7 @@ export default function Reports() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <Label>Value at Risk (VaR)</Label>
-                  <div className="text-2xl font-bold text-red-600">$2,450</div>
+                  <div className="text-2xl font-bold text-red-600">CHF 2,450</div>
                   <p className="text-sm text-gray-500">95% confidence, 1-day horizon</p>
                 </div>
                 <div>

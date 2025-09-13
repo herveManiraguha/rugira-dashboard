@@ -157,10 +157,10 @@ export default function Overview() {
       
       const details = {
         online: [
-          'BTC-USDT • Size: $2,450 • Fee: $2.45',
-          'ETH-USDT • Size: $1,200 • Fee: $1.20',
-          'SOL-USDT • Size: $800 • Fee: $0.80',
-          'AVAX-USDT • Size: $500 • Fee: $0.50'
+          'BTC-USDT • Size: CHF 2,450 • Fee: CHF 2.45',
+          'ETH-USDT • Size: CHF 1,200 • Fee: CHF 1.20',
+          'SOL-USDT • Size: CHF 800 • Fee: CHF 0.80',
+          'AVAX-USDT • Size: CHF 500 • Fee: CHF 0.50'
         ],
         warning: [
           'Current volatility: 24.5% (24h)',
@@ -533,7 +533,7 @@ export default function Overview() {
                   <Clock className="h-3 w-3 text-gray-400" />
                 </div>
                 <p className="mb-1 text-xs text-gray-600">
-                  ETHUSD-ARB-02 Daily loss limit: $5,000 → $10,000
+                  ETHUSD-ARB-02 Daily loss limit: CHF 5,000 → CHF 10,000
                 </p>
                 <p className="text-xs text-gray-500">
                   Lin Zhang • 02/09/2025, 14:44:54

@@ -105,7 +105,7 @@ export default function TenantDetail() {
   // Mock policies data
   const policies = [
     { id: 1, name: 'Daily Drawdown Limit', baseline: '3%', override: '5%', status: 'overridden' },
-    { id: 2, name: 'Position Size Limit', baseline: '$100k', override: null, status: 'baseline' },
+    { id: 2, name: 'Position Size Limit', baseline: 'CHF 100k', override: null, status: 'baseline' },
     { id: 3, name: 'Max Leverage', baseline: '3x', override: '5x', status: 'overridden' },
     { id: 4, name: 'Trading Hours', baseline: '24/7', override: null, status: 'baseline' }
   ];

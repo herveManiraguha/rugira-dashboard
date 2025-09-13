@@ -221,7 +221,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
       id: '4',
       type: 'success',
       title: 'New Profit Target Reached',
-      message: 'Beta Grid bot has achieved +15% profit target on ETH/USDT pair. Total profit: $2,347.89',
+      message: 'Beta Grid bot has achieved +15% profit target on ETH/USDT pair. Total profit: CHF 2,347.89',
       timestamp: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
       read: false,
       category: 'trading',

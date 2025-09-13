@@ -85,57 +85,57 @@ export default function UserDetail() {
     country: 'Switzerland',
     phone: '+41 79 123 4567',
     totalTrades: 15847,
-    totalVolume: '$2.4M',
+    totalVolume: 'CHF 2.4M',
     subscription: 'Enterprise',
     twoFactorEnabled: true,
     emailNotifications: true,
     apiAccess: true,
     lastIpAddress: '185.23.45.67',
-    accountBalance: '$45,230.50',
-    profitLoss: '+$12,450.30',
+    accountBalance: 'CHF 45,230.50',
+    profitLoss: '+CHF 12,450.30',
     winRate: 73.2
   });
 
   const [recentTrades] = useState<Trade[]>([
     {
       id: '1',
-      pair: 'BTC/USD',
+      pair: 'BTC/CHF',
       type: 'buy',
       amount: '0.5',
-      price: '$42,150',
-      total: '$21,075',
+      price: 'CHF 42,150',
+      total: 'CHF 21,075',
       status: 'completed',
       timestamp: new Date(Date.now() - 3600000).toISOString(),
-      profit: '+$1,250'
+      profit: '+CHF 1,250'
     },
     {
       id: '2',
-      pair: 'ETH/USD',
+      pair: 'ETH/CHF',
       type: 'sell',
       amount: '2.0',
-      price: '$2,450',
-      total: '$4,900',
+      price: 'CHF 2,450',
+      total: 'CHF 4,900',
       status: 'completed',
       timestamp: new Date(Date.now() - 7200000).toISOString(),
-      profit: '+$320'
+      profit: '+CHF 320'
     },
     {
       id: '3',
-      pair: 'ADA/USD',
+      pair: 'ADA/CHF',
       type: 'buy',
       amount: '1000',
-      price: '$0.45',
-      total: '$450',
+      price: 'CHF 0.45',
+      total: 'CHF 450',
       status: 'pending',
       timestamp: new Date(Date.now() - 1800000).toISOString()
     },
     {
       id: '4',
-      pair: 'DOT/USD',
+      pair: 'DOT/CHF',
       type: 'sell',
       amount: '50',
-      price: '$12.30',
-      total: '$615',
+      price: 'CHF 12.30',
+      total: 'CHF 615',
       status: 'cancelled',
       timestamp: new Date(Date.now() - 5400000).toISOString()
     }
@@ -607,7 +607,7 @@ export default function UserDetail() {
                 
                 <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div>
-                    <p className="text-sm font-medium">Completed trade: BTC/USD</p>
+                    <p className="text-sm font-medium">Completed trade: BTC/CHF</p>
                     <p className="text-xs text-gray-500">Amount: 0.5 BTC</p>
                   </div>
                   <span className="text-xs text-gray-500">3 hours ago</span>

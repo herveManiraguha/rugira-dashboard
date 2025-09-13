@@ -759,9 +759,9 @@ export default function Backtesting() {
                   </TableRow>
                   <TableRow>
                     <TableCell className="font-medium">Final Capital</TableCell>
-                    <TableCell className="text-center font-medium">$124,700</TableCell>
-                    <TableCell className="text-center font-medium">$118,300</TableCell>
-                    <TableCell className="text-center font-medium">$131,200</TableCell>
+                    <TableCell className="text-center font-medium">CHF 124,700</TableCell>
+                    <TableCell className="text-center font-medium">CHF 118,300</TableCell>
+                    <TableCell className="text-center font-medium">CHF 131,200</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -1007,7 +1007,7 @@ export default function Backtesting() {
                     </div>
                     <div>
                       <div className="text-gray-500">Initial Capital</div>
-                      <div className="font-medium">$100,000</div>
+                      <div className="font-medium">CHF 100,000</div>
                     </div>
                     <div>
                       <div className="text-gray-500">Trading Pair</div>
@@ -1093,19 +1093,19 @@ export default function Backtesting() {
                         </div>
                         <div className="flex justify-between text-xs sm:text-sm">
                           <span className="text-gray-500">Average Win</span>
-                          <span className="font-medium text-green-600">+$487.23</span>
+                          <span className="font-medium text-green-600">+CHF 487.23</span>
                         </div>
                         <div className="flex justify-between text-xs sm:text-sm">
                           <span className="text-gray-500">Average Loss</span>
-                          <span className="font-medium text-red-600">-$321.15</span>
+                          <span className="font-medium text-red-600">-CHF 321.15</span>
                         </div>
                         <div className="flex justify-between text-xs sm:text-sm">
                           <span className="text-gray-500">Largest Win</span>
-                          <span className="font-medium text-green-600">+$2,347.89</span>
+                          <span className="font-medium text-green-600">+CHF 2,347.89</span>
                         </div>
                         <div className="flex justify-between text-xs sm:text-sm">
                           <span className="text-gray-500">Largest Loss</span>
-                          <span className="font-medium text-red-600">-$1,123.45</span>
+                          <span className="font-medium text-red-600">-CHF 1,123.45</span>
                         </div>
                       </CardContent>
                     </Card>
@@ -1148,11 +1148,11 @@ export default function Backtesting() {
                       <div className="grid grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
                         <div>
                           <div className="text-gray-500">Value at Risk (95%)</div>
-                          <div className="font-medium">-$2,456</div>
+                          <div className="font-medium">-CHF 2,456</div>
                         </div>
                         <div>
                           <div className="text-gray-500">Expected Shortfall</div>
-                          <div className="font-medium">-$3,123</div>
+                          <div className="font-medium">-CHF 3,123</div>
                         </div>
                         <div>
                           <div className="text-gray-500">Calmar Ratio</div>

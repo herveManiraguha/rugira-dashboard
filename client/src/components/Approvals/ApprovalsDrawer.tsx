@@ -55,7 +55,7 @@ export function ApprovalsDrawer() {
       status: 'pending',
       details: {
         botName: 'ETHUSD-ARB-02',
-        riskChange: 'Daily loss limit: $5,000 → $10,000'
+        riskChange: 'Daily loss limit: CHF 5,000 → CHF 10,000'
       }
     }
   ]);

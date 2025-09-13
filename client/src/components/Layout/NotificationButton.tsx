@@ -34,7 +34,7 @@ const generateDemoNotifications = (): Notification[] => {
       id: '2',
       type: 'success',
       title: 'Gamma Momentum Bot closed profitable trade',
-      message: 'SOL-USDT • Size: $800 • Fee: $0.60',
+      message: 'SOL-USDT • Size: CHF 800 • Fee: CHF 0.60',
       timestamp: new Date(now.getTime() - 11 * 60 * 1000).toISOString(), // 11 minutes ago
       read: false,
       category: 'Trading'
@@ -43,7 +43,7 @@ const generateDemoNotifications = (): Notification[] => {
       id: '3',
       type: 'info',
       title: 'Beta Grid Trading opened new position',
-      message: 'ETH-USDT • Size: $1,200 • Fee: $1.20',
+      message: 'ETH-USDT • Size: CHF 1,200 • Fee: CHF 1.20',
       timestamp: new Date(now.getTime() - 15 * 60 * 1000).toISOString(), // 15 minutes ago
       read: true,
       category: 'Trading'

@@ -228,9 +228,9 @@ const getStatusClass = (status: string) => {
 }
 
 const formatPnL = (pnl: number) => {
-  if (pnl === 0) return '$0.00'
+  if (pnl === 0) return 'CHF 0.00'
   const sign = pnl >= 0 ? '+' : ''
-  return `${sign}$${Math.abs(pnl).toFixed(2)}`
+  return `${sign}CHF ${Math.abs(pnl).toFixed(2)}`
 }
 
 const formatHeartbeat = (heartbeat: Date | null) => {

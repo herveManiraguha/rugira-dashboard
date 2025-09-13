@@ -47,9 +47,9 @@ const formattedValue = computed(() => {
   
   switch (props.type) {
     case 'currency':
-      return new Intl.NumberFormat('en-US', {
+      return new Intl.NumberFormat('de-CH', {
         style: 'currency',
-        currency: 'USD'
+        currency: 'CHF'
       }).format(props.value as number)
     case 'percentage':
       return `${props.value}%`

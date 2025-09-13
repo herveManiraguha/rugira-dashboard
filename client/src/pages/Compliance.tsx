@@ -134,7 +134,7 @@ export default function Compliance() {
       { action: 'User login', category: 'login' as const, details: 'Successful login from IP' },
       { action: 'Bot stopped', category: 'config' as const, details: 'Emergency stop triggered' },
       { action: 'Risk parameters updated', category: 'config' as const, details: 'Maximum position size changed from 10% to 8%' },
-      { action: 'Large order executed', category: 'order' as const, details: 'Order size: $25,000 BTC-USDT' },
+      { action: 'Large order executed', category: 'order' as const, details: 'Order size: CHF 25,000 BTC-USDT' },
       { action: 'Compliance alert triggered', category: 'alert' as const, details: 'KYT screening flagged transaction' },
       { action: 'API key rotated', category: 'config' as const, details: 'Binance API credentials updated' },
       { action: 'User logout', category: 'login' as const, details: 'Session terminated' },

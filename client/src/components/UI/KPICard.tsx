@@ -27,9 +27,9 @@ export default function KPICard({
     
     switch (type) {
       case 'currency':
-        return new Intl.NumberFormat('en-US', {
+        return new Intl.NumberFormat('de-CH', {
           style: 'currency',
-          currency: 'USD'
+          currency: 'CHF'
         }).format(value as number);
       case 'percentage':
         return `${value}%`;

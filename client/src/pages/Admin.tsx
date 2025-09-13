@@ -71,26 +71,26 @@ export default function Admin() {
   
   const generateMockUsers = (): User[] => {
     const userData = [
-      { username: 'hmueller', name: 'Hans Mueller', email: 'hans.mueller@rugira.ch', role: 'admin' as const, country: 'Switzerland', subscription: 'Enterprise' as const, totalTrades: 15847, totalVolume: '$2.4M', orgsCount: 3 },
-      { username: 'echen', name: 'Emma Chen', email: 'emma.chen@tradepro.com', role: 'trader' as const, country: 'Singapore', subscription: 'Professional' as const, totalTrades: 8924, totalVolume: '$1.2M', orgsCount: 2 },
-      { username: 'mrossi', name: 'Marco Rossi', email: 'marco.rossi@cryptofund.it', role: 'trader' as const, country: 'Italy', subscription: 'Professional' as const, totalTrades: 6743, totalVolume: '$890K', orgsCount: 1 },
-      { username: 'sjohnson', name: 'Sarah Johnson', email: 'sarah.j@quanthedge.com', role: 'trader' as const, country: 'United Kingdom', subscription: 'Professional' as const, totalTrades: 12456, totalVolume: '$1.8M', orgsCount: 2 },
-      { username: 'apetrov', name: 'Alex Petrov', email: 'alex.petrov@binarytech.ru', role: 'trader' as const, country: 'Russia', subscription: 'Professional' as const, totalTrades: 3421, totalVolume: '$345K', orgsCount: 0 },
-      { username: 'landerson', name: 'Lisa Anderson', email: 'lisa.anderson@tradewise.ca', role: 'viewer' as const, country: 'Canada', subscription: 'Free' as const, totalTrades: 1567, totalVolume: '$89K', orgsCount: 1 },
-      { username: 'htanaka', name: 'Hiroshi Tanaka', email: 'h.tanaka@cryptoasia.jp', role: 'trader' as const, country: 'Japan', subscription: 'Professional' as const, totalTrades: 9876, totalVolume: '$1.5M', orgsCount: 1 },
-      { username: 'pdubois', name: 'Pierre Dubois', email: 'pierre.dubois@tradeparis.fr', role: 'trader' as const, country: 'France', subscription: 'Professional' as const, totalTrades: 4532, totalVolume: '$567K', orgsCount: 2 },
-      { username: 'akowalski', name: 'Anna Kowalski', email: 'anna.k@cryptopoland.pl', role: 'viewer' as const, country: 'Poland', subscription: 'Free' as const, totalTrades: 892, totalVolume: '$34K', orgsCount: 0 },
-      { username: 'crodriguez', name: 'Carlos Rodriguez', email: 'carlos.r@trademexico.mx', role: 'trader' as const, country: 'Mexico', subscription: 'Free' as const, totalTrades: 2134, totalVolume: '$156K', orgsCount: 1 },
-      { username: 'ilarsson', name: 'Ingrid Larsson', email: 'ingrid.larsson@nordicfunds.se', role: 'trader' as const, country: 'Sweden', subscription: 'Professional' as const, totalTrades: 7234, totalVolume: '$923K', orgsCount: 2 },
-      { username: 'moconnor', name: 'Michael O\'Connor', email: 'michael.oconnor@irishcrypto.ie', role: 'trader' as const, country: 'Ireland', subscription: 'Professional' as const, totalTrades: 3876, totalVolume: '$445K', orgsCount: 1 },
-      { username: 'frashid', name: 'Fatima Al-Rashid', email: 'fatima.rashid@gulftrading.ae', role: 'trader' as const, country: 'UAE', subscription: 'Enterprise' as const, totalTrades: 11234, totalVolume: '$1.9M', orgsCount: 4 },
-      { username: 'dkim', name: 'David Kim', email: 'david.kim@koreafintech.kr', role: 'trader' as const, country: 'South Korea', subscription: 'Professional' as const, totalTrades: 5432, totalVolume: '$678K', orgsCount: 2 },
-      { username: 'evolkov', name: 'Elena Volkov', email: 'elena.volkov@baltictrade.ee', role: 'viewer' as const, country: 'Estonia', subscription: 'Free' as const, totalTrades: 234, totalVolume: '$12K', orgsCount: 0 },
-      { username: 'jsilva', name: 'João Silva', email: 'joao.silva@brasilcrypto.br', role: 'trader' as const, country: 'Brazil', subscription: 'Professional' as const, totalTrades: 4567, totalVolume: '$523K', orgsCount: 1 },
-      { username: 'rpatel', name: 'Raj Patel', email: 'raj.patel@mumbaitrading.in', role: 'trader' as const, country: 'India', subscription: 'Professional' as const, totalTrades: 8765, totalVolume: '$987K', orgsCount: 3 },
-      { username: 'smitchell', name: 'Sophie Mitchell', email: 'sophie.mitchell@aussiefunds.au', role: 'trader' as const, country: 'Australia', subscription: 'Professional' as const, totalTrades: 3241, totalVolume: '$387K', orgsCount: 1 },
-      { username: 'ahassan', name: 'Ahmed Hassan', email: 'ahmed.hassan@egypttrade.eg', role: 'viewer' as const, country: 'Egypt', subscription: 'Free' as const, totalTrades: 1456, totalVolume: '$67K', orgsCount: 0 },
-      { username: 'kweber', name: 'Klaus Weber', email: 'klaus.weber@germanfunds.de', role: 'trader' as const, country: 'Germany', subscription: 'Enterprise' as const, totalTrades: 9432, totalVolume: '$1.3M', orgsCount: 5 }
+      { username: 'hmueller', name: 'Hans Mueller', email: 'hans.mueller@rugira.ch', role: 'admin' as const, country: 'Switzerland', subscription: 'Enterprise' as const, totalTrades: 15847, totalVolume: 'CHF 2.4M', orgsCount: 3 },
+      { username: 'echen', name: 'Emma Chen', email: 'emma.chen@tradepro.com', role: 'trader' as const, country: 'Singapore', subscription: 'Professional' as const, totalTrades: 8924, totalVolume: 'CHF 1.2M', orgsCount: 2 },
+      { username: 'mrossi', name: 'Marco Rossi', email: 'marco.rossi@cryptofund.it', role: 'trader' as const, country: 'Italy', subscription: 'Professional' as const, totalTrades: 6743, totalVolume: 'CHF 890K', orgsCount: 1 },
+      { username: 'sjohnson', name: 'Sarah Johnson', email: 'sarah.j@quanthedge.com', role: 'trader' as const, country: 'United Kingdom', subscription: 'Professional' as const, totalTrades: 12456, totalVolume: 'CHF 1.8M', orgsCount: 2 },
+      { username: 'apetrov', name: 'Alex Petrov', email: 'alex.petrov@binarytech.ru', role: 'trader' as const, country: 'Russia', subscription: 'Professional' as const, totalTrades: 3421, totalVolume: 'CHF 345K', orgsCount: 0 },
+      { username: 'landerson', name: 'Lisa Anderson', email: 'lisa.anderson@tradewise.ca', role: 'viewer' as const, country: 'Canada', subscription: 'Free' as const, totalTrades: 1567, totalVolume: 'CHF 89K', orgsCount: 1 },
+      { username: 'htanaka', name: 'Hiroshi Tanaka', email: 'h.tanaka@cryptoasia.jp', role: 'trader' as const, country: 'Japan', subscription: 'Professional' as const, totalTrades: 9876, totalVolume: 'CHF 1.5M', orgsCount: 1 },
+      { username: 'pdubois', name: 'Pierre Dubois', email: 'pierre.dubois@tradeparis.fr', role: 'trader' as const, country: 'France', subscription: 'Professional' as const, totalTrades: 4532, totalVolume: 'CHF 567K', orgsCount: 2 },
+      { username: 'akowalski', name: 'Anna Kowalski', email: 'anna.k@cryptopoland.pl', role: 'viewer' as const, country: 'Poland', subscription: 'Free' as const, totalTrades: 892, totalVolume: 'CHF 34K', orgsCount: 0 },
+      { username: 'crodriguez', name: 'Carlos Rodriguez', email: 'carlos.r@trademexico.mx', role: 'trader' as const, country: 'Mexico', subscription: 'Free' as const, totalTrades: 2134, totalVolume: 'CHF 156K', orgsCount: 1 },
+      { username: 'ilarsson', name: 'Ingrid Larsson', email: 'ingrid.larsson@nordicfunds.se', role: 'trader' as const, country: 'Sweden', subscription: 'Professional' as const, totalTrades: 7234, totalVolume: 'CHF 923K', orgsCount: 2 },
+      { username: 'moconnor', name: 'Michael O\'Connor', email: 'michael.oconnor@irishcrypto.ie', role: 'trader' as const, country: 'Ireland', subscription: 'Professional' as const, totalTrades: 3876, totalVolume: 'CHF 445K', orgsCount: 1 },
+      { username: 'frashid', name: 'Fatima Al-Rashid', email: 'fatima.rashid@gulftrading.ae', role: 'trader' as const, country: 'UAE', subscription: 'Enterprise' as const, totalTrades: 11234, totalVolume: 'CHF 1.9M', orgsCount: 4 },
+      { username: 'dkim', name: 'David Kim', email: 'david.kim@koreafintech.kr', role: 'trader' as const, country: 'South Korea', subscription: 'Professional' as const, totalTrades: 5432, totalVolume: 'CHF 678K', orgsCount: 2 },
+      { username: 'evolkov', name: 'Elena Volkov', email: 'elena.volkov@baltictrade.ee', role: 'viewer' as const, country: 'Estonia', subscription: 'Free' as const, totalTrades: 234, totalVolume: 'CHF 12K', orgsCount: 0 },
+      { username: 'jsilva', name: 'João Silva', email: 'joao.silva@brasilcrypto.br', role: 'trader' as const, country: 'Brazil', subscription: 'Professional' as const, totalTrades: 4567, totalVolume: 'CHF 523K', orgsCount: 1 },
+      { username: 'rpatel', name: 'Raj Patel', email: 'raj.patel@mumbaitrading.in', role: 'trader' as const, country: 'India', subscription: 'Professional' as const, totalTrades: 8765, totalVolume: 'CHF 987K', orgsCount: 3 },
+      { username: 'smitchell', name: 'Sophie Mitchell', email: 'sophie.mitchell@aussiefunds.au', role: 'trader' as const, country: 'Australia', subscription: 'Professional' as const, totalTrades: 3241, totalVolume: 'CHF 387K', orgsCount: 1 },
+      { username: 'ahassan', name: 'Ahmed Hassan', email: 'ahmed.hassan@egypttrade.eg', role: 'viewer' as const, country: 'Egypt', subscription: 'Free' as const, totalTrades: 1456, totalVolume: 'CHF 67K', orgsCount: 0 },
+      { username: 'kweber', name: 'Klaus Weber', email: 'klaus.weber@germanfunds.de', role: 'trader' as const, country: 'Germany', subscription: 'Enterprise' as const, totalTrades: 9432, totalVolume: 'CHF 1.3M', orgsCount: 5 }
     ];
 
     return userData.map((user, index) => {
@@ -115,7 +115,7 @@ export default function Admin() {
     {
       key: 'MAX_POSITION_SIZE',
       value: '50000',
-      description: 'Maximum position size per bot (USD)',
+      description: 'Maximum position size per bot (CHF)',
       category: 'trading'
     },
     {
@@ -205,8 +205,8 @@ export default function Admin() {
         bValue = b.country;
         break;
       case 'volume':
-        aValue = parseFloat(a.totalVolume.replace(/[\$,KM]/g, ''));
-        bValue = parseFloat(b.totalVolume.replace(/[\$,KM]/g, ''));
+        aValue = parseFloat(a.totalVolume.replace(/[CHF ,KM]/g, ''));
+        bValue = parseFloat(b.totalVolume.replace(/[CHF ,KM]/g, ''));
         break;
       case 'lastLogin':
         aValue = new Date(a.lastLogin).getTime();
@@ -377,7 +377,7 @@ export default function Admin() {
                     <p className="text-sm font-medium text-gray-500">Total Volume</p>
                     <p className="text-2xl font-bold text-gray-900">
                       ${(users.reduce((acc, user) => {
-                        const volume = parseFloat(user.totalVolume.replace(/[$KM,]/g, ''));
+                        const volume = parseFloat(user.totalVolume.replace(/[CHF KM,]/g, ''));
                         const multiplier = user.totalVolume.includes('M') ? 1000000 : user.totalVolume.includes('K') ? 1000 : 1;
                         return acc + (volume * multiplier);
                       }, 0) / 1000000).toFixed(1)}M
