@@ -458,7 +458,7 @@ export default function Bots() {
         }`}>
           {bot.pnl24h > 0 ? <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" /> : 
            bot.pnl24h < 0 ? <TrendingDown className="h-3 w-3 sm:h-4 sm:w-4" /> : null}
-          <span className="text-sm">${bot.pnl24h.toFixed(2)}</span>
+          <span className="text-sm">CHF {bot.pnl24h.toFixed(2)}</span>
         </div>
       )
     },
@@ -472,7 +472,7 @@ export default function Bots() {
         <span className={`font-medium text-sm ${
           bot.totalPnl > 0 ? 'text-green-600' : bot.totalPnl < 0 ? 'text-red-600' : 'text-gray-600'
         }`}>
-          ${bot.totalPnl.toFixed(2)}
+          CHF {bot.totalPnl.toFixed(2)}
         </span>
       )
     },
@@ -768,7 +768,7 @@ function BotCardsView({ bots, onStartBot, onStopBot, onDeleteBot, getStatusBadge
                   <p className={`font-semibold ${
                     bot.pnl24h > 0 ? 'text-green-600' : bot.pnl24h < 0 ? 'text-red-600' : 'text-gray-600'
                   }`}>
-                    {bot.pnl24h > 0 ? '+' : ''}${bot.pnl24h.toFixed(2)}
+                    {bot.pnl24h > 0 ? '+' : ''}CHF {bot.pnl24h.toFixed(2)}
                   </p>
                 </div>
                 <div>
@@ -776,7 +776,7 @@ function BotCardsView({ bots, onStartBot, onStopBot, onDeleteBot, getStatusBadge
                   <p className={`font-semibold ${
                     bot.totalPnl > 0 ? 'text-green-600' : bot.totalPnl < 0 ? 'text-red-600' : 'text-gray-600'
                   }`}>
-                    {bot.totalPnl > 0 ? '+' : ''}${bot.totalPnl.toFixed(2)}
+                    {bot.totalPnl > 0 ? '+' : ''}CHF {bot.totalPnl.toFixed(2)}
                   </p>
                 </div>
               </div>

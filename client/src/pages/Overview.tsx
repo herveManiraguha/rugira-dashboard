@@ -354,7 +354,7 @@ export default function Overview() {
     switch (type) {
       case 'currency':
         return typeof value === 'number' ? 
-          `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` :
+          `CHF ${value.toLocaleString('de-CH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` :
           String(value);
       case 'percentage':
         return typeof value === 'number' ? `${value.toFixed(2)}%` : String(value);
@@ -461,7 +461,7 @@ export default function Overview() {
               ]}
               timeRange={timeRange}
               onTimeRangeChange={(range) => setTimeRange(range.value)}
-              formatValue={(value) => `$${value.toLocaleString()}`}
+              formatValue={(value) => `CHF ${value.toLocaleString('de-CH')}`}
               className="lg:col-span-2"
             />
 
@@ -473,7 +473,7 @@ export default function Overview() {
               dataKeys={[
                 { key: 'pnl', label: 'Daily P&L', color: '#DC2626' }
               ]}
-              formatValue={(value) => `$${Number(value).toFixed(2)}`}
+              formatValue={(value) => `CHF ${Number(value).toFixed(2)}`}
             />
 
             {/* Trading Volume Chart */}
@@ -482,10 +482,10 @@ export default function Overview() {
               description="Daily trading volume and number of trades"
               data={volumeData.map(d => ({ timestamp: d.date, value: d.volume, volume: d.volume, trades: d.trades }))}
               dataKeys={[
-                { key: 'volume', label: 'Volume ($)', color: '#1E40AF' },
+                { key: 'volume', label: 'Volume (CHF)', color: '#1E40AF' },
                 { key: 'trades', label: 'Trades', color: '#A16207' }
               ]}
-              formatValue={(value) => `$${value.toLocaleString()}`}
+              formatValue={(value) => `CHF ${value.toLocaleString('de-CH')}`}
             />
           </div>
 
@@ -642,7 +642,7 @@ export default function Overview() {
                     <p className={`text-sm font-medium ${
                       activity.pnl > 0 ? 'text-pnl-positive' : activity.pnl < 0 ? 'text-pnl-negative' : 'text-gray-500'
                     }`}>
-                      {activity.pnl > 0 ? '+' : ''}${activity.pnl.toFixed(2)}
+                      {activity.pnl > 0 ? '+' : ''}CHF {activity.pnl.toFixed(2)}
                     </p>
                     <p className="text-xs text-gray-500">{activity.timestamp}</p>
                   </div>
