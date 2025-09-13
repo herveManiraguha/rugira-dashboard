@@ -330,8 +330,13 @@ export default function Overview() {
     }
   ];
 
-  // Setup SSE for real-time updates
+  // Setup SSE for real-time updates (only in Paper/Live mode)
   useEffect(() => {
+    // Skip SSE in Demo mode
+    if (isDemoMode) {
+      return;
+    }
+
     const eventSource = new EventSource('/api/stream');
     
     eventSource.onmessage = (event) => {
@@ -348,7 +353,7 @@ export default function Overview() {
     return () => {
       eventSource.close();
     };
-  }, []);
+  }, [isDemoMode]);
 
   const formatValue = (value: string | number, type: KPI['type']): string => {
     switch (type) {
