@@ -698,7 +698,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const holdings = filterSnapshots(req.query);
       res.json({
-        items: holdings,
+        items: holdings.map((holding) => ({
+          ...holding,
+          quantity: holding.total,
+        })),
         asOf: req.query.asOf || null,
         appliedFilters: req.query,
       });
