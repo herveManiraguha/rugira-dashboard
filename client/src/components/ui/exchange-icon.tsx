@@ -4,7 +4,19 @@ import { TrendingUp } from 'lucide-react';
 // Import local exchange logos that we have successfully downloaded
 import binanceLogo from '@/assets/exchanges/binance.svg';
 import coinbaseLogo from '@/assets/exchanges/coinbase.svg';
+import krakenLogo from '@/assets/exchanges/kraken.svg';
+import bybitLogo from '@/assets/exchanges/bybit.svg';
+import okxLogo from '@/assets/exchanges/okx.svg';
 import kucoinLogo from '@/assets/exchanges/kucoin.svg';
+import huobiLogo from '@/assets/exchanges/huobi.svg';
+import geminiLogo from '@/assets/exchanges/gemini.svg';
+import bitfinexLogo from '@/assets/exchanges/bitfinex.svg';
+import bitstampLogo from '@/assets/exchanges/bitstamp.svg';
+import securitizeLogo from '@/assets/exchanges/securitize.svg';
+import franklinLogo from '@/assets/exchanges/franklin.svg';
+import sdxLogo from '@/assets/exchanges/sdx.svg';
+import bxDigitalLogo from '@/assets/exchanges/bx_digital.svg';
+import taurusLogo from '@/assets/exchanges/taurus.svg';
 import genericLogo from '@/assets/exchanges/generic.svg';
 
 interface ExchangeIconProps {
@@ -31,15 +43,17 @@ const containerSizes = {
 export const EXCHANGE_LOGOS: Record<string, string> = {
   binance: binanceLogo,
   coinbase: coinbaseLogo,
+  coinbase_pro: coinbaseLogo,
+  kraken: krakenLogo,
+  bybit: bybitLogo,
+  okx: okxLogo,
   kucoin: kucoinLogo,
+  huobi: huobiLogo,
+  gemini: geminiLogo,
+  bitfinex: bitfinexLogo,
+  bitstamp: bitstampLogo,
   // All other exchanges use the generic logo
-  kraken: genericLogo,
-  bybit: genericLogo,
-  okx: genericLogo,
-  huobi: genericLogo,
   gate: genericLogo,
-  bitfinex: genericLogo,
-  gemini: genericLogo,
   crypto_com: genericLogo,
   bitget: genericLogo,
   mexc: genericLogo,
@@ -55,13 +69,12 @@ export const EXCHANGE_LOGOS: Record<string, string> = {
   bitflyer: genericLogo,
   lbank: genericLogo,
   probit: genericLogo,
-  bitstamp: genericLogo,
   // Tokenized venues
-  'bx_digital': genericLogo,
-  'sdx': genericLogo,
-  'taurus': genericLogo,
-  'securitize': genericLogo,
-  'franklin': genericLogo
+  'bx_digital': bxDigitalLogo,
+  'sdx': sdxLogo,
+  'taurus': taurusLogo,
+  'securitize': securitizeLogo,
+  'franklin': franklinLogo
 };
 
 // Fallback to generic logo for any exchange not in the map

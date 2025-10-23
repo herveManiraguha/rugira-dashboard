@@ -11,6 +11,17 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import AddExchangeModal from '@/components/Exchange/AddExchangeModal';
+import binanceLogo from '@/assets/exchanges/binance.svg';
+import coinbaseLogo from '@/assets/exchanges/coinbase.svg';
+import krakenLogo from '@/assets/exchanges/kraken.svg';
+import bybitLogo from '@/assets/exchanges/bybit.svg';
+import okxLogo from '@/assets/exchanges/okx.svg';
+import kucoinLogo from '@/assets/exchanges/kucoin.svg';
+import bxDigitalLogo from '@/assets/exchanges/bx_digital.svg';
+import sdxVenueLogo from '@/assets/exchanges/sdx.svg';
+import taurusLogo from '@/assets/exchanges/taurus.svg';
+import securitizeLogo from '@/assets/exchanges/securitize.svg';
+import franklinLogo from '@/assets/exchanges/franklin.svg';
 import { useToast } from '@/hooks/use-toast';
 import { 
   Settings, 
@@ -106,7 +117,8 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 12450.32, available: 8921.45, currency: 'USDT' },
     supportedPairs: 1800,
     activeBots: 4,
-    features: ['Spot Trading', 'Futures', 'Margin', 'Options', 'P2P', 'Staking']
+    features: ['Spot Trading', 'Futures', 'Margin', 'Options', 'P2P', 'Staking'],
+    logo: binanceLogo
   },
   {
     id: '2',
@@ -118,7 +130,8 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 5620.78, available: 4150.23, currency: 'USD' },
     supportedPairs: 180,
     activeBots: 2,
-    features: ['Spot Trading', 'Institutional', 'Advanced Trading', 'API Access']
+    features: ['Spot Trading', 'Institutional', 'Advanced Trading', 'API Access'],
+    logo: coinbaseLogo
   },
   {
     id: '3',
@@ -130,7 +143,8 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 0, available: 0, currency: 'EUR' },
     supportedPairs: 220,
     activeBots: 0,
-    features: ['Spot Trading', 'Futures', 'Margin', 'Staking', 'DeFi']
+    features: ['Spot Trading', 'Futures', 'Margin', 'Staking', 'DeFi'],
+    logo: krakenLogo
   },
   {
     id: '4',
@@ -142,7 +156,8 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 3420.15, available: 2890.67, currency: 'USDT' },
     supportedPairs: 400,
     activeBots: 3,
-    features: ['Spot Trading', 'Futures', 'Options', 'Copy Trading', 'NFT']
+    features: ['Spot Trading', 'Futures', 'Options', 'Copy Trading', 'NFT'],
+    logo: bybitLogo
   },
   {
     id: '5',
@@ -154,7 +169,8 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 7850.92, available: 6120.45, currency: 'USDT' },
     supportedPairs: 500,
     activeBots: 5,
-    features: ['Spot Trading', 'Futures', 'Options', 'DeFi', 'Web3 Wallet']
+    features: ['Spot Trading', 'Futures', 'Options', 'DeFi', 'Web3 Wallet'],
+    logo: okxLogo
   },
   {
     id: '6',
@@ -166,7 +182,8 @@ const mockExchanges: ExchangeData[] = [
     balance: { total: 2940.78, available: 2100.45, currency: 'USDT' },
     supportedPairs: 700,
     activeBots: 2,
-    features: ['Spot Trading', 'Futures', 'Margin', 'P2P', 'Lending']
+    features: ['Spot Trading', 'Futures', 'Margin', 'P2P', 'Lending'],
+    logo: kucoinLogo
   }
 ];
 
@@ -182,7 +199,8 @@ const tokenizedVenues: TokenizedVenueData[] = [
     eligibility: 'Pro/Inst',
     status: 'Pilot-ready (Paper)',
     actions: ['Open Venue', 'Docs'],
-    footnote: 'Orders routed via InCore participant connectivity; Rugira enforces pre-trade limits and reconciles via drop-copy (T+0).'
+    footnote: 'Orders routed via InCore participant connectivity; Rugira enforces pre-trade limits and reconciles via drop-copy (T+0).',
+    logo: bxDigitalLogo
   },
   {
     id: 'sdx',
@@ -193,7 +211,8 @@ const tokenizedVenues: TokenizedVenueData[] = [
     routeVia: 'Member broker',
     eligibility: 'Pro/Inst',
     status: 'Coming soon (Paper)',
-    actions: ['Open Venue']
+    actions: ['Open Venue'],
+    logo: sdxVenueLogo
   },
   {
     id: 'taurus-tdx',
@@ -204,7 +223,8 @@ const tokenizedVenues: TokenizedVenueData[] = [
     routeVia: 'Partner bank/broker',
     eligibility: 'Pro/Retail',
     status: 'Partner route (Paper)',
-    actions: ['Open Venue']
+    actions: ['Open Venue'],
+    logo: taurusLogo
   }
 ];
 
@@ -217,7 +237,8 @@ const issuerPlatforms = [
     connectivity: 'API',
     routeVia: 'Custodian/bank',
     eligibility: 'Qualified/Pro',
-    status: 'Issuer-led (external)'
+    status: 'Issuer-led (external)',
+    logo: securitizeLogo
   },
   {
     id: 'franklin',
@@ -227,7 +248,8 @@ const issuerPlatforms = [
     connectivity: 'API',
     routeVia: 'Custodian/bank',
     eligibility: 'Qualified/Pro',
-    status: 'Issuer-led (external)'
+    status: 'Issuer-led (external)',
+    logo: franklinLogo
   }
 ];
 
@@ -781,9 +803,7 @@ export default function Venues() {
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                        <Shield className="h-6 w-6 text-gray-600" />
-                      </div>
+                      <ExchangeIcon name={venue.name} logo={venue.logo} className="w-10 h-10" />
                       <div>
                         <CardTitle className="text-base">{venue.name}</CardTitle>
                         <div className="flex items-center space-x-2 mt-1">
@@ -870,8 +890,11 @@ export default function Venues() {
               <div className="space-y-3">
                 {filteredIssuerPlatforms.map((platform) => (
                   <div key={platform.id} className="p-3 border rounded-lg space-y-2">
-                    <div className="font-medium text-sm">
-                      {platform.name} <span className="text-gray-500 font-normal">({platform.example})</span>
+                    <div className="flex items-center gap-2">
+                      <ExchangeIcon name={platform.name} logo={platform.logo} size="sm" />
+                      <div className="font-medium text-sm">
+                        {platform.name} <span className="text-gray-500 font-normal">({platform.example})</span>
+                      </div>
                     </div>
                     <div className="flex flex-wrap gap-1">
                       <Badge variant="secondary" className="text-xs">
@@ -916,7 +939,7 @@ export default function Venues() {
                   <TableRow key={venue.id}>
                     <TableCell>
                       <div className="flex items-center space-x-2">
-                        <Shield className="h-5 w-5 text-gray-600" />
+                        <ExchangeIcon name={venue.name} logo={venue.logo} className="w-8 h-8" />
                         <div>
                           <div className="font-medium">{venue.name}</div>
                           <div className="text-xs text-gray-500">{venue.subtitle}</div>
@@ -960,7 +983,7 @@ export default function Venues() {
                   <TableRow key={platform.id}>
                     <TableCell>
                       <div className="flex items-center space-x-2">
-                        <Shield className="h-5 w-5 text-gray-600" />
+                        <ExchangeIcon name={platform.name} logo={platform.logo} size="sm" />
                         <div>
                           <div className="font-medium">{platform.name}</div>
                           <div className="text-xs text-gray-500">Example: {platform.example}</div>
