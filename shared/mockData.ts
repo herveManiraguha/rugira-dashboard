@@ -35,23 +35,44 @@ export interface MockTrade {
   status: 'filled' | 'partial' | 'cancelled';
 }
 
+export type StrategyStatus = 'available' | 'popular' | 'advanced';
+export type StrategyComplexity = 'beginner' | 'intermediate' | 'advanced';
+export type StrategyMarketCondition = 'trending' | 'ranging' | 'volatile' | 'any';
+export type StrategyRiskLevel = 'low' | 'medium' | 'high';
+
 export interface MockStrategy {
   id: string;
+  slug: string;
   name: string;
   description: string;
-  type: 'arbitrage' | 'grid' | 'momentum' | 'mean_reversion' | 'scalping';
-  risk: 'low' | 'medium' | 'high';
-  minCapital: number;
-  maxDrawdown: number;
-  expectedReturn: number;
+  type: string;
+  status: StrategyStatus;
+  complexity: StrategyComplexity;
+  marketConditions: StrategyMarketCondition[];
+  tags: string[];
+  risk: StrategyRiskLevel;
+  riskLabel?: string;
   timeframe: string;
-  parameters: Record<string, any>;
+  bestFor: string;
+  advantages: string[];
+  considerations: string[];
+  overlay?: boolean;
+  minCapital?: number;
+  maxDrawdown?: number;
+  expectedReturn?: number;
+  parameters?: Record<string, any>;
+  performance?: {
+    winRate: number;
+    avgReturn: number;
+    sharpeRatio: number;
+  };
   backtestResults?: {
     totalReturn: number;
     sharpeRatio: number;
     maxDrawdown: number;
     winRate: number;
   };
+  version?: string;
 }
 
 export interface MockExchange {
@@ -234,78 +255,754 @@ export const mockTrades: MockTrade[] = [
   }
 ];
 
-// Mock Strategies
+// Mock Strategies (central catalog)
 export const mockStrategies: MockStrategy[] = [
   {
-    id: '1',
-    name: 'Cross-Exchange Arbitrage',
-    description: 'Identifies price differences between exchanges and executes profitable arbitrage trades',
-    type: 'arbitrage',
-    risk: 'medium',
-    minCapital: 50000,
-    maxDrawdown: 8,
-    expectedReturn: 12,
-    timeframe: '1-5 minutes',
-    parameters: {
-      minSpread: 0.5,
-      maxSlippage: 0.2,
-      exchanges: ['binance', 'coinbase', 'kraken'],
-      maxPositionSize: 0.1
-    },
-    backtestResults: {
-      totalReturn: 24.7,
-      sharpeRatio: 1.85,
-      maxDrawdown: -8.5,
-      winRate: 73.2
-    }
-  },
-  {
-    id: '2',
-    name: 'Grid Trading Strategy',
-    description: 'Places buy and sell orders at predetermined intervals around current market price',
+    id: 'strategy-grid-trading',
+    slug: 'grid_trading',
+    name: 'Grid Trading',
+    description: 'Places buy and sell orders at regular intervals above and below current price',
     type: 'grid',
+    status: 'popular',
+    complexity: 'beginner',
+    marketConditions: ['ranging'],
+    tags: [],
     risk: 'low',
+    timeframe: '15m - 1h',
+    bestFor: 'Stable coins and low-volatility periods',
+    advantages: [
+      'Works well in sideways markets',
+      'Consistent profits',
+      'Automatic profit taking'
+    ],
+    considerations: [
+      'Vulnerable to strong trends',
+      'Requires ranging markets'
+    ],
     minCapital: 25000,
     maxDrawdown: 12,
     expectedReturn: 8,
-    timeframe: '15 minutes - 4 hours',
     parameters: {
       gridSpacing: 1.5,
       numberOfGrids: 10,
       gridSize: 0.02,
       profitTarget: 2.0
     },
+    performance: {
+      winRate: 68.5,
+      avgReturn: 2.3,
+      sharpeRatio: 1.45
+    },
     backtestResults: {
       totalReturn: 15.3,
       sharpeRatio: 1.42,
       maxDrawdown: -12.3,
       winRate: 68.9
-    }
+    },
+    version: 'v2.4'
   },
   {
-    id: '3',
-    name: 'Momentum Breakout',
-    description: 'Detects and trades momentum breakouts using technical indicators',
+    id: 'strategy-dca',
+    slug: 'dca',
+    name: 'DCA (Dollar Cost Averaging)',
+    description: 'Invests fixed amount at regular intervals regardless of price',
+    type: 'dca',
+    status: 'popular',
+    complexity: 'beginner',
+    marketConditions: ['any'],
+    tags: [],
+    risk: 'low',
+    timeframe: '1d - 1w',
+    bestFor: 'Long-term investors and volatile markets',
+    advantages: [
+      'Reduces average cost',
+      'Simple to implement',
+      'Reduces timing risk'
+    ],
+    considerations: [
+      'No profit in sideways markets',
+      'Requires long-term commitment'
+    ],
+    minCapital: 1000,
+    maxDrawdown: 18,
+    expectedReturn: 6,
+    parameters: {
+      interval: 'daily',
+      orderSize: 'fixed',
+      rebalance: false
+    },
+    performance: {
+      winRate: 72.1,
+      avgReturn: 0.8,
+      sharpeRatio: 1.05
+    },
+    backtestResults: {
+      totalReturn: 7.8,
+      sharpeRatio: 1.08,
+      maxDrawdown: -9.5,
+      winRate: 66.4
+    },
+    version: 'v1.7'
+  },
+  {
+    id: 'strategy-arbitrage-trading',
+    slug: 'arbitrage',
+    name: 'Arbitrage Trading',
+    description: 'Exploits price differences between different exchanges or trading pairs',
+    type: 'arbitrage',
+    status: 'advanced',
+    complexity: 'advanced',
+    marketConditions: ['any'],
+    tags: [],
+    risk: 'low',
+    timeframe: '1s - 5m',
+    bestFor: 'High-frequency traders with substantial capital',
+    advantages: [
+      'Low risk',
+      'Market neutral',
+      'Quick profits'
+    ],
+    considerations: [
+      'Requires high capital',
+      'Opportunities are rare',
+      'Complex execution'
+    ],
+    minCapital: 50000,
+    maxDrawdown: 8,
+    expectedReturn: 12,
+    parameters: {
+      exchanges: ['binance', 'coinbase', 'kraken'],
+      maxLatencyMs: 200,
+      capitalAllocation: 0.2
+    },
+    performance: {
+      winRate: 94.2,
+      avgReturn: 0.5,
+      sharpeRatio: 2.3
+    },
+    backtestResults: {
+      totalReturn: 6.0,
+      sharpeRatio: 2.1,
+      maxDrawdown: -4.3,
+      winRate: 92.4
+    },
+    version: 'v3.2'
+  },
+  {
+    id: 'strategy-market-making',
+    slug: 'market_making',
+    name: 'Market Making',
+    description: 'Provides liquidity by continuously quoting buy and sell orders around mid-price to capture the spread.',
+    type: 'market-making',
+    status: 'available',
+    complexity: 'advanced',
+    marketConditions: ['any'],
+    tags: [],
+    risk: 'medium',
+    timeframe: '1m - 1h',
+    bestFor: 'Liquid venues with consistent order flow',
+    advantages: [
+      'Earns spread on both sides of the book',
+      'Supports stable market liquidity',
+      'Highly configurable quoting behavior'
+    ],
+    considerations: [
+      'Requires careful inventory management',
+      'Exposed to sudden price jumps',
+      'Needs low-latency infrastructure'
+    ],
+    minCapital: 60000,
+    maxDrawdown: 15,
+    expectedReturn: 16,
+    parameters: {
+      quoteSpacingBps: 8,
+      inventoryTarget: 0,
+      refreshIntervalMs: 750
+    },
+    performance: {
+      winRate: 71.4,
+      avgReturn: 1.2,
+      sharpeRatio: 1.89
+    },
+    backtestResults: {
+      totalReturn: 13.5,
+      sharpeRatio: 1.62,
+      maxDrawdown: -9.8,
+      winRate: 70.1
+    },
+    version: 'v2.5'
+  },
+  {
+    id: 'strategy-momentum-trading',
+    slug: 'momentum',
+    name: 'Momentum Trading',
+    description: 'Follows price trends and momentum indicators to enter positions',
     type: 'momentum',
+    status: 'popular',
+    complexity: 'intermediate',
+    marketConditions: ['trending'],
+    tags: [],
     risk: 'high',
+    timeframe: '15m - 4h',
+    bestFor: 'Trending markets and news-driven movements',
+    advantages: [
+      'High profit potential',
+      'Captures strong moves',
+      'Clear signals'
+    ],
+    considerations: [
+      'High risk',
+      'Frequent false signals',
+      'Requires discipline'
+    ],
     minCapital: 35000,
     maxDrawdown: 20,
     expectedReturn: 25,
-    timeframe: '5-30 minutes',
     parameters: {
-      rsiPeriod: 14,
-      rsiOverbought: 70,
-      rsiOversold: 30,
-      volumeThreshold: 1.5,
+      indicators: ['RSI', 'MACD', 'Volume'],
       stopLoss: 2.0,
       takeProfit: 4.0
+    },
+    performance: {
+      winRate: 58.9,
+      avgReturn: 3.2,
+      sharpeRatio: 1.67
     },
     backtestResults: {
       totalReturn: 31.2,
       sharpeRatio: 2.1,
       maxDrawdown: -15.2,
       winRate: 71.6
-    }
+    },
+    version: 'v2.1'
+  },
+  {
+    id: 'strategy-mean-reversion',
+    slug: 'mean_reversion',
+    name: 'Mean Reversion',
+    description: 'Trades based on the assumption that prices return to their historical average',
+    type: 'mean-reversion',
+    status: 'available',
+    complexity: 'intermediate',
+    marketConditions: ['ranging'],
+    tags: [],
+    risk: 'medium',
+    timeframe: '1h - 1d',
+    bestFor: 'Established cryptocurrencies with predictable patterns',
+    advantages: [
+      'Works in range-bound markets',
+      'Statistical edge',
+      'Clear entry/exit'
+    ],
+    considerations: [
+      'Fails in trending markets',
+      'Complex calculations'
+    ],
+    minCapital: 20000,
+    maxDrawdown: 18,
+    expectedReturn: 14,
+    parameters: {
+      lookbackPeriod: 20,
+      deviationThreshold: 1.5,
+      stopLoss: 1.8
+    },
+    performance: {
+      winRate: 64.3,
+      avgReturn: 2.1,
+      sharpeRatio: 1.52
+    },
+    backtestResults: {
+      totalReturn: 18.9,
+      sharpeRatio: 1.56,
+      maxDrawdown: -11.7,
+      winRate: 69.1
+    },
+    version: 'v1.9'
+  },
+  {
+    id: 'strategy-ma-crossover',
+    slug: 'ma_crossover',
+    name: 'Moving Average Crossover',
+    description: 'Generates buy/sell signals when short-term and long-term moving averages cross to confirm trend direction.',
+    type: 'trend',
+    status: 'available',
+    complexity: 'intermediate',
+    marketConditions: ['trending'],
+    tags: [],
+    risk: 'low',
+    timeframe: '15m - 4h',
+    bestFor: 'Swing traders looking for rule-based signals',
+    advantages: [
+      'Simple, rules-based entries',
+      'Filters out minor noise',
+      'Works across timeframes'
+    ],
+    considerations: [
+      'Lags during rapid reversals',
+      'Whipsaws in choppy markets',
+      'Needs complementary risk controls'
+    ],
+    minCapital: 15000,
+    maxDrawdown: 14,
+    expectedReturn: 12,
+    parameters: {
+      shortMAPeriod: 20,
+      longMAPeriod: 50,
+      confirmationIndicator: 'RSI'
+    },
+    performance: {
+      winRate: 62.3,
+      avgReturn: 1.8,
+      sharpeRatio: 1.12
+    },
+    backtestResults: {
+      totalReturn: 14.4,
+      sharpeRatio: 1.25,
+      maxDrawdown: -9.9,
+      winRate: 64.8
+    },
+    version: 'v2.2'
+  },
+  {
+    id: 'strategy-scalping',
+    slug: 'scalping',
+    name: 'Scalping',
+    description: 'Makes numerous small profits from tiny price movements throughout the day',
+    type: 'scalping',
+    status: 'advanced',
+    complexity: 'advanced',
+    marketConditions: ['volatile'],
+    tags: [],
+    risk: 'high',
+    timeframe: '1m - 15m',
+    bestFor: 'Experienced traders with low-latency connections',
+    advantages: [
+      'Many opportunities',
+      'Quick profits',
+      'Limited exposure'
+    ],
+    considerations: [
+      'High transaction costs',
+      'Requires constant monitoring',
+      'Stressful'
+    ],
+    minCapital: 45000,
+    maxDrawdown: 25,
+    expectedReturn: 28,
+    parameters: {
+      tradeDurationSeconds: 120,
+      maxSimultaneousPositions: 5,
+      executionMode: 'low-latency'
+    },
+    performance: {
+      winRate: 54.1,
+      avgReturn: 1.5,
+      sharpeRatio: 1.28
+    },
+    backtestResults: {
+      totalReturn: 22.4,
+      sharpeRatio: 1.34,
+      maxDrawdown: -18.6,
+      winRate: 58.2
+    },
+    version: 'v3.1'
+  },
+  {
+    id: 'strategy-swing-trading',
+    slug: 'swing_trading',
+    name: 'Swing Trading',
+    description: 'Captures price swings over several days to weeks using technical analysis',
+    type: 'swing',
+    status: 'popular',
+    complexity: 'intermediate',
+    marketConditions: ['trending'],
+    tags: [],
+    risk: 'medium',
+    timeframe: '4h - 1w',
+    bestFor: 'Part-time traders and medium-term opportunities',
+    advantages: [
+      'Less time intensive',
+      'Good risk-reward',
+      'Flexible timing'
+    ],
+    considerations: [
+      'Overnight risk',
+      'Requires patience',
+      'Market gaps'
+    ],
+    minCapital: 30000,
+    maxDrawdown: 22,
+    expectedReturn: 18,
+    parameters: {
+      holdingPeriodDays: 5,
+      indicators: ['EMA', 'ATR'],
+      stopLoss: 3.5
+    },
+    performance: {
+      winRate: 60.7,
+      avgReturn: 2.6,
+      sharpeRatio: 1.49
+    },
+    backtestResults: {
+      totalReturn: 21.5,
+      sharpeRatio: 1.38,
+      maxDrawdown: -13.8,
+      winRate: 63.2
+    },
+    version: 'v2.0'
+  },
+  {
+    id: 'strategy-breakout-trading',
+    slug: 'breakout',
+    name: 'Breakout Trading',
+    description: 'Enters trades when price breaks through significant support or resistance levels',
+    type: 'breakout',
+    status: 'available',
+    complexity: 'intermediate',
+    marketConditions: ['volatile'],
+    tags: [],
+    risk: 'high',
+    timeframe: '15m - 4h',
+    bestFor: 'Volatile crypto markets and key technical levels',
+    advantages: [
+      'Catches big moves early',
+      'Clear entry signals',
+      'High profit potential'
+    ],
+    considerations: [
+      'Many false breakouts',
+      'Requires quick execution',
+      'High risk'
+    ],
+    minCapital: 28000,
+    maxDrawdown: 24,
+    expectedReturn: 20,
+    parameters: {
+      breakoutThreshold: 1.8,
+      retestConfirmation: true,
+      stopLoss: 2.5
+    },
+    performance: {
+      winRate: 57.4,
+      avgReturn: 2.9,
+      sharpeRatio: 1.41
+    },
+    backtestResults: {
+      totalReturn: 24.2,
+      sharpeRatio: 1.47,
+      maxDrawdown: -16.9,
+      winRate: 59.8
+    },
+    version: 'v2.6'
+  },
+  {
+    id: 'strategy-pairs-trading',
+    slug: 'pairs_trading',
+    name: 'Pairs Trading',
+    description: 'Trades correlation between two related cryptocurrencies',
+    type: 'pairs',
+    status: 'advanced',
+    complexity: 'advanced',
+    marketConditions: ['any'],
+    tags: [],
+    risk: 'medium',
+    timeframe: '1h - 1d',
+    bestFor: 'Sophisticated traders with strong analytical skills',
+    advantages: [
+      'Market neutral',
+      'Statistical advantage',
+      'Reduced market risk'
+    ],
+    considerations: [
+      'Complex analysis',
+      'Correlations can break',
+      'Limited pairs'
+    ],
+    minCapital: 40000,
+    maxDrawdown: 19,
+    expectedReturn: 16,
+    parameters: {
+      correlationLookback: 30,
+      hedgeRatio: 0.85,
+      divergenceThreshold: 2.0
+    },
+    performance: {
+      winRate: 61.8,
+      avgReturn: 1.7,
+      sharpeRatio: 1.33
+    },
+    backtestResults: {
+      totalReturn: 17.9,
+      sharpeRatio: 1.4,
+      maxDrawdown: -12.6,
+      winRate: 65.1
+    },
+    version: 'v1.6'
+  },
+  {
+    id: 'strategy-trend-following',
+    slug: 'trend_following',
+    name: 'Trend Following',
+    description: 'Follows established trends using moving averages and trend indicators',
+    type: 'trend-following',
+    status: 'popular',
+    complexity: 'beginner',
+    marketConditions: ['trending'],
+    tags: [],
+    risk: 'medium',
+    timeframe: '1d - 1w',
+    bestFor: 'Long-term trending cryptocurrencies like Bitcoin and Ethereum',
+    advantages: [
+      'Simple concept',
+      'Catches big moves',
+      'Clear rules'
+    ],
+    considerations: [
+      'Late entries',
+      'Whipsaws in choppy markets',
+      'Requires trending markets'
+    ],
+    minCapital: 20000,
+    maxDrawdown: 17,
+    expectedReturn: 14,
+    parameters: {
+      longMA: 50,
+      shortMA: 20,
+      trailingStop: 4.0
+    },
+    performance: {
+      winRate: 63.9,
+      avgReturn: 1.9,
+      sharpeRatio: 1.44
+    },
+    backtestResults: {
+      totalReturn: 16.5,
+      sharpeRatio: 1.36,
+      maxDrawdown: -10.8,
+      winRate: 67.7
+    },
+    version: 'v1.8'
+  },
+  {
+    id: 'strategy-ai-trend-classifier',
+    slug: 'ai_trend_classifier',
+    name: 'AI Trend Classifier',
+    description: 'Uses deep learning on price and order-book features to score short-term trends (up/down/flat) and trigger entries with a confidence signal.',
+    type: 'ai-trend',
+    status: 'available',
+    complexity: 'intermediate',
+    marketConditions: ['trending'],
+    tags: ['AI'],
+    risk: 'medium',
+    timeframe: '15m - 4h',
+    bestFor: 'Trending crypto pairs with healthy liquidity',
+    advantages: [
+      'Fewer false starts than simple moving averages',
+      'Adapts to changing microstructure',
+      'Clear confidence score on each signal'
+    ],
+    considerations: [
+      'Needs periodic re-training to avoid drift',
+      'Can lag during disorderly markets'
+    ],
+    minCapital: 32000,
+    maxDrawdown: 16,
+    expectedReturn: 22,
+    parameters: {
+      modelType: 'transformer',
+      retrainCadenceDays: 14,
+      confidenceThreshold: 0.62
+    },
+    performance: {
+      winRate: 66.4,
+      avgReturn: 2.7,
+      sharpeRatio: 1.71
+    },
+    backtestResults: {
+      totalReturn: 27.8,
+      sharpeRatio: 1.75,
+      maxDrawdown: -13.4,
+      winRate: 68.5
+    },
+    version: 'v1.3'
+  },
+  {
+    id: 'strategy-regime-detection-ensemble',
+    slug: 'regime_detection_ensemble',
+    name: 'Regime Detection (Ensemble)',
+    description: 'Labels live market regimes (Range, Trend, Panic) and routes orders to the appropriate playbook (e.g., grid in range, momentum in trend, risk-off in panic).',
+    type: 'ai-regime',
+    status: 'advanced',
+    complexity: 'intermediate',
+    marketConditions: ['ranging', 'trending'],
+    tags: ['AI'],
+    risk: 'medium',
+    timeframe: '1h - 1d',
+    bestFor: 'Established cryptocurrencies with regime shifts',
+    advantages: [
+      'Reduces strategy mismatch across regimes',
+      'Smoother transitions around regime changes',
+      'Pairs well with most strategies'
+    ],
+    considerations: [
+      'Occasional mislabels during fast flips',
+      'Needs a short lookback to stabilize'
+    ],
+    minCapital: 36000,
+    maxDrawdown: 15,
+    expectedReturn: 18,
+    parameters: {
+      ensembleMembers: 5,
+      lookbackHours: 24,
+      regimeLabels: ['range', 'trend', 'panic']
+    },
+    performance: {
+      winRate: 65.1,
+      avgReturn: 2.1,
+      sharpeRatio: 1.62
+    },
+    backtestResults: {
+      totalReturn: 21.4,
+      sharpeRatio: 1.68,
+      maxDrawdown: -12.1,
+      winRate: 67.9
+    },
+    version: 'v1.0'
+  },
+  {
+    id: 'strategy-sentiment-event-driven',
+    slug: 'sentiment_event_driven',
+    name: 'Sentiment / Event-Driven',
+    description: 'Uses news/social NLP plus funding/liquidations to detect sentiment shocks and directional bursts; follows or avoids events with tight risk caps.',
+    type: 'ai-sentiment',
+    status: 'advanced',
+    complexity: 'advanced',
+    marketConditions: ['volatile'],
+    tags: ['AI'],
+    risk: 'high',
+    timeframe: '5m - 1h',
+    bestFor: 'Top-cap perps around macro/crypto news windows',
+    advantages: [
+      'Captures news-driven moves',
+      'Avoids trading blindly into event risk',
+      'Fast, clearly triggered signals'
+    ],
+    considerations: [
+      'Requires a third-party news/social feed',
+      'Higher variance around major events'
+    ],
+    minCapital: 42000,
+    maxDrawdown: 27,
+    expectedReturn: 30,
+    parameters: {
+      dataSources: ['news', 'social', 'funding'],
+      cooldownMinutes: 45,
+      sentimentThreshold: 0.7
+    },
+    performance: {
+      winRate: 55.6,
+      avgReturn: 3.5,
+      sharpeRatio: 1.58
+    },
+    backtestResults: {
+      totalReturn: 34.6,
+      sharpeRatio: 1.61,
+      maxDrawdown: -19.5,
+      winRate: 58.3
+    },
+    version: 'v1.2'
+  },
+  {
+    id: 'strategy-volatility-forecaster',
+    slug: 'volatility_forecaster_overlay',
+    name: 'Volatility Forecaster (Overlay)',
+    description: 'Predicts near-term volatility to size positions and set adaptive stops/take-profits; used as an overlay on top of any entry strategy.',
+    type: 'ai-volatility-overlay',
+    status: 'available',
+    complexity: 'intermediate',
+    marketConditions: ['any'],
+    tags: ['AI', 'Overlay'],
+    risk: 'medium',
+    riskLabel: 'Low-Medium Risk',
+    timeframe: 'Any',
+    bestFor: 'All strategies seeking steadier risk',
+    advantages: [
+      'Smoother equity curve across regimes',
+      'Stops/TP adapt to expected volatility',
+      'Works with any base strategy'
+    ],
+    considerations: [
+      'Overlay only - does not create entries',
+      'Forecasts can degrade in regime shifts'
+    ],
+    overlay: true,
+    parameters: {
+      forecastHorizonMinutes: 30,
+      percentileTarget: 0.75,
+      integration: 'position-sizing'
+    },
+    version: 'v1.0'
+  },
+  {
+    id: 'strategy-rl-execution-policy',
+    slug: 'rl_execution_policy_overlay',
+    name: 'RL Execution Policy (Overlay)',
+    description: 'Reinforcement-learning policy that chooses between limit/market/iceberg and re-quotes to reduce slippage and fees for existing signals.',
+    type: 'ai-rl-execution',
+    status: 'advanced',
+    complexity: 'advanced',
+    marketConditions: ['any'],
+    tags: ['AI', 'Overlay'],
+    risk: 'high',
+    riskLabel: 'Medium-High Risk',
+    timeframe: '1m - 15m',
+    bestFor: 'Low-latency strategies on liquid venues',
+    advantages: [
+      'Better fills and lower costs',
+      'Learns venue microstructure behavior',
+      'Strong with momentum/scalping entries'
+    ],
+    considerations: [
+      'Training is data-intensive',
+      'Can overfit to one venue if not monitored'
+    ],
+    overlay: true,
+    parameters: {
+      actionSpace: ['limit', 'market', 'iceberg'],
+      retrainCadenceHours: 6,
+      rewardSignal: 'implementation-shortfall'
+    },
+    version: 'v1.1'
+  },
+  {
+    id: 'strategy-anomaly-guard',
+    slug: 'anomaly_guard_overlay',
+    name: 'Anomaly Guard (Overlay)',
+    description: 'Detects abnormal order-book/liquidation patterns (e.g., spoofing, cascades) and enforces risk-off or tighter limits as a defensive layer.',
+    type: 'ai-anomaly-guard',
+    status: 'available',
+    complexity: 'beginner',
+    marketConditions: ['any'],
+    tags: ['AI', 'Overlay'],
+    risk: 'low',
+    timeframe: 'Any',
+    bestFor: 'All strategies as a safety overlay',
+    advantages: [
+      'Cuts tail losses during disorderly moves',
+      'Independent safety layer for any strategy',
+      'Lightweight to run'
+    ],
+    considerations: [
+      'Defensive only - no entries',
+      'May occasionally sideline good trades'
+    ],
+    overlay: true,
+    parameters: {
+      detectionWindowSeconds: 30,
+      anomalyScoreThreshold: 0.8,
+      responseMode: 'risk-off'
+    },
+    version: 'v1.0'
   }
 ];
 

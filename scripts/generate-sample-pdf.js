@@ -2,6 +2,7 @@ import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { mockStrategies } from '../shared/mockData.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,6 +22,20 @@ const doc = new PDFDocument({
 // Pipe to file
 const outputPath = path.join(__dirname, '../public/samples/rugira_monthly_performance_report_sample.pdf');
 doc.pipe(fs.createWriteStream(outputPath));
+
+const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
+
+const getRiskLabel = (strategy) =>
+  strategy.riskLabel ?? `${capitalize(strategy.risk)} Risk`;
+
+const getTagSummary = (strategy) => {
+  const tags = [];
+  if (strategy.tags.includes('AI')) tags.push('AI');
+  if (strategy.tags.includes('Overlay')) tags.push('Overlay');
+  tags.push(capitalize(strategy.complexity));
+  tags.push(strategy.marketConditions.map(capitalize).join('/'));
+  return tags.join(', ');
+};
 
 // Helper functions
 function addTitle(text, size = 24) {
@@ -217,13 +232,14 @@ addPageBreak();
 addTitle('Performance Breakdowns', 20);
 
 addSubtitle('By Strategy');
-const strategyData = [
-  ['Strategy', 'P&L', 'Hit Ratio', 'Trades'],
-  ['Grid Trading', '+2.1%', '62%', '98'],
-  ['Momentum', '+3.4%', '58%', '87'],
-  ['Arbitrage', '-0.3%', '71%', '62']
-];
-addTable(strategyData[0], strategyData.slice(1));
+const strategyTableHeaders = ['Strategy', 'Risk', 'Timeframe', 'Tags'];
+const strategyTableRows = mockStrategies.map((strategy) => [
+  strategy.name,
+  getRiskLabel(strategy),
+  strategy.timeframe,
+  getTagSummary(strategy)
+]);
+addTable(strategyTableHeaders, strategyTableRows);
 
 doc.moveDown();
 addSubtitle('By Venue');

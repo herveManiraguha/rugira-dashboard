@@ -13,12 +13,20 @@ import {
   DollarSign,
   Zap,
   GitBranchPlus,
+  GitCompare,
   Activity,
   Target,
   Loader2,
-  Settings
+  Settings,
+  Sparkles,
+  Layers,
+  TrendingUp,
+  Crosshair,
+  BarChart3,
+  ScissorsLineDashed
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { mockStrategies, type MockStrategy } from '@shared/mockData';
 
 interface CreateBotModalProps {
   isOpen: boolean;
@@ -34,57 +42,6 @@ interface BotCreationData {
   maxPositionSize: number;
   stopLoss: number;
 }
-
-const strategies = [
-  {
-    id: 'grid_trading',
-    name: 'Grid Trading',
-    description: 'Automated buy/sell orders in a price range',
-    icon: <Grid3X3 className="w-5 h-5 text-blue-500" />,
-    difficulty: 'Intermediate',
-    timeframe: '1h-1d'
-  },
-  {
-    id: 'arbitrage',
-    name: 'Arbitrage',
-    description: 'Profit from price differences across exchanges',
-    icon: <ArrowRightLeft className="w-5 h-5 text-green-500" />,
-    difficulty: 'Advanced',
-    timeframe: '1-5m'
-  },
-  {
-    id: 'dca',
-    name: 'Dollar Cost Averaging',
-    description: 'Buy fixed amounts at regular intervals',
-    icon: <DollarSign className="w-5 h-5 text-indigo-500" />,
-    difficulty: 'Beginner',
-    timeframe: '1d-1w'
-  },
-  {
-    id: 'momentum',
-    name: 'Momentum Trading',
-    description: 'Follow strong price movements and trends',
-    icon: <Zap className="w-5 h-5 text-purple-500" />,
-    difficulty: 'Advanced',
-    timeframe: '5m-1h'
-  },
-  {
-    id: 'ma_crossover',
-    name: 'Moving Average Crossover',
-    description: 'Trade based on moving average signals',
-    icon: <GitBranchPlus className="w-5 h-5 text-orange-500" />,
-    difficulty: 'Intermediate',
-    timeframe: '15m-4h'
-  },
-  {
-    id: 'mean_reversion',
-    name: 'Mean Reversion',
-    description: 'Buy low and sell high around average price',
-    icon: <Activity className="w-5 h-5 text-pink-500" />,
-    difficulty: 'Intermediate',
-    timeframe: '30m-2h'
-  }
-];
 
 const exchanges = [
   { id: 'binance', name: 'Binance' },
@@ -108,6 +65,8 @@ export default function CreateBotModal({ isOpen, onClose, onSubmit }: CreateBotM
   const [maxPositionSize, setMaxPositionSize] = useState(10);
   const [stopLoss, setStopLoss] = useState(5);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const strategyCatalog = mockStrategies;
 
   const resetForm = () => {
     setName('');
@@ -148,16 +107,48 @@ export default function CreateBotModal({ isOpen, onClose, onSubmit }: CreateBotM
   };
 
   const isFormValid = name && exchange && tradingPair && strategy;
-  const selectedStrategy = strategies.find(s => s.id === strategy);
+  const selectedStrategy = strategyCatalog.find(s => s.slug === strategy);
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Beginner': return 'bg-green-100 text-green-800';
-      case 'Intermediate': return 'bg-yellow-100 text-yellow-800';
-      case 'Advanced': return 'bg-red-100 text-red-800';
+  const getDifficultyColor = (complexity: MockStrategy['complexity']) => {
+    switch (complexity) {
+      case 'beginner': return 'bg-green-100 text-green-800';
+      case 'intermediate': return 'bg-yellow-100 text-yellow-800';
+      case 'advanced': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
+
+  const formatComplexity = (complexity: MockStrategy['complexity']) =>
+    complexity.charAt(0).toUpperCase() + complexity.slice(1);
+
+  const renderStrategyIcon = (catalogEntry: MockStrategy) => {
+    const baseClass = "w-5 h-5";
+    if (catalogEntry.tags.includes('Overlay')) {
+      return <Layers className={`${baseClass} text-slate-500`} />;
+    }
+    if (catalogEntry.tags.includes('AI')) {
+      return <Sparkles className={`${baseClass} text-purple-500`} />;
+    }
+
+    switch (catalogEntry.type) {
+      case 'grid': return <Grid3X3 className={`${baseClass} text-blue-500`} />;
+      case 'arbitrage': return <ArrowRightLeft className={`${baseClass} text-green-500`} />;
+      case 'dca': return <DollarSign className={`${baseClass} text-indigo-500`} />;
+      case 'momentum': return <Zap className={`${baseClass} text-purple-500`} />;
+      case 'mean-reversion': return <Activity className={`${baseClass} text-pink-500`} />;
+      case 'trend':
+      case 'trend-following': return <TrendingUp className={`${baseClass} text-orange-500`} />;
+      case 'market-making': return <Loader2 className={`${baseClass} text-teal-500`} />;
+      case 'pairs': return <GitCompare className={`${baseClass} text-emerald-500`} />;
+      case 'breakout': return <Crosshair className={`${baseClass} text-red-500`} />;
+      case 'scalping': return <ScissorsLineDashed className={`${baseClass} text-rose-500`} />;
+      case 'swing': return <GitBranchPlus className={`${baseClass} text-yellow-500`} />;
+      default: return <BarChart3 className={`${baseClass} text-gray-500`} />;
+    }
+  };
+
+  const getRiskLabel = (catalogEntry: MockStrategy) =>
+    catalogEntry.riskLabel ?? `${catalogEntry.risk.charAt(0).toUpperCase() + catalogEntry.risk.slice(1)} Risk`;
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -263,15 +254,30 @@ export default function CreateBotModal({ isOpen, onClose, onSubmit }: CreateBotM
                   </CardHeader>
                   <CardContent className="pt-0">
                     <div className="flex items-center space-x-2 mb-2">
-                      {selectedStrategy.icon}
+                      {renderStrategyIcon(selectedStrategy)}
                       <span className="font-medium text-sm">{selectedStrategy.name}</span>
-                      <Badge className={getDifficultyColor(selectedStrategy.difficulty)}>
-                        {selectedStrategy.difficulty}
+                      <Badge className={getDifficultyColor(selectedStrategy.complexity)}>
+                        {formatComplexity(selectedStrategy.complexity)}
                       </Badge>
+                      {selectedStrategy.tags.includes('AI') && (
+                        <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-200">
+                          AI
+                        </Badge>
+                      )}
+                      {selectedStrategy.tags.includes('Overlay') && (
+                        <Badge variant="outline" className="bg-slate-100 text-slate-800 border-slate-200">
+                          Overlay
+                        </Badge>
+                      )}
                     </div>
-                    <p className="text-xs text-blue-700 mb-2">{selectedStrategy.description}</p>
-                    <div className="text-xs text-blue-600">
-                      <strong>Timeframe:</strong> {selectedStrategy.timeframe}
+                    <p className="text-xs text-blue-700 mb-2 leading-relaxed">{selectedStrategy.description}</p>
+                    <div className="text-xs text-blue-600 space-y-1">
+                      <div>
+                        <strong>Timeframe:</strong> {selectedStrategy.timeframe}
+                      </div>
+                      <div>
+                        <strong>Risk:</strong> {getRiskLabel(selectedStrategy)}
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -283,28 +289,44 @@ export default function CreateBotModal({ isOpen, onClose, onSubmit }: CreateBotM
           <div>
             <Label className="text-base font-medium mb-4 block">Trading Strategy</Label>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {strategies.map((strat) => (
+              {strategyCatalog.map((strat) => (
                 <Card 
                   key={strat.id}
                   className={cn(
                     "cursor-pointer transition-all hover:shadow-md",
-                    strategy === strat.id ? "ring-2 ring-blue-500 bg-blue-50" : ""
+                    strategy === strat.slug ? "ring-2 ring-blue-500 bg-blue-50" : ""
                   )}
-                  onClick={() => setStrategy(strat.id)}
+                  onClick={() => setStrategy(strat.slug)}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-start space-x-3">
-                      {strat.icon}
+                      {renderStrategyIcon(strat)}
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-2 mb-1">
+                        <div className="flex items-center space-x-2 mb-1 flex-wrap">
                           <h4 className="font-medium text-sm truncate">{strat.name}</h4>
-                          <Badge className={getDifficultyColor(strat.difficulty)} variant="outline">
-                            {strat.difficulty}
+                          <Badge className={getDifficultyColor(strat.complexity)} variant="outline">
+                            {formatComplexity(strat.complexity)}
                           </Badge>
+                          {strat.tags.includes('AI') && (
+                            <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-200">
+                              AI
+                            </Badge>
+                          )}
+                          {strat.tags.includes('Overlay') && (
+                            <Badge variant="outline" className="bg-slate-100 text-slate-800 border-slate-200">
+                              Overlay
+                            </Badge>
+                          )}
                         </div>
                         <p className="text-xs text-gray-600 leading-tight mb-2">{strat.description}</p>
                         <div className="text-xs text-gray-500">
                           <strong>Timeframe:</strong> {strat.timeframe}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          <strong>Risk:</strong> {getRiskLabel(strat)}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          <strong>Best for:</strong> {strat.bestFor}
                         </div>
                       </div>
                     </div>

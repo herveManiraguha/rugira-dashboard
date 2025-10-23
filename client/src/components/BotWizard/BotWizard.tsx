@@ -28,6 +28,7 @@ import {
   Check
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { mockStrategies, type MockStrategy } from '@shared/mockData';
 
 interface BotWizardProps {
   open: boolean;
@@ -51,12 +52,16 @@ export function BotWizard({ open, onClose, onComplete }: BotWizardProps) {
     mode: 'Paper' as 'Paper' | 'Live'
   });
 
-  const strategies = [
-    { value: 'market_making', label: 'Market Making', risk: 'Medium' },
-    { value: 'arbitrage', label: 'Arbitrage', risk: 'Low' },
-    { value: 'trend_following', label: 'Trend Following', risk: 'High' },
-    { value: 'grid_trading', label: 'Grid Trading', risk: 'Medium' }
-  ];
+  const strategies = mockStrategies;
+  const strategyOptions = strategies.map(strategy => ({
+    slug: strategy.slug,
+    label: strategy.name,
+    risk: strategy.risk,
+    riskLabel: strategy.riskLabel,
+    tags: strategy.tags,
+    overlay: strategy.overlay ?? false,
+    description: strategy.description
+  }));
 
   const markets = [
     'BTC/USDT', 'ETH/USDT', 'SOL/USDT', 'MATIC/USDT'
@@ -185,19 +190,26 @@ export function BotWizard({ open, onClose, onComplete }: BotWizardProps) {
                     <SelectValue placeholder="Choose a trading strategy" />
                   </SelectTrigger>
                   <SelectContent>
-                    {strategies.map(strategy => (
-                      <SelectItem key={strategy.value} value={strategy.value}>
-                        <div className="flex items-center justify-between w-full">
-                          <span>{strategy.label}</span>
-                          <Badge 
-                            variant={
-                              strategy.risk === 'Low' ? 'default' :
-                              strategy.risk === 'Medium' ? 'secondary' : 'destructive'
-                            }
-                            className="ml-2"
-                          >
-                            {strategy.risk} Risk
-                          </Badge>
+                    {strategyOptions.map(strategy => (
+                      <SelectItem key={strategy.slug} value={strategy.slug}>
+                        <div className="flex flex-col space-y-1">
+                          <div className="flex items-center justify-between w-full">
+                            <span className="font-medium">
+                              {strategy.label}
+                              {strategy.overlay && <span className="ml-2 text-xs uppercase text-muted-foreground tracking-wide">(Overlay)</span>}
+                            </span>
+                            <Badge 
+                              variant={
+                                strategy.risk === 'low' ? 'default' :
+                                strategy.risk === 'medium' ? 'secondary' : 'destructive'
+                              }
+                            >
+                              {strategy.riskLabel ?? `${strategy.risk.charAt(0).toUpperCase() + strategy.risk.slice(1)} Risk`}
+                            </Badge>
+                          </div>
+                          {strategy.tags.includes('AI') && (
+                            <span className="text-xs text-purple-600 font-medium">AI-Powered</span>
+                          )}
                         </div>
                       </SelectItem>
                     ))}
@@ -208,14 +220,7 @@ export function BotWizard({ open, onClose, onComplete }: BotWizardProps) {
               {botData.strategy && (
                 <Alert>
                   <AlertDescription>
-                    {botData.strategy === 'market_making' && 
-                      'Market making provides liquidity by placing limit orders on both sides of the order book.'}
-                    {botData.strategy === 'arbitrage' && 
-                      'Arbitrage exploits price differences across venues with minimal risk.'}
-                    {botData.strategy === 'trend_following' && 
-                      'Trend following captures momentum but requires strict risk management.'}
-                    {botData.strategy === 'grid_trading' && 
-                      'Grid trading profits from volatility within a defined price range.'}
+                    {strategies.find(strategy => strategy.slug === botData.strategy)?.description ?? 'Strategy details are unavailable.'}
                   </AlertDescription>
                 </Alert>
               )}

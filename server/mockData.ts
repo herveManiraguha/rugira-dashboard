@@ -8,6 +8,7 @@ import type {
   ComplianceReport,
   UserProfile
 } from '../shared/schema';
+import { mockStrategies } from '../shared/mockData';
 
 // Helper to generate realistic time series data
 function generateTimeSeriesData(days: number, baseValue: number, volatility: number = 0.1) {
@@ -99,64 +100,50 @@ export function generateExchangeData(): ExchangeConfig[] {
 
 // Generate strategy data
 export function generateStrategyData(): StrategyConfig[] {
-  const strategies = [
-    {
-      name: 'Grid Trading Pro',
-      type: 'grid',
-      description: 'Advanced grid trading with dynamic grid spacing',
-      performance: { winRate: 68.5, avgReturn: 2.3, sharpeRatio: 1.45 }
-    },
-    {
-      name: 'MA Crossover Classic',
-      type: 'trend',
-      description: 'Simple moving average crossover strategy',
-      performance: { winRate: 62.3, avgReturn: 1.8, sharpeRatio: 1.12 }
-    },
-    {
-      name: 'Momentum Breakout',
-      type: 'momentum',
-      description: 'Captures momentum during breakout periods',
-      performance: { winRate: 58.9, avgReturn: 3.2, sharpeRatio: 1.67 }
-    },
-    {
-      name: 'Arbitrage Scanner',
-      type: 'arbitrage',
-      description: 'Cross-exchange arbitrage opportunities',
-      performance: { winRate: 94.2, avgReturn: 0.5, sharpeRatio: 2.3 }
-    },
-    {
-      name: 'Market Maker Plus',
-      type: 'market-making',
-      description: 'Provides liquidity and captures spread',
-      performance: { winRate: 71.4, avgReturn: 1.2, sharpeRatio: 1.89 }
-    }
-  ];
-  
-  return strategies.map((strategy, i) => ({
-    id: `strategy-${i + 1}`,
-    name: strategy.name,
-    type: strategy.type,
-    description: strategy.description,
-    status: i === 0 ? 'active' : 'inactive' as 'active' | 'inactive',
-    version: `v${Math.floor(Math.random() * 3 + 1)}.${Math.floor(Math.random() * 10)}`,
-    performance: strategy.performance,
-    backtestResults: {
-      totalReturn: strategy.performance.avgReturn * 12,
-      maxDrawdown: Math.round(Math.random() * 15 + 5),
-      totalTrades: Math.floor(Math.random() * 1000 + 100),
-      profitFactor: Math.round((1 + Math.random()) * 100) / 100
-    },
-    parameters: {
-      timeframe: ['1m', '5m', '15m', '1h', '4h'][i % 5],
-      indicators: ['EMA', 'RSI', 'MACD', 'Bollinger'],
-      riskManagement: {
-        maxPositionSize: 10000,
-        stopLoss: 2.5,
-        takeProfit: 5
-      }
-    },
-    lastModified: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString()
-  }));
+  return mockStrategies.map((strategy, index) => {
+    const performance = strategy.performance ?? {
+      winRate: strategy.overlay ? 0 : 60,
+      avgReturn: strategy.overlay ? 0 : 1.5,
+      sharpeRatio: strategy.overlay ? 0 : 1.2
+    };
+
+    const totalReturn =
+      strategy.backtestResults?.totalReturn ??
+      (performance.avgReturn ? Math.round(performance.avgReturn * 12 * 10) / 10 : 0);
+
+    const maxDrawdown =
+      strategy.backtestResults?.maxDrawdown !== undefined
+        ? Math.abs(strategy.backtestResults.maxDrawdown)
+        : strategy.overlay
+          ? 5
+          : 12;
+
+    const totalTrades =
+      (strategy.backtestResults as any)?.totalTrades ??
+      (strategy.overlay ? 0 : 250 + index * 15);
+
+    const profitFactor =
+      (strategy.backtestResults as any)?.profitFactor ??
+      (strategy.overlay ? 1.0 : Math.max(1.1, 1 + performance.avgReturn / 2));
+
+    return {
+      id: strategy.id,
+      name: strategy.name,
+      type: strategy.type,
+      description: strategy.description,
+      status: 'active' as const,
+      version: strategy.version ?? `v1.${index}`,
+      performance,
+      backtestResults: {
+        totalReturn,
+        maxDrawdown,
+        totalTrades,
+        profitFactor
+      },
+      parameters: strategy.parameters ?? {},
+      lastModified: new Date(Date.now() - index * 86400000).toISOString()
+    };
+  });
 }
 
 // Generate backtest results
