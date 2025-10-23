@@ -583,13 +583,6 @@ export default function TaxCenter() {
           </Alert>
         )}
 
-        <Alert variant="secondary" className="border-dashed border-amber-300 bg-amber-50">
-          <AlertTitle>Demo data notice</AlertTitle>
-          <AlertDescription>
-            All tax numbers shown here are generated from mock data to illustrate the reporting flow.
-          </AlertDescription>
-        </Alert>
-
         <Card>
           <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
