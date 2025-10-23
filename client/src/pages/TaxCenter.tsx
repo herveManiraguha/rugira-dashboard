@@ -843,20 +843,31 @@ export default function TaxCenter() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {holdings.map((holding) => (
-                    <TableRow key={`${holding.venue}-${holding.asset}`}>
-                      <TableCell>{holding.venue}</TableCell>
-                      <TableCell>{holding.asset}</TableCell>
-                      <TableCell className="text-right">
-                        {holding.quantity.toLocaleString("en-CH", {
-                          maximumFractionDigits: 8,
-                        })}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {formatCurrency(holding.valueInBase, baseCurrency)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {holdings.map((holding) => {
+                    const quantity = Number(
+                      // API normalises quantity but keep fallback for robustness
+                      (holding as Record<string, unknown>).quantity ??
+                        (holding as Record<string, unknown>).total ??
+                        0
+                    );
+
+                    return (
+                      <TableRow key={`${holding.venue}-${holding.asset}`}>
+                        <TableCell>{holding.venue}</TableCell>
+                        <TableCell>{holding.asset}</TableCell>
+                        <TableCell className="text-right">
+                          {Number.isFinite(quantity)
+                            ? quantity.toLocaleString("en-CH", {
+                                maximumFractionDigits: 8,
+                              })
+                            : "—"}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {formatCurrency(holding.valueInBase, baseCurrency)}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                   {holdings.length === 0 && (
                     <TableRow>
                       <TableCell colSpan={4} className="text-center text-sm text-muted-foreground py-6">
@@ -897,7 +908,7 @@ export default function TaxCenter() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        {rate.rate.toLocaleString("en-CH", {
+                        {Number(rate.rate).toLocaleString("en-CH", {
                           minimumFractionDigits: 4,
                           maximumFractionDigits: 6,
                         })}
@@ -952,7 +963,7 @@ export default function TaxCenter() {
                     <TableCell className="capitalize">{txn.type.replace("_", " ")}</TableCell>
                     <TableCell>{txn.baseAsset}</TableCell>
                     <TableCell className="text-right">
-                      {txn.quantity.toLocaleString("en-CH", {
+                      {Number(txn.quantity ?? 0).toLocaleString("en-CH", {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 8,
                       })}
