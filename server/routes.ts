@@ -5,10 +5,151 @@ import { storage } from "./storage";
 import { authRoutes, optionalAuth } from "./auth";
 import * as mockData from "./mockData";
 import { mockOrganizations, mockOrgRoles } from "./mockData/organizations";
+import { mockVenueTransactions, mockVenueBalanceSnapshots, mockFxRates, mockMarketPrices } from "../shared/mockData";
+import { runMockTaxEngine } from "./services/mockTaxEngine";
+import type { CostBasisMethod } from "./services/mockTaxEngine";
+import { buildTaxCsv, buildTaxPdf } from "./services/mockTaxExport";
+import { startMockTaxScheduler, getMockTaxStatus, triggerManualTaxSync } from "./services/mockTaxScheduler";
 import healthRoutes from "./routes/health";
 
+function filterTransactions(query: any) {
+  const { venues, startDate, endDate, types } = query;
+  let transactions = [...mockVenueTransactions];
+
+  if (venues && typeof venues === "string") {
+    const venueList = venues.split(",").map((v: string) => v.trim().toLowerCase());
+    transactions = transactions.filter((txn) => venueList.includes(txn.venue.toLowerCase()));
+  }
+
+  if (types && typeof types === "string") {
+    const typeList = types.split(",").map((t: string) => t.trim());
+    transactions = transactions.filter((txn) => typeList.includes(txn.type));
+  }
+
+  if (startDate) {
+    const start = new Date(startDate as string).getTime();
+    transactions = transactions.filter((txn) => new Date(txn.venueTimestamp).getTime() >= start);
+  }
+
+  if (endDate) {
+    const end = new Date(endDate as string).getTime();
+    transactions = transactions.filter((txn) => new Date(txn.venueTimestamp).getTime() <= end);
+  }
+
+  return transactions.sort((a, b) =>
+    new Date(a.venueTimestamp).getTime() - new Date(b.venueTimestamp).getTime()
+  );
+}
+
+function filterSnapshots(query: any) {
+  const { venues, assets, asOf } = query;
+  let balances = [...mockVenueBalanceSnapshots];
+
+  if (venues && typeof venues === "string") {
+    const venueList = venues.split(",").map((v: string) => v.trim().toLowerCase());
+    balances = balances.filter((snap) => venueList.includes(snap.venue.toLowerCase()));
+  }
+
+  if (assets && typeof assets === "string") {
+    const assetList = assets.split(",").map((a: string) => a.trim().toUpperCase());
+    balances = balances.filter((snap) => assetList.includes(snap.asset.toUpperCase()));
+  }
+
+  if (asOf) {
+    balances = balances.filter((snap) => snap.capturedAt <= (asOf as string));
+  }
+
+  return balances;
+}
+
+function filterFxRates(query: any) {
+  const { base, quote, startDate, endDate } = query;
+  let rates = [...mockFxRates];
+
+  if (base && typeof base === "string") {
+    const baseList = base.split(",").map((b: string) => b.trim().toUpperCase());
+    rates = rates.filter((rate) => baseList.includes(rate.baseCurrency.toUpperCase()));
+  }
+
+  if (quote && typeof quote === "string") {
+    const quoteList = quote.split(",").map((q: string) => q.trim().toUpperCase());
+    rates = rates.filter((rate) => quoteList.includes(rate.quoteCurrency.toUpperCase()));
+  }
+
+  if (startDate) {
+    const start = new Date(startDate as string).getTime();
+    rates = rates.filter((rate) => new Date(rate.capturedAt).getTime() >= start);
+  }
+
+  if (endDate) {
+    const end = new Date(endDate as string).getTime();
+    rates = rates.filter((rate) => new Date(rate.capturedAt).getTime() <= end);
+  }
+
+  return rates;
+}
+
+function normalizeCostBasis(value: any): CostBasisMethod {
+  const upper = String(value || "").toUpperCase();
+  if (upper === "LIFO" || upper === "HIFO") {
+    return upper;
+  }
+  return "FIFO";
+}
+
+function buildMockReportPreview(query: any) {
+  const transactions = filterTransactions(query);
+  const balances = filterSnapshots({ ...query, asOf: query.asOf || query.endDate });
+  const fxRates = filterFxRates(query);
+  const venuesFilter =
+    query.venues && typeof query.venues === "string"
+      ? query.venues.split(",").map((v: string) => v.trim())
+      : undefined;
+  const options = {
+    costBasis: normalizeCostBasis(query.costBasis),
+    baseCurrency: (query.baseCurrency || "CHF") as string,
+    startDate: query.startDate as string | undefined,
+    endDate: query.endDate as string | undefined,
+    venues: venuesFilter,
+  };
+
+  const engineResult = runMockTaxEngine(options);
+
+  return {
+    metadata: {
+      requestedAt: new Date().toISOString(),
+      reportType: query.reportType || "annual_tax",
+      jurisdiction: query.jurisdiction || "CH",
+      startDate: query.startDate || null,
+      endDate: query.endDate || null,
+      venues: venuesFilter ?? ["All"],
+      costBasis: engineResult.metadata.costBasis,
+      baseCurrency: engineResult.metadata.baseCurrency,
+    },
+    summary: {
+      totalTransactions: transactions.length,
+      totalVenues: new Set(transactions.map((txn) => txn.venue)).size,
+      realizedGains: engineResult.realizedGains.reduce((acc, record) => acc + record.gainLoss, 0),
+      feesPaid: transactions.reduce((acc, txn) => acc + (txn.feeAmount || 0), 0),
+      incomeEvents: engineResult.income.length,
+      incomeValue: engineResult.income.reduce((acc, item) => acc + item.valueInBase, 0),
+    },
+    holdingsSnapshot: balances.map((bal) => ({
+      venue: bal.venue,
+      asset: bal.asset,
+      quantity: bal.total,
+      valueInBase: bal.valueInBase,
+      capturedAt: bal.capturedAt,
+    })),
+    fxRates,
+    marketPrices: mockMarketPrices,
+    sampleTransactions: transactions.slice(0, 20),
+    engine: engineResult,
+  };
+}
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
+  startMockTaxScheduler();
   
   // TODO: Re-enable WebSocket server after fixing Vite HMR conflict
   // const wss = new WebSocketServer({ server: httpServer });
@@ -532,6 +673,126 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(complianceData);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch compliance data" });
+    }
+  });
+
+  // --- Mock tax APIs ---
+  app.get("/api/tax/transactions", async (req, res) => {
+    try {
+      const transactions = filterTransactions(req.query);
+      res.json({
+        items: transactions,
+        pagination: {
+          total: transactions.length,
+          limit: Number(req.query.limit) || transactions.length,
+          offset: Number(req.query.offset) || 0,
+        },
+        appliedFilters: req.query,
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch tax transactions" });
+    }
+  });
+
+  app.get("/api/tax/holdings", async (req, res) => {
+    try {
+      const holdings = filterSnapshots(req.query);
+      res.json({
+        items: holdings,
+        asOf: req.query.asOf || null,
+        appliedFilters: req.query,
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch holdings" });
+    }
+  });
+
+  app.get("/api/tax/fx-rates", async (req, res) => {
+    try {
+      const rates = filterFxRates(req.query);
+      res.json({
+        items: rates,
+        appliedFilters: req.query,
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch FX rates" });
+    }
+  });
+
+  app.get("/api/tax/reports/preview", async (req, res) => {
+    try {
+      const preview = buildMockReportPreview(req.query);
+      res.json(preview);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to build tax report preview" });
+    }
+  });
+
+  app.get("/api/tax/reports/export.csv", async (req, res) => {
+    try {
+      const options = {
+        costBasis: normalizeCostBasis(req.query.costBasis),
+        baseCurrency: (req.query.baseCurrency || "CHF") as string,
+        startDate: req.query.startDate as string | undefined,
+        endDate: req.query.endDate as string | undefined,
+        venues:
+          req.query.venues && typeof req.query.venues === "string"
+            ? req.query.venues.split(",").map((v) => v.trim())
+            : undefined,
+      };
+      const engine = runMockTaxEngine(options);
+      const csv = buildTaxCsv(engine);
+      res.setHeader("Content-Type", "text/csv");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="rugira-tax-export-mock.csv"`
+      );
+      res.send(csv);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to generate CSV export" });
+    }
+  });
+
+  app.get("/api/tax/reports/export.pdf", async (req, res) => {
+    try {
+      const options = {
+        costBasis: normalizeCostBasis(req.query.costBasis),
+        baseCurrency: (req.query.baseCurrency || "CHF") as string,
+        startDate: req.query.startDate as string | undefined,
+        endDate: req.query.endDate as string | undefined,
+        venues:
+          req.query.venues && typeof req.query.venues === "string"
+            ? req.query.venues.split(",").map((v) => v.trim())
+            : undefined,
+        jurisdiction: req.query.jurisdiction as string | undefined,
+      };
+      const engine = runMockTaxEngine(options);
+      const buffer = await buildTaxPdf(engine, options);
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="rugira-tax-report-mock.pdf"`
+      );
+      res.send(buffer);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to generate PDF export" });
+    }
+  });
+
+  app.get("/api/tax/status", async (req, res) => {
+    try {
+      res.json(getMockTaxStatus());
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch tax sync status" });
+    }
+  });
+
+  app.post("/api/tax/status/run", async (req, res) => {
+    try {
+      const updated = triggerManualTaxSync();
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to trigger sync" });
     }
   });
 

@@ -24,7 +24,8 @@ import {
   User,
   ChevronRight,
   Star,
-  Network
+  Network,
+  FileText
 } from 'lucide-react';
 import {
   Sheet,
@@ -58,6 +59,7 @@ const navigation = [
   { name: 'Bots', href: '/bots', icon: Bot, group: 'Run', description: 'Trading bots' },
   { name: 'Monitoring', href: '/monitoring', icon: MonitorDot, group: 'Run', description: 'System monitoring' },
   { name: 'Analytics', href: '/reports', icon: BarChart, group: 'Govern', description: 'Reports & analytics' },
+  { name: 'Tax Center', href: '/tax-center', icon: FileText, group: 'Govern', description: 'Tax reporting & exports' },
   { name: 'Compliance', href: '/compliance', icon: ShieldCheck, group: 'Govern', description: 'Compliance tracking' },
   { name: 'Tenants', href: '/tenants', icon: Network, group: 'System', description: 'Tenant management', requiresAdmin: true },
   { name: 'Admin', href: '/admin', icon: Settings, group: 'System', description: 'Administration' },
