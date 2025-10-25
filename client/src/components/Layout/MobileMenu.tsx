@@ -23,7 +23,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     { path: '/venues', icon: Building2, label: 'Venues' },
     { path: '/strategies', icon: TrendingUp, label: 'Strategies' },
     { path: '/backtesting', icon: FlaskConical, label: 'Backtesting' },
-    { path: '/bots', icon: Bot, label: 'Automations', badge: activeBotCount },
+    { path: '/bots', icon: Bot, label: 'Trading', badge: activeBotCount },
     ...(isDemoMode ? [{ path: '/console', icon: Command, label: 'Console (Pilot-Assist)' }] : []),
     { path: '/monitoring', icon: Activity, label: 'Monitoring' },
     { path: '/reports', icon: FileText, label: 'Reports' },

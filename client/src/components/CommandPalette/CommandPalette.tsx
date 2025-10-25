@@ -64,7 +64,7 @@ export function CommandPalette({
       { id: 'venues', title: 'Venues', category: 'screen', icon: Building2, href: '/venues', keywords: ['exchanges', 'connections'] },
       { id: 'strategies', title: 'Strategies', category: 'screen', icon: Beaker, href: '/strategies', keywords: ['trading', 'algorithms'] },
       { id: 'backtesting', title: 'Backtesting', category: 'screen', icon: History, href: '/backtesting', keywords: ['test', 'simulation'] },
-      { id: 'automations', title: 'Automations', category: 'screen', icon: Bot, href: '/bots', keywords: ['automations', 'bots', 'automation'] },
+      { id: 'trading', title: 'Trading', category: 'screen', icon: Bot, href: '/bots', keywords: ['trading', 'automations', 'bots'] },
     ];
 
     if (isDemoMode) {
@@ -203,7 +203,7 @@ export function CommandPalette({
   const getCategoryLabel = (category: string) => {
     switch (category) {
       case 'screen': return 'Screens';
-      case 'bot': return 'Automations';
+      case 'bot': return 'Trading';
       case 'strategy': return 'Strategies';
       case 'org': return 'Organizations';
       case 'portfolio': return 'Portfolios';

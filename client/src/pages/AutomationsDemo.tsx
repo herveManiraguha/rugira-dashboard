@@ -291,8 +291,8 @@ export default function AutomationsDemo() {
   return (
     <>
       <StandardPageLayout
-        title="Automations"
-        subtitle="Hands-free strategies with trader-grade context for discretionary decisions."
+        title="Trading"
+        subtitle="Automation-first trading cockpit with the context needed for discretionary decisions."
         viewMode={viewMode === 'cards' ? 'cards' : 'list'}
         onViewModeChange={(mode) => setViewMode(mode === 'cards' ? 'cards' : 'list')}
         showViewModes

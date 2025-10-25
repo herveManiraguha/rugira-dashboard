@@ -58,7 +58,7 @@ const baseNavigation = [
   { name: 'Venues', href: '/venues', icon: Building2, group: 'Build', description: 'Exchange connections' },
   { name: 'Strategies', href: '/strategies', icon: Beaker, group: 'Build', description: 'Trading strategies' },
   { name: 'Backtesting', href: '/backtesting', icon: History, group: 'Build', description: 'Test strategies' },
-  { name: 'Automations', href: '/bots', icon: Bot, group: 'Run', description: 'Automation orchestrator' },
+  { name: 'Trading', href: '/bots', icon: Bot, group: 'Run', description: 'Trading automations and controls' },
   { name: 'Console (Pilot-Assist)', href: '/console', icon: Command, group: 'Run', description: 'Trader console (Demo)', demoOnly: true },
   { name: 'Monitoring', href: '/monitoring', icon: MonitorDot, group: 'Run', description: 'System monitoring' },
   { name: 'Analytics', href: '/reports', icon: BarChart, group: 'Govern', description: 'Reports & analytics' },

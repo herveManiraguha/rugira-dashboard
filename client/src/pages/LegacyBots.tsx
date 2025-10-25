@@ -562,7 +562,7 @@ export default function LegacyBots() {
 
   return (
     <StandardPageLayout
-      title="Automations"
+      title="Trading"
       subtitle="Manage and monitor your automated trading strategies"
       viewMode={viewMode === 'table' ? 'list' : 'cards'}
       onViewModeChange={(mode) => setViewMode(mode === 'list' ? 'table' : 'cards')}
