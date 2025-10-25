@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Route, Switch, useLocation, Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import logoSvg from "@/assets/logo.svg";
 import { useAuth } from '@/contexts/AuthContext';
 import { useEnvironment } from '@/contexts/EnvironmentContext';
+import { useDemoMode } from '@/contexts/DemoContext';
 import DemoRibbon from '@/components/Demo/DemoRibbon';
 import Footer from '@/components/Layout/Footer';
 import HeaderRefactored from '@/components/Layout/HeaderRefactored';
@@ -25,7 +26,8 @@ import {
   ChevronRight,
   Star,
   Network,
-  FileText
+  FileText,
+  Command
 } from 'lucide-react';
 import {
   Sheet,
@@ -51,12 +53,13 @@ interface MainLayoutProps {
   children: React.ReactNode;
 }
 
-const navigation = [
+const baseNavigation = [
   { name: 'Overview', href: '/overview', icon: Activity, group: null, description: 'Dashboard overview' },
   { name: 'Venues', href: '/venues', icon: Building2, group: 'Build', description: 'Exchange connections' },
   { name: 'Strategies', href: '/strategies', icon: Beaker, group: 'Build', description: 'Trading strategies' },
   { name: 'Backtesting', href: '/backtesting', icon: History, group: 'Build', description: 'Test strategies' },
-  { name: 'Bots', href: '/bots', icon: Bot, group: 'Run', description: 'Trading bots' },
+  { name: 'Automations', href: '/bots', icon: Bot, group: 'Run', description: 'Automation orchestrator' },
+  { name: 'Console (Pilot-Assist)', href: '/console', icon: Command, group: 'Run', description: 'Trader console (Demo)', demoOnly: true },
   { name: 'Monitoring', href: '/monitoring', icon: MonitorDot, group: 'Run', description: 'System monitoring' },
   { name: 'Analytics', href: '/reports', icon: BarChart, group: 'Govern', description: 'Reports & analytics' },
   { name: 'Tax Center', href: '/tax-center', icon: FileText, group: 'Govern', description: 'Tax reporting & exports' },
@@ -71,6 +74,7 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
   const { user, currentTenant } = useAuth();
   const [isKillSwitchEnabled, setIsKillSwitchEnabled] = useState(false);
   const { isLive } = useEnvironment();
+  const { isDemoMode } = useDemoMode();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   
@@ -115,6 +119,11 @@ export default function MainLayoutNew({ children }: MainLayoutProps) {
 
   // Check if user is Organization Admin
   const isOrgAdmin = user?.tenant_roles?.[currentTenant || 'rugira-prod']?.includes('admin');
+
+  const navigation = useMemo(
+    () => baseNavigation.filter(item => !item.demoOnly || isDemoMode),
+    [isDemoMode],
+  );
 
   // Filter navigation items based on permissions
   const filteredNavigation = navigation.filter(item => {

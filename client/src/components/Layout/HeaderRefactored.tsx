@@ -29,6 +29,7 @@ import { cn } from '@/lib/utils';
 import logoSvg from '@/assets/logo.svg';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEnvironment, TradingEnvironment } from '@/contexts/EnvironmentContext';
+import { useDemoMode } from '@/contexts/DemoContext';
 import { useScope } from '@/contexts/ScopeContext';
 import { CommandPalette } from '@/components/CommandPalette/CommandPalette';
 import NotificationButton from './NotificationButton';
@@ -82,6 +83,7 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
   const currentTenants = organization?.tenants || [];
   const currentPortfolios = tenant?.portfolios || [];
   const currentModes = portfolio?.modes || [];
+  const { isDemoMode } = useDemoMode();
   
   
   // Handle mode change
@@ -467,6 +469,7 @@ export default function HeaderRefactored({ onKillSwitch, onMobileMenuToggle, sid
       <CommandPalette
         open={commandPaletteOpen}
         onOpenChange={setCommandPaletteOpen}
+        isDemoMode={isDemoMode}
       />
       
       {/* Live Mode Confirmation Dialog */}

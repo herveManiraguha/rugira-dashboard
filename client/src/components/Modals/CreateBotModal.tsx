@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -27,11 +27,23 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { mockStrategies, type MockStrategy } from '@shared/mockData';
+import { demoStrategies } from '@/data/demoAutomationData';
+import { useDemoMode } from '@/contexts/DemoContext';
+
+const slugToType: Record<string, string> = {
+  'grid-trading': 'grid',
+  'dca': 'dca',
+  'arbitrage': 'arbitrage',
+  'market-making': 'market-making',
+  'momentum': 'momentum',
+  'mean-reversion': 'mean-reversion',
+};
 
 interface CreateBotModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: BotCreationData) => void;
+  promotionSource?: PromotionSource;
 }
 
 interface BotCreationData {
@@ -42,6 +54,21 @@ interface BotCreationData {
   maxPositionSize: number;
   stopLoss: number;
 }
+
+interface PromotionSource {
+  name: string;
+  strategySlug: string;
+  sizePercent: number;
+  stopLossPercent: number;
+  pair: string;
+}
+
+type StrategyWithDefaults = MockStrategy & {
+  riskDefaults?: {
+    maxPositionSizePercent?: number;
+    stopLossPercent?: number;
+  };
+};
 
 const exchanges = [
   { id: 'binance', name: 'Binance' },
@@ -57,7 +84,8 @@ const tradingPairs = [
   'LINK/USDT', 'DOT/USDT', 'UNI/USDT', 'AVAX/USDT', 'LTC/USDT'
 ];
 
-export default function CreateBotModal({ isOpen, onClose, onSubmit }: CreateBotModalProps) {
+export default function CreateBotModal({ isOpen, onClose, onSubmit, promotionSource }: CreateBotModalProps) {
+  const { isDemoMode } = useDemoMode();
   const [name, setName] = useState('');
   const [exchange, setExchange] = useState('');
   const [tradingPair, setTradingPair] = useState('');
@@ -66,7 +94,30 @@ export default function CreateBotModal({ isOpen, onClose, onSubmit }: CreateBotM
   const [stopLoss, setStopLoss] = useState(5);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const strategyCatalog = mockStrategies;
+  const strategyCatalog = useMemo<StrategyWithDefaults[]>(() => {
+    if (isDemoMode) {
+      return demoStrategies.map((strat) => ({
+        id: strat.slug,
+        slug: strat.slug,
+        name: strat.name,
+        description: strat.description,
+        type: slugToType[strat.slug] ?? strat.slug,
+        status: 'available',
+        complexity: strat.level.toLowerCase() as MockStrategy['complexity'],
+        marketConditions: [],
+        tags: ['Demo'],
+        risk: strat.risk.toLowerCase() as MockStrategy['risk'],
+        riskLabel: `${strat.risk} Risk`,
+        timeframe: strat.timeframe,
+        bestFor: strat.bestFor,
+        advantages: [],
+        considerations: [],
+        parameters: strat.defaults,
+        riskDefaults: strat.riskDefaults,
+      }));
+    }
+    return mockStrategies as StrategyWithDefaults[];
+  }, [isDemoMode]);
 
   const resetForm = () => {
     setName('');
@@ -81,6 +132,40 @@ export default function CreateBotModal({ isOpen, onClose, onSubmit }: CreateBotM
     resetForm();
     onClose();
   };
+
+  const applyRiskDefaults = (slug: string) => {
+    const selected = strategyCatalog.find((s) => s.slug === slug);
+    if (selected?.riskDefaults) {
+      if (typeof selected.riskDefaults.maxPositionSizePercent === 'number') {
+        setMaxPositionSize(selected.riskDefaults.maxPositionSizePercent);
+      }
+      if (typeof selected.riskDefaults.stopLossPercent === 'number') {
+        setStopLoss(selected.riskDefaults.stopLossPercent);
+      }
+    }
+  };
+
+  const handleStrategySelect = (slug: string) => {
+    setStrategy(slug);
+    applyRiskDefaults(slug);
+  };
+
+  useEffect(() => {
+    if (!isOpen) {
+      resetForm();
+      return;
+    }
+
+    if (promotionSource) {
+      setName(promotionSource.name);
+      setTradingPair(promotionSource.pair);
+      setStrategy(promotionSource.strategySlug);
+      setMaxPositionSize(promotionSource.sizePercent);
+      setStopLoss(promotionSource.stopLossPercent);
+    } else {
+      resetForm();
+    }
+  }, [isOpen, promotionSource, strategyCatalog]);
 
   const handleSubmit = async () => {
     if (!name || !exchange || !tradingPair || !strategy) return;
@@ -278,6 +363,14 @@ export default function CreateBotModal({ isOpen, onClose, onSubmit }: CreateBotM
                       <div>
                         <strong>Risk:</strong> {getRiskLabel(selectedStrategy)}
                       </div>
+                      {selectedStrategy.riskDefaults && (
+                        <div>
+                          <strong>Risk defaults:</strong>{' '}
+                          Size {selectedStrategy.riskDefaults.maxPositionSizePercent !== undefined ? `${selectedStrategy.riskDefaults.maxPositionSizePercent}%` : '—'}
+                          {' · '}
+                          SL {selectedStrategy.riskDefaults.stopLossPercent !== undefined ? `${selectedStrategy.riskDefaults.stopLossPercent}%` : '—'}
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -296,7 +389,7 @@ export default function CreateBotModal({ isOpen, onClose, onSubmit }: CreateBotM
                     "cursor-pointer transition-all hover:shadow-md",
                     strategy === strat.slug ? "ring-2 ring-blue-500 bg-blue-50" : ""
                   )}
-                  onClick={() => setStrategy(strat.slug)}
+                  onClick={() => handleStrategySelect(strat.slug)}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-start space-x-3">
@@ -328,6 +421,16 @@ export default function CreateBotModal({ isOpen, onClose, onSubmit }: CreateBotM
                         <div className="text-xs text-gray-500">
                           <strong>Best for:</strong> {strat.bestFor}
                         </div>
+                        {strat.riskDefaults && (
+                          <div className="text-xs text-gray-500 mt-1">
+                            <strong>Risk defaults:</strong>{' '}
+                            <span>
+                              Size {strat.riskDefaults.maxPositionSizePercent !== undefined ? `${strat.riskDefaults.maxPositionSizePercent}%` : '—'}
+                              {' · '}
+                              SL {strat.riskDefaults.stopLossPercent !== undefined ? `${strat.riskDefaults.stopLossPercent}%` : '—'}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </CardContent>

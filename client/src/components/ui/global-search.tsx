@@ -29,9 +29,9 @@ const searchItems: SearchItem[] = [
     icon: <BarChart3 className="h-4 w-4" />
   },
   {
-    id: 'bots',
-    title: 'Bots',
-    description: 'Manage your trading bots',
+    id: 'automations',
+    title: 'Automations',
+    description: 'Manage automated strategies',
     href: '/bots',
     group: 'Pages',
     icon: <Bot className="h-4 w-4" />

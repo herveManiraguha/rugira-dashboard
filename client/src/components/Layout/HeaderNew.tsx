@@ -516,7 +516,7 @@ export default function HeaderNew({ onKillSwitch, onMobileMenuToggle }: HeaderNe
             </CommandItem>
             <CommandItem onSelect={() => { setLocation('/bots'); setCommandPaletteOpen(false); }}>
               <Bot className="mr-2 h-4 w-4" />
-              Bots
+              Automations
             </CommandItem>
             <CommandItem onSelect={() => { setLocation('/backtesting'); setCommandPaletteOpen(false); }}>
               <Target className="mr-2 h-4 w-4" />

@@ -53,6 +53,8 @@ interface EnhancedTableProps<T> {
   bulkActions?: React.ReactNode;
   pageSize?: number;
   className?: string;
+  enableSearch?: boolean;
+  enableFilters?: boolean;
 }
 
 export function EnhancedTable<T extends { id: string | number }>({
@@ -65,7 +67,9 @@ export function EnhancedTable<T extends { id: string | number }>({
   onSelectionChange,
   bulkActions,
   pageSize = 10,
-  className
+  className,
+  enableSearch = true,
+  enableFilters = true,
 }: EnhancedTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortColumn, setSortColumn] = useState<string | null>(null);
@@ -204,58 +208,61 @@ export function EnhancedTable<T extends { id: string | number }>({
 
   return (
     <div className={cn("space-y-4", className)}>
-      {/* Search and Filters */}
-      <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative flex-1 max-w-full sm:max-w-sm">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            placeholder={searchPlaceholder}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 h-11"
-            data-testid="table-search"
-          />
-        </div>
-        
-        <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:space-x-4">
-          {filters.length > 0 && (
-            <div className="flex items-center space-x-2">
-              <Filter className="h-4 w-4 text-gray-400 flex-shrink-0" />
-              <div className="flex flex-wrap gap-2">
-                {filters.map(filter => (
-                  <Badge
-                    key={filter.id}
-                    variant={selectedFilters.includes(filter.id) ? "default" : "outline"}
-                    className="cursor-pointer touch-friendly min-h-[32px] px-3"
-                    onClick={() => {
-                      if (onFilterChange) {
-                        const newFilters = selectedFilters.includes(filter.id)
-                          ? selectedFilters.filter(id => id !== filter.id)
-                          : [...selectedFilters, filter.id];
-                        onFilterChange(newFilters);
-                      }
-                    }}
-                    data-testid={`filter-${filter.id}`}
-                  >
-                    {filter.label}
-                  </Badge>
-                ))}
-              </div>
+      {(enableSearch || (enableFilters && filters.length > 0) || (selectedRows.size > 0 && !!bulkActions)) && (
+        <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
+          {enableSearch && (
+            <div className="relative flex-1 max-w-full sm:max-w-sm">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder={searchPlaceholder}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 h-11"
+                data-testid="table-search"
+              />
             </div>
           )}
           
-          {selectedRows.size > 0 && bulkActions && (
-            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
-              <span className="text-sm text-gray-500">
-                {selectedRows.size} selected
-              </span>
-              <div className="flex space-x-2 w-full sm:w-auto">
-                {bulkActions}
+          <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:space-x-4">
+            {enableFilters && filters.length > 0 && (
+              <div className="flex items-center space-x-2">
+                <Filter className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                <div className="flex flex-wrap gap-2">
+                  {filters.map(filter => (
+                    <Badge
+                      key={filter.id}
+                      variant={selectedFilters.includes(filter.id) ? "default" : "outline"}
+                      className="cursor-pointer touch-friendly min-h-[32px] px-3"
+                      onClick={() => {
+                        if (onFilterChange) {
+                          const newFilters = selectedFilters.includes(filter.id)
+                            ? selectedFilters.filter(id => id !== filter.id)
+                            : [...selectedFilters, filter.id];
+                          onFilterChange(newFilters);
+                        }
+                      }}
+                      data-testid={`filter-${filter.id}`}
+                    >
+                      {filter.label}
+                    </Badge>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
+            
+            {selectedRows.size > 0 && bulkActions && (
+              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
+                <span className="text-sm text-gray-500">
+                  {selectedRows.size} selected
+                </span>
+                <div className="flex space-x-2 w-full sm:w-auto">
+                  {bulkActions}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Table */}
       <div className="border rounded-lg overflow-hidden w-full">

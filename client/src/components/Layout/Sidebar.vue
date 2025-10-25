@@ -83,7 +83,7 @@
             data-testid="nav-bots"
           >
             <i class="fas fa-robot w-5"></i>
-            <span>Bots</span>
+            <span>Automations</span>
             <span 
               v-if="activeBotCount > 0" 
               class="ml-auto bg-brand-red text-white text-xs px-2 py-0.5 rounded-full"

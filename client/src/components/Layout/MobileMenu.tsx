@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, ChevronRight, Home, Bot, TrendingUp, Building2, Shield, FileText, FlaskConical, Activity, Settings, HelpCircle } from "lucide-react";
+import { Menu, X, ChevronRight, Home, Bot, TrendingUp, Building2, Shield, FileText, FlaskConical, Activity, Settings, HelpCircle, Command } from "lucide-react";
 import { useBotsStore } from "../../stores";
+import { useDemoMode } from "@/contexts/DemoContext";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface MobileMenuProps {
 export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const [location] = useLocation();
   const { activeBotCount } = useBotsStore();
+  const { isDemoMode } = useDemoMode();
   
   const isActive = (path: string) => {
     return location === path;
@@ -21,7 +23,8 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     { path: '/venues', icon: Building2, label: 'Venues' },
     { path: '/strategies', icon: TrendingUp, label: 'Strategies' },
     { path: '/backtesting', icon: FlaskConical, label: 'Backtesting' },
-    { path: '/bots', icon: Bot, label: 'Bots', badge: activeBotCount },
+    { path: '/bots', icon: Bot, label: 'Automations', badge: activeBotCount },
+    ...(isDemoMode ? [{ path: '/console', icon: Command, label: 'Console (Pilot-Assist)' }] : []),
     { path: '/monitoring', icon: Activity, label: 'Monitoring' },
     { path: '/reports', icon: FileText, label: 'Reports' },
     { path: '/compliance', icon: Shield, label: 'Compliance', badge: 2 },

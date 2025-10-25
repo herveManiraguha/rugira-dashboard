@@ -40,6 +40,7 @@ const Tenants = lazy(() => import("@/pages/Tenants"));
 const TenantDetail = lazy(() => import("@/pages/TenantDetail"));
 const CreateTenant = lazy(() => import("@/pages/CreateTenant"));
 const TaxCenter = lazy(() => import("@/pages/TaxCenter"));
+const Console = lazy(() => import("@/pages/Console"));
 
 // Loading component for lazy-loaded routes
 const PageLoader = () => (
@@ -91,6 +92,16 @@ function App() {
               <MainLayout>
                 <Suspense fallback={<PageLoader />}>
                   <Bots />
+                </Suspense>
+              </MainLayout>
+            </ProtectedRoute>
+          </Route>
+
+          <Route path="/console">
+            <ProtectedRoute>
+              <MainLayout>
+                <Suspense fallback={<PageLoader />}>
+                  <Console />
                 </Suspense>
               </MainLayout>
             </ProtectedRoute>

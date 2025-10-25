@@ -22,6 +22,7 @@ import {
   LifeBuoy,
   Search,
   ArrowRight,
+  Command,
 } from 'lucide-react';
 
 interface CommandItem {
@@ -34,19 +35,6 @@ interface CommandItem {
   keywords?: string[];
 }
 
-const screenItems: CommandItem[] = [
-  { id: 'overview', title: 'Overview', category: 'screen', icon: Activity, href: '/overview', keywords: ['dashboard', 'home'] },
-  { id: 'venues', title: 'Venues', category: 'screen', icon: Building2, href: '/venues', keywords: ['exchanges', 'connections'] },
-  { id: 'strategies', title: 'Strategies', category: 'screen', icon: Beaker, href: '/strategies', keywords: ['trading', 'algorithms'] },
-  { id: 'backtesting', title: 'Backtesting', category: 'screen', icon: History, href: '/backtesting', keywords: ['test', 'simulation'] },
-  { id: 'bots', title: 'Bots', category: 'screen', icon: Bot, href: '/bots', keywords: ['trading bots', 'automation'] },
-  { id: 'monitoring', title: 'Monitoring', category: 'screen', icon: MonitorDot, href: '/monitoring', keywords: ['alerts', 'status'] },
-  { id: 'analytics', title: 'Analytics', category: 'screen', icon: BarChart, href: '/reports', keywords: ['reports', 'analysis'] },
-  { id: 'compliance', title: 'Compliance', category: 'screen', icon: ShieldCheck, href: '/compliance', keywords: ['audit', 'regulations'] },
-  { id: 'admin', title: 'Admin', category: 'screen', icon: Settings, href: '/admin', keywords: ['settings', 'configuration'] },
-  { id: 'help', title: 'Help', category: 'screen', icon: LifeBuoy, href: '/help', keywords: ['support', 'documentation'] },
-];
-
 interface CommandPaletteProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -54,6 +42,7 @@ interface CommandPaletteProps {
   strategies?: Array<{ id: string; name: string }>;
   organizations?: Array<{ id: string; name: string }>;
   portfolios?: Array<{ id: string; name: string }>;
+  isDemoMode?: boolean;
 }
 
 export function CommandPalette({
@@ -63,10 +52,42 @@ export function CommandPalette({
   strategies = [],
   organizations = [],
   portfolios = [],
+  isDemoMode = false,
 }: CommandPaletteProps) {
   const [, setLocation] = useLocation();
   const [search, setSearch] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const screenItems = useMemo<CommandItem[]>(() => {
+    const items: CommandItem[] = [
+      { id: 'overview', title: 'Overview', category: 'screen', icon: Activity, href: '/overview', keywords: ['dashboard', 'home'] },
+      { id: 'venues', title: 'Venues', category: 'screen', icon: Building2, href: '/venues', keywords: ['exchanges', 'connections'] },
+      { id: 'strategies', title: 'Strategies', category: 'screen', icon: Beaker, href: '/strategies', keywords: ['trading', 'algorithms'] },
+      { id: 'backtesting', title: 'Backtesting', category: 'screen', icon: History, href: '/backtesting', keywords: ['test', 'simulation'] },
+      { id: 'automations', title: 'Automations', category: 'screen', icon: Bot, href: '/bots', keywords: ['automations', 'bots', 'automation'] },
+    ];
+
+    if (isDemoMode) {
+      items.push({
+        id: 'console',
+        title: 'Console (Pilot-Assist)',
+        category: 'screen',
+        icon: Command,
+        href: '/console',
+        keywords: ['console', 'pilot', 'trade ticket', 'demo'],
+      });
+    }
+
+    items.push(
+      { id: 'monitoring', title: 'Monitoring', category: 'screen', icon: MonitorDot, href: '/monitoring', keywords: ['alerts', 'status'] },
+      { id: 'analytics', title: 'Analytics', category: 'screen', icon: BarChart, href: '/reports', keywords: ['reports', 'analysis'] },
+      { id: 'compliance', title: 'Compliance', category: 'screen', icon: ShieldCheck, href: '/compliance', keywords: ['audit', 'regulations'] },
+      { id: 'admin', title: 'Admin', category: 'screen', icon: Settings, href: '/admin', keywords: ['settings', 'configuration'] },
+      { id: 'help', title: 'Help', category: 'screen', icon: LifeBuoy, href: '/help', keywords: ['support', 'documentation'] },
+    );
+
+    return items;
+  }, [isDemoMode]);
 
   // Combine all items
   const allItems = useMemo(() => {
@@ -182,7 +203,7 @@ export function CommandPalette({
   const getCategoryLabel = (category: string) => {
     switch (category) {
       case 'screen': return 'Screens';
-      case 'bot': return 'Bots';
+      case 'bot': return 'Automations';
       case 'strategy': return 'Strategies';
       case 'org': return 'Organizations';
       case 'portfolio': return 'Portfolios';

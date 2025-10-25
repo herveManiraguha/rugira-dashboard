@@ -106,7 +106,7 @@ export default function Sidebar() {
               data-testid="nav-bots"
             >
               <i className="fas fa-robot w-5"></i>
-              <span>Bots</span>
+              <span>Automations</span>
               {activeBotCount > 0 && (
                 <span 
                   className="ml-auto bg-brand-red text-white text-xs px-2 py-0.5 rounded-full"
